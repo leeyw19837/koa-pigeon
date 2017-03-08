@@ -1,17 +1,16 @@
-const Koa = require('koa');
-const Router = require('koa-router');
-const convert = require('koa-convert');
-const graphqlHTTP = require('koa-graphql');
-const {
+import * as Koa from 'koa'
+import * as Router from 'koa-router'
+const convert = require('koa-convert')
+const graphqlHTTP = require('koa-graphql')
+import {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
-  GraphQLList,
-  GraphQLD
-} = require('graphql');
+  GraphQLList
+} from 'graphql'
 const GraphQLDate = require('graphql-date')
-const { MongoClient } = require('mongodb');
+import { MongoClient } from 'mongodb'
 
 
 const app = new Koa()
@@ -20,7 +19,6 @@ const router = new Router()
 const AppointmentType = new GraphQLObjectType({
   name: 'Appointment',
   fields: {
-    nickname: { type: GraphQLString },
     date: { type: GraphQLDate }
   }
 })
@@ -54,8 +52,8 @@ const queryType = new GraphQLObjectType({
           }
         }).toArray()
         
-        console.log(appointmentObjects)
-        const convertedAppointments = appointmentObjects.map(a => ({ date: a.appointmentTime, nickname: a.nickname }))
+        // console.log(appointmentObjects)
+        const convertedAppointments = appointmentObjects.map((a: any) => ({ date: a.appointmentTime, nickname: a.nickname }))
 
         // console.log(convertedAppointments)
         return convertedAppointments
