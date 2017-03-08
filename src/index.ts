@@ -11,61 +11,94 @@ import {
 } from 'graphql'
 const GraphQLDate = require('graphql-date')
 import { MongoClient } from 'mongodb'
+import * as fs from 'fs'
+import { makeExecutableSchema } from 'graphql-tools'
 
 
 const app = new Koa()
 const router = new Router()
 
-const AppointmentType = new GraphQLObjectType({
-  name: 'Appointment',
-  fields: {
-    date: { type: GraphQLDate }
-  }
-})
+const schemasText = fs.readFileSync('./schemas/schemas', 'utf-8')
 
-const queryType = new GraphQLObjectType({
-  name: 'RootQuery',
-  fields: {
-    appointments: {
-      type: new GraphQLList(AppointmentType),
-      description: 'All appointments on a given date',
-      args: {
-        startDateInSeconds: {
-          type: GraphQLDate,
-          description: 'The inclusive lower bound for the appointment date.',
-          // defaultValue: 0,
-        },
-        endDateInSeconds: {
-          type: GraphQLDate,
-          description: 'The exclusive upper bound for the appointment date.',
-          // defaultValue: new Date('1/1/2039').getTime(),
-        },
-      },
-      resolve: async (_, args, { db }) => {
-        const startDate = args.startDateInSeconds
-        const endDate = args.endDateInSeconds
+const resolverMap = {
+  Query: {
+    async appointments(_, args, { db }) {
+      const startDate = args.startDateInSeconds
+      const endDate = args.endDateInSeconds
 
-        const appointmentObjects = await db.collection('appointments').find({
-          appointmentTime: {
-            $gte: startDate,
-            $lt: endDate,
-          }
-        }).toArray()
-        
-        // console.log(appointmentObjects)
-        const convertedAppointments = appointmentObjects.map((a: any) => ({ date: a.appointmentTime, nickname: a.nickname }))
+      const appointmentObjects = await db.collection('appointments').find({
+        // appointmentTime: {
+        //   $gte: startDate,
+        //   $lt: endDate,
+        // }
+      }).toArray()
 
-        // console.log(convertedAppointments)
-        return convertedAppointments
+      // console.log(appointmentObjects)
+      const convertedAppointments = appointmentObjects.map((a: any) => ({ date: a.appointmentTime, nickname: a.nickname }))
 
-        // return appointments
-      }
+      // console.log(convertedAppointments)
+      return convertedAppointments
+
     }
   }
-})
+}
 
-const schema = new GraphQLSchema({
-  query: queryType,
+
+// const AppointmentType = new GraphQLObjectType({
+//   name: 'Appointment',
+//   fields: {
+//     date: { type: GraphQLDate }
+//   }
+// })
+
+// const queryType = new GraphQLObjectType({
+//   name: 'RootQuery',
+//   fields: {
+//     appointments: {
+//       type: new GraphQLList(AppointmentType),
+//       description: 'All appointments on a given date',
+//       args: {
+//         startDateInSeconds: {
+//           type: GraphQLDate,
+//           description: 'The inclusive lower bound for the appointment date.',
+//           // defaultValue: 0,
+//         },
+//         endDateInSeconds: {
+//           type: GraphQLDate,
+//           description: 'The exclusive upper bound for the appointment date.',
+//           // defaultValue: new Date('1/1/2039').getTime(),
+//         },
+//       },
+//       resolve: async (_, args, { db }) => {
+//         const startDate = args.startDateInSeconds
+//         const endDate = args.endDateInSeconds
+
+//         const appointmentObjects = await db.collection('appointments').find({
+//           appointmentTime: {
+//             $gte: startDate,
+//             $lt: endDate,
+//           }
+//         }).toArray()
+
+//         // console.log(appointmentObjects)
+//         const convertedAppointments = appointmentObjects.map((a: any) => ({ date: a.appointmentTime, nickname: a.nickname }))
+
+//         // console.log(convertedAppointments)
+//         return convertedAppointments
+
+//         // return appointments
+//       }
+//     }
+//   }
+// })
+
+// const schema = new GraphQLSchema({
+//   query: queryType,
+// })
+
+const schema = makeExecutableSchema({
+  typeDefs: schemasText,
+  resolvers: resolverMap,
 })
 
 MongoClient.connect('mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@120.131.8.26:27017/paper-king-developing').then(db => {

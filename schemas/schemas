@@ -1,0 +1,11 @@
+type Appointment {
+  date: String!
+}
+
+type Query {
+  appointments: [Appointment]
+}
+
+schema {
+  query: Query
+}
