@@ -1,0 +1,99 @@
+scalar Date
+scalar JSON
+
+type Patient {
+  name: String!
+}
+
+type Appointment {
+  date: String!
+}
+
+# type TreatmentSt
+
+type Blood {
+
+  
+
+  conclusion: String
+
+  ABILeft: Float
+  ABIRight: Float
+  TBILeft: Float
+  TBIRight: Float
+}
+
+type NerveSymptoms {
+  pain: Bool
+  numbness: Bool
+  paresthesia: Bool
+}
+
+enum SENSITIVITY {
+  NORMAL,
+  NUMBNESS,
+  PAIN,
+}
+
+type Nerve {
+  symptomsPresent: Bool
+  symptoms: NerveSymptoms!
+
+  pressureSenseLeft: Bool
+  pressureSenseRight: Bool
+  vibrationSenseLeft: Bool
+  vibrationSenseRight: Bool
+  temperatureSenseLeft: Bool
+  temperatureSenseRight: Bool
+  ankleReflexLeft: Bool
+  ankleReflexRight: Bool
+
+  leftArmSensitivity: SENSITIVITY
+  rightArmSensitivity: SENSITIVITY
+  leftLegSensitivity: SENSITIVITY
+  rightLegSensitivity: SENSITIVITY
+
+  hasDoneSomatesthesiaCheck: Bool
+  needsSomatesthesiaCheck: Bool
+}
+
+type ShoeTypes {
+  flipFlops: Bool!
+  # ...
+}
+
+type FootwearQuestions {
+  question1: Bool
+  question2: Bool
+  question3: Bool
+  question4: Bool
+  question5: Bool
+  question6: Bool
+  question7: Bool
+  question8: Bool
+  question9: Bool
+  question10: Bool
+  question11: Bool
+  question12: Bool
+  question13: Bool
+  question14: Bool
+  question15: Bool
+}
+
+type FootAssessment {
+  id: ID!
+  patient: Patient!
+
+  blood: Blood!
+  nerve: Nerve!
+  footwearQuestions: FootwearQuestions!
+  footwearSelection: ShoeTypes!
+}
+
+type Query {
+  appointments: [Appointment]
+}
+
+schema {
+  query: Query
+}

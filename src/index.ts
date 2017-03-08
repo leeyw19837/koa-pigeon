@@ -43,7 +43,6 @@ const resolverMap = {
   }
 }
 
-
 // const AppointmentType = new GraphQLObjectType({
 //   name: 'Appointment',
 //   fields: {
