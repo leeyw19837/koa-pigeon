@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "watch": "concurrently 'tsc --watch' 'nodemon --watch \"dist\" dist/index.js'"
+    "watch": "concurrently 'tsc --watch' 'nodemon --watch \"dist\" --watch \"schemas\" --ext js,ts,gql dist/index.js'"
   },
   "repository": {
     "type": "git",
