@@ -18,7 +18,7 @@ import { makeExecutableSchema } from 'graphql-tools'
 const app = new Koa()
 const router = new Router()
 
-const schemasText = fs.readFileSync('./schemas/schemas', 'utf-8')
+const schemasText = fs.readFileSync('./schemas/schemas.gql', 'utf-8')
 
 const resolverMap = {
   Query: {

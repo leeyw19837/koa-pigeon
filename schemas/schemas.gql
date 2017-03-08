@@ -24,9 +24,9 @@ type Blood {
 }
 
 type NerveSymptoms {
-  pain: Bool
-  numbness: Bool
-  paresthesia: Bool
+  pain: Boolean
+  numbness: Boolean
+  paresthesia: Boolean
 }
 
 enum SENSITIVITY {
@@ -36,48 +36,48 @@ enum SENSITIVITY {
 }
 
 type Nerve {
-  symptomsPresent: Bool
+  symptomsPresent: Boolean
   symptoms: NerveSymptoms!
 
-  pressureSenseLeft: Bool
-  pressureSenseRight: Bool
-  vibrationSenseLeft: Bool
-  vibrationSenseRight: Bool
-  temperatureSenseLeft: Bool
-  temperatureSenseRight: Bool
-  ankleReflexLeft: Bool
-  ankleReflexRight: Bool
+  pressureSenseLeft: Boolean
+  pressureSenseRight: Boolean
+  vibrationSenseLeft: Boolean
+  vibrationSenseRight: Boolean
+  temperatureSenseLeft: Boolean
+  temperatureSenseRight: Boolean
+  ankleReflexLeft: Boolean
+  ankleReflexRight: Boolean
 
   leftArmSensitivity: SENSITIVITY
   rightArmSensitivity: SENSITIVITY
   leftLegSensitivity: SENSITIVITY
   rightLegSensitivity: SENSITIVITY
 
-  hasDoneSomatesthesiaCheck: Bool
-  needsSomatesthesiaCheck: Bool
+  hasDoneSomatesthesiaCheck: Boolean
+  needsSomatesthesiaCheck: Boolean
 }
 
 type ShoeTypes {
-  flipFlops: Bool!
+  flipFlops: Boolean!
   # ...
 }
 
 type FootwearQuestions {
-  question1: Bool
-  question2: Bool
-  question3: Bool
-  question4: Bool
-  question5: Bool
-  question6: Bool
-  question7: Bool
-  question8: Bool
-  question9: Bool
-  question10: Bool
-  question11: Bool
-  question12: Bool
-  question13: Bool
-  question14: Bool
-  question15: Bool
+  question1: Boolean
+  question2: Boolean
+  question3: Boolean
+  question4: Boolean
+  question5: Boolean
+  question6: Boolean
+  question7: Boolean
+  question8: Boolean
+  question9: Boolean
+  question10: Boolean
+  question11: Boolean
+  question12: Boolean
+  question13: Boolean
+  question14: Boolean
+  question15: Boolean
 }
 
 type FootAssessment {
