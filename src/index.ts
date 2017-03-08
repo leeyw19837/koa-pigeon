@@ -22,7 +22,7 @@ const schemasText = fs.readFileSync('./schemas/schemas', 'utf-8')
 
 const resolverMap = {
   Query: {
-    async appointments(_, args, { db }) {
+    async appointments(_: any, args: any, { db }: any) {
       const startDate = args.startDateInSeconds
       const endDate = args.endDateInSeconds
 
