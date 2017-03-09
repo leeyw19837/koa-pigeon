@@ -5,3 +5,4 @@
 - refactor resolvers
 - add mutations for writing
 - appointment system integration
+- should use enums for normal/abnormal etc?

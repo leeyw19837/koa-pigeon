@@ -164,7 +164,6 @@ const nerveSymptomParser = (object: object, path: string) => {
     paresthesia: value.includes('感觉异常'),
   }
 }
-// NOTE: this will return a false value for instances where the actual value is missing, undefined or empty string
 const defaultToNull = (object: object, path: string) => {
   return get(object, path, null)
 }

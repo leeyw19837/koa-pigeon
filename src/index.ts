@@ -41,10 +41,10 @@ const resolverMap = {
       )
     },
     async footAssessment(_: any, args: any, { db }: any) {
-      const objects = await db.collection('footAssessment').findOne({
+      const footAssessment = await db.collection('footAssessment').findOne({
         _id: args.id,
       })
-      return parseLegacyFootAssessment(objects)
+      return parseLegacyFootAssessment(footAssessment)
     },
   },
 }
