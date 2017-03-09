@@ -12,17 +12,14 @@ type Appointment {
 
 # type TreatmentSt
 enum VARIATION{
-  NORMAL,
+  NORMAL
   ABNORMAL
 }
 enum MEDICAL_HISTORY{
   HAS,
   NOT_HAS
 }
-enum DEFORMITY{
-  HAS,
-  NOT_HAS
-}
+
 
 type History {
   recievedFootcareInstruction: Boolean
@@ -30,18 +27,41 @@ type History {
   hadFootUlcer: Boolean
   amputee: Boolean
 }
+
 type Skin {
   historyPresent: MEDICAL_HISTORY!
-  # history: History!
+}
+
+type Deformities {
+  bunion: Boolean
+  charcotFoot: Boolean
+  hammertoe: Boolean
+  clawToe: Boolean
+  malletToe: Boolean
+}
+type Limitation {
+  backStretch: Boolean
+  plantarFlexion: Boolean
 }
 type Bone {
-  deformityPresent: DEFORMITY!
+  deformitiesLeftPresent: Boolean!
+  deformitiesLeft: Deformities
+  deformitiesRightPresent: Boolean!
+  deformitiesRight: Deformities
+  ankleJointLimitationLeftPresent: Boolean!
+  ankleJointLimitationRightPresent: Boolean!
+  ankleJointLimitationLeft: Limitation!
+  ankleJointLimitationRight: Limitation!
+  ballJointLimitationLeftPresent: Boolean!
+  ballJointLimitationRightPresent: Boolean!
+  ballJointLimitationLeft: Limitation!
+  ankleJointLimitationRight: Limitation!
 }
 
 enum PULSE {
-  NORMAL,
-  WEAK,
-  NO_PULSE,
+  NORMAL
+  WEAK
+  NO_PULSE
 }
 enum CONCLUSION {
   NORMAL
@@ -74,9 +94,9 @@ type NerveSymptoms {
 }
 
 enum SENSITIVITY {
-  NORMAL,
-  NUMBNESS,
-  PAIN,
+  NORMAL
+  NUMBNESS
+  PAIN
 }
 
 type Nerve {
@@ -141,6 +161,7 @@ type FootAssessment {
   id: ID!
   patient: Patient!
   skin: Skin!
+  bone: Bone!
   blood: Blood!
   nerve: Nerve!
   footwearQuestions: FootwearQuestions!

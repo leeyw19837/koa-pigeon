@@ -59,7 +59,18 @@ const resolverMap = {
 
             },
             bone: {
-
+              deformitiesLeftPresent: undefinedFalse(a, 'boneAndJoint.deformityLeft.had'),
+              deformitiesRightPresent: undefinedFalse(a, 'boneAndJoint.deformityRight.had'),
+              deformitiesLeft: deformityParser(a, 'boneAndJoint.deformityLeft'),
+              deformitiesRight: deformityParser(a, 'boneAndJoint.deformityRight'),
+              ankleJointLimitationLeftPresent: undefinedFalse(a, 'boneAndJoint.jointLeft.had'),
+              ankleJointLimitationRightPresent: undefinedFalse(a, 'boneAndJoint.jointRight.had'),
+              ankleJointLimitationLeft: limitationParser(a, 'boneAndJoint.jointLeft'),
+              ankleJointLimitationRight: limitationParser(a, 'boneAndJoint.jointRight'),
+              ballJointLimitationLeftPresent: undefinedFalse(a, 'boneAndJoint.firstPlantarToeJointLeft.had'),
+              ballJointLimitationRightPresent: undefinedFalse(a, 'boneAndJoint.firstPlantarToeJointRight.had'),
+              ballJointLimitationLeft: limitationParser(a, 'boneAndJoint.firstPlantarToeJointLeft'),
+              ballJointLimitationRight: limitationParser(a, 'boneAndJoint.firstPlantarToeJointRight'),
             },
             blood: {
               symptomsPresent: undefinedFalse(a, 'peripheralVessel.symptoms.had'),
@@ -96,8 +107,12 @@ const resolverMap = {
     },
   },
 }
-// TODO: convert from old type to 3 state enum
+
+// TODO: test this
 const acupuntureSenceParser = (object: object, path: string) => {
+  const value = get (object, path + '.items', [])
+  if (value.includes('感觉消退'))return 'NUMBNESS'
+  if (value.includes('疼痛过敏')) return 'PAIN'
   return 'NORMAL'
 }
 const pulseParser = (object: object, path: string) => {
@@ -105,6 +120,25 @@ const pulseParser = (object: object, path: string) => {
   if (value === 'less')return 'WEAK'
   if (value === 'missing')return 'NO_PULSE'
   return 'NORMAL'
+}
+const deformityParser = (object: object, path: string) => {
+  const value = get (object, path, false)
+  const symptoms = {
+    bunion: get(object, path + '.discoloration', false),
+    charcotFoot: get(object, path + '.edema', false),
+    hammertoe: get(object, path + '.bladder', false),
+    clawToe: get(object, path + '.cracks', false),
+    malletToe: get(object, path + '.callus', false),
+  }
+  return symptoms
+}
+const limitationParser = (object: object, path: string) => {
+  const value = get (object, path, false)
+  const symptoms = {
+    backStretch: get(object, path + '.BackStretchLimited', false),
+    plantarFlexion: get(object, path + '.PlantarFlexionLimited', false),
+  }
+  return symptoms
 }
 const bloodSymptomParser = (object: object, path: string) => {
   const value = get (object, path, false)
@@ -123,6 +157,7 @@ const nerveSymptomParser = (object: object, path: string) => {
   }
   return symptoms
 }
+// NOTE: this will return a false value for instances where the actual value is missing, undefined or empty string
 const undefinedFalse = (object: object, path: string) => {
   return get(object, path, false)
 }
