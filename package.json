@@ -29,12 +29,16 @@
     "koa-graphql": "^0.6.2",
     "koa-mount": "^2.0.0",
     "koa-router": "7",
+    "lodash.get": "^4.4.2",
     "mongodb": "^2.2.24"
   },
   "devDependencies": {
     "@types/graphql": "^0.8.6",
+    "@types/graphql-date": "^1.0.0",
     "@types/koa": "^2.0.38",
     "@types/koa-router": "^7.0.21",
+    "@types/lodash": "^4.14.54",
+    "@types/lodash.get": "^4.4.1",
     "@types/mongodb": "^2.1.41",
     "concurrently": "^3.4.0",
     "nodemon": "^1.11.0",

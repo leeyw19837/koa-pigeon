@@ -2,18 +2,42 @@ scalar Date
 scalar JSON
 
 type Patient {
-  name: String!
+  nickname: String!
 }
 
 type Appointment {
   date: String!
+  nickname: String!
 }
 
 # type TreatmentSt
+enum VARIATION{
+  NORMAL,
+  ABNORMAL
+}
+enum MEDICAL_HISTORY{
+  HAS,
+  NOT_HAS
+}
+enum DEFORMITY{
+  HAS,
+  NOT_HAS
+}
 
+type History {
+  recievedFootcareInstruction: Boolean
+  livesAlone: Boolean
+  hadFootUlcer: Boolean
+  amputee: Boolean
+}
+type Skin {
+  historyPresent: MEDICAL_HISTORY!
+  # history: History!
+}
+type Bone {
+  deformityPresent: DEFORMITY!
+}
 type Blood {
-
-  
 
   conclusion: String
 
@@ -59,7 +83,20 @@ type Nerve {
 
 type ShoeTypes {
   flipFlops: Boolean!
-  # ...
+  crocs: Boolean!
+  net: Boolean!
+  flats: Boolean!
+  mocassins: Boolean!
+  dress: Boolean!
+  lowHeel: Boolean!
+  midHeel: Boolean!
+  highHeel: Boolean!
+  rain: Boolean!
+  highHeel: Boolean!
+  sandals: Boolean!
+  football: Boolean!
+  running: Boolean!
+  hiking: Boolean!
 }
 
 type FootwearQuestions {
@@ -83,7 +120,7 @@ type FootwearQuestions {
 type FootAssessment {
   id: ID!
   patient: Patient!
-
+  skin: Skin!
   blood: Blood!
   nerve: Nerve!
   footwearQuestions: FootwearQuestions!
@@ -92,6 +129,8 @@ type FootAssessment {
 
 type Query {
   appointments: [Appointment]
+  patients: [Patient]
+  footAssessments: [FootAssessment]
 }
 
 schema {

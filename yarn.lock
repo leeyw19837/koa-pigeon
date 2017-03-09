@@ -13,7 +13,13 @@
     "@types/keygrip" "*"
     "@types/node" "*"
 
-"@types/graphql@^0.8.5", "@types/graphql@^0.8.6":
+"@types/graphql-date@^1.0.0":
+  version "1.0.0"
+  resolved "http://registry.npm.taobao.org/@types/graphql-date/download/@types/graphql-date-1.0.0.tgz#81eeaa2f2a6a65cac91a22c37fd135b45f49e787"
+  dependencies:
+    "@types/graphql" "*"
+
+"@types/graphql@*", "@types/graphql@^0.8.5", "@types/graphql@^0.8.6":
   version "0.8.6"
   resolved "https://registry.yarnpkg.com/@types/graphql/-/graphql-0.8.6.tgz#b34fb880493ba835b0c067024ee70130d6f9bb68"
 
@@ -45,6 +51,16 @@
     "@types/keygrip" "*"
     "@types/koa-compose" "*"
     "@types/node" "*"
+
+"@types/lodash.get@^4.4.1":
+  version "4.4.1"
+  resolved "http://registry.npm.taobao.org/@types/lodash.get/download/@types/lodash.get-4.4.1.tgz#06ff6f7b4060a4c4d00078637c6624f549c80884"
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*", "@types/lodash@^4.14.54":
+  version "4.14.54"
+  resolved "http://registry.npm.taobao.org/@types/lodash/download/@types/lodash-4.14.54.tgz#287dbbcd97d5da69c25ca99fb5afa81c4839b7fa"
 
 "@types/mongodb@^2.1.41":
   version "2.1.41"
@@ -1199,6 +1215,10 @@ lodash.defaults@^3.1.2:
   dependencies:
     lodash.assign "^3.0.0"
     lodash.restparam "^3.0.0"
+
+lodash.get@^4.4.2:
+  version "4.4.2"
+  resolved "http://registry.npm.taobao.org/lodash.get/download/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
 
 lodash.isarguments@^3.0.0:
   version "3.1.0"
