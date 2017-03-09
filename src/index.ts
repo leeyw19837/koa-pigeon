@@ -64,9 +64,15 @@ const resolverMap = {
             blood: {
               instepPulseLeft: pulseParser(a, 'peripheralVessel.dorsalisPedisLeft'),
               instepPulseRight: pulseParser(a, 'peripheralVessel.dorsalisPedisRight'),
+              conclusion: a.peripheralVessel.conclusion,
+              ABILeft: +a.peripheralVessel.ABILeft,
+              ABIRight: +a.peripheralVessel.ABIRight,
+              TBILeft: +a.peripheralVessel.TBILeft,
+              TBIRight: +a.peripheralVessel.TBIRight,
             },
             nerve: {
-              symptomsPresent: undefinedFalse(a, 'peripheralNerve.symptom.normal'),
+              symptomsPresent: undefinedFalse(a, 'peripheralNerve.symptom.normal'), // TODO symptoms states
+              symptoms: nerveSymptomParser(a, 'peripheralNerve.symptom.items'),
               pressureSenseLeft: undefinedFalse(a, 'peripheralNerve.pressureSense.left'),
               pressureSenseRight: undefinedFalse(a, 'peripheralNerve.pressureSense.right'),
               vibrationSenseLeft: undefinedFalse(a, 'peripheralNerve.vibrationSense.right'),
@@ -97,6 +103,15 @@ const pulseParser = (object: object, path: string) => {
   if (value === 'less')return 'WEAK'
   if (value === 'missing')return 'NO_PULSE'
   return 'NORMAL'
+}
+const nerveSymptomParser = (object: object, path: string) => {
+  const value = get (object, path, [])
+  const symptoms = {
+    pain: value.includes('疼痛'),
+    numbness: value.includes('麻木'),
+    paresthesia: value.includes('感觉异常'),
+  }
+  return symptoms
 }
 const undefinedFalse = (object: object, path: string) => {
   return get(object, path, false)

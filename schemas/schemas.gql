@@ -43,6 +43,10 @@ enum PULSE {
   WEAK,
   NO_PULSE,
 }
+enum CONCLUSION {
+  NORMAL
+  EXCEPTION
+}
 
 type Blood {
   conclusion: String
