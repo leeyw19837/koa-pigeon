@@ -27,9 +27,36 @@ type History {
   hadFootUlcer: Boolean
   amputee: Boolean
 }
-
+type Abnormalities{
+  discoloration: Boolean
+  edema: Boolean
+  flakySkin: Boolean
+  blister: Boolean
+  cracks: Boolean
+  callus: Boolean
+  ingrownToenail: Boolean
+  athletesFoot: Boolean
+  toenailFungus: Boolean
+}
+type Temperature{
+  value: Float
+  unit: String!
+}
+type FootTemperature {
+  environment: Temperature
+  left: Temperature
+  right: Temperature
+  leftMetatarsal: Temperature
+  rightMetatarsal: Temperature
+}
+type MedicalHistory {
+  historyPresent: Boolean
+  history: History
+}
 type Skin {
-  historyPresent: MEDICAL_HISTORY!
+  abnormalityPresent: Boolean
+  abnormalities: Abnormalities
+  footTemperatures: FootTemperature
 }
 
 type Deformities {
@@ -160,6 +187,7 @@ type FootwearQuestions {
 type FootAssessment {
   id: ID!
   patient: Patient!
+  medicalHistory:MedicalHistory!
   skin: Skin!
   bone: Bone!
   blood: Blood!
