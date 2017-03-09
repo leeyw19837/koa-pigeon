@@ -648,6 +648,10 @@ form-data@~2.1.1:
     combined-stream "^1.0.5"
     mime-types "^2.1.12"
 
+fresh-id@^1.1.0:
+  version "1.1.0"
+  resolved "http://r.cnpmjs.org/fresh-id/download/fresh-id-1.1.0.tgz#663059db27ef564aade6b77250ce2caada25cdcc"
+
 fresh@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.3.0.tgz#651f838e22424e7566de161d8358caa199f83d4f"

@@ -194,18 +194,16 @@ type FootAssessment {
   footwearQuestions: FootwearQuestions
   footwearSelection: ShoeTypes
 }
-# input SetHistoryInput {
-#   id: ID!
-#   medicalHistory: MedicalHistory{
-#     historyPresent: Boolean!
-#   }
-# }
-# type Mutation {
-#   footAssessments(params:SetHistoryInput):[FootAssessment]!
-# }
+input SetHistoryInput {
+  historyPresent: Boolean!
+}
+type Mutation {
+  footAssessment(params:SetHistoryInput):FootAssessment!
+}
 type Query {
   appointments: [Appointment]
   patients: [Patient]
+  patient(_id: ID): Patient
   footAssessments(limit: Int = 3): [FootAssessment]
   footAssessment(_id: ID, patientId: ID): FootAssessment
   # footAssessment(patientId: ID): FootAssessment
@@ -213,4 +211,5 @@ type Query {
 
 schema {
   query: Query
+  mutation: Mutation
 }

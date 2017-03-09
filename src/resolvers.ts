@@ -1,3 +1,4 @@
+import freshId from 'fresh-id'
 import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
 export const resolverMap = {
   Query: {
@@ -13,12 +14,11 @@ export const resolverMap = {
       return convertedAppointments
     },
     async patients(_: any, args: any, { db }: any) {
-      const patientObjects = await db.collection('users').find({
+      return await db.collection('users').find({
       }).toArray()
-      const convertedPatients = patientObjects.map(
-        (a: any) => ({ nickname: a.nickname }),
-      )
-      return convertedPatients
+    },
+    async patient(_: any, args: any, { db }: any) {
+      return await db.collection('users').findOne({...args})
     },
     async footAssessments(_: any, args: any, { db }: any) {
       const objects = await db.collection('footAssessment').find({
@@ -30,6 +30,18 @@ export const resolverMap = {
     async footAssessment(_: any, args: any, { db }: any) { // TODO: is patient/foot assessment one-to-one
       const footAssessment = await db.collection('footAssessment').findOne({...args})
       return parseLegacyFootAssessment(footAssessment)
+    },
+  },
+  Mutation: {
+    async footAssessment(_: any, args: any, { db }: any) {
+      const assessment = {
+        _id: freshId(17),
+        medicalHistory: {
+          historyPresent: args.params.historyPresent,
+        },
+      }
+      console.log('t', args)
+      return assessment
     },
   },
 }
