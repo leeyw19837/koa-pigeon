@@ -26,10 +26,6 @@ If successful then repeat for other groups of forms
 1. improve data type consistency
 1. improve naming
 1. enable greater react component reuse
-1. can get a given days appointments :tick:
-1. can get a previously completed assessment :tick:
-1. can create a new assessment :tick:
-1. can set treatmentstate
 
 ## Assumptions
 
