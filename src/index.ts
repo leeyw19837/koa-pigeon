@@ -6,7 +6,7 @@ const GraphQLDate = require('graphql-date')
 import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 import { MongoClient } from 'mongodb'
-import {parseLegacyFootAssessment} from './parseLegacyFootAssessment'
+import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
 const app = new Koa()
 const router = new Router()
 // import schemasText from './schemas/footAssessment.gql'
@@ -22,20 +22,28 @@ const resolverMap = {
       }).toArray()
       const convertedAppointments = appointmentObjects.map(
         (a: any) => ({ date: a.appointmentTime, nickname: a.nickname }),
-        )
+      )
       return convertedAppointments
     },
-     async patients(_: any, args: any, { db }: any) {
+    async patients(_: any, args: any, { db }: any) {
       const patientObjects = await db.collection('users').find({
       }).toArray()
       const convertedPatients = patientObjects.map(
         (a: any) => ({ nickname: a.nickname }),
-        )
+      )
       return convertedPatients
     },
-     async footAssessments(_: any, args: any, { db }: any) {
+    async footAssessments(_: any, args: any, { db }: any) {
       const objects = await db.collection('footAssessment').find({
       }).toArray()
+      return objects.map(
+        (a: any) => (parseLegacyFootAssessment),
+      )
+    },
+    async footAssessment(_: any, args: any, { db }: any) {
+      const objects = await db.collection('footAssessment').findOne({
+        _id: args.id,
+      })
       return parseLegacyFootAssessment(objects)
     },
   },
@@ -47,16 +55,16 @@ const schema = makeExecutableSchema({
 })
 
 MongoClient.connect('mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@120.131.8.26:27017/paper-king-developing')
-.then((db) => {
-  // console.log('Connected')
+  .then((db) => {
+    // console.log('Connected')
 
-  router.all('/graphql', convert(graphqlHTTP({
-    context: { db },
-    schema,
-    graphiql: true,
-  })))
+    router.all('/graphql', convert(graphqlHTTP({
+      context: { db },
+      schema,
+      graphiql: true,
+    })))
 
-  app.use(router.routes()).use(router.allowedMethods())
+    app.use(router.routes()).use(router.allowedMethods())
 
-  app.listen(3080)
-})
+    app.listen(3080)
+  })

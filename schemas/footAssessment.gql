@@ -200,6 +200,7 @@ type Query {
   appointments: [Appointment]
   patients: [Patient]
   footAssessments: [FootAssessment]
+  footAssessment(id: ID): FootAssessment
 }
 
 schema {
