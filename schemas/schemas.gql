@@ -48,7 +48,16 @@ enum CONCLUSION {
   EXCEPTION
 }
 
+type BloodSymptoms {
+  restPain: Boolean
+  intermittentClaudication: Boolean
+}
+
+
 type Blood {
+  symptomsPresent: Boolean
+  symptoms: BloodSymptoms!
+
   conclusion: String
   instepPulseLeft: PULSE!
   instepPulseRight: PULSE!

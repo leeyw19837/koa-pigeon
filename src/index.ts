@@ -62,6 +62,8 @@ const resolverMap = {
 
             },
             blood: {
+              symptomsPresent: undefinedFalse(a, 'peripheralVessel.symptoms.had'),
+              symptoms: bloodSymptomParser(a, 'peripheralVessel.symptoms'),
               instepPulseLeft: pulseParser(a, 'peripheralVessel.dorsalisPedisLeft'),
               instepPulseRight: pulseParser(a, 'peripheralVessel.dorsalisPedisRight'),
               conclusion: a.peripheralVessel.conclusion,
@@ -71,7 +73,7 @@ const resolverMap = {
               TBIRight: +a.peripheralVessel.TBIRight,
             },
             nerve: {
-              symptomsPresent: undefinedFalse(a, 'peripheralNerve.symptom.normal'), // TODO symptoms states
+              symptomsPresent: undefinedFalse(a, 'peripheralNerve.symptom.normal'),
               symptoms: nerveSymptomParser(a, 'peripheralNerve.symptom.items'),
               pressureSenseLeft: undefinedFalse(a, 'peripheralNerve.pressureSense.left'),
               pressureSenseRight: undefinedFalse(a, 'peripheralNerve.pressureSense.right'),
@@ -103,6 +105,14 @@ const pulseParser = (object: object, path: string) => {
   if (value === 'less')return 'WEAK'
   if (value === 'missing')return 'NO_PULSE'
   return 'NORMAL'
+}
+const bloodSymptomParser = (object: object, path: string) => {
+  const value = get (object, path, false)
+  const symptoms = {
+    restPain: get(object, path + '.restPain', false),
+    intermittentClaudication: get(object, path + '.intermittentClaudication', false),
+  }
+  return symptoms
 }
 const nerveSymptomParser = (object: object, path: string) => {
   const value = get (object, path, [])
