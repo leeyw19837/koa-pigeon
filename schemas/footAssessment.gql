@@ -203,6 +203,7 @@ type Mutation {
 }
 type Query {
   appointments: [Appointment]
+  appointmentsByDate(date:String!): [Appointment]
   patients: [Patient]
   patient(_id: ID): Patient
   footAssessments(limit: Int = 3): [FootAssessment]

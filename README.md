@@ -28,7 +28,7 @@ If successful then repeat for other groups of forms
 1. enable greater react component reuse
 1. can get a given days appointments
 1. can get a previously completed assessment
-1. can create a new assessment
+1. can create a new assessment (and set treatment state)
 
 ## Assumptions
 
@@ -40,3 +40,23 @@ Temperatures are recorded in Celsius
 
 * Should use enums for normal abnormal rather than boolean?
 * Should refactor left and right data into a different form factor?
+
+## Examples
+
+```graphql
+query{
+  appointmentsByDate(date:"2017/03/10") {
+    date
+    nickname
+  }
+}
+
+mutation y($json: String!){
+  footAssessment(params: {input:$json}) {
+    _id
+  }
+}
+{
+  "json": "{\"medicalHistory\":{\"history\":{\"recievedFootcareInstruction\":false,\"livesAlone\":true,\"amputee\":false,\"hadFootUlcer\":false},\"historyPresent\":true}}"
+}
+```

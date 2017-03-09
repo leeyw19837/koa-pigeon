@@ -1,11 +1,27 @@
 import freshId from 'fresh-id'
+import moment = require('moment')
 import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
 export const resolverMap = {
   Query: {
-    async appointments(_, args, { db }) {
-      const startDate = args.startDateInSeconds
-      const endDate = args.endDateInSeconds
+    async appointmentsByDate(_, args, { db }) {
+      // QUESTION: should be UTC?
+      console.log('a', args)
+      const startOfDay = moment(args.date).startOf('day').toDate()
+      const endOfDay = moment(args.date).endOf('day').toDate()
+      console.log(startOfDay, endOfDay)
+      const appointmentObjects = await db.collection('appointments').find({
+        appointmentTime: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
 
+      }).toArray()
+      const convertedAppointments = appointmentObjects.map(
+        (a: any) => ({ date: a.appointmentTime, nickname: a.nickname }),
+      )
+      return convertedAppointments
+    },
+    async appointments(_, args, { db }) {
       const appointmentObjects = await db.collection('appointments').find({
       }).toArray()
       const convertedAppointments = appointmentObjects.map(
