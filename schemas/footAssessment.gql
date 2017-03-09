@@ -2,6 +2,7 @@ scalar Date
 scalar JSON
 
 type Patient {
+  id: ID!
   nickname: String!
 }
 
