@@ -45,6 +45,7 @@ query{
   appointmentsByDate(date:"2017/03/10") {
     date
     nickname
+    patientId
   }
 }
 

@@ -16,18 +16,16 @@ export const resolverMap = {
         },
 
       }).toArray()
-      const convertedAppointments = appointmentObjects.map(
-        (a: any) => ({ date: a.appointmentTime, nickname: a.nickname }),
+      return appointmentObjects.map(
+        (a: any) => ({ date: a.appointmentTime, ...a }),
       )
-      return convertedAppointments
     },
     async appointments(_, args, { db }) {
       const appointmentObjects = await db.collection('appointments').find({
       }).toArray()
-      const convertedAppointments = appointmentObjects.map(
-        (a: any) => ({ date: a.appointmentTime, nickname: a.nickname }),
+      return appointmentObjects.map(
+        (a: any) => ({ date: a.appointmentTime, ...a }),
       )
-      return convertedAppointments
     },
     async patients(_, args, { db }) {
       return await db.collection('users').find({
