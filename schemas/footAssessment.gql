@@ -187,13 +187,13 @@ type FootwearQuestions {
 type FootAssessment {
   id: ID!
   patient: Patient!
-  medicalHistory:MedicalHistory!
-  skin: Skin!
-  bone: Bone!
-  blood: Blood!
-  nerve: Nerve!
-  footwearQuestions: FootwearQuestions!
-  footwearSelection: ShoeTypes!
+  medicalHistory:MedicalHistory
+  skin: Skin
+  bone: Bone
+  blood: Blood
+  nerve: Nerve
+  footwearQuestions: FootwearQuestions
+  footwearSelection: ShoeTypes
 }
 
 type Query {
