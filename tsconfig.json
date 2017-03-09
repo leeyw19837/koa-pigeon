@@ -2,9 +2,13 @@
   "include": [
     "src/**/*.ts"
   ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
   "compilerOptions": {
     "target": "es3",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "strictNullChecks": true,
     "outDir": "dist",
     "moduleResolution": "node",

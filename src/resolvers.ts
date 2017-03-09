@@ -2,7 +2,7 @@ import freshId from 'fresh-id'
 import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
 export const resolverMap = {
   Query: {
-    async appointments(_: any, args: any, { db }: any) {
+    async appointments(_, args, { db }) {
       const startDate = args.startDateInSeconds
       const endDate = args.endDateInSeconds
 
@@ -13,42 +13,32 @@ export const resolverMap = {
       )
       return convertedAppointments
     },
-    async patients(_: any, args: any, { db }: any) {
+    async patients(_, args, { db }) {
       return await db.collection('users').find({
       }).toArray()
     },
-    async patient(_: any, args: any, { db }: any) {
+    async patient(_, args, { db }) {
       return await db.collection('users').findOne({ ...args })
     },
-    async footAssessments(_: any, args: any, { db }: any) {
+    async footAssessments(_, args, { db }) {
       const objects = await db.collection('footAssessment').find({
       }).limit(args.limit).toArray()
       return objects.map(
         (a: any) => (parseLegacyFootAssessment(a)),
       )
     },
-    async footAssessment(_: any, args: any, { db }: any) { // TODO: is patient/foot assessment one-to-one
+    async footAssessment(_, args, { db }) {// TODO: is patient/foot assessment one-to-one
       const footAssessment = await db.collection('footAssessment').findOne({ ...args })
       return parseLegacyFootAssessment(footAssessment)
     },
   },
   Mutation: {
-    async footAssessment(_: any, args: any, { db }: any) {
-      // const a = JSON.parse(args.params.input)
-      const asJSON = JSON.parse(unescape(args.params.input))
-      // console.log('a', JSON.parse(unescape(args.params.input))
+    async footAssessment(_, args, { db }) {
+      const asJSON = JSON.parse(args.params.input)
       const assessment = {
         _id: freshId(17),
         medicalHistory: asJSON.medicalHistory,
-        // medicalHistory: {
-        //   historyPresent: asJSON.historyPresent,
-        //   history: {
-        //     recievedFootcareInstruction: args.params.history.recievedFootcareInstruction,
-        //     livesAlone: args.params.history.livesAlone,
-        //     hadFootUlcer: args.params.history.hadFootUlcer,
-        //     amputee: args.params.history.amputee,
-        //   },
-        // },
+        // TODO: convert the new style json into old and save to the database OR switch to another table OR change database?
       }
       return assessment
     },
