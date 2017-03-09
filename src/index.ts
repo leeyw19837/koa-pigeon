@@ -62,7 +62,8 @@ const resolverMap = {
 
             },
             blood: {
-
+              instepPulseLeft: pulseParser(a, 'peripheralVessel.dorsalisPedisLeft'),
+              instepPulseRight: pulseParser(a, 'peripheralVessel.dorsalisPedisRight'),
             },
             nerve: {
               symptomsPresent: undefinedFalse(a, 'peripheralNerve.symptom.normal'),
@@ -89,6 +90,12 @@ const resolverMap = {
 }
 // TODO: convert from old type to 3 state enum
 const acupuntureSenceParser = (object: object, path: string) => {
+  return 'NORMAL'
+}
+const pulseParser = (object: object, path: string) => {
+  const value = get (object, path)
+  if (value === 'less')return 'WEAK'
+  if (value === 'missing')return 'NO_PULSE'
   return 'NORMAL'
 }
 const undefinedFalse = (object: object, path: string) => {

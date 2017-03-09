@@ -37,10 +37,17 @@ type Skin {
 type Bone {
   deformityPresent: DEFORMITY!
 }
+
+enum PULSE {
+  NORMAL,
+  WEAK,
+  NO_PULSE,
+}
+
 type Blood {
-
   conclusion: String
-
+  instepPulseLeft: PULSE!
+  instepPulseRight: PULSE!
   ABILeft: Float
   ABIRight: Float
   TBILeft: Float
