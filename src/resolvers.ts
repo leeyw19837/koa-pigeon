@@ -18,7 +18,7 @@ export const resolverMap = {
       }).toArray()
     },
     async patient(_: any, args: any, { db }: any) {
-      return await db.collection('users').findOne({...args})
+      return await db.collection('users').findOne({ ...args })
     },
     async footAssessments(_: any, args: any, { db }: any) {
       const objects = await db.collection('footAssessment').find({
@@ -28,19 +28,28 @@ export const resolverMap = {
       )
     },
     async footAssessment(_: any, args: any, { db }: any) { // TODO: is patient/foot assessment one-to-one
-      const footAssessment = await db.collection('footAssessment').findOne({...args})
+      const footAssessment = await db.collection('footAssessment').findOne({ ...args })
       return parseLegacyFootAssessment(footAssessment)
     },
   },
   Mutation: {
     async footAssessment(_: any, args: any, { db }: any) {
+      // const a = JSON.parse(args.params.input)
+      const asJSON = JSON.parse(unescape(args.params.input))
+      // console.log('a', JSON.parse(unescape(args.params.input))
       const assessment = {
         _id: freshId(17),
-        medicalHistory: {
-          historyPresent: args.params.historyPresent,
-        },
+        medicalHistory: asJSON.medicalHistory,
+        // medicalHistory: {
+        //   historyPresent: asJSON.historyPresent,
+        //   history: {
+        //     recievedFootcareInstruction: args.params.history.recievedFootcareInstruction,
+        //     livesAlone: args.params.history.livesAlone,
+        //     hadFootUlcer: args.params.history.hadFootUlcer,
+        //     amputee: args.params.history.amputee,
+        //   },
+        // },
       }
-      console.log('t', args)
       return assessment
     },
   },

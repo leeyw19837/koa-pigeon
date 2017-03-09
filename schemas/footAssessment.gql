@@ -194,11 +194,12 @@ type FootAssessment {
   footwearQuestions: FootwearQuestions
   footwearSelection: ShoeTypes
 }
-input SetHistoryInput {
-  historyPresent: Boolean!
+# Should be an escape JSON string containing all fields from the forms
+input CreateFootAssessment {
+  input: String!
 }
 type Mutation {
-  footAssessment(params:SetHistoryInput):FootAssessment!
+  footAssessment(params:CreateFootAssessment):FootAssessment!
 }
 type Query {
   appointments: [Appointment]
