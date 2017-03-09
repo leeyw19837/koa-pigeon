@@ -1,11 +1,6 @@
 const get = require('lodash.get')
 
-export function parseLegacyFootAssessments(objects: any) {
-  return objects.map(
-    (a: any) => (parseLegacyFootAssessment),
-  )
-}
-export function parseLegacyFootAssessment(a: any) {
+export const parseLegacyFootAssessment = (a: any) => {
   return {
     id: a._id,
     patient: { id: a.patientId },
