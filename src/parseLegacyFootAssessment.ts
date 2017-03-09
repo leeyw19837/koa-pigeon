@@ -2,8 +2,8 @@ const get = require('lodash.get')
 
 export const parseLegacyFootAssessment = (a: any) => {
   return {
-    id: a._id,
-    patient: { id: a.patientId },
+    _id: a._id,
+    patient: { _id: a.patientId },
     footwearQuestions: a.footgear,
     footwearSelection: {
       flipFlops: defaultToFalse(a, 'footgear.question16.flipflops'),

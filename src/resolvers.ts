@@ -28,9 +28,7 @@ export const resolverMap = {
       )
     },
     async footAssessment(_: any, args: any, { db }: any) { // TODO: is patient/foot assessment one-to-one
-      const footAssessment = await db.collection('footAssessment').findOne({
-        _id: args.id,
-      })
+      const footAssessment = await db.collection('footAssessment').findOne({...args})
       return parseLegacyFootAssessment(footAssessment)
     },
   },
