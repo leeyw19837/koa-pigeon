@@ -199,7 +199,7 @@ type FootAssessment {
 type Query {
   appointments: [Appointment]
   patients: [Patient]
-  footAssessments: [FootAssessment]
+  footAssessments(limit: Float = 3): [FootAssessment]
   footAssessment(id: ID): FootAssessment
 }
 

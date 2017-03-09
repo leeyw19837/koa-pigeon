@@ -35,12 +35,12 @@ const resolverMap = {
     },
     async footAssessments(_: any, args: any, { db }: any) {
       const objects = await db.collection('footAssessment').find({
-      }).toArray()
+      }).limit(args.limit).toArray()
       return objects.map(
-        (a: any) => (parseLegacyFootAssessment),
+        (a: any) => (parseLegacyFootAssessment(a)),
       )
     },
-    async footAssessment(_: any, args: any, { db }: any) {
+    async footAssessment(_: any, args: any, { db }: any) { // TODO: is patient/foot assessment one-to-one
       const footAssessment = await db.collection('footAssessment').findOne({
         _id: args.id,
       })

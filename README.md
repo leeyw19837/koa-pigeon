@@ -21,6 +21,11 @@ GTZH database structure has inconsistencies and naming issues.
 
 If successful then repeat for other groups of forms
 
+## Assumptions
+
+Checkbox values can be safely defaulted to false, eg. shoe types and hidden by radio checkbox buttons
+Everything else defaults to null
+Temperatures are recorded in Celsius
 
 ## Questions
 
