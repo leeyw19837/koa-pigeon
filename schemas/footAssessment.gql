@@ -5,12 +5,13 @@ type Patient {
   nickname: String!
 }
 
+
 type Appointment {
   date: String!
   nickname: String!
 }
 
-# type TreatmentSt
+
 enum VARIATION{
   NORMAL
   ABNORMAL
@@ -19,7 +20,6 @@ enum MEDICAL_HISTORY{
   HAS,
   NOT_HAS
 }
-
 
 type History {
   recievedFootcareInstruction: Boolean
@@ -51,14 +51,13 @@ type FootTemperature {
 }
 type MedicalHistory {
   historyPresent: Boolean
-  history: History
+  history: History!
 }
 type Skin {
   abnormalityPresent: Boolean
-  abnormalities: Abnormalities
-  footTemperatures: FootTemperature
+  abnormalities: Abnormalities!
+  footTemperatures: FootTemperature!
 }
-
 type Deformities {
   bunion: Boolean
   charcotFoot: Boolean
@@ -71,16 +70,16 @@ type Limitation {
   plantarFlexion: Boolean
 }
 type Bone {
-  deformitiesLeftPresent: Boolean!
-  deformitiesLeft: Deformities
-  deformitiesRightPresent: Boolean!
-  deformitiesRight: Deformities
-  ankleJointLimitationLeftPresent: Boolean!
-  ankleJointLimitationRightPresent: Boolean!
+  deformitiesLeftPresent: Boolean
+  deformitiesLeft: Deformities!
+  deformitiesRightPresent: Boolean
+  deformitiesRight: Deformities!
+  ankleJointLimitationLeftPresent: Boolean
+  ankleJointLimitationRightPresent: Boolean
   ankleJointLimitationLeft: Limitation!
   ankleJointLimitationRight: Limitation!
-  ballJointLimitationLeftPresent: Boolean!
-  ballJointLimitationRightPresent: Boolean!
+  ballJointLimitationLeftPresent: Boolean
+  ballJointLimitationRightPresent: Boolean
   ballJointLimitationLeft: Limitation!
   ankleJointLimitationRight: Limitation!
 }
@@ -106,8 +105,8 @@ type Blood {
   symptoms: BloodSymptoms!
 
   conclusion: String
-  instepPulseLeft: PULSE!
-  instepPulseRight: PULSE!
+  instepPulseLeft: PULSE
+  instepPulseRight: PULSE
   ABILeft: Float
   ABIRight: Float
   TBILeft: Float
@@ -147,7 +146,7 @@ type Nerve {
   hasDoneSomatesthesiaCheck: Boolean
   needsSomatesthesiaCheck: Boolean
 }
-
+# defaults to false
 type ShoeTypes {
   flipFlops: Boolean!
   crocs: Boolean!
@@ -165,7 +164,7 @@ type ShoeTypes {
   running: Boolean!
   hiking: Boolean!
 }
-
+# defaults to null as it means the question wasn't answered
 type FootwearQuestions {
   question1: Boolean
   question2: Boolean

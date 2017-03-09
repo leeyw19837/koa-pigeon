@@ -10,8 +10,8 @@ import { MongoClient } from 'mongodb'
 
 const app = new Koa()
 const router = new Router()
-
-const schemasText = fs.readFileSync('./schemas/schemas.gql', 'utf-8')
+// import schemasText from './schemas/footAssessment.gql'
+const schemasText = fs.readFileSync('./schemas/footAssessment.gql', 'utf-8')
 
 const resolverMap = {
   Query: {
