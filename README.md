@@ -50,12 +50,30 @@ query{
   }
 }
 
-mutation y($json: String!){
-  footAssessment(params: {input:$json}) {
+mutation CreateFootAssessment($json: String!){
+  createFootAssessment(params: {input:$json}) {
     _id
   }
 }
 {
   "json": "{\"medicalHistory\":{\"history\":{\"recievedFootcareInstruction\":false,\"livesAlone\":true,\"amputee\":false,\"hadFootUlcer\":false},\"historyPresent\":true}}"
 }
+
+mutation CreateEvent($event: EventInput!){
+  createEvent(params: $event) {
+    _id
+    type
+    patientId
+    keypath
+  }
+}
+{
+  "event": {
+    "patientId": "57fe06de00b23ed85ea0b981",
+    "keypath": "igraphql/test",
+    "type": "igraphql/test"
+  }
+}
+
+
 ```

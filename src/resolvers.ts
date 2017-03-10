@@ -52,7 +52,7 @@ export const resolverMap = {
     },
   },
   Mutation: {
-    async footAssessment(_, args, { db }) {
+    async createFootAssessment(_, args, { db }) {
       const asJSON = JSON.parse(args.params.input)
       const assessment = {
         _id: freshId(17),
@@ -64,11 +64,12 @@ export const resolverMap = {
     async createEvent(_, args, { db }) {
       const event = {
         _id: freshId(17),
-        ...args.params,
         createdAt: new Date(),
         updatedAt: new Date(),
-        // TODO: save
+        ...args.params,
+        // TODO: save, figure out what to do if anything about value
       }
+      db.collection('event').insert(event)
       return event
     },
   },

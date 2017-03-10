@@ -208,15 +208,15 @@ type FootAssessment {
 input CreateFootAssessment {
   input: String!
 }
-input CreateEvent {
+input EventInput {
   keypath:String!
   patientId:ID!
   type:String!
 }
 type Mutation {
-  footAssessment(params:CreateFootAssessment):FootAssessment!
+  createFootAssessment(params:CreateFootAssessment):FootAssessment!
   createEvent(
-    params:CreateEvent
+    params:EventInput
     ):Event!
 }
 type Query {
