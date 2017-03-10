@@ -204,20 +204,32 @@ type FootAssessment {
   footwearQuestions: FootwearQuestions
   footwearSelection: ShoeTypes
 }
-# Should be an escape JSON string containing all fields from the forms, could try to use JSON and define each input using above types
-input CreateFootAssessment {
-  input: String!
+input MedicalHistoryCheckboxInput {
+  recievedFootcareInstruction: Boolean
+  livesAlone: Boolean
+  hadFootUlcer: Boolean
+  amputee: Boolean
+}
+input MedicalHistoryRadioInput {
+  historyPresent: Boolean
+  history: MedicalHistoryCheckboxInput
+}
+input FootAssessmentInput {
+  medicalHistory: MedicalHistoryRadioInput!
 }
 input EventInput {
   keypath:String!
   patientId:ID!
   type:String!
 }
+# Should be an escape JSON string containing all fields from the forms, could try to use JSON and define each input using above types
+input CreateFootAssessment {
+  input: String!
+}
 type Mutation {
-  createFootAssessment(params:CreateFootAssessment):FootAssessment!
-  createEvent(
-    params:EventInput
-    ):Event!
+  createFootAssessmentFromString(params:CreateFootAssessment):FootAssessment!
+  createFootAssessment(params:FootAssessmentInput):FootAssessment!
+  createEvent(params:EventInput):Event!
 }
 type Query {
   appointments: [Appointment]

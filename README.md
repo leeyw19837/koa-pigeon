@@ -50,13 +50,38 @@ query{
   }
 }
 
-mutation CreateFootAssessment($json: String!){
+mutation CreateFootAssessmentFromString($json: String!){
   createFootAssessment(params: {input:$json}) {
     _id
   }
 }
 {
   "json": "{\"medicalHistory\":{\"history\":{\"recievedFootcareInstruction\":false,\"livesAlone\":true,\"amputee\":false,\"hadFootUlcer\":false},\"historyPresent\":true}}"
+}
+
+mutation CreateFootAssessment($fa: FootAssessmentInput!){
+  createFootAssessment(params: $fa) {
+    _id
+    medicalHistory {
+      historyPresent
+      history {
+        recievedFootcareInstruction
+        livesAlone
+        hadFootUlcer
+        amputee
+      }
+    }
+  } 
+}
+{
+  "fa": {
+    "medicalHistory": {
+      "historyPresent": true,
+      "history": {
+        "livesAlone": true
+      }
+    }
+  }
 }
 
 mutation CreateEvent($event: EventInput!){
