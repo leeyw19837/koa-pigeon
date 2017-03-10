@@ -37,6 +37,7 @@ Temperatures are recorded in Celsius
 
 * Should use enums for normal abnormal rather than boolean?
 * Should refactor left and right data into a different form factor?
+* Why are there two treeatment state object for one person on one day
 
 ## Examples
 

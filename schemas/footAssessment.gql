@@ -1,6 +1,14 @@
 scalar Date
 scalar JSON
 
+
+type Event {
+  _id: ID!
+  type: String
+  patientId: ID
+  keypath: String!
+}
+
 type Patient {
   _id: ID
   nickname: String
@@ -11,6 +19,7 @@ type Appointment {
   date: String!
   nickname: String!
   patientId: ID!
+  didFinishFootAssessment: Boolean
 }
 
 
@@ -195,12 +204,20 @@ type FootAssessment {
   footwearQuestions: FootwearQuestions
   footwearSelection: ShoeTypes
 }
-# Should be an escape JSON string containing all fields from the forms
+# Should be an escape JSON string containing all fields from the forms, could try to use JSON and define each input using above types
 input CreateFootAssessment {
   input: String!
 }
+input CreateEvent {
+  keypath:String!
+  patientId:ID!
+  type:String!
+}
 type Mutation {
   footAssessment(params:CreateFootAssessment):FootAssessment!
+  createEvent(
+    params:CreateEvent
+    ):Event!
 }
 type Query {
   appointments: [Appointment]
@@ -209,7 +226,7 @@ type Query {
   patient(_id: ID): Patient
   footAssessments(limit: Int = 3): [FootAssessment]
   footAssessment(_id: ID, patientId: ID): FootAssessment
-  # footAssessment(patientId: ID): FootAssessment
+  events(limit: Int = 3): [Event]
 }
 
 schema {
