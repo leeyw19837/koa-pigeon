@@ -32,12 +32,6 @@ enum MEDICAL_HISTORY{
   NOT_HAS
 }
 
-type History {
-  recievedFootcareInstruction: Boolean
-  livesAlone: Boolean
-  hadFootUlcer: Boolean
-  amputee: Boolean
-}
 type Abnormalities{
   discoloration: Boolean
   edema: Boolean
@@ -59,6 +53,12 @@ type FootTemperature {
   right: Temperature
   leftMetatarsal: Temperature
   rightMetatarsal: Temperature
+}
+type History {
+  recievedFootcareInstruction: Boolean
+  livesAlone: Boolean
+  hadFootUlcer: Boolean
+  amputee: Boolean
 }
 type MedicalHistory {
   historyPresent: Boolean
@@ -223,12 +223,9 @@ input EventInput {
   type:String!
 }
 # Should be an escape JSON string containing all fields from the forms, could try to use JSON and define each input using above types
-input CreateFootAssessment {
-  input: String!
-}
+
 type Mutation {
-  createFootAssessmentFromString(params:CreateFootAssessment):FootAssessment!
-  createFootAssessment(params:FootAssessmentInput):FootAssessment!
+  createFootAssessment(params:FootAssessmentInput, stringifiedInput:String):FootAssessment!
   createEvent(params:EventInput):Event!
 }
 type Query {

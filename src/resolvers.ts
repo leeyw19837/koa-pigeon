@@ -52,21 +52,14 @@ export const resolverMap = {
     },
   },
   Mutation: {
-    async createFootAssessmentFromString(_, args, { db }) {
-      const asJSON = JSON.parse(args.params.input)
-      const assessment = {
-        _id: freshId(17),
-        medicalHistory: asJSON.medicalHistory,
-        // TODO: convert the new style json into old and save to the database OR switch to another table OR change database?
-      }
-      console.log(assessment)
-      return assessment
-    },
+    // NOTE: accepts type and string
     async createFootAssessment(_, args, { db }) {
+      let fa = args.params
+      if (args.stringifiedInput) fa = JSON.parse(args.stringifiedInput)
       console.log(args)
       const assessment = {
         _id: freshId(17),
-        medicalHistory: args.params.medicalHistory,
+        medicalHistory: fa.medicalHistory,
         // TODO: convert the new style json into old and save to the database OR switch to another table OR change database?
       }
       console.log(assessment)
