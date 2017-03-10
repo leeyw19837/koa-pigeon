@@ -2,26 +2,9 @@ scalar Date
 scalar JSON
 
 
-type Event {
-  _id: ID!
-  type: String
-  patientId: ID
-  keypath: String!
-}
-
-type Patient {
-  _id: ID
-  nickname: String
-}
 
 
-type Appointment {
-  date: String!
-  nickname: String!
-  patientId: ID!
-  didFinishFootAssessment: Boolean
-}
-
+# Primtives
 
 enum VARIATION{
   NORMAL
@@ -31,7 +14,46 @@ enum MEDICAL_HISTORY{
   HAS,
   NOT_HAS
 }
+enum PULSE {
+  NORMAL
+  WEAK
+  NO_PULSE
+}
+enum CONCLUSION {
+  NORMAL
+  EXCEPTION
+}
+enum SENSITIVITY {
+  NORMAL
+  NUMBNESS
+  PAIN
+}
 
+type Temperature{
+  value: Float
+  unit: String!
+}
+
+# Page one history
+
+type MedicalHistory {
+  historyPresent: Boolean
+  history: History!
+}
+type History {
+  recievedFootcareInstruction: Boolean
+  livesAlone: Boolean
+  hadFootUlcer: Boolean
+  amputee: Boolean
+}
+
+# Page one skin conditions
+
+type Skin {
+  abnormalityPresent: Boolean
+  abnormalities: Abnormalities!
+  footTemperatures: FootTemperature!
+}
 type Abnormalities{
   discoloration: Boolean
   edema: Boolean
@@ -43,10 +65,6 @@ type Abnormalities{
   athletesFoot: Boolean
   toenailFungus: Boolean
 }
-type Temperature{
-  value: Float
-  unit: String!
-}
 type FootTemperature {
   environment: Temperature
   left: Temperature
@@ -54,32 +72,9 @@ type FootTemperature {
   leftMetatarsal: Temperature
   rightMetatarsal: Temperature
 }
-type History {
-  recievedFootcareInstruction: Boolean
-  livesAlone: Boolean
-  hadFootUlcer: Boolean
-  amputee: Boolean
-}
-type MedicalHistory {
-  historyPresent: Boolean
-  history: History!
-}
-type Skin {
-  abnormalityPresent: Boolean
-  abnormalities: Abnormalities!
-  footTemperatures: FootTemperature!
-}
-type Deformities {
-  bunion: Boolean
-  charcotFoot: Boolean
-  hammertoe: Boolean
-  clawToe: Boolean
-  malletToe: Boolean
-}
-type Limitation {
-  backStretch: Boolean
-  plantarFlexion: Boolean
-}
+
+# Page two bones
+
 type Bone {
   deformitiesLeftPresent: Boolean
   deformitiesLeft: Deformities!
@@ -94,22 +89,19 @@ type Bone {
   ballJointLimitationLeft: Limitation!
   ankleJointLimitationRight: Limitation!
 }
-
-enum PULSE {
-  NORMAL
-  WEAK
-  NO_PULSE
+type Deformities {
+  bunion: Boolean
+  charcotFoot: Boolean
+  hammertoe: Boolean
+  clawToe: Boolean
+  malletToe: Boolean
 }
-enum CONCLUSION {
-  NORMAL
-  EXCEPTION
-}
-
-type BloodSymptoms {
-  restPain: Boolean
-  intermittentClaudication: Boolean
+type Limitation {
+  backStretch: Boolean
+  plantarFlexion: Boolean
 }
 
+# Page three blood abnormalities
 
 type Blood {
   symptomsPresent: Boolean
@@ -122,18 +114,13 @@ type Blood {
   TBILeft: Float
   TBIRight: Float
 }
-
-type NerveSymptoms {
-  pain: Boolean
-  numbness: Boolean
-  paresthesia: Boolean
+type BloodSymptoms {
+  restPain: Boolean
+  intermittentClaudication: Boolean
 }
 
-enum SENSITIVITY {
-  NORMAL
-  NUMBNESS
-  PAIN
-}
+
+# Page four nerves
 
 type Nerve {
   symptomsPresent: Boolean
@@ -156,6 +143,35 @@ type Nerve {
   hasDoneSomatesthesiaCheck: Boolean
   needsSomatesthesiaCheck: Boolean
 }
+type NerveSymptoms {
+  pain: Boolean
+  numbness: Boolean
+  paresthesia: Boolean
+}
+
+# Page five shoe questions
+
+# defaults to null as it means the question wasn't answered
+type FootwearQuestions {
+  question1: Boolean
+  question2: Boolean
+  question3: Boolean
+  question4: Boolean
+  question5: Boolean
+  question6: Boolean
+  question7: Boolean
+  question8: Boolean
+  question9: Boolean
+  question10: Boolean
+  question11: Boolean
+  question12: Boolean
+  question13: Boolean
+  question14: Boolean
+  question15: Boolean
+}
+
+# Page six preferred shoes
+
 # defaults to false
 type ShoeTypes {
   flipFlops: Boolean!
@@ -174,23 +190,25 @@ type ShoeTypes {
   running: Boolean!
   hiking: Boolean!
 }
-# defaults to null as it means the question wasn't answered
-type FootwearQuestions {
-  question1: Boolean
-  question2: Boolean
-  question3: Boolean
-  question4: Boolean
-  question5: Boolean
-  question6: Boolean
-  question7: Boolean
-  question8: Boolean
-  question9: Boolean
-  question10: Boolean
-  question11: Boolean
-  question12: Boolean
-  question13: Boolean
-  question14: Boolean
-  question15: Boolean
+
+type Event {
+  _id: ID!
+  type: String
+  patientId: ID
+  keypath: String!
+}
+
+type Patient {
+  _id: ID
+  nickname: String
+}
+
+
+type Appointment {
+  date: String!
+  nickname: String!
+  patientId: ID!
+  didFinishFootAssessment: Boolean
 }
 
 type FootAssessment {
@@ -222,7 +240,7 @@ input EventInput {
   patientId:ID!
   type:String!
 }
-# Should be an escape JSON string containing all fields from the forms, could try to use JSON and define each input using above types
+
 
 type Mutation {
   createFootAssessment(params:FootAssessmentInput, stringifiedInput:String):FootAssessment!
