@@ -37,7 +37,8 @@ export const resolverMap = {
     },
     async footAssessments(_, args, { db }) {
       console.log(args)
-      const objects = await db.collection('footAssessment').find({...args,
+      const objects = await db.collection('footAssessment').find({
+        ...args,
       }).toArray()
       return objects.map(
         (a: any) => (parseLegacyFootAssessment(a)),
@@ -50,6 +51,19 @@ export const resolverMap = {
     async events(_, args, { db }) {
       return await db.collection('event').find({
       }).limit(args.limit).toArray()
+    },
+    async bloodTests(_, args, { db }) {
+      const objects = await db.collection('bloodglucoses').find({
+        author: args.patientId,
+      }).toArray()
+      return objects.map(
+        (a: any) => ({
+          result: { value: +a.bgValue, unit: 'mg/dL' },
+          patientId: a.author,
+          timePeriod: a.dinnerSituation,
+          ...a,
+        }),
+      )
     },
   },
   Mutation: {
@@ -78,8 +92,8 @@ export const resolverMap = {
       return event
     },
     async setFootAssessmentCompleteFlag(_, args, { db }) {
-      const reply = await db.collection('treatmentState').update({_id: args._id}, {$set: {footAt: true}})
-      if (reply.result.nModified === 1)return true
+      const reply = await db.collection('treatmentState').update({ _id: args._id }, { $set: { footAt: true } })
+      if (reply.result.nModified === 1) return true
       else return false
     },
   },

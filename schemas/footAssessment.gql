@@ -256,9 +256,27 @@ type Query {
   footAssessments(patientId: ID): [FootAssessment]
   footAssessment(_id: ID): FootAssessment
   events(limit: Int = 3): [Event]
+  bloodTests(patientId: ID): [BloodTest]
 }
 
 schema {
   query: Query
   mutation: Mutation
+}
+
+# stored as bgValue
+type BloodGlucose {
+  value: Float
+  unit: String!
+}
+
+type BloodTest {
+  _id: ID!
+  # stored as author
+  patientId: ID!
+  source: String
+  # stored as dinnerSituation
+  timePeriod: String
+  remarks: String
+  result: BloodGlucose!
 }

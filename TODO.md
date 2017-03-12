@@ -4,6 +4,7 @@
 - [x] can get a previously completed assessment :tick:
 - [x] can create a new assessment :tick:
 - [x] can set treatmentstate
+- [x] can get blood test results
 - [ ] date handling
 - [ ] composing multiple schema gqls
 
