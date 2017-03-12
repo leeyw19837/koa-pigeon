@@ -77,5 +77,10 @@ export const resolverMap = {
       db.collection('event').insert(event)
       return event
     },
+    async setFootAssessmentCompleteFlag(_, args, { db }) {
+      const reply = await db.collection('treatmentState').update({_id: args._id}, {$set: {footAt: true}})
+      if (reply.result.nModified === 1)return true
+      else return false
+    },
   },
 }

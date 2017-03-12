@@ -209,6 +209,7 @@ type Appointment {
   nickname: String!
   patientId: ID!
   didFinishFootAssessment: Boolean
+  treatmentStateId: ID!
 }
 
 type FootAssessment {
@@ -245,6 +246,7 @@ input EventInput {
 type Mutation {
   createFootAssessment(params:FootAssessmentInput, stringifiedInput:String):FootAssessment!
   createEvent(params:EventInput):Event!
+  setFootAssessmentCompleteFlag(_id: ID):Boolean!
 }
 type Query {
   appointments: [Appointment]
