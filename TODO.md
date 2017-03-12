@@ -3,7 +3,9 @@
 - [x] can get a given days appointments :tick:
 - [x] can get a previously completed assessment :tick:
 - [x] can create a new assessment :tick:
-- [ ] can set treatmentstate
+- [x] can set treatmentstate
+- [ ] date handling
+- [ ] composing multiple schema gqls
 
 ## considerations
 
