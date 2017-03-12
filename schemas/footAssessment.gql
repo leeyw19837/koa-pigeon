@@ -251,8 +251,8 @@ type Query {
   appointmentsByDate(date:String!): [Appointment]
   patients: [Patient]
   patient(_id: ID): Patient
-  footAssessments(limit: Int = 3): [FootAssessment]
-  footAssessment(_id: ID, patientId: ID): FootAssessment
+  footAssessments(patientId: ID): [FootAssessment]
+  footAssessment(_id: ID): FootAssessment
   events(limit: Int = 3): [Event]
 }
 

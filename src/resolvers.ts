@@ -36,13 +36,14 @@ export const resolverMap = {
       return await db.collection('users').findOne({ ...args })
     },
     async footAssessments(_, args, { db }) {
-      const objects = await db.collection('footAssessment').find({
-      }).limit(args.limit).toArray()
+      console.log(args)
+      const objects = await db.collection('footAssessment').find({...args,
+      }).toArray()
       return objects.map(
         (a: any) => (parseLegacyFootAssessment(a)),
       )
     },
-    async footAssessment(_, args, { db }) {// TODO: is patient/foot assessment one-to-one
+    async footAssessment(_, args, { db }) {
       const footAssessment = await db.collection('footAssessment').findOne({ ...args })
       return parseLegacyFootAssessment(footAssessment)
     },
