@@ -1,6 +1,11 @@
 import freshId from 'fresh-id'
 import moment = require('moment')
 import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
+
+const parseMedication = (old) => old.map(
+    (a: any) => ({ type: a.type, value: +a.value.replace('mg', ''), unit: 'mg' }),
+  )
+
 export const resolverMap = {
   Query: {
     async appointmentsByDate(_, args, { db }) {
@@ -53,14 +58,13 @@ export const resolverMap = {
       }).limit(args.limit).toArray()
     },
     async bloodTests(_, args, { db }) {
-      const objects = await db.collection('bloodglucoses').find({
-        author: args.patientId,
-      }).toArray()
+      const objects = await db.collection('bloodglucoses').find(args.patientId && {author: args.patientId}).toArray()
       return objects.map(
         (a: any) => ({
           result: { value: +a.bgValue, unit: 'mg/dL' },
           patientId: a.author,
           timePeriod: a.dinnerSituation,
+          medication: a.pillNote[0] && parseMedication(a.pillNote),
           ...a,
         }),
       )

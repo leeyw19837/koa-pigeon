@@ -269,6 +269,11 @@ type BloodGlucose {
   value: Float
   unit: String!
 }
+type Medication {
+  type: String!
+  value: Int!
+  unit: String!
+}
 
 type BloodTest {
   _id: ID!
@@ -279,4 +284,5 @@ type BloodTest {
   timePeriod: String
   remarks: String
   result: BloodGlucose!
+  medication: [Medication]
 }
