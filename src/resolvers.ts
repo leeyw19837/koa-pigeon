@@ -5,6 +5,19 @@ import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
 const parseMedication = (old) => old.map(
     (a: any) => ({ type: a.type, value: +a.value.replace('mg', ''), unit: 'mg' }),
   )
+const source = [
+  {key: '早餐前', value: 'beforeBreakfast'},
+  {key: '早餐后', value: 'afterBreakfast'},
+  {key: '午餐前', value: 'beforeLunch'},
+  {key: '午餐后', value: 'afterLunch'},
+  {key: '晚餐前', value: 'beforeDinner'},
+  {key: '晚餐后', value: 'afterDinner'},
+  {key: '半夜', value: 'midnight'},
+]
+const convertToEnglish = (chinese) => {
+  const item = source.filter((item) => item.key === chinese)
+  return item[0] && item[0].value || chinese
+}
 
 export const resolverMap = {
   Query: {
@@ -63,8 +76,8 @@ export const resolverMap = {
         (a: any) => ({
           result: { value: +a.bgValue, unit: 'mg/dL' },
           patientId: a.author,
-          timePeriod: a.dinnerSituation,
-          medication: a.pillNote[0] && parseMedication(a.pillNote),
+          temporalRelationshipToMeal: a.dinnerSituation && convertToEnglish(a.dinnerSituation),
+          medication: a.pillNote && a.pillNote[0] && parseMedication(a.pillNote),
           ...a,
         }),
       )

@@ -281,7 +281,7 @@ type BloodTest {
   patientId: ID!
   source: String
   # stored as dinnerSituation
-  timePeriod: String
+  temporalRelationshipToMeal: String
   remarks: String
   result: BloodGlucose!
   medication: [Medication]
