@@ -257,7 +257,9 @@ type Query {
   footAssessment(_id: ID): FootAssessment
   events(limit: Int = 3): [Event]
   bloodTests(patientId: ID): [BloodTest]
-  task(_id: ID!): Task
+  task(patientId: ID!): Task
+  tasks: [Task]
+  phoneFollowUp(patientId: ID!): PhoneFollowUp
 }
 
 schema {
@@ -289,14 +291,17 @@ type BloodTest {
 }
 
 type PhoneFollowUp {
-  isCompleted: Boolean
+  _id: ID!
+  patientId: ID!
+  caseRecordId: ID!
+  nickname: String
+  type: String
+  complete: [Boolean]
 }
 
 type Task {
   _id: ID!
   patientId: ID!
   type: String
-  # tasks can be string or object
   tasks: [String]
-  phoneFollowUp: [PhoneFollowUp]
 }

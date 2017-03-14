@@ -19,6 +19,8 @@ const convertToEnglish = (chinese) => {
   return item[0] && item[0].value || chinese
 }
 
+const convertObjectToBoolean = (arr) => arr.map(item => item.isCompleted)
+
 export const resolverMap = {
   Query: {
     async appointmentsByDate(_, args, { db }) {
@@ -83,8 +85,19 @@ export const resolverMap = {
       )
     },
     async task(_, args, { db }) {
-      const objects = await db.collection('tasks').findOne({...args})
-      return {...objects}
+      const result = await db.collection('tasks').findOne({...args})
+      return {...result}
+    },
+    async tasks(_, args, { db }) {
+      const resultList = await db.collection('tasks').find({...args}).toArray()
+      return resultList.map((result: any) => ({...result}))
+    },
+    async phoneFollowUp(_, args, { db }) {
+      const result = await db.collection('tasks').findOne({...args})
+      return {
+        complete: convertObjectToBoolean(result.phoneFollowUp),
+        ...result
+      }
     }
   },
   Mutation: {
