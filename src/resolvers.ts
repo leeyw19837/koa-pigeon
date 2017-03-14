@@ -82,6 +82,10 @@ export const resolverMap = {
         }),
       )
     },
+    async task(_, args, { db }) {
+      const objects = await db.collection('tasks').findOne({...args})
+      return {...objects}
+    }
   },
   Mutation: {
     // NOTE: accepts type and string
