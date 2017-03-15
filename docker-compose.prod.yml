@@ -1,0 +1,8 @@
+# This should bring up a docker container with a volume mapped to dist folder
+version: '3'
+services:
+  api:
+    build: .
+    working_dir: /usr/src/app
+    ports:
+      - "5000:3080"

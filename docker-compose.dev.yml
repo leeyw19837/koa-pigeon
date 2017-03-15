@@ -1,0 +1,16 @@
+# This should bring up a docker container with a volume mapped to dist folder
+version: '3'
+services:
+  api:
+    image: node:7.7.2-alpine
+    volumes:
+      - yarn:/root/.cache/yarn
+      - ./:/usr/src/app
+    restart: always
+    working_dir: /usr/src/app
+    ports:
+      - "5000:3080"
+    command: yarn build && yarn watch
+
+volumes:
+  yarn:

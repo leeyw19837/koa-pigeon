@@ -9,6 +9,13 @@ yarn watch
 open http://localhost:3080/graphql
 ```
 
+run service as docker container, dev mode will watch for changes
+
+```bash
+docker-compose -f docker-compose.dev.yml up
+docker-compose -f docker-compose.prod.yml up
+```
+
 ## Problem domain
 
 GTZH database structure has inconsistencies and naming issues.
