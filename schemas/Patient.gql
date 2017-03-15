@@ -1,3 +1,4 @@
 type Patient {
+  _id: ID
   name: String
 }
