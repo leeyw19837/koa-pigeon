@@ -12,6 +12,9 @@ type Query {
   footAssessment(_id: ID): FootAssessment
   events(limit: Int = 3): [Event]
   bloodTests(patientId: ID): [BloodTest]
+  task(patientId: ID!): Task
+  tasks: [Task]
+  phoneFollowUp(patientId: ID!): PhoneFollowUp
 }
 
 type Mutation {
