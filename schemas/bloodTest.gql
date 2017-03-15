@@ -1,0 +1,22 @@
+type BloodTest {
+  _id: ID!
+  # stored as author
+  patientId: ID!
+  source: String
+  # stored as dinnerSituation
+  temporalRelationshipToMeal: String
+  remarks: String
+  result: BloodGlucose!
+  medication: [Medication]
+}
+
+# stored as bgValue
+type BloodGlucose {
+  value: Float
+  unit: String!
+}
+type Medication {
+  type: String!
+  value: Int!
+  unit: String!
+}

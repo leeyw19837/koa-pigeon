@@ -7,10 +7,10 @@ import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 import { MongoClient } from 'mongodb'
 import { resolverMap } from './resolvers'
+
 const app = new Koa()
 const router = new Router()
-// import schemasText from './schemas/footAssessment.gql'
-const schemasText = fs.readFileSync('./schemas/footAssessment.gql', 'utf-8')
+let schemasText = fs.readdirSync('./schemas/').map((fileName) => fs.readFileSync(`./schemas/${fileName}`, 'utf-8'))
 
 const schema = makeExecutableSchema({
   resolvers: resolverMap,
@@ -19,8 +19,6 @@ const schema = makeExecutableSchema({
 
 MongoClient.connect('mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@120.131.8.26:27017/paper-king-developing')
   .then((db) => {
-    // console.log('Connected')
-
     router.all('/graphql', convert(graphqlHTTP({
       context: { db },
       schema,

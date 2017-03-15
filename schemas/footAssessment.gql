@@ -10,24 +10,13 @@ enum VARIATION{
   NORMAL
   ABNORMAL
 }
-enum MEDICAL_HISTORY{
-  HAS,
-  NOT_HAS
-}
-enum PULSE {
-  NORMAL
-  WEAK
-  NO_PULSE
-}
+
+
 enum CONCLUSION {
   NORMAL
   EXCEPTION
 }
-enum SENSITIVITY {
-  NORMAL
-  NUMBNESS
-  PAIN
-}
+
 
 type Temperature{
   value: Float
@@ -35,9 +24,12 @@ type Temperature{
 }
 
 # Page one history
-
+enum MEDICAL_HISTORY{
+  PRESENT
+  NOT_PRESENT
+}
 type MedicalHistory {
-  historyPresent: Boolean
+  selected: MEDICAL_HISTORY
   history: History!
 }
 type History {
@@ -102,7 +94,11 @@ type Limitation {
 }
 
 # Page three blood abnormalities
-
+enum PULSE {
+  NORMAL
+  WEAK
+  NO_PULSE
+}
 type Blood {
   symptomsPresent: Boolean
   symptoms: BloodSymptoms!
@@ -121,7 +117,11 @@ type BloodSymptoms {
 
 
 # Page four nerves
-
+enum SENSITIVITY {
+  NORMAL
+  NUMBNESS
+  PAIN
+}
 type Nerve {
   symptomsPresent: Boolean
   symptoms: NerveSymptoms!
@@ -198,19 +198,10 @@ type Event {
   keypath: String!
 }
 
-type Patient {
-  _id: ID
-  nickname: String
-}
 
 
-type Appointment {
-  date: String!
-  nickname: String!
-  patientId: ID!
-  didFinishFootAssessment: Boolean
-  treatmentStateId: ID!
-}
+
+
 
 type FootAssessment {
   _id: ID!
@@ -240,49 +231,4 @@ input EventInput {
   keypath:String!
   patientId:ID!
   type:String!
-}
-
-
-type Mutation {
-  createFootAssessment(params:FootAssessmentInput, stringifiedInput:String):FootAssessment!
-  createEvent(params:EventInput):Event!
-  setFootAssessmentCompleteFlag(_id: ID):Boolean!
-}
-type Query {
-  appointments: [Appointment]
-  appointmentsByDate(date:String!): [Appointment]
-  patients: [Patient]
-  patient(_id: ID): Patient
-  footAssessments(patientId: ID): [FootAssessment]
-  footAssessment(_id: ID): FootAssessment
-  events(limit: Int = 3): [Event]
-  bloodTests(patientId: ID): [BloodTest]
-}
-
-schema {
-  query: Query
-  mutation: Mutation
-}
-
-# stored as bgValue
-type BloodGlucose {
-  value: Float
-  unit: String!
-}
-type Medication {
-  type: String!
-  value: Int!
-  unit: String!
-}
-
-type BloodTest {
-  _id: ID!
-  # stored as author
-  patientId: ID!
-  source: String
-  # stored as dinnerSituation
-  temporalRelationshipToMeal: String
-  remarks: String
-  result: BloodGlucose!
-  medication: [Medication]
 }

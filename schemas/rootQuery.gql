@@ -1,0 +1,21 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  appointments: [Appointment]
+  appointmentsByDate(date:String!): [Appointment]
+  patients: [Patient]
+  patient(_id: ID): Patient
+  footAssessments(patientId: ID): [FootAssessment]
+  footAssessment(_id: ID): FootAssessment
+  events(limit: Int = 3): [Event]
+  bloodTests(patientId: ID): [BloodTest]
+}
+
+type Mutation {
+  createFootAssessment(params:FootAssessmentInput, stringifiedInput:String):FootAssessment!
+  createEvent(params:EventInput):Event!
+  setFootAssessmentCompleteFlag(_id: ID):Boolean!
+}
