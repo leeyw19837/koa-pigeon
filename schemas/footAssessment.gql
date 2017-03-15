@@ -6,17 +6,17 @@ scalar JSON
 
 # Primtives
 
-enum VARIATION{
-  NORMAL
-  ABNORMAL
-}
+
 
 
 enum CONCLUSION {
   NORMAL
   EXCEPTION
 }
-
+enum SYMPTOMS_JUDGEMENT{
+  SYMPTOMS
+  NO_SYMPTOMS
+}
 
 type Temperature{
   value: Float
@@ -40,9 +40,12 @@ type History {
 }
 
 # Page one skin conditions
-
+enum SKIN_JUDGEMENT{
+  NORMAL
+  ABNORMAL
+}
 type Skin {
-  abnormalityPresent: Boolean
+  abnormalityPresent: SKIN_JUDGEMENT
   abnormalities: Abnormalities!
   footTemperatures: FootTemperature!
 }
@@ -66,18 +69,25 @@ type FootTemperature {
 }
 
 # Page two bones
-
+enum BONE_DEFORMITY_JUDGEMENT{
+  DEFORMED
+  NOT_DEFORMED
+}
+enum BONE_JUDGEMENT{
+  NORMAL
+  ABNORMAL
+}
 type Bone {
-  deformitiesLeftPresent: Boolean
+  deformitiesLeftPresent: BONE_DEFORMITY_JUDGEMENT
   deformitiesLeft: Deformities!
-  deformitiesRightPresent: Boolean
+  deformitiesRightPresent: BONE_DEFORMITY_JUDGEMENT
   deformitiesRight: Deformities!
-  ankleJointLimitationLeftPresent: Boolean
-  ankleJointLimitationRightPresent: Boolean
+  ankleJointLimitationLeftPresent: BONE_JUDGEMENT
+  ankleJointLimitationRightPresent: BONE_JUDGEMENT
   ankleJointLimitationLeft: Limitation!
   ankleJointLimitationRight: Limitation!
-  ballJointLimitationLeftPresent: Boolean
-  ballJointLimitationRightPresent: Boolean
+  ballJointLimitationLeftPresent: BONE_JUDGEMENT
+  ballJointLimitationRightPresent: BONE_JUDGEMENT
   ballJointLimitationLeft: Limitation!
   ankleJointLimitationRight: Limitation!
 }
@@ -100,9 +110,9 @@ enum PULSE {
   NO_PULSE
 }
 type Blood {
-  symptomsPresent: Boolean
+  symptomsPresent: SYMPTOMS_JUDGEMENT
   symptoms: BloodSymptoms!
-  conclusion: String
+  conclusion: CONCLUSION
   instepPulseLeft: PULSE
   instepPulseRight: PULSE
   ABILeft: Float
@@ -122,18 +132,22 @@ enum SENSITIVITY {
   NUMBNESS
   PAIN
 }
+enum NERVE_JUDGEMENT{
+  NORMAL
+  ABNORMAL
+}
 type Nerve {
-  symptomsPresent: Boolean
+  symptomsPresent: SYMPTOMS_JUDGEMENT
   symptoms: NerveSymptoms!
 
-  pressureSenseLeft: Boolean
-  pressureSenseRight: Boolean
-  vibrationSenseLeft: Boolean
-  vibrationSenseRight: Boolean
-  temperatureSenseLeft: Boolean
-  temperatureSenseRight: Boolean
-  ankleReflexLeft: Boolean
-  ankleReflexRight: Boolean
+  pressureSenseLeft: NERVE_JUDGEMENT
+  pressureSenseRight: NERVE_JUDGEMENT
+  vibrationSenseLeft: NERVE_JUDGEMENT
+  vibrationSenseRight: NERVE_JUDGEMENT
+  temperatureSenseLeft: NERVE_JUDGEMENT
+  temperatureSenseRight: NERVE_JUDGEMENT
+  ankleReflexLeft: NERVE_JUDGEMENT
+  ankleReflexRight: NERVE_JUDGEMENT
 
   leftArmSensitivity: SENSITIVITY
   rightArmSensitivity: SENSITIVITY

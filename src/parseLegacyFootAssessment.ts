@@ -22,50 +22,52 @@ export const parseLegacyFootAssessment = (a: any) => {
       hiking: defaultToFalse(a, 'footgear.question16.hiking'),
     },
     medicalHistory: {
-      historyPresent: defaultToNull(a, 'medicalHistory.had'),
+      selected: defaultEnumToNull(a, 'medicalHistory.had', 'PRESENT', 'NOT_PRESENT'),
       history: historyParser(a, 'medicalHistory'),
     },
     skin: {
-      abnormalityPresent: defaultToNull(a, 'skinConditions.had'),
+      abnormalityPresent: defaultEnumToNull(a, 'skinConditions.had', 'ABNORMAL', 'NORMAL'),
       abnormalities: skinParser(a, 'skinConditions'),
       footTemperatures: temperatureParser(a, 'skinConditions'),
     },
     bone: {
-      deformitiesLeftPresent: defaultToNull(a, 'boneAndJoint.deformityLeft.had'),
-      deformitiesRightPresent: defaultToNull(a, 'boneAndJoint.deformityRight.had'),
+      deformitiesLeftPresent: defaultEnumToNull(a, 'boneAndJoint.deformityLeft.had', 'DEFORMED', 'NOT_DEFORMED'),
+      deformitiesRightPresent: defaultEnumToNull(a, 'boneAndJoint.deformityRight.had', 'DEFORMED', 'NOT_DEFORMED'),
       deformitiesLeft: deformityParser(a, 'boneAndJoint.deformityLeft'),
       deformitiesRight: deformityParser(a, 'boneAndJoint.deformityRight'),
-      ankleJointLimitationLeftPresent: defaultToNull(a, 'boneAndJoint.jointLeft.had'),
-      ankleJointLimitationRightPresent: defaultToNull(a, 'boneAndJoint.jointRight.had'),
+      ankleJointLimitationLeftPresent: defaultEnumToNull(a, 'boneAndJoint.jointLeft.had', 'ABNORMAL', 'NORMAL'),
+      ankleJointLimitationRightPresent: defaultEnumToNull(a, 'boneAndJoint.jointRight.had', 'ABNORMAL', 'NORMAL'),
       ankleJointLimitationLeft: limitationParser(a, 'boneAndJoint.jointLeft'),
       ankleJointLimitationRight: limitationParser(a, 'boneAndJoint.jointRight'),
-      ballJointLimitationLeftPresent: defaultToNull(a, 'boneAndJoint.firstPlantarToeJointLeft.had'),
-      ballJointLimitationRightPresent: defaultToNull(a, 'boneAndJoint.firstPlantarToeJointRight.had'),
+      ballJointLimitationLeftPresent: defaultEnumToNull(a, 'boneAndJoint.firstPlantarToeJointLeft.had', 'ABNORMAL', 'NORMAL'),
+      ballJointLimitationRightPresent: defaultEnumToNull(a, 'boneAndJoint.firstPlantarToeJointRight.had', 'ABNORMAL', 'NORMAL'),
       ballJointLimitationLeft: limitationParser(a, 'boneAndJoint.firstPlantarToeJointLeft'),
       ballJointLimitationRight: limitationParser(a, 'boneAndJoint.firstPlantarToeJointRight'),
     },
     blood: {
-      symptomsPresent: defaultToNull(a, 'peripheralVessel.symptoms.had'),
+      symptomsPresent: defaultEnumToNull(a, 'peripheralVessel.symptoms.had', 'SYMPTOMS', 'NO_SYMPTOMS'),
       symptoms: bloodSymptomParser(a, 'peripheralVessel.symptoms'),
       instepPulseLeft: pulseParser(a, 'peripheralVessel.dorsalisPedisLeft'),
       instepPulseRight: pulseParser(a, 'peripheralVessel.dorsalisPedisRight'),
-      conclusion: a.peripheralVessel.conclusion,
+      conclusion: a.peripheralVessel.conclusion && a.peripheralVessel.conclusion.toUpperCase(),
       ABILeft: +a.peripheralVessel.ABILeft,
       ABIRight: +a.peripheralVessel.ABIRight,
       TBILeft: +a.peripheralVessel.TBILeft,
       TBIRight: +a.peripheralVessel.TBIRight,
     },
     nerve: {
-      symptomsPresent: defaultToNull(a, 'peripheralNerve.symptom.normal'),
+      // NOTE: the following bool values have opposite to above normal abnormal logic
+      symptomsPresent: defaultEnumToNull(a, 'peripheralNerve.symptom.normal', 'NO_SYMPTOMS', 'SYMPTOMS'),
       symptoms: nerveSymptomParser(a, 'peripheralNerve.symptom.items'),
-      pressureSenseLeft: defaultToNull(a, 'peripheralNerve.pressureSense.left'),
-      pressureSenseRight: defaultToNull(a, 'peripheralNerve.pressureSense.right'),
-      vibrationSenseLeft: defaultToNull(a, 'peripheralNerve.vibrationSense.right'),
-      vibrationSenseRight: defaultToNull(a, 'peripheralNerve.vibrationSense.right'),
-      temperatureSenseLeft: defaultToNull(a, 'peripheralNerve.thalposis.right'),
-      temperatureSenseRight: defaultToNull(a, 'peripheralNerve.thalposis.right'),
-      ankleReflexLeft: defaultToNull(a, 'peripheralNerve.ankleJerk.right'),
-      ankleReflexRight: defaultToNull(a, 'peripheralNerve.ankleJerk.right'),
+      // NOTE: the following bool values have opposite to above normal abnormal logic
+      pressureSenseLeft: defaultEnumToNull(a, 'peripheralNerve.pressureSense.left', 'NORMAL', 'ABNORMAL'),
+      pressureSenseRight: defaultEnumToNull(a, 'peripheralNerve.pressureSense.right', 'NORMAL', 'ABNORMAL'),
+      vibrationSenseLeft: defaultEnumToNull(a, 'peripheralNerve.vibrationSense.right', 'NORMAL', 'ABNORMAL'),
+      vibrationSenseRight: defaultEnumToNull(a, 'peripheralNerve.vibrationSense.right', 'NORMAL', 'ABNORMAL'),
+      temperatureSenseLeft: defaultEnumToNull(a, 'peripheralNerve.thalposis.right', 'NORMAL', 'ABNORMAL'),
+      temperatureSenseRight: defaultEnumToNull(a, 'peripheralNerve.thalposis.right', 'NORMAL', 'ABNORMAL'),
+      ankleReflexLeft: defaultEnumToNull(a, 'peripheralNerve.ankleJerk.right', 'NORMAL', 'ABNORMAL'),
+      ankleReflexRight: defaultEnumToNull(a, 'peripheralNerve.ankleJerk.right', 'NORMAL', 'ABNORMAL'),
       leftArmSensitivity: acupuntureSenceParser(a, 'peripheralNerve.acupunctureSence.leftTop'),
       rightArmSensitivity: acupuntureSenceParser(a, 'peripheralNerve.acupunctureSence.rightTop'),
       leftLegSensitivity: acupuntureSenceParser(a, 'peripheralNerve.acupunctureSence.leftBottom'),
@@ -75,7 +77,13 @@ export const parseLegacyFootAssessment = (a: any) => {
     },
   }
 }
+const defaultEnumToNull = (object: object, path: string, trueState: string, falseState: string) => {
+  const value = get(object, path)
+  if (value === true)return trueState
+  if (value === false)return falseState
+  return null
 
+}
 // TODO: test this
 const acupuntureSenceParser = (object: object, path: string) => {
   const value = get(object, `${path}.items`, [])
