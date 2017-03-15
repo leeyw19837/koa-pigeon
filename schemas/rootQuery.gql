@@ -4,8 +4,7 @@ schema {
 }
 
 type Query {
-  appointments: [Appointment]
-  appointmentsByDate(date:String!): [Appointment]
+  appointments(day: String, timezone: String = "+0800"): [Appointment]
   patients: [Patient]
   patient(_id: ID): Patient
   footAssessments(patientId: ID): [FootAssessment]

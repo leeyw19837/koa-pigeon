@@ -1,18 +1,23 @@
 import freshId from 'fresh-id'
 import moment = require('moment')
 import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
+import {
+  transformAppointment,
+  transformPatient,
+} from './data-transformations'
+import { ObjectID } from 'mongodb'
 
 const parseMedication = (old) => old.map(
-    (a: any) => ({ type: a.type, value: +a.value.replace('mg', ''), unit: 'mg' }),
-  )
+  (a: any) => ({ type: a.type, value: +a.value.replace('mg', ''), unit: 'mg' }),
+)
 const source = [
-  {key: '早餐前', value: 'beforeBreakfast'},
-  {key: '早餐后', value: 'afterBreakfast'},
-  {key: '午餐前', value: 'beforeLunch'},
-  {key: '午餐后', value: 'afterLunch'},
-  {key: '晚餐前', value: 'beforeDinner'},
-  {key: '晚餐后', value: 'afterDinner'},
-  {key: '半夜', value: 'midnight'},
+  { key: '早餐前', value: 'beforeBreakfast' },
+  { key: '早餐后', value: 'afterBreakfast' },
+  { key: '午餐前', value: 'beforeLunch' },
+  { key: '午餐后', value: 'afterLunch' },
+  { key: '晚餐前', value: 'beforeDinner' },
+  { key: '晚餐后', value: 'afterDinner' },
+  { key: '半夜', value: 'midnight' },
 ]
 const convertToEnglish = (chinese) => {
   const item = source.filter((item) => item.key === chinese)
@@ -23,30 +28,43 @@ const convertObjectToBoolean = (arr) => arr.map(item => item.isCompleted)
 
 export const resolverMap = {
   Query: {
-    async appointmentsByDate(_, args, { db }) {
-      // QUESTION: should be UTC?
-      console.log('a', args)
-      const startOfDay = moment(args.date).startOf('day').toDate()
-      const endOfDay = moment(args.date).endOf('day').toDate()
-      console.log('s', startOfDay)
-      console.log('e', endOfDay)
-      const treatmentObjects = await db.collection('treatmentState').find({
-        appointmentTime: {
-          $gte: startOfDay,
-          $lt: endOfDay,
-        },
-
-      }).toArray()
-      return treatmentObjects.map(
-        (a: any) => ({ date: a.appointmentTime, didFinishFootAssessment: a.footAt, ...a }),
-      )
-    },
     async appointments(_, args, { db }) {
-      const appointmentObjects = await db.collection('appointments').find({
-      }).toArray()
-      return appointmentObjects.map(
-        (a: any) => ({ date: a.appointmentTime, ...a }),
-      )
+      let query = {}
+
+      if (args.day) {
+        const startOfDay = moment(args.day)
+          .utcOffset(args.timezone)
+          .startOf('day')
+          .toDate()
+        const endOfDay = moment(args.day)
+          .utcOffset(args.timezone)
+          .endOf('day')
+          .toDate()
+
+        query = {
+          appointmentTime: {
+            $gte: startOfDay,
+            $lt: endOfDay,
+          }
+        }
+      }
+
+      const oldStyleAppointments = await db
+        .collection('appointments')
+        .find(query)
+        .toArray()
+
+      const oldStyleAppointmentsWithPatientIds =
+        oldStyleAppointments.filter(a => a.patientId)
+
+      return Promise.all(oldStyleAppointmentsWithPatientIds.map(oldApp => db
+        .collection('users')
+        .findOne({ _id: ObjectID.createFromHexString(oldApp.patientId) })
+        .then(oldStylePatient => ({
+          ...transformAppointment(oldApp),
+          patient: transformPatient(oldStylePatient)
+        }))
+      ))
     },
     async patients(_, args, { db }) {
       return await db.collection('users').find({
@@ -73,7 +91,7 @@ export const resolverMap = {
       }).limit(args.limit).toArray()
     },
     async bloodTests(_, args, { db }) {
-      const objects = await db.collection('bloodglucoses').find(args.patientId && {author: args.patientId}).toArray()
+      const objects = await db.collection('bloodglucoses').find(args.patientId && { author: args.patientId }).toArray()
       return objects.map(
         (a: any) => ({
           result: { value: +a.bgValue, unit: 'mg/dL' },
@@ -85,15 +103,15 @@ export const resolverMap = {
       )
     },
     async task(_, args, { db }) {
-      const result = await db.collection('tasks').findOne({...args})
-      return {...result}
+      const result = await db.collection('tasks').findOne({ ...args })
+      return { ...result }
     },
     async tasks(_, args, { db }) {
-      const resultList = await db.collection('tasks').find({...args}).toArray()
-      return resultList.map((result: any) => ({...result}))
+      const resultList = await db.collection('tasks').find({ ...args }).toArray()
+      return resultList.map((result: any) => ({ ...result }))
     },
     async phoneFollowUp(_, args, { db }) {
-      const result = await db.collection('tasks').findOne({...args})
+      const result = await db.collection('tasks').findOne({ ...args })
       return {
         complete: convertObjectToBoolean(result.phoneFollowUp),
         ...result

@@ -1,7 +1,3 @@
-type Patient {
-  _id: ID
-  nickname: String
-}
 type PhoneFollowUp {
   _id: ID!
   patientId: ID!
