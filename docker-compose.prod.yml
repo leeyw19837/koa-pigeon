@@ -1,4 +1,4 @@
-# This should bring up a docker container with a volume mapped to dist folder
+# This should bring up a stateless docker container ready for deployment
 version: '3'
 services:
   api:
