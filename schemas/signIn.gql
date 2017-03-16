@@ -1,0 +1,7 @@
+type SignInEvent {
+  patientId: ID
+  patientName: String
+  createdAt: String
+  isSignedOut: Boolean
+  type: String
+}

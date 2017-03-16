@@ -20,4 +20,6 @@ type Mutation {
   createFootAssessment(params:FootAssessmentInput, stringifiedInput:String):FootAssessment!
   createEvent(params:EventInput):Event!
   setFootAssessmentCompleteFlag(_id: ID):Boolean!
+  signInPatient(patientId: ID!): SignInEvent
+  signOutPatient(patientId: ID!): SignInEvent
 }
