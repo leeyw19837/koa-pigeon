@@ -11,7 +11,8 @@
 - [x] Docker compose dev environment with watcher
 - [x] Docker compose production environment with minimal size
 - [ ] Set up build agent which copies code to ci server then runs docker:prod
-
+- [x] Investigate get-graphql-schema and gql2ts to create typings - doesn't seem useful on the server
+- [ ] Consider the benefits and challenges of adding typings generation to ci build and publishing to npm for use in typescript client
 
 
 ## to consider
