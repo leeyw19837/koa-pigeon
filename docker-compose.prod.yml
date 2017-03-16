@@ -6,3 +6,4 @@ services:
     working_dir: /usr/src/app
     ports:
       - "5000:3080"
+    restart: always

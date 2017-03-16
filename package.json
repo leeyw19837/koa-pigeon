@@ -2,11 +2,13 @@
   "name": "pigeon",
   "private": true,
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "watch": "concurrently 'tsc --watch' 'nodemon --watch \"dist\" --watch \"schemas\" --ext js,ts,gql dist/index.js'",
-    "lint": "tslint 'src/**/*.ts'"
+    "lint": "tslint 'src/**/*.ts'",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d"
   },
   "repository": {
     "type": "git",

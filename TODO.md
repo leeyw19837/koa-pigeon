@@ -6,11 +6,13 @@
 - [x] can set treatmentstate
 - [x] can get blood test results
 - [ ] date handling
-- [ ] composing multiple schema gqls
+- [x] composing multiple schema gqls
+- [x] Dockerfile
+- [x] Docker compose dev environment with watcher
+- [x] Docker compose production environment with minimal size
+- [ ] Set up build agent which copies code to ci server then runs docker:prod
 
-## considerations
 
-- use mongoose, better api and schemas
-- consider express
-- appointment system integration
-- should use enums for normal/abnormal etc?
+
+## to consider
+- [ ] use .env? set env_file: .env and - $PORT:$PORT in docker compose
