@@ -7,4 +7,5 @@ enum AssessmentState {
 type TreatmentState {
   patient: Patient!
   footAssessmentState: AssessmentState!
+  notes: String
 }

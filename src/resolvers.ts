@@ -80,7 +80,9 @@ export const resolverMap = {
         case true: return 'COMPLETED'
         default: return 'NOT_REQUIRED'
       }
-    }
+    },
+    notes: ts => ts.note,
+
   },
   Query: {
     async appointments(_, args, { db }) {
@@ -109,19 +111,7 @@ export const resolverMap = {
         .find(query)
         .toArray()
 
-      const oldStyleAppointmentsWithPatientIds =
-        oldStyleAppointments.filter(a => a.patientId)
-
-      return oldStyleAppointmentsWithPatientIds
-
-      // return Promise.all(oldStyleAppointmentsWithPatientIds.map(oldApp => db
-      //   .collection('users')
-      //   .findOne({ _id: ObjectID.createFromHexString(oldApp.patientId) })
-      //   .then(oldStylePatient => ({
-      //     ...transformAppointment(oldApp),
-      //     patient: transformPatient(oldStylePatient)
-      //   }))
-      // ))
+      return oldStyleAppointments.filter(a => a.patientId)
     },
     async patients(_, args, { db }) {
       return await db.collection('users').find().toArray()
