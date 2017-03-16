@@ -1,10 +1,6 @@
 import freshId from 'fresh-id'
 import moment = require('moment')
 import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
-import {
-  transformAppointment,
-  transformPatient,
-} from './data-transformations'
 import { ObjectID } from 'mongodb'
 
 const parseMedication = (old) => old.map(
