@@ -208,34 +208,35 @@ export const resolverMap = {
       console.log(args)
       const { patientId } = args
       const isExists = await db.collection('event').findOne({
+        patientId,
+        type: 'attendence/signIn',
+        isSignedOut: false,
+      })
+      if (!isExists) {
+        const modifyResult = await db.collection('event').insert({
           patientId,
+          createdAt: new Date(),
           type: 'attendence/signIn',
           isSignedOut: false,
-      }
-      if (!isExists) {
-          const modifyResult = await db.collection('event').insert({
-              patientId,
-              createdAt: new Date(),
-              type: 'attendence/signIn',
-              isSignedOut: false,
-          })
-          return modifyResult.ops[0]
+        })
+        return modifyResult.ops[0]
       } else return
     },
     async signOutPatient(_, args, { db }) {
       console.log(args)
       const { patientId } = args
       const modifyResult = await db.collection('event').update({
-          patientId,
-          type: 'attendence/signIn',
-          isSignedOut: false,
-      }, {$set: {
+        patientId,
+        type: 'attendence/signIn',
+        isSignedOut: false,
+      }, {
+        $set: {
           signOutAt: new Date(),
           isSignedOut: true,
-      }})
+        }
+        })
       console.log(modifyResult)
       return modifyResult.ok
     },
-  },
   },
 }
