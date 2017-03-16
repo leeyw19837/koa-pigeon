@@ -1,0 +1,10 @@
+enum AssessmentState {
+  NOT_REQUIRED
+  WAITING
+  COMPLETED
+}
+
+type TreatmentState {
+  patient: Patient!
+  footAssessmentState: AssessmentState!
+}

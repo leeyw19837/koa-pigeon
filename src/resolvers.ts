@@ -27,6 +27,65 @@ const convertToEnglish = (chinese) => {
 const convertObjectToBoolean = (arr) => arr.map(item => item.isCompleted)
 
 export const resolverMap = {
+  Appointment: {
+    date: app => app.appointmentTime,
+    patient: (appointment, _, { db }) => {
+      const patientId = appointment.patientId
+      console.log(appointment)
+      if (!patientId) {
+        return null
+      }
+      return db.collection('users')
+        .findOne({ _id: ObjectID.createFromHexString(patientId) })
+    },
+    needsFootAssessment: app => !!app.footAt,
+    treatmentState: (app, _, { db }) => {
+      const treatmentStateId = app.treatmentStateId
+      if (!treatmentStateId) {
+        return null
+      }
+      return db.collection('treatmentState')
+        .findOne({ _id: treatmentStateId })
+    }
+  },
+  Patient: {
+    name: patient => patient.nickname,
+    gender: patient => {
+      switch (patient.gender) {
+        case 'male': return 'MALE'
+        case 'female': return 'FEMALE'
+        default: return null
+      }
+    },
+    diabetesType: patient => {
+      switch (patient.diabetesType) {
+        case '1': return 'ONE'
+        case '2': return 'TWO'
+        default: return null
+      }
+    },
+    latestTreatmentState: (patient, _, { db }) => {
+      const latestTreatmentStateId = patient.latestTSID
+      if (!latestTreatmentStateId) {
+        return null
+      }
+      return db.collection('treatmentState')
+        .findOne({ _id: latestTreatmentStateId })
+    }
+  },
+  TreatmentState: {
+    patient: (ts, _, { db }) => {
+      return db.collection('users')
+        .findOne({ _id: ObjectID.createFromHexString(ts.patientId) })
+    },
+    footAssessmentState: ts => {
+      switch (ts.footAt) {
+        case false: return 'WAITING'
+        case true: return 'COMPLETED'
+        default: return 'NOT_REQUIRED'
+      }
+    }
+  },
   Query: {
     async appointments(_, args, { db }) {
       let query = {}
@@ -57,18 +116,19 @@ export const resolverMap = {
       const oldStyleAppointmentsWithPatientIds =
         oldStyleAppointments.filter(a => a.patientId)
 
-      return Promise.all(oldStyleAppointmentsWithPatientIds.map(oldApp => db
-        .collection('users')
-        .findOne({ _id: ObjectID.createFromHexString(oldApp.patientId) })
-        .then(oldStylePatient => ({
-          ...transformAppointment(oldApp),
-          patient: transformPatient(oldStylePatient)
-        }))
-      ))
+      return oldStyleAppointmentsWithPatientIds
+
+      // return Promise.all(oldStyleAppointmentsWithPatientIds.map(oldApp => db
+      //   .collection('users')
+      //   .findOne({ _id: ObjectID.createFromHexString(oldApp.patientId) })
+      //   .then(oldStylePatient => ({
+      //     ...transformAppointment(oldApp),
+      //     patient: transformPatient(oldStylePatient)
+      //   }))
+      // ))
     },
     async patients(_, args, { db }) {
-      return await db.collection('users').find({
-      }).toArray()
+      return await db.collection('users').find().toArray()
     },
     async patient(_, args, { db }) {
       return await db.collection('users').findOne({ ...args })

@@ -1,6 +1,6 @@
 type Appointment {
   date: String!
   patient: Patient!
-  didFinishFootAssessment: Boolean
-  treatmentStateId: ID!
+  needsFootAssessment: Boolean!
+  treatmentState: TreatmentState
 }

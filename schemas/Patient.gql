@@ -1,4 +1,17 @@
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum DiabetesType {
+  ONE
+  TWO
+}
+
 type Patient {
   _id: ID
+  gender: Gender
   name: String
+  diabetesType: DiabetesType
+  latestTreatmentState: TreatmentState
 }
