@@ -27,11 +27,11 @@ export const resolverMap = {
     date: app => app.appointmentTime,
     patient: (appointment, _, { db }) => {
       const patientId = appointment.patientId
-      console.log(appointment)
       if (!patientId) {
         return null
       }
-      return db.collection('users')
+      return db
+        .collection('users')
         .findOne({ _id: ObjectID.createFromHexString(patientId) })
     },
     needsFootAssessment: app => !!app.footAt,
@@ -67,7 +67,13 @@ export const resolverMap = {
       }
       return db.collection('treatmentState')
         .findOne({ _id: latestTreatmentStateId })
+    },
+    footAssessmentPhotos: (patient, _, { db }) => {
+      return db.collection('photos').find({ patientId: patient._id, owner: 'footAssessment' })
     }
+  },
+  Photo: {
+    notes: photo => photo.note,
   },
   TreatmentState: {
     patient: (ts, _, { db }) => {
@@ -113,56 +119,6 @@ export const resolverMap = {
 
       return oldStyleAppointments.filter(a => a.patientId)
     },
-    async patients(_, args, { db }) {
-      return await db.collection('users').find().toArray()
-    },
-    async patient(_, args, { db }) {
-      return await db.collection('users').findOne({ ...args })
-    },
-    async footAssessments(_, args, { db }) {
-      console.log(args)
-      const objects = await db.collection('footAssessment').find({
-        ...args,
-      }).toArray()
-      return objects.map(
-        (a: any) => (parseLegacyFootAssessment(a)),
-      )
-    },
-    async footAssessment(_, args, { db }) {
-      const footAssessment = await db.collection('footAssessment').findOne({ ...args })
-      return parseLegacyFootAssessment(footAssessment)
-    },
-    async events(_, args, { db }) {
-      return await db.collection('event').find({
-      }).limit(args.limit).toArray()
-    },
-    async bloodTests(_, args, { db }) {
-      const objects = await db.collection('bloodglucoses').find(args.patientId && { author: args.patientId }).toArray()
-      return objects.map(
-        (a: any) => ({
-          result: { value: +a.bgValue, unit: 'mg/dL' },
-          patientId: a.author,
-          temporalRelationshipToMeal: a.dinnerSituation && convertToEnglish(a.dinnerSituation),
-          medication: a.pillNote && a.pillNote[0] && parseMedication(a.pillNote),
-          ...a,
-        }),
-      )
-    },
-    async task(_, args, { db }) {
-      const result = await db.collection('tasks').findOne({ ...args })
-      return { ...result }
-    },
-    async tasks(_, args, { db }) {
-      const resultList = await db.collection('tasks').find({ ...args }).toArray()
-      return resultList.map((result: any) => ({ ...result }))
-    },
-    async phoneFollowUp(_, args, { db }) {
-      const result = await db.collection('tasks').findOne({ ...args })
-      return {
-        complete: convertObjectToBoolean(result.phoneFollowUp),
-        ...result
-      }
-    }
   },
   Mutation: {
     // NOTE: accepts type and string

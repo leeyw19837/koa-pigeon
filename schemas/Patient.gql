@@ -14,4 +14,5 @@ type Patient {
   name: String
   diabetesType: DiabetesType
   latestTreatmentState: TreatmentState
+  footAssessmentPhotos: [Photo]
 }

@@ -1,0 +1,4 @@
+type Photo {
+  url: String!
+  notes: String
+}
