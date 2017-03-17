@@ -26,6 +26,10 @@ MongoClient.connect('mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@120.131.8.
       context: { db },
       schema,
       graphiql: true,
+      formatError: error => {
+        console.error(error)
+        return error
+      }
     })))
 
     app.use(router.routes()).use(router.allowedMethods())
