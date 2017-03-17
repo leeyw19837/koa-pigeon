@@ -2,7 +2,6 @@ import * as Koa from 'koa'
 import * as Router from 'koa-router'
 const convert = require('koa-convert')
 const graphqlHTTP = require('koa-graphql')
-const GraphQLDate = require('graphql-date')
 import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 import { MongoClient } from 'mongodb'
