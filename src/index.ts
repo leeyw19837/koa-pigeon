@@ -17,11 +17,9 @@ const schema = makeExecutableSchema({
   typeDefs: schemasText,
 })
 
-const SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
-
-MongoClient.connect('mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@120.131.8.26:27017/paper-king-developing')
+MongoClient.connect(process.env.MONGODB_URL)
   .then(db => {
-    router.all(`/${SECRET}`, convert(graphqlHTTP({
+    router.all(`/${process.env.SECRET}`, convert(graphqlHTTP({
       context: { db },
       schema,
       graphiql: true,
