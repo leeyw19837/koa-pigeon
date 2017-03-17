@@ -7,9 +7,10 @@ import { makeExecutableSchema } from 'graphql-tools'
 import { MongoClient } from 'mongodb'
 import { resolverMap } from './resolvers'
 
+
 const app = new Koa()
 const router = new Router()
-let schemasText = fs.readdirSync('./schemas/').map(fileName => fs.readFileSync(`./schemas/${fileName}`, 'utf-8'))
+const schemasText = fs.readdirSync('./schemas/').map(fileName => fs.readFileSync(`./schemas/${fileName}`, 'utf-8'))
 
 const schema = makeExecutableSchema({
   resolvers: resolverMap,

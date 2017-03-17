@@ -2,7 +2,7 @@ import freshId from 'fresh-id'
 import moment = require('moment')
 import { ObjectID } from 'mongodb'
 import { uploadBase64Img } from './ks3'
-import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
+
 
 export const resolverMap = {
   Appointment: {

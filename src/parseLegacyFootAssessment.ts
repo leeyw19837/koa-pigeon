@@ -104,7 +104,6 @@ const pulseParser = (object: object, path: string) => {
   return null
 }
 const deformityParser = (object: object, path: string) => {
-  const value = get(object, path, false)
   return {
     bunion: get(object, path + '.discoloration', false),
     charcotFoot: get(object, path + '.edema', false),
@@ -114,7 +113,6 @@ const deformityParser = (object: object, path: string) => {
   }
 }
 const historyParser = (object: object, path: string) => {
-  const value = get(object, path, false)
   return {
     hadFootUlcer: get(object, path + '.footUlcer', false),
     amputee: get(object, path + '.amputation', false),
@@ -123,7 +121,6 @@ const historyParser = (object: object, path: string) => {
   }
 }
 const skinParser = (object: object, path: string) => {
-  const value = get(object, path, false)
   return {
     discoloration: get(object, path + '.discoloration', false),
     edema: get(object, path + '.edema', false),
@@ -137,7 +134,6 @@ const skinParser = (object: object, path: string) => {
   }
 }
 const temperatureParser = (object: object, path: string) => {
-  const value = get(object, path, false)
   const unit = 'C'
   return {
     environment: { value: get(object, path + '.temperatureOfEnvironment', false), unit },
@@ -148,14 +144,12 @@ const temperatureParser = (object: object, path: string) => {
   }
 }
 const limitationParser = (object: object, path: string) => {
-  const value = get(object, path, false)
   return {
     backStretch: get(object, path + '.BackStretchLimited', false),
     plantarFlexion: get(object, path + '.PlantarFlexionLimited', false),
   }
 }
 const bloodSymptomParser = (object: object, path: string) => {
-  const value = get(object, path, false)
   return {
     restPain: get(object, path + '.restPain', false),
     intermittentClaudication: get(object, path + '.intermittentClaudication', false),
