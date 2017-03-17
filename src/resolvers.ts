@@ -68,8 +68,14 @@ export const resolverMap = {
       return db.collection('treatmentState')
         .findOne({ _id: latestTreatmentStateId })
     },
-    footAssessmentPhotos: (patient, _, { db }) => {
-      return db.collection('photos').find({ patientId: patient._id, owner: 'footAssessment' })
+    footAssessmentPhotos: async (patient, _, { db }) => {
+      return db
+        .collection('photos')
+        .find({
+          patientId: patient._id.toString(),
+          owner: 'footAssessment',
+        })
+        .toArray()
     }
   },
   Photo: {
