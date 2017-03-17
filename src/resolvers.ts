@@ -5,25 +5,6 @@ import { ObjectID } from 'mongodb'
 import { uploadBase64Img } from './ks3'
 
 
-const parseMedication = (old) => old.map(
-  (a: any) => ({ type: a.type, value: +a.value.replace('mg', ''), unit: 'mg' }),
-)
-const source = [
-  { key: '早餐前', value: 'beforeBreakfast' },
-  { key: '早餐后', value: 'afterBreakfast' },
-  { key: '午餐前', value: 'beforeLunch' },
-  { key: '午餐后', value: 'afterLunch' },
-  { key: '晚餐前', value: 'beforeDinner' },
-  { key: '晚餐后', value: 'afterDinner' },
-  { key: '半夜', value: 'midnight' },
-]
-const convertToEnglish = (chinese) => {
-  const item = source.filter((item) => item.key === chinese)
-  return item[0] && item[0].value || chinese
-}
-
-const convertObjectToBoolean = (arr) => arr.map(item => item.isCompleted)
-
 export const resolverMap = {
   Appointment: {
     date: app => app.appointmentTime,
