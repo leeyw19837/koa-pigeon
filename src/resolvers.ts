@@ -2,6 +2,8 @@ import freshId from 'fresh-id'
 import moment = require('moment')
 import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
 import { ObjectID } from 'mongodb'
+import { uploadBase64Img } from './ks3'
+
 
 const parseMedication = (old) => old.map(
   (a: any) => ({ type: a.type, value: +a.value.replace('mg', ''), unit: 'mg' }),
@@ -150,11 +152,20 @@ export const resolverMap = {
       const { result } = await db.collection('event').insert(event)
       return result.nInserted === 1
     },
-    // async setFootAssessmentCompleteFlag(_, args, { db }) {
-    //   const reply = await db.collection('treatmentState').update({ _id: args._id }, { $set: { footAt: true } })
-    //   if (reply.result.nModified === 1) return true
-    //   else return false
-    // },
+    async savePhoto(_, args, { db }) {
+      const { patientId, data, context, notes } = args
+      const photoUrlKey = `${patientId}${Date.now()}`
+      const url = await uploadBase64Img(photoUrlKey, data)
+      const photo = {
+        patientId,
+        url,
+        owner: context,
+        note: notes,
+        createdAt: new Date(),
+      }
+      const { result } = await db.collection('photo').insert(photo)
+      return result.nInserted === 1
+    },
     async signInPatient(_, args, { db }) {
       console.log(args)
       const { patientId } = args
@@ -181,10 +192,10 @@ export const resolverMap = {
         type: 'attendence/signIn',
         isSignedOut: false,
       }, {
-        $set: {
-          signOutAt: new Date(),
-          isSignedOut: true,
-        }
+          $set: {
+            signOutAt: new Date(),
+            isSignedOut: true,
+          }
         })
       console.log(modifyResult)
       return modifyResult.ok

@@ -8,8 +8,9 @@ type Query {
 }
 
 type Mutation {
-  createFootAssessment(params:FootAssessmentInput, stringifiedInput:String):FootAssessment!
+  createFootAssessment(params:FootAssessmentInput, stringifiedInput:String): FootAssessment!
   createEvent(payload: String!): Boolean!
+  savePhoto(patientId: ID!, data: String!, context: PHOTO_CONTEXT!): Boolean!
   setFootAssessmentCompleteFlag(_id: ID):Boolean!
   signInPatient(patientId: ID!): SignInEvent
   signOutPatient(patientId: ID!): SignInEvent
