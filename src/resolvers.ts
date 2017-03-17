@@ -139,17 +139,16 @@ export const resolverMap = {
         _id: freshId(17),
         createdAt: new Date(),
         updatedAt: new Date(),
-        ...args.params,
-        // TODO: figure out what to do if anything about value
+        ...JSON.parse(args.payload),
       }
-      db.collection('event').insert(event)
-      return event
+      const { result } = await db.collection('event').insert(event)
+      return result.nInserted === 1
     },
-    async setFootAssessmentCompleteFlag(_, args, { db }) {
-      const reply = await db.collection('treatmentState').update({ _id: args._id }, { $set: { footAt: true } })
-      if (reply.result.nModified === 1) return true
-      else return false
-    },
+    // async setFootAssessmentCompleteFlag(_, args, { db }) {
+    //   const reply = await db.collection('treatmentState').update({ _id: args._id }, { $set: { footAt: true } })
+    //   if (reply.result.nModified === 1) return true
+    //   else return false
+    // },
     async signInPatient(_, args, { db }) {
       console.log(args)
       const { patientId } = args

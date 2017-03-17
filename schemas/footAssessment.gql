@@ -205,12 +205,7 @@ type ShoeTypes {
   hiking: Boolean!
 }
 
-type Event {
-  _id: ID!
-  type: String
-  patientId: ID
-  keypath: String!
-}
+
 
 
 
@@ -240,9 +235,4 @@ input MedicalHistoryRadioInput {
 }
 input FootAssessmentInput {
   medicalHistory: MedicalHistoryRadioInput!
-}
-input EventInput {
-  keypath:String!
-  patientId:ID!
-  type:String!
 }

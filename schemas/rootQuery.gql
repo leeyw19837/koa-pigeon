@@ -5,20 +5,11 @@ schema {
 
 type Query {
   appointments(day: String, timezone: String = "+0800"): [Appointment]
-  patients: [Patient]
-  patient(_id: ID): Patient
-  footAssessments(patientId: ID): [FootAssessment]
-  footAssessment(_id: ID): FootAssessment
-  events(limit: Int = 3): [Event]
-  bloodTests(patientId: ID): [BloodTest]
-  task(patientId: ID!): Task
-  tasks: [Task]
-  phoneFollowUp(patientId: ID!): PhoneFollowUp
 }
 
 type Mutation {
   createFootAssessment(params:FootAssessmentInput, stringifiedInput:String):FootAssessment!
-  createEvent(params:EventInput):Event!
+  createEvent(payload: String!): Boolean!
   setFootAssessmentCompleteFlag(_id: ID):Boolean!
   signInPatient(patientId: ID!): SignInEvent
   signOutPatient(patientId: ID!): SignInEvent
