@@ -39,8 +39,10 @@ export const parseLegacyFootAssessment = (a: any) => {
       ankleJointLimitationRightPresent: defaultEnumToNull(a, 'boneAndJoint.jointRight.had', 'ABNORMAL', 'NORMAL'),
       ankleJointLimitationLeft: limitationParser(a, 'boneAndJoint.jointLeft'),
       ankleJointLimitationRight: limitationParser(a, 'boneAndJoint.jointRight'),
-      ballJointLimitationLeftPresent: defaultEnumToNull(a, 'boneAndJoint.firstPlantarToeJointLeft.had', 'ABNORMAL', 'NORMAL'),
-      ballJointLimitationRightPresent: defaultEnumToNull(a, 'boneAndJoint.firstPlantarToeJointRight.had', 'ABNORMAL', 'NORMAL'),
+      ballJointLimitationLeftPresent:
+        defaultEnumToNull(a, 'boneAndJoint.firstPlantarToeJointLeft.had', 'ABNORMAL', 'NORMAL'),
+      ballJointLimitationRightPresent:
+        defaultEnumToNull(a, 'boneAndJoint.firstPlantarToeJointRight.had', 'ABNORMAL', 'NORMAL'),
       ballJointLimitationLeft: limitationParser(a, 'boneAndJoint.firstPlantarToeJointLeft'),
       ballJointLimitationRight: limitationParser(a, 'boneAndJoint.firstPlantarToeJointRight'),
     },

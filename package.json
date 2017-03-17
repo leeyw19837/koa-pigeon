@@ -9,7 +9,8 @@
     "lint": "tslint 'src/**/*.ts'",
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
     "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
-    "archive": "tar czf pigeon.tar.gz dist/ node_modules/ schemas/"
+    "archive": "tar czf pigeon.tar.gz dist/ node_modules/ schemas/",
+    "prepush": "npm run lint"
   },
   "repository": {
     "type": "git",
@@ -47,6 +48,7 @@
     "@types/lodash.get": "^4.4.1",
     "@types/mongodb": "^2.1.41",
     "concurrently": "^3.4.0",
+    "husky": "^0.13.2",
     "nodemon": "^1.11.0",
     "tslint": "^4.5.1"
   }

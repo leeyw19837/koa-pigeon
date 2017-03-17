@@ -1,9 +1,8 @@
 import freshId from 'fresh-id'
 import moment = require('moment')
-import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
 import { ObjectID } from 'mongodb'
 import { uploadBase64Img } from './ks3'
-
+import { parseLegacyFootAssessment } from './parseLegacyFootAssessment'
 
 export const resolverMap = {
   Appointment: {
@@ -25,7 +24,7 @@ export const resolverMap = {
       }
       return db.collection('treatmentState')
         .findOne({ _id: treatmentStateId })
-    }
+    },
   },
   Patient: {
     name: patient => patient.nickname,
@@ -59,7 +58,7 @@ export const resolverMap = {
           owner: 'footAssessment',
         })
         .toArray()
-    }
+    },
   },
   Photo: {
     notes: photo => photo.note,
@@ -102,7 +101,7 @@ export const resolverMap = {
           appointmentTime: {
             $gte: startOfDay,
             $lt: endOfDay,
-          }
+          },
         }
       }
 
@@ -116,18 +115,19 @@ export const resolverMap = {
   },
   Mutation: {
     // NOTE: accepts type and string
-    async createFootAssessment(_, args, { db }) {
-      let fa = args.params
-      if (args.stringifiedInput) fa = JSON.parse(args.stringifiedInput)
-      console.log(args)
-      const assessment = {
-        _id: freshId(17),
-        medicalHistory: fa.medicalHistory,
-        // TODO: convert the new style json into old and save to the database OR switch to another table OR change database?
-      }
-      console.log(assessment)
-      return assessment
-    },
+    // async createFootAssessment(_, args, { db }) {
+    //   let fa = args.params
+    //   if (args.stringifiedInput) fa = JSON.parse(args.stringifiedInput)
+    //   console.log(args)
+    //   const assessment = {
+    //     _id: freshId(17),
+    //     medicalHistory: fa.medicalHistory,
+    //     // TODO: convert the new style
+    // json into old and save to the database OR switch to another table OR change database?
+    //   }
+    //   console.log(assessment)
+    //   return assessment
+    // },
     async createEvent(_, args, { db }) {
       const event = {
         _id: freshId(17),
@@ -153,7 +153,6 @@ export const resolverMap = {
       return result.nInserted === 1
     },
     async signInPatient(_, args, { db }) {
-      console.log(args)
       const { patientId } = args
       const isExists = await db.collection('event').findOne({
         patientId,
@@ -171,7 +170,6 @@ export const resolverMap = {
       } else return
     },
     async signOutPatient(_, args, { db }) {
-      console.log(args)
       const { patientId } = args
       const modifyResult = await db.collection('event').update({
         patientId,
@@ -181,9 +179,8 @@ export const resolverMap = {
           $set: {
             signOutAt: new Date(),
             isSignedOut: true,
-          }
+          },
         })
-      console.log(modifyResult)
       return modifyResult.ok
     },
   },

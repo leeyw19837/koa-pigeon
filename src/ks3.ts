@@ -1,6 +1,5 @@
 const KS3 = require('ks3')
 
-
 const ks3 = {
   AK: '4WTrGdPYAlWYAEG2/fjt',
   SK: 'ALmKR2JPA5u8SF39FhVWRTaU1vefRZXZ/Dk4Kf9J',
@@ -16,7 +15,7 @@ client.config({
   dataType: 'json',
 })
 
-export const getImageType = (data) => {
+export const getImageType = data => {
   const imgType = data.substring(data.indexOf('/') + 1, data.indexOf(';base64,'))
   return imgType
 }
@@ -27,13 +26,13 @@ export const uploadBase64Img = async (key, data) => {
   const rData = new Buffer(data.replace(/^data:image\/(png|gif|jpeg);base64,/, ''), 'base64')
   const rKey = key + imageType
 
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     client.object.put({
       Bucket: bucketName,
       Key: rKey,
       ACL: 'public-read',
       Body: rData,
-    }, (err) => {
+    }, err => {
       if (err) {
         reject(err)
       } else {
