@@ -80,6 +80,11 @@ export const resolverMap = {
 
   },
   Query: {
+    async patient(_, args, { db }) {
+      return db
+        .collection('users')
+        .findOne({ _id: ObjectID.createFromHexString(args.id) })
+    },
     async appointments(_, args, { db }) {
       let query = {}
 
