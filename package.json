@@ -8,7 +8,8 @@
     "watch": "concurrently 'tsc --watch' 'nodemon --watch \"dist\" --watch \"schemas\" --ext js,ts,gql dist/index.js'",
     "lint": "tslint 'src/**/*.ts'",
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
-    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d"
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
+    "archive": "tar czf pigeon.tar.gz dist/ node_modules/ schemas/"
   },
   "repository": {
     "type": "git",
