@@ -24,6 +24,7 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
+    "date-aware-json": "^0.1.0",
     "fresh-id": "^1.1.0",
     "graphql": "^0.9.1",
     "graphql-subscriptions": "^0.3.0",

@@ -4,8 +4,14 @@ enum AssessmentState {
   COMPLETED
 }
 
+enum Assessment {
+  FOOT
+  BLOOD_VESSEL_CLOGGINESS
+}
+
 type TreatmentState {
   patient: Patient!
   footAssessmentState: AssessmentState!
+  #bloodVesselClogginessAssessmentState: AssessmentState!
   notes: String
 }

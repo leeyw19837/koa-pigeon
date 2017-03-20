@@ -3,17 +3,37 @@ schema {
   mutation: Mutation
 }
 
+type StringResult {
+  error: String
+  result: String
+}
+
+type AssessmentStateResult {
+  error: String
+  result: AssessmentState
+}
+
 type Query {
   appointments(day: String, timezone: String = "+0800"): [Appointment]
   patient(id: ID!): Patient
 }
 
 type Mutation {
-  createFootAssessment(params:FootAssessmentInput, stringifiedInput:String): FootAssessment!
+  createFootAssessment(payload: String!): StringResult!
   createEvent(payload: String!): Boolean!
-  savePhoto(patientId: ID!, data: String!, context: PHOTO_CONTEXT!, notes: String): Boolean!
+  savePhoto(
+    patientId: ID!,
+    data: String!,
+    context: PHOTO_CONTEXT!,
+    notes: String
+  ): Boolean!
 
-  setFootAssessmentCompleteFlag(_id: ID): Boolean!
+  setAssessmentState(
+    patientId: ID!,
+    assessment: Assessment!,
+    state: AssessmentState!
+  ): AssessmentStateResult!
+
   signInPatient(patientId: ID!): SignInEvent
   signOutPatient(patientId: ID!): SignInEvent
 }

@@ -1,5 +1,6 @@
 import freshId from 'fresh-id'
 import moment = require('moment')
+import { parse, stringify } from 'date-aware-json'
 import { ObjectID } from 'mongodb'
 import { uploadBase64Img } from './ks3'
 
@@ -151,6 +152,91 @@ export const resolverMap = {
       }
       const { result } = await db.collection('photo').insert(photo)
       return result.nInserted === 1
+    },
+    async createFootAssessment(_, args, { db }) {
+      const { record } = parse(args.payload)
+      const { _id: recordId } = record
+
+      const result = await db
+        .collection('footAssessment')
+        .findOneAndUpdate(
+        { _id: recordId },
+        record,
+        { upsert: true },
+      )
+
+      if (result.ok) {
+        return {
+          error: null,
+          result: stringify(result.value),
+        }
+      }
+      return {
+        error: 'An error occurred',
+        result: null,
+      }
+    },
+    async setAssessmentState(_, args, { db }) {
+      const { patientId, assessment, state } = args
+
+      const oldAssesment = (() => {
+        switch (assessment) {
+          case 'FOOT': return 'footAt'
+          case 'BLOOD_VESSEL_CLOGGINESS': return 'footBloodAt'
+          default: throw new TypeError(`Unknown assessment type ${assessment}`)
+        }
+      })()
+      const oldState = (() => {
+        switch (state) {
+          case 'NOT_REQUIRED': return undefined
+          case 'WAITING': return false
+          case 'COMPLETED': return true
+          default: throw new TypeError(`Unknown assessment state ${state}`)
+        }
+      })()
+
+      const patient = await db
+        .collection('users')
+        .findOne({ _id: ObjectID.createFromHexString(patientId) })
+
+      const latestTreatmentStateId = patient.latestTSID
+      if (!latestTreatmentStateId) {
+        return {
+          error: `patient.latestTSID is ${patient.latestTSID}`,
+          result: null,
+        }
+      }
+      const treatmentState = await db
+        .collection('treatmentState')
+        .findOne({ _id: latestTreatmentStateId })
+      if (!treatmentState) {
+        return {
+          error: `Can't find TreatmentState with id ${latestTreatmentStateId}`,
+          result: null,
+        }
+      }
+
+      const { result } = await db
+        .collection('treatmentState')
+        .update(
+        { _id: latestTreatmentStateId },
+        {
+          $set: {
+            [oldAssesment]: oldState,
+          },
+        },
+      )
+
+      if (result.ok) {
+        return {
+          error: null,
+          result: state,
+        }
+      }
+      return {
+        error: JSON.stringify(result.writeConcernError),
+        result: null,
+      }
     },
     async signInPatient(_, args, { db }) {
       const { patientId } = args
