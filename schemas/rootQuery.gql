@@ -20,6 +20,12 @@ type Query {
 
 type Mutation {
   createFootAssessment(payload: String!): StringResult!
+  setAssessmentState(
+    patientId: ID!,
+    assessment: Assessment!,
+    state: AssessmentState!
+  ): AssessmentStateResult!
+
   createEvent(payload: String!): Boolean!
   savePhoto(
     patientId: ID!,
@@ -27,12 +33,6 @@ type Mutation {
     context: PHOTO_CONTEXT!,
     notes: String
   ): Boolean!
-
-  setAssessmentState(
-    patientId: ID!,
-    assessment: Assessment!,
-    state: AssessmentState!
-  ): AssessmentStateResult!
 
   signInPatient(patientId: ID!): SignInEvent
   signOutPatient(patientId: ID!): SignInEvent
