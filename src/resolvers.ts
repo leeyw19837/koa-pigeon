@@ -141,16 +141,19 @@ export const resolverMap = {
     },
     async savePhoto(_, args, { db }) {
       const { patientId, data, context, notes } = args
+      console.log(args)
       const photoUrlKey = `${patientId}${Date.now()}`
       const url = await uploadBase64Img(photoUrlKey, data)
+      console.log(url)
       const photo = {
         patientId,
         url,
-        owner: context,
-        note: notes,
+        owner: context || '',
+        note: notes || '',
         createdAt: new Date(),
       }
       const { result } = await db.collection('photo').insert(photo)
+      console.log(result)
       return !!result.ok
     },
     async createFootAssessment(_, args, { db }) {
