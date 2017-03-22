@@ -154,7 +154,7 @@ export const resolverMap = {
       return result.nInserted === 1
     },
     async createFootAssessment(_, args, { db }) {
-      const { record } = parse(args.payload)
+      const record = parse(args.payload)
       const { _id: recordId } = record
 
       const result = await db
