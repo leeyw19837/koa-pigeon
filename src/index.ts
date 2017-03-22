@@ -25,7 +25,7 @@ MongoClient.connect(process.env.MONGODB_URL)
       graphiql: true,
       formatError: error => {
         console.error(error)
-        return error
+        throw error
       },
     })))
 
