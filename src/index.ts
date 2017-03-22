@@ -26,7 +26,10 @@ MongoClient.connect(process.env.MONGODB_URL)
       schema,
       graphiql: true,
       formatError: error => {
+        console.error(`-------- ERROR ${new Date()} --------`)
         console.error(error)
+        console.error(JSON.stringify(error))
+        console.error(`----------------------------------------`)
         throw error
       },
     })))
