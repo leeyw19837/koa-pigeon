@@ -151,7 +151,7 @@ export const resolverMap = {
         createdAt: new Date(),
       }
       const { result } = await db.collection('photo').insert(photo)
-      return result.nInserted === 1
+      return !!result.ok
     },
     async createFootAssessment(_, args, { db }) {
       const record = parse(args.payload)
