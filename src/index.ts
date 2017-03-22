@@ -8,6 +8,8 @@ import { MongoClient } from 'mongodb'
 import { resolverMap } from './resolvers'
 
 
+const PORT = 3080
+
 const app = new Koa()
 const router = new Router()
 const schemasText = fs.readdirSync('./schemas/').map(fileName => fs.readFileSync(`./schemas/${fileName}`, 'utf-8'))
@@ -31,5 +33,6 @@ MongoClient.connect(process.env.MONGODB_URL)
 
     app.use(router.routes()).use(router.allowedMethods())
 
-    app.listen(3080)
+    console.log(`Running at ${PORT}`)
+    app.listen(PORT)
   })

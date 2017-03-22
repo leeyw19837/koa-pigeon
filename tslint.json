@@ -17,6 +17,7 @@
     "prefer-const": true,
     "cyclomatic-complexity": [true, 20],
     "max-file-line-count": [true, 300],
-    "no-consecutive-blank-lines": [true, 2]
+    "no-consecutive-blank-lines": [true, 2],
+    "no-console": [false]
   }
 }
