@@ -141,19 +141,25 @@ export const resolverMap = {
     },
     async savePhoto(_, args, { db }) {
       const { patientId, data, context, notes } = args
-      console.log(args)
+
       const photoUrlKey = `${patientId}${Date.now()}`
       const url = await uploadBase64Img(photoUrlKey, data)
-      console.log(url)
+
+      const oldContext = (() => {
+        switch (context) {
+          case 'FOOT_ASSESSMENT': return 'footAssessment'
+          default: throw new TypeError(`Unknown context ${context}`)
+        }
+      })()
+
       const photo = {
         patientId,
         url,
-        owner: context || '',
+        owner: oldContext || '',
         note: notes || '',
         createdAt: new Date(),
       }
-      const { result } = await db.collection('photo').insert(photo)
-      console.log(result)
+      const { result } = await db.collection('photos').insert(photo)
       return !!result.ok
     },
     async createFootAssessment(_, args, { db }) {
