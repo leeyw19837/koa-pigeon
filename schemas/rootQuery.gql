@@ -35,5 +35,5 @@ type Mutation {
   ): Boolean!
 
   signInPatient(patientId: ID!): SignInEvent
-  signOutPatient(patientId: ID!): SignInEvent
+  signOutPatient(patientId: ID!): SignOutRes
 }

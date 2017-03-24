@@ -1,4 +1,9 @@
 type SignInEvent {
+  eventRes: SignEvt
+  checkInRes: Boolean
+}
+
+type SignEvt {
   patientId: ID
   patientName: String
   createdAt: String
@@ -14,6 +19,5 @@ type TreatmentStateEvent {
 }
 
 type SignOutRes {
-  eventRes: SignInEvent
-  checkInRes: TreatmentStateEvent
+  isSignedOut: Boolean
 }

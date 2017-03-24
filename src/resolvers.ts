@@ -248,24 +248,45 @@ export const resolverMap = {
     },
     async signInPatient(_, args, { db }) {
       const { patientId } = args
-      const isExists = await db.collection('event').findOne({
+      const StartOfDay = moment().startOf('day').toDate()
+      const EndOfDay = moment().endOf('day').toDate()
+      const evtExists = await db.collection('event').findOne({
         patientId,
+        createdAt: { $gte: StartOfDay, $lt: EndOfDay },
         type: 'attendence/signIn',
         isSignedOut: false,
       })
-      if (!isExists) {
+      const treatmentStateExists = await db.collection('treatmentState').findOne({
+        patientId,
+        appointmentTime: { $gte: StartOfDay, $lt: EndOfDay },
+      })
+      // console.log({StartOfDay, evtExists, treatmentStateExists})
+      if (!evtExists && treatmentStateExists) {
         const modifyResult = await db.collection('event').insert({
           patientId,
           createdAt: new Date(),
           type: 'attendence/signIn',
           isSignedOut: false,
         })
-        return modifyResult.ops[0]
+        // Mark attendence on treatmentState
+
+        const treatmentStateModifyRes = await db.collection('treatmentState').update({
+          patientId,
+          appointmentTime: { $gte: StartOfDay, $lt: EndOfDay },
+        }, {
+          $set: {
+            checkIn: true,
+          },
+        })
+        return {
+          eventRes: modifyResult.ops[0],
+          checkInRes: treatmentStateModifyRes.result.ok,
+        }
       } else return
     },
     async signOutPatient(_, args, { db }) {
       const { patientId } = args
-      const eventRes = await db.collection('event').update({
+      const modifyResult = await db.collection('event').update({
         patientId,
         type: 'attendence/signIn',
         isSignedOut: false,
@@ -275,21 +296,7 @@ export const resolverMap = {
             isSignedOut: true,
           },
         })
-
-      const StartOfDay = moment().startOf('day').toDate()
-      const EndOfDay = moment().endOf('day').toDate()
-      const checkInRes = await db.collection('treatmentState').update({
-        patientId,
-        appointmentTime: { $gte: StartOfDay, $lt: EndOfDay }
-      }, {
-        $set: {
-            checkIn: true,
-        },
-      })
-      return {
-        eventRes,
-        checkInRes,
-      }
+      return {isSignedOut: modifyResult.result.ok}
     },
   },
 }

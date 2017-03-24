@@ -19,7 +19,8 @@ const schema = makeExecutableSchema({
   typeDefs: schemasText,
 })
 
-const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@120.131.8.26:27017/paper-king-developing'
+const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://paperKingDevelopingByiHea' +
+  'lth:d3Wrg40dE@120.131.8.26:27017/paper-king-developing'
 const SECRET = process.env.SECRET || 'graphql'
 
 MongoClient.connect(MONGODB_URL)
