@@ -5,3 +5,15 @@ type SignInEvent {
   isSignedOut: Boolean
   type: String
 }
+
+type TreatmentStateEvent {
+  _id: ID
+  patientId: ID
+  appointmentTime: String
+  checkIn: Boolean
+}
+
+type SignOutRes {
+  eventRes: SignInEvent
+  checkInRes: TreatmentStateEvent
+}

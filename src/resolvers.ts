@@ -4,7 +4,6 @@ import { parse, stringify } from 'date-aware-json'
 import { ObjectID } from 'mongodb'
 import { uploadBase64Img } from './ks3'
 
-
 export const resolverMap = {
   Appointment: {
     date: app => app.appointmentTime,
@@ -266,7 +265,7 @@ export const resolverMap = {
     },
     async signOutPatient(_, args, { db }) {
       const { patientId } = args
-      const modifyResult = await db.collection('event').update({
+      const eventRes = await db.collection('event').update({
         patientId,
         type: 'attendence/signIn',
         isSignedOut: false,
@@ -276,7 +275,21 @@ export const resolverMap = {
             isSignedOut: true,
           },
         })
-      return modifyResult.ok
+
+      const StartOfDay = moment().startOf('day').toDate()
+      const EndOfDay = moment().endOf('day').toDate()
+      const checkInRes = await db.collection('treatmentState').update({
+        patientId,
+        appointmentTime: { $gte: StartOfDay, $lt: EndOfDay }
+      }, {
+        $set: {
+            checkIn: true,
+        },
+      })
+      return {
+        eventRes,
+        checkInRes,
+      }
     },
   },
 }

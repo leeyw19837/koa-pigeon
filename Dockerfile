@@ -5,4 +5,6 @@ COPY package.json .
 RUN yarn install --production --no-progress
 COPY . .
 RUN yarn build
+RUN echo "Asia/Shanghai" > /etc/timezone
+RUN dpkg-reconfigure -f noninteractive tzdata
 CMD [ "node", "dist/index.js" ]
