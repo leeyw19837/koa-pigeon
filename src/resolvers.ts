@@ -3,6 +3,7 @@ import moment = require('moment')
 import { parse, stringify } from 'date-aware-json'
 import { ObjectID } from 'mongodb'
 import { uploadBase64Img } from './ks3'
+import { log } from './logging'
 
 export const resolverMap = {
   Appointment: {
@@ -79,12 +80,12 @@ export const resolverMap = {
 
   },
   Query: {
-    async patient(_, args, { db }) {
+    patient: log('Query.patient', async (_, args, { db }) => {
       return db
         .collection('users')
         .findOne({ _id: ObjectID.createFromHexString(args.id) })
-    },
-    async appointments(_, args, { db }) {
+    }),
+    appointments: log('Query.appointments', async (_, args, { db }) => {
       let query = {}
 
       if (args.day) {
@@ -110,7 +111,7 @@ export const resolverMap = {
         .toArray()
 
       return oldStyleAppointments.filter(a => a.patientId)
-    },
+    }),
   },
   Mutation: {
     // NOTE: accepts type and string
