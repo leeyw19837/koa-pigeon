@@ -165,13 +165,23 @@ export default {
         patientId,
         appointmentTime: { $gte: StartOfDay, $lt: EndOfDay },
       }, {
-          $set: {
-            checkIn: true,
-          },
-        })
+        $set: {
+          checkIn: true,
+        },
+      })
+
+      const setIsDonee = await db.collection('users').update({
+        _id: new ObjectID(patientId),
+      }, {
+        $set: {
+          isDonee: true,
+        },
+      })
+
       return {
         eventRes: modifyResult.ops[0],
         checkInRes: treatmentStateModifyRes.result.ok,
+        setIsDonee: setIsDonee.result.ok,
       }
     } else return
   }),
@@ -182,11 +192,12 @@ export default {
       type: 'attendence/signIn',
       isSignedOut: false,
     }, {
-        $set: {
-          signOutAt: new Date(),
-          isSignedOut: true,
-        },
-      })
-    return { isSignedOut: modifyResult.result.ok }
+      $set: {
+        signOutAt: new Date(),
+        isSignedOut: true,
+      },
+    })
+    return {isSignedOut: modifyResult.result.ok}
   }),
+
 }
