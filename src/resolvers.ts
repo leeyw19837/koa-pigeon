@@ -76,7 +76,6 @@ export const resolverMap = {
       }
     },
     notes: ts => ts.note,
-
   },
   Query: {
     async patient(_, args, { db }) {
@@ -86,7 +85,6 @@ export const resolverMap = {
     },
     async appointments(_, args, { db }) {
       let query = {}
-
       if (args.day) {
         const startOfDay = moment(args.day)
           .utcOffset(args.timezone)
@@ -113,20 +111,6 @@ export const resolverMap = {
     },
   },
   Mutation: {
-    // NOTE: accepts type and string
-    // async createFootAssessment(_, args, { db }) {
-    //   let fa = args.params
-    //   if (args.stringifiedInput) fa = JSON.parse(args.stringifiedInput)
-    //   console.log(args)
-    //   const assessment = {
-    //     _id: freshId(17),
-    //     medicalHistory: fa.medicalHistory,
-    //     // TODO: convert the new style
-    // json into old and save to the database OR switch to another table OR change database?
-    //   }
-    //   console.log(assessment)
-    //   return assessment
-    // },
     async createEvent(_, args, { db }) {
       const event = {
         _id: freshId(17),
@@ -200,7 +184,6 @@ export const resolverMap = {
           default: throw new TypeError(`Unknown assessment state ${state}`)
         }
       })()
-
       const patient = await db
         .collection('users')
         .findOne({ _id: ObjectID.createFromHexString(patientId) })
@@ -231,7 +214,6 @@ export const resolverMap = {
           },
         },
       )
-
       if (result.ok) {
         return {
           error: null,
@@ -266,7 +248,6 @@ export const resolverMap = {
           isSignedOut: false,
         })
         // Mark attendence on treatmentState
-
         const treatmentStateModifyRes = await db.collection('treatmentState').update({
           patientId,
           appointmentTime: { $gte: StartOfDay, $lt: EndOfDay },
@@ -275,7 +256,6 @@ export const resolverMap = {
             checkIn: true,
           },
         })
-
         const setDoneeRes = await db.collection('users').update({
           _id: patientId,
         }, {
@@ -283,7 +263,6 @@ export const resolverMap = {
             isDonee: true,
           },
         })
-
         return {
           eventRes: modifyResult.ops[0],
           checkInRes: treatmentStateModifyRes.result.ok,
