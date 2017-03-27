@@ -104,7 +104,6 @@ export const resolverMap = {
           },
         }
       }
-
       const oldStyleAppointments = await db
         .collection('appointments')
         .find(query)
@@ -150,7 +149,6 @@ export const resolverMap = {
           default: throw new TypeError(`Unknown context ${context}`)
         }
       })()
-
       const photo = {
         patientId,
         url,
@@ -223,7 +221,6 @@ export const resolverMap = {
           result: null,
         }
       }
-
       const { result } = await db
         .collection('treatmentState')
         .update(
