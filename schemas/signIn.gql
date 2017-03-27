@@ -1,6 +1,7 @@
 type SignInEvent {
   eventRes: SignEvt
   checkInRes: Boolean
+  setDoneeRes: Boolean
 }
 
 type SignEvt {

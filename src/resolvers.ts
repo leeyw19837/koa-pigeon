@@ -275,9 +275,19 @@ export const resolverMap = {
             checkIn: true,
           },
         })
+
+        const setDoneeRes = await db.collection('users').update({
+          _id: patientId,
+        }, {
+          $set: {
+            isDonee: true,
+          },
+        })
+
         return {
           eventRes: modifyResult.ops[0],
           checkInRes: treatmentStateModifyRes.result.ok,
+          setDoneeRes: setDoneeRes.result.ok,
         }
       } else return
     },
