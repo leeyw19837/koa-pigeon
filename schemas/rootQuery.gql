@@ -34,6 +34,6 @@ type Mutation {
     notes: String
   ): Boolean!
 
-  signInPatient(patientId: ID!): SignInEvent
-  signOutPatient(patientId: ID!): SignOutRes
+  signInPatient(patientId: String!): SignInEvent
+  signOutPatient(patientId: String!): SignOutRes
 }
