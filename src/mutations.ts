@@ -3,6 +3,7 @@ import freshId from 'fresh-id'
 import { ObjectID } from 'mongodb'
 import { uploadBase64Img } from './ks3'
 import moment = require('moment')
+import { log } from './logging'
 
 
 export default {
@@ -20,7 +21,7 @@ export default {
   //   console.log(assessment)
   //   return assessment
   // },
-  async createEvent(_, args, { db }) {
+  createEvent: log('Mutation.createEvent', async (_, args, { db }) => {
     const event = {
       _id: freshId(17),
       createdAt: new Date(),
@@ -29,8 +30,8 @@ export default {
     }
     const { result } = await db.collection('event').insert(event)
     return result.nInserted === 1
-  },
-  async savePhoto(_, args, { db }) {
+  }),
+  savePhoto: log('Mutation.savePhoto', async (_, args, { db }) => {
     const { patientId, data, context, notes } = args
 
     const photoUrlKey = `${patientId}${Date.now()}`
@@ -51,8 +52,8 @@ export default {
     }
     const { result } = await db.collection('photos').insert(photo)
     return !!result.ok
-  },
-  async createFootAssessment(_, args, { db }) {
+  }),
+  createFootAssessment: log('Mutation.createFootAssessment', async (_, args, { db }) => {
     const record = parse(args.payload)
     const { _id: recordId } = record
 
@@ -74,8 +75,8 @@ export default {
       error: 'An error occurred',
       result: null,
     }
-  },
-  async setAssessmentState(_, args, { db }) {
+  }),
+  setAssessmentState: log('Mutation.setAssessmentState', async (_, args, { db }) => {
     const { patientId, assessment, state } = args
 
     const oldAssesment = (() => {
@@ -135,8 +136,8 @@ export default {
       error: JSON.stringify(result.writeConcernError),
       result: null,
     }
-  },
-  async signInPatient(_, args, { db }) {
+  }),
+  signInPatient: log('Mutation.signInPatient', async (_, args, { db }) => {
     const { patientId } = args
     const StartOfDay = moment().startOf('day').toDate()
     const EndOfDay = moment().endOf('day').toDate()
@@ -173,8 +174,8 @@ export default {
         checkInRes: treatmentStateModifyRes.result.ok,
       }
     } else return
-  },
-  async signOutPatient(_, args, { db }) {
+  }),
+  signOutPatient: log('Mutation.signOutPatient', async (_, args, { db }) => {
     const { patientId } = args
     const modifyResult = await db.collection('event').update({
       patientId,
@@ -187,5 +188,5 @@ export default {
         },
       })
     return { isSignedOut: modifyResult.result.ok }
-  },
+  }),
 }
