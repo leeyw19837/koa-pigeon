@@ -151,7 +151,7 @@ export default {
       patientId,
       appointmentTime: { $gte: StartOfDay, $lt: EndOfDay },
     })
-    // console.log({StartOfDay, evtExists, treatmentStateExists})
+    console.log({treatmentStateExists})
     if (!evtExists && treatmentStateExists) {
       const modifyResult = await db.collection('event').insert({
         patientId,
@@ -184,6 +184,7 @@ export default {
       }, {
         $set: {
           isDonee: true,
+          latestTSID: treatmentStateExists._id,
         },
       })
 
