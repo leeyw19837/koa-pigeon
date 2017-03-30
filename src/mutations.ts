@@ -61,7 +61,10 @@ export default {
       .collection('footAssessment')
       .findOneAndUpdate(
       { _id: recordId },
-      record,
+      {
+        ...record,
+        createdAt: record.createdAt || new Date(),
+      },
       { upsert: true },
     )
 
@@ -99,8 +102,10 @@ export default {
       .collection('users')
       .findOne({ _id: ObjectID.createFromHexString(patientId) })
 
+    console.log(patient)
     const latestTreatmentStateId = patient.latestTSID
     if (!latestTreatmentStateId) {
+      console.error('latestTreatmentStateId is falsy')
       return {
         error: `patient.latestTSID is ${patient.latestTSID}`,
         result: null,
