@@ -166,18 +166,18 @@ export default {
         appointmentTime: { $gte: StartOfDay, $lt: EndOfDay },
       }, {
         $set: {
-          checkIn: true,
+          app: true,
         },
       })
 
-      const appointmentModifyRes = await db.collection('appointments').update({
+      /* const appointmentModifyRes = await db.collection('appointments').update({
         patientId,
         appointmentTime: { $gte: StartOfDay, $lt: EndOfDay },
       }, {
         $set: {
           isOutPatient: true,
         },
-      })
+      }) */
 
       const setIsDonee = await db.collection('users').update({
         _id: new ObjectID(patientId),
@@ -190,7 +190,7 @@ export default {
 
       return {
         eventRes: modifyResult.ops[0],
-        checkInRes: treatmentStateModifyRes.result.ok && appointmentModifyRes.result.ok,
+        checkInRes: treatmentStateModifyRes.result.ok,
         setIsDonee: setIsDonee.result.ok,
       }
     } else return
