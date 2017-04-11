@@ -1,17 +1,4 @@
-enum AssessmentState {
-  NOT_REQUIRED
-  WAITING
-  COMPLETED
-}
-
-enum Assessment {
-  FOOT
-  BLOOD_VESSEL_CLOGGINESS
-}
-
 type TreatmentState {
   patient: Patient!
-  footAssessmentState: AssessmentState!
-  #bloodVesselClogginessAssessmentState: AssessmentState!
-  notes: String
+  footAt: Boolean
 }

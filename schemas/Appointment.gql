@@ -1,6 +1,0 @@
-type Appointment {
-  date: String!
-  patient: Patient!
-  needsFootAssessment: Boolean!
-  treatmentState: TreatmentState
-}

@@ -1,8 +1,4 @@
-enum PHOTO_CONTEXT {
-  FOOT_ASSESSMENT
-}
-
 type Photo {
   url: String!
-  notes: String
+  note: String
 }

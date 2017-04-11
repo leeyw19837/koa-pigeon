@@ -1,0 +1,24 @@
+type Query {
+  treatmentStates(day: String, timezone: String = "+0800"): [TreatmentState!]!
+  photos(patientId: ID!): [Photo!]!
+}
+
+type Mutation {
+  createFootAssessment(payload: String!): String!
+
+  savePhoto(
+    patientId: ID!,
+    data: String!,
+    owner: String!,
+  ): Boolean!
+
+  signInPatient(patientId: String!): SignInEvent
+  signOutPatient(patientId: String!): SignOutRes
+
+  createEvent(payload: String!): Boolean!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
