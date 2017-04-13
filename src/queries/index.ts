@@ -1,7 +1,7 @@
-import patient from './patient'
+import photos from './photos'
 import treatmentStates from './treatmentStates'
 
 export default {
   treatmentStates,
-  patient,
+  photos,
 }

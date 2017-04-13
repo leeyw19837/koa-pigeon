@@ -1,6 +1,6 @@
 type Query {
   treatmentStates(day: String, timezone: String = "+0800"): [TreatmentState!]!
-  photos(patientId: ID!): [Photo!]!
+  photos(patientId: ID!, owner: String!): [Photo!]!
 }
 
 type Mutation {

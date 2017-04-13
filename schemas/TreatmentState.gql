@@ -1,4 +1,5 @@
 type TreatmentState {
   patient: Patient!
   footAt: Boolean
+  footBloodAt: Boolean
 }
