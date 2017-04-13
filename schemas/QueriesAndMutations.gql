@@ -1,10 +1,29 @@
 type Query {
-  treatmentStates(day: String, timezone: String = "+0800"): [TreatmentState!]!
+  footAssessment(
+    patientId: ID!,
+    day: String!,
+    timezone: String = "+0800"
+  ): FootAssessment!
+
+  treatmentStates(
+    day: String,
+    timezone: String = "+0800"
+  ): [TreatmentState!]!
+
   photos(patientId: ID!, owner: String!): [Photo!]!
 }
 
 type Mutation {
-  createFootAssessment(payload: String!): String!
+  saveFootAssessment(
+    _id: String!,
+    updatedAtString: String!,
+    assessmentDetailsJson: String!
+  ): String!
+
+  setAssessmentState(
+    patientId: string!
+    newState: Boolean
+  ): String!
 
   savePhoto(
     patientId: ID!,

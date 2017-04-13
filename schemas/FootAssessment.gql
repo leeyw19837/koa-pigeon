@@ -1,0 +1,5 @@
+type FootAssessment {
+  _id: ID!
+  patientId: ID!
+  assessmentDetailsJson: String!
+}

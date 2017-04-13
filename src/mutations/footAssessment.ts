@@ -1,31 +1,29 @@
-import { parse, stringify } from 'date-aware-json'
-
-
 export default {
-  createFootAssessment: async (_, args, { db }) => {
-    const record = parse(args.payload)
-    const { _id: recordId } = record
+  saveFootAssessment: async (_, args, { db }) => {
 
-    const result = await db
-      .collection('footAssessment')
-      .findOneAndUpdate(
-      { _id: recordId },
-      {
-        ...record,
-        createdAt: record.createdAt || new Date(),
-      },
-      { upsert: true },
-    )
+  //   const record = parse(args.payload)
+  //   const { _id: recordId } = record
 
-    if (result.ok) {
-      return {
-        error: null,
-        result: stringify(result.value),
-      }
-    }
-    return {
-      error: 'An error occurred',
-      result: null,
-    }
-  },
+  //   const result = await db
+  //     .collection('footAssessment')
+  //     .findOneAndUpdate(
+  //     { _id: recordId },
+  //     {
+  //       ...record,
+  //       createdAt: record.createdAt || new Date(),
+  //     },
+  //     { upsert: true },
+  //   )
+
+  //   if (result.ok) {
+  //     return {
+  //       error: null,
+  //       result: stringify(result.value),
+  //     }
+  //   }
+  //   return {
+  //     error: 'An error occurred',
+  //     result: null,
+  //   }
+  // },
 }

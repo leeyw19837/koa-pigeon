@@ -9,6 +9,7 @@ import { MongoClient } from 'mongodb'
 import Mutation from './mutations'
 import Query from './queries'
 import resolvers from './resolvers'
+import formatError from './utils/formatError'
 
 
 const resolverMap = {
@@ -41,13 +42,7 @@ MongoClient.connect(MONGODB_URL).then(db => {
     context: { db },
     schema,
     graphiql: true,
-    formatError: error => {
-      console.error(`-------- ERROR ${new Date()} --------`)
-      console.error(error)
-      console.error(JSON.stringify(error))
-      console.error(`----------------------------------------`)
-      throw error
-    },
+    formatError,
   })))
 
   app

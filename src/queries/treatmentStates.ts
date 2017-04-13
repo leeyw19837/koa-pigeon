@@ -1,7 +1,8 @@
 import moment = require('moment')
+import { Db } from 'mongodb'
 
 
-export default async (_, args, { db }) => {
+export default async (_, args, { db }: { db: Db }) => {
   let query = {}
 
   if (args.day) {

@@ -1,4 +1,5 @@
 type TreatmentState {
+  _id: ID!
   patient: Patient!
   footAt: Boolean
   footBloodAt: Boolean
