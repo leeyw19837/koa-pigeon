@@ -51,4 +51,4 @@ MongoClient.connect(MONGODB_URL).then(db => {
 
   console.log(`Running at ${PORT}`)
   app.listen(PORT)
-})
+}).catch(error => console.error(`Error: ${JSON.stringify(error)}`))

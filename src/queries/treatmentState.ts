@@ -16,16 +16,14 @@ export default async (_, args, { db }: { db: Db }) => {
       .toDate()
 
     query = {
+      patientId: args.patientId,
       appointmentTime: {
         $gte: startOfDay,
         $lt: endOfDay,
       },
     }
   }
-  const treatmentStates = await db
+  return await db
     .collection('treatmentState')
-    .find(query)
-    .toArray()
-
-  return treatmentStates
+    .findOne(query)
 }

@@ -5,6 +5,12 @@ type Query {
     timezone: String = "+0800"
   ): FootAssessment!
 
+  treatmentState(
+    patientId: ID!,
+    day: String,
+    timezone: String = "+0800"
+  ): TreatmentState!
+
   treatmentStates(
     day: String,
     timezone: String = "+0800"
@@ -15,15 +21,12 @@ type Query {
 
 type Mutation {
   saveFootAssessment(
-    _id: String!,
+    recordId: ID!,
     updatedAtString: String!,
-    assessmentDetailsJson: String!
-  ): String!
-
-  setAssessmentState(
-    patientId: string!
-    newState: Boolean
-  ): String!
+    assessmentDetailsJson: String!,
+    treatmentStateId: ID!,
+    footBloodAt: Boolean
+  ): String
 
   savePhoto(
     patientId: ID!,
