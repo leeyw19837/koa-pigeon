@@ -32,6 +32,7 @@ type Mutation {
     patientId: ID!,
     data: String!,
     owner: String!,
+    note: String!
   ): Boolean!
 
   signInPatient(patientId: String!): SignInEvent
