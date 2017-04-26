@@ -5,6 +5,7 @@ const graphqlHTTP = require('koa-graphql')
 import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 import { MongoClient } from 'mongodb'
+const cors = require('koa-cors')
 
 import Mutation from './mutations'
 import Query from './queries'
@@ -32,6 +33,8 @@ const schema = makeExecutableSchema({
 const PORT = 3080
 
 const app = new Koa()
+app.use(cors())
+
 const router = new Router()
 
 const MONGODB_URL = process.env.MONGODB_URL
