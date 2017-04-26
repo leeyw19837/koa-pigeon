@@ -5,6 +5,10 @@ type Query {
     timezone: String = "+0800"
   ): FootAssessment!
 
+  footAssessments(
+    patientId: ID!  
+  ): [FootAssessment!]!
+
   treatmentState(
     patientId: ID!,
     day: String,

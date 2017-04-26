@@ -32,6 +32,7 @@ export default async (_, args, { db }: { db: Db }) => {
     return {
       _id: existingFootAssessment._id,
       patientId: existingFootAssessment.patientId,
+      createdAt: existingFootAssessment.createdAt.toString(),
       assessmentDetailsJson: JSON.stringify({
         medicalHistory: existingFootAssessment.medicalHistory,
         skinConditions: existingFootAssessment.skinConditions,
