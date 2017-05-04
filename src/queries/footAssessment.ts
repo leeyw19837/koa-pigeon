@@ -62,6 +62,14 @@ export default async (_, args, { db }: { db: Db }) => {
   }
 
   await db.collection('footAssessment').insert(newFootAssessment)
+  try {
+    await db.collection('event').insert({
+      eventType: 'CREATE_NEW_FOOT_ASSESSMENT',
+      recordId: newFootAssessment._id,
+      patientId: args.patientId,
+      createdAt: new Date(args.nowString),
+    })
+  } catch (e) { ; }
 
   return {
     _id: newFootAssessment._id,

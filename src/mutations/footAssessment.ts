@@ -47,6 +47,15 @@ export default {
       return `Error updating treatmentState: ${JSON.stringify(treatmentStateResult.lastErrorObject)}`
     }
 
+    try {
+      await db.collection('event').insert({
+        eventType: 'SAVE_FOOT_ASSESSMENT',
+        recordId,
+        patientId: treatmentState.patientId,
+        createdAt: new Date(updatedAtString),
+      })
+    } catch (e) { ; }
+
     return null
   },
 }
