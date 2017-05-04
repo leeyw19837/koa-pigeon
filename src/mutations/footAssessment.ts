@@ -49,7 +49,7 @@ export default {
 
     try {
       await db.collection('event').insert({
-        eventType: 'SAVE_FOOT_ASSESSMENT',
+        type: 'SAVE_FOOT_ASSESSMENT',
         recordId,
         patientId: treatmentState.patientId,
         createdAt: new Date(updatedAtString),
