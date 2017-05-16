@@ -43,7 +43,12 @@ type Mutation {
   signInPatient(patientId: String!): SignInEvent
   signOutPatient(patientId: String!): SignOutRes
 
-  createEvent(payload: String!): Boolean!
+  saveAssessmentTimes(
+    treatmentStateId: String!,
+    role: String!,
+    startAtString: String!,
+    stopAtString: String!
+  ): Boolean!
 }
 
 schema {

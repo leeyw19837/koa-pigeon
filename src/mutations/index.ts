@@ -1,11 +1,11 @@
-import events from './events'
+import assessmentTimes from './assessmentTimes'
 import footAssessment from './footAssessment'
 import photos from './photos'
 import signingInAndOut from './signingInAndOut'
 
 export default {
-  ...events,
   ...footAssessment,
   ...photos,
   ...signingInAndOut,
+  ...assessmentTimes,
 }
