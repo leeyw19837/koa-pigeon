@@ -33,7 +33,7 @@ const schema = makeExecutableSchema({
 const PORT = 3080
 
 const app = new Koa()
-app.use(cors())
+app.use(convert(cors()))
 
 const router = new Router()
 
