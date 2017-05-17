@@ -30,8 +30,20 @@ export default async (_, args, { db }: { db: Db }) => {
         year, month, day,
       },
       averageAssessmentTimeInMins,
-    }) => ({
-      x: `${year}-${month}-${day}`,
-      y: averageAssessmentTimeInMins,
-    }))
+    }) => {
+      let twoDigitMonths = String(month)
+      if (twoDigitMonths.length === 1) {
+        twoDigitMonths = `0${twoDigitMonths}`
+      }
+
+      let twoDigitDays = String(day)
+      if (twoDigitDays.length === 1) {
+        twoDigitDays = `0${twoDigitDays}`
+      }
+
+      return {
+        x: Number(`${year}${twoDigitMonths}${twoDigitDays}`),
+        y: Math.round(averageAssessmentTimeInMins),
+      }
+    })
 }

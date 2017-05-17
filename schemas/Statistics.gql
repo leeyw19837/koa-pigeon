@@ -1,4 +1,4 @@
-type DataPointStringNumber {
-  x: String!
+type DataPointNumberNumber {
+  x: Float!
   y: Float!
 }

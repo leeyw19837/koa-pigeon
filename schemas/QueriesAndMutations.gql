@@ -24,7 +24,7 @@ type Query {
 
   photos(patientId: ID!, owner: String!): [Photo!]!
 
-  meanWaitingTimes: [DataPointStringNumber!]!
+  meanWaitingTimes: [DataPointNumberNumber!]!
 }
 
 type Mutation {
