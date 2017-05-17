@@ -1,0 +1,4 @@
+type DataPointStringNumber {
+  x: String!
+  y: Float!
+}
