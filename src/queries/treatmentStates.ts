@@ -2,7 +2,7 @@ import moment = require('moment')
 import { Db } from 'mongodb'
 
 
-export default async (_, args, { db }: { db: Db }) => {
+export const treatmentStates = async (_, args, { db }: { db: Db }) => {
   let query = {}
 
   if (args.day) {
@@ -22,10 +22,10 @@ export default async (_, args, { db }: { db: Db }) => {
       },
     }
   }
-  const treatmentStates = await db
+  const treatmentStateObjects = await db
     .collection('treatmentState')
     .find(query)
     .toArray()
 
-  return treatmentStates
+  return treatmentStateObjects
 }

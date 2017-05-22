@@ -1,4 +1,4 @@
-export default {
+export const Patient = {
   footAssessmentPhotos: async (patient, _, { db }) => {
     return db
       .collection('photos')

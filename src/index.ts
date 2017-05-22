@@ -7,17 +7,21 @@ import { makeExecutableSchema } from 'graphql-tools'
 import { MongoClient } from 'mongodb'
 const cors = require('koa-cors')
 
-import Mutation from './mutations'
-import Query from './queries'
-import resolvers from './resolvers'
+import * as Mutation from './mutations'
+import * as Query from './queries'
+import * as resolvers from './resolvers'
 import formatError from './utils/formatError'
 
+
+// This is necessary because otherwise, graphql-tools
+// looks for __esModule in the schema
+delete (resolvers as any).__esModule
 
 const resolverMap = {
   ...resolvers,
   Query,
   Mutation,
-}
+} as any // TODO(jan): Find a way to make this typed
 
 const schemasText = fs
   .readdirSync('./schemas/')

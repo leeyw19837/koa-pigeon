@@ -2,7 +2,8 @@ import { Db } from 'mongodb'
 import moment = require('moment')
 import freshId from 'fresh-id'
 
-export default async (_, args, { db }: { db: Db }) => {
+
+export const footAssessment = async (_, args, { db }: { db: Db }) => {
   let query = {}
 
   if (args.day) {

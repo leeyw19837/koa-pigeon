@@ -1,14 +1,14 @@
 import { Db } from 'mongodb'
 
 
-export default async (_, args, { db }: { db: Db }) => {
-  const footAssessments = await db
+export const footAssessments = async (_, args, { db }: { db: Db }) => {
+  const footAssessmentObjects = await db
     .collection('footAssessment')
     .find({ patientId: args.patientId })
     .sort({ createdAt: -1 })
     .toArray()
 
-  return footAssessments
+  return footAssessmentObjects
     .map(fa => ({
       _id: fa._id,
       patientId: fa.patientId,

@@ -1,7 +1,7 @@
 import { ObjectID } from 'mongodb'
 
 
-export default {
+export const TreatmentState = {
   patient: async (ts, _, { db }) => {
     const user = await db.collection('users')
       .findOne({ _id: ObjectID.createFromHexString(ts.patientId) })

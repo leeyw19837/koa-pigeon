@@ -2,7 +2,7 @@ import moment = require('moment')
 import { Db } from 'mongodb'
 
 
-export default async (_, args, { db }: { db: Db }) => {
+export const treatmentState = async (_, args, { db }: { db: Db }) => {
   let query = {}
 
   if (args.day) {
