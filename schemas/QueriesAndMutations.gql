@@ -43,9 +43,6 @@ type Mutation {
     note: String!
   ): Boolean!
 
-  signInPatient(patientId: String!): SignInEvent
-  signOutPatient(patientId: String!): SignOutRes
-
   saveAssessmentTimes(
     treatmentStateId: String!,
     role: String!,
