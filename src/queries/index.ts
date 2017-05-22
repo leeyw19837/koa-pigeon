@@ -1,6 +1,6 @@
 export * from './footAssessment'
 export * from './footAssessments'
-export * from './meanWaitingTimes'
 export * from './photos'
 export * from './treatmentState'
 export * from './treatmentStates'
+export * from './statistics'
