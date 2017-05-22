@@ -19,9 +19,12 @@ export default async (_, args, { db }: { db: Db }) => {
             month: { $month: '$appointmentTime' },
             day: { $dayOfMonth: '$appointmentTime' },
           },
-          averageAssessmentTimeInMins: { $avg: '$assessmentTimeInMins' },
+          assessmentTimesInMins: { $push: '$assessmentTimeInMins' },
         },
       },
+      { $match: { 'assessmentTimesInMins.4': { $exists: 1 } } },
+      { $unwind: '$assessmentTimesInMins' },
+      { $group: { _id: '$_id', averageAssessmentTimeInMins: { $avg: '$assessmentTimesInMins' } } },
       { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } },
     ]).toArray()
 
@@ -29,21 +32,21 @@ export default async (_, args, { db }: { db: Db }) => {
       _id: {
         year, month, day,
       },
-      averageAssessmentTimeInMins,
+    averageAssessmentTimeInMins,
     }) => {
-      let twoDigitMonths = String(month)
-      if (twoDigitMonths.length === 1) {
-        twoDigitMonths = `0${twoDigitMonths}`
-      }
+    let twoDigitMonths = String(month)
+    if (twoDigitMonths.length === 1) {
+      twoDigitMonths = `0${twoDigitMonths}`
+    }
 
-      let twoDigitDays = String(day)
-      if (twoDigitDays.length === 1) {
-        twoDigitDays = `0${twoDigitDays}`
-      }
+    let twoDigitDays = String(day)
+    if (twoDigitDays.length === 1) {
+      twoDigitDays = `0${twoDigitDays}`
+    }
 
-      return {
-        x: Number(`${year}${twoDigitMonths}${twoDigitDays}`),
-        y: Math.round(averageAssessmentTimeInMins),
-      }
-    })
+    return {
+      x: Number(`${year}${twoDigitMonths}${twoDigitDays}`),
+      y: Math.round(averageAssessmentTimeInMins),
+    }
+  })
 }
