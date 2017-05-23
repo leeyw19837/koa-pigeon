@@ -1,7 +1,7 @@
 import { Db } from 'mongodb'
 
 
-export const meanWaitingTimes = async (_, args, { db }: { db: Db }) => {
+export const totalTimeAtClinic = async (_, args, { db }: { db: Db }) => {
   const averages = await db
     .collection('treatmentState')
     .aggregate([

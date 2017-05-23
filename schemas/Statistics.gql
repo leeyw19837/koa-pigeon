@@ -2,3 +2,9 @@ type DataPointNumberNumber {
   x: Float!
   y: Float!
 }
+
+type DataPointNumberNumberStdDev {
+  x: Float!
+  y: Float!
+  stdDev: Float!
+}

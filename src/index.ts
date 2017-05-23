@@ -44,6 +44,11 @@ const router = new Router()
 const MONGODB_URL = process.env.MONGODB_URL
 const SECRET = process.env.SECRET
 
+if (MONGODB_URL === undefined) {
+  console.error('Run with `yarn docker:dev`!')
+  process.exit(-1)
+}
+
 MongoClient.connect(MONGODB_URL).then(db => {
   router.all(`/${SECRET}`, convert(graphqlHTTP({
     context: { db },

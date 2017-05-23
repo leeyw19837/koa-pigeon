@@ -1,1 +1,3 @@
-export * from './meanWaitingTimes'
+export * from './totalTimeAtClinic'
+export * from './timeBetweenAppointments'
+export * from './activePatients'

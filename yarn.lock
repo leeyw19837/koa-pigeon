@@ -52,13 +52,7 @@
     "@types/koa-compose" "*"
     "@types/node" "*"
 
-"@types/lodash.get@^4.4.1":
-  version "4.4.1"
-  resolved "http://registry.npm.taobao.org/@types/lodash.get/download/@types/lodash.get-4.4.1.tgz#06ff6f7b4060a4c4d00078637c6624f549c80884"
-  dependencies:
-    "@types/lodash" "*"
-
-"@types/lodash@*", "@types/lodash@^4.14.55":
+"@types/lodash@^4.14.55":
   version "4.14.55"
   resolved "http://r.cnpmjs.org/@types/lodash/download/@types/lodash-4.14.55.tgz#75d7d4eba020ee4103d4cbd0f2a3ef5db8f7534f"
 
@@ -353,6 +347,10 @@ commander@2.6.0, commander@^2.5.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.6.0.tgz#9df7e52fb2a0cb0fb89058ee80c3104225f37e1d"
 
+complex.js@2.0.1:
+  version "2.0.1"
+  resolved "http://registry.npm.taobao.org/complex.js/download/complex.js-2.0.1.tgz#ea90c7a05aeceaf3a376d2c0f6a78421727d6879"
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -473,6 +471,10 @@ debug@~2.2.0:
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.2.0.tgz#f87057e995b1a1f6ae6a4960664137bc56f039da"
   dependencies:
     ms "0.7.1"
+
+decimal.js@7.1.1:
+  version "7.1.1"
+  resolved "http://registry.npm.taobao.org/decimal.js/download/decimal.js-7.1.1.tgz#1adcad7d70d7a91c426d756f1eb6566c3be6cbcf"
 
 deep-equal@~1.0.0:
   version "1.0.1"
@@ -684,6 +686,10 @@ form-data@~2.1.1:
     asynckit "^0.4.0"
     combined-stream "^1.0.5"
     mime-types "^2.1.12"
+
+fraction.js@4.0.0:
+  version "4.0.0"
+  resolved "http://registry.npm.taobao.org/fraction.js/download/fraction.js-4.0.0.tgz#73974e2f8b51ef709536d624cc90782e2bb61274"
 
 fresh-id@^1.1.0:
   version "1.1.0"
@@ -1291,10 +1297,6 @@ lodash.defaults@^3.1.2:
     lodash.assign "^3.0.0"
     lodash.restparam "^3.0.0"
 
-lodash.get@^4.4.2:
-  version "4.4.2"
-  resolved "http://registry.npm.taobao.org/lodash.get/download/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
-
 lodash.isarguments@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/lodash.isarguments/-/lodash.isarguments-3.1.0.tgz#2f573d85c6a24289ff00663b491c1d338ff3458a"
@@ -1315,9 +1317,9 @@ lodash.restparam@^3.0.0:
   version "3.6.1"
   resolved "https://registry.yarnpkg.com/lodash.restparam/-/lodash.restparam-3.6.1.tgz#936a4e309ef330a7645ed4145986c85ae5b20805"
 
-lodash@^4.3.0, lodash@^4.5.1:
+lodash@^4.17.4, lodash@^4.3.0, lodash@^4.5.1:
   version "4.17.4"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
+  resolved "http://registry.npm.taobao.org/lodash/download/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
 lowercase-keys@^1.0.0:
   version "1.0.0"
@@ -1333,6 +1335,17 @@ lru-cache@^4.0.0:
 map-stream@~0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/map-stream/-/map-stream-0.1.0.tgz#e56aa94c4c8055a16404a0674b78f215f7c8e194"
+
+mathjs@^3.13.1:
+  version "3.13.1"
+  resolved "http://registry.npm.taobao.org/mathjs/download/mathjs-3.13.1.tgz#591ad98c80e87c5d5997eb626137b1efad44ae71"
+  dependencies:
+    complex.js "2.0.1"
+    decimal.js "7.1.1"
+    fraction.js "4.0.0"
+    seed-random "2.2.0"
+    tiny-emitter "1.0.2"
+    typed-function "0.10.5"
 
 media-typer@0.3.0:
   version "0.3.0"
@@ -1851,6 +1864,10 @@ safe-buffer@^5.0.1:
   version "5.0.1"
   resolved "http://r.cnpmjs.org/safe-buffer/download/safe-buffer-5.0.1.tgz#d263ca54696cd8a306b5ca6551e92de57918fbe7"
 
+seed-random@2.2.0:
+  version "2.2.0"
+  resolved "http://registry.npm.taobao.org/seed-random/download/seed-random-2.2.0.tgz#2a9b19e250a817099231a5b99a4daf80b7fbed54"
+
 semver-diff@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/semver-diff/-/semver-diff-2.1.0.tgz#4bbb8437c8d37e4b0cf1a68fd726ec6d645d6d36"
@@ -2034,6 +2051,10 @@ timed-out@^4.0.0:
   version "4.0.1"
   resolved "http://r.cnpmjs.org/timed-out/download/timed-out-4.0.1.tgz#f32eacac5a175bea25d7fab565ab3ed8741ef56f"
 
+tiny-emitter@1.0.2:
+  version "1.0.2"
+  resolved "http://registry.npm.taobao.org/tiny-emitter/download/tiny-emitter-1.0.2.tgz#8e49470d3f55f89e247210368a6bb9fb51aa1601"
+
 touch@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/touch/-/touch-1.0.0.tgz#449cbe2dbae5a8c8038e30d71fa0ff464947c4de"
@@ -2082,6 +2103,10 @@ type-is@^1.5.5:
   dependencies:
     media-typer "0.3.0"
     mime-types "~2.1.13"
+
+typed-function@0.10.5:
+  version "0.10.5"
+  resolved "http://registry.npm.taobao.org/typed-function/download/typed-function-0.10.5.tgz#2e0f18abd065219fab694a446a65c6d1981832c0"
 
 typescript@^2.2.1:
   version "2.2.1"
