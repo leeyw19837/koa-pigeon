@@ -1,3 +1,5 @@
+# TODO(jan): Add a Date type and get rid of all the ...AtString parameters
+
 type Query {
   footAssessment(
     patientId: ID!,
@@ -23,6 +25,8 @@ type Query {
   ): [TreatmentState!]!
 
   photos(patientId: ID!, owner: String!): [Photo!]!
+
+  chatMessages(patientId: ID!): [ChatMessage!]!
 
   # Statistics
   totalTimeAtClinic: [DataPointNumberNumber!]!
@@ -51,6 +55,13 @@ type Mutation {
     role: String!,
     startAtString: String!,
     stopAtString: String!
+  ): Boolean!
+
+  saveChatMessage(
+    content: String!,
+    sentAtString: String!,
+    patientId: ID!,
+    senderNickname: String!
   ): Boolean!
 }
 

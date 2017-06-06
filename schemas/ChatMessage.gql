@@ -1,0 +1,4 @@
+type ChatMessage {
+  content: String!
+  senderNickname: String!
+}
