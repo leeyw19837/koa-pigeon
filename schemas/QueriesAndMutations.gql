@@ -26,7 +26,7 @@ type Query {
 
   photos(patientId: ID!, owner: String!): [Photo!]!
 
-  chatMessages(patientId: ID!): [ChatMessage!]!
+  chatMessages(appointmentId: ID!): [ChatMessage!]!
 
   # Statistics
   totalTimeAtClinic: [DataPointNumberNumber!]!
@@ -60,7 +60,7 @@ type Mutation {
   saveChatMessage(
     content: String!,
     sentAtString: String!,
-    patientId: ID!,
+    appointmentId: ID!,
     senderNickname: String!
   ): Boolean!
 }

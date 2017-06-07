@@ -5,14 +5,14 @@ export const saveChatMessage = async (_, args, { db }: { db: Db }) => {
   const {
     content,
     sentAtString,
-    patientId,
+    appointmentId,
     senderNickname,
   } = args
 
   const chatMessage = {
     content,
     sentAt: new Date(sentAtString),
-    patientId,
+    appointmentId,
     senderNickname,
   }
 
