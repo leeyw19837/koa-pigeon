@@ -2,3 +2,8 @@ type ChatMessage {
   content: String!
   senderNickname: String!
 }
+
+type ChatMessagesResponse {
+  messages: [ChatMessage!]!
+  timestamp: String
+}

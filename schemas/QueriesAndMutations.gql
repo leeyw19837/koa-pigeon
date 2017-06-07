@@ -26,7 +26,7 @@ type Query {
 
   photos(patientId: ID!, owner: String!): [Photo!]!
 
-  chatMessages(appointmentId: ID!): [ChatMessage!]!
+  chatMessages(appointmentId: ID!): ChatMessagesResponse!
 
   # Statistics
   totalTimeAtClinic: [DataPointNumberNumber!]!
