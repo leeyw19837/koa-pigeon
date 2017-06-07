@@ -1,5 +1,4 @@
 type ChatMessage {
-  _id: ID!
   content: String!
   senderNickname: String!
 }

@@ -3,7 +3,6 @@ import { Db } from 'mongodb'
 
 export const saveChatMessage = async (_, args, { db }: { db: Db }) => {
   const {
-    _id,
     content,
     sentAtString,
     appointmentId,
@@ -11,7 +10,6 @@ export const saveChatMessage = async (_, args, { db }: { db: Db }) => {
   } = args
 
   const chatMessage = {
-    _id,
     content,
     sentAt: new Date(sentAtString),
     appointmentId,

@@ -58,7 +58,6 @@ type Mutation {
   ): Boolean!
 
   saveChatMessage(
-    _id: ID!,
     content: String!,
     sentAtString: String!,
     appointmentId: ID!,
