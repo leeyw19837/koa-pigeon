@@ -65,8 +65,8 @@ export default data => {
     !isBadForPeripheralNerve && !isFootDeformity
   const level1 = !isFootUlcer && !isAmputated && !isBadForPeripheralVessel &&
     isBadForPeripheralNerve && !isFootDeformity
-  const level2 = !isFootUlcer && !isAmputated && isFootDeformity ||
-    (isBadForPeripheralVessel && isBadForPeripheralNerve)
+  const level2 = !isFootUlcer && !isAmputated && (isFootDeformity ||
+    (isBadForPeripheralVessel && isBadForPeripheralNerve))
   const level3 = isFootUlcer || isAmputated
   let highRiskFoot = ''
   if (level0) {
