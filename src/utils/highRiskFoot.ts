@@ -49,7 +49,7 @@ const getBoneAndJoint = (boneAndJoint = {}, skinConditions) => {
   const footBad = ['edema', 'bladder', 'cracks', 'callus', 'discoloration']
   const skinCallus = get(skinConditions, 'had') && get(skinConditions, 'callus')
   return skinCallus || !!twoSide.filter(item => get(boneAndJoint, `deformity${item}.had`)
-    && footBad.filter(o => get(boneAndJoint, `deformity${item}${o}`)).length).length
+    && footBad.filter(o => get(boneAndJoint, `deformity${item}.${o}`)).length).length
 }
 
 export default data => {
