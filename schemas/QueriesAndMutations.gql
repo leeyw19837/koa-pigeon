@@ -32,6 +32,7 @@ type Query {
   totalTimeAtClinic: [DataPointNumberNumber!]!
   timeBetweenAppointments: [DataPointNumberNumberStdDev!]!
   activePatients: [DataPointNumberNumber!]!
+  glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
 }
 
 type Mutation {
