@@ -41,6 +41,7 @@ export const footAssessment = async (_, args, { db }: { db: Db }) => {
         peripheralVessel: existingFootAssessment.peripheralVessel,
         peripheralNerve: existingFootAssessment.peripheralNerve,
         footgear: existingFootAssessment.footgear,
+        referrals: existingFootAssessment.referrals || {},
       }),
     }
   }
@@ -60,7 +61,11 @@ export const footAssessment = async (_, args, { db }: { db: Db }) => {
     peripheralVessel: {},
     peripheralNerve: {},
     footgear: {},
+    referrals: {},
   }
+
+  console.log('New Foot Assessment')
+  console.log(newFootAssessment)
 
   await db.collection('footAssessment').insert(newFootAssessment)
   try {
@@ -82,6 +87,7 @@ export const footAssessment = async (_, args, { db }: { db: Db }) => {
       peripheralVessel: newFootAssessment.peripheralVessel,
       peripheralNerve: newFootAssessment.peripheralNerve,
       footgear: newFootAssessment.footgear,
+      referrals: newFootAssessment.referrals,
     }),
   }
 }
