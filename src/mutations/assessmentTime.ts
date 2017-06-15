@@ -1,7 +1,7 @@
 import { Db } from 'mongodb'
 
 
-export const saveAssessmentTimes = async (_, args, { db }: { db: Db }) => {
+export const saveAssessmentTime = async (_, args, { db }: { db: Db }) => {
   const {
     treatmentStateId,
     role,
