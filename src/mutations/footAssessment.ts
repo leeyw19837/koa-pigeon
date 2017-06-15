@@ -32,6 +32,7 @@ export const saveFootAssessment = async (_, args, { db }: { db: Db }) => {
           updatedAt: new Date(updatedAtString),
           ...assessmentDetails,
           highRiskFoot: highRiskFoot(assessmentDetails),
+          treatmentDate: treatmentState.appointmentTime,
         },
       },
     )
