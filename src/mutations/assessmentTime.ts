@@ -5,8 +5,8 @@ export const saveAssessmentTimes = async (_, args, { db }: { db: Db }) => {
   const {
     treatmentStateId,
     role,
-    startAtString,
-    stopAtString,
+    occurredAtString,
+    action,
   } = args
 
   const treatmentState = await db.collection('treatmentState').findOne({ _id: treatmentStateId })
@@ -18,8 +18,8 @@ export const saveAssessmentTimes = async (_, args, { db }: { db: Db }) => {
     $push: {
       assessmentTimes: {
         role,
-        startAt: new Date(startAtString),
-        stopAt: new Date(stopAtString),
+        occurredAt: new Date(occurredAtString),
+        action,
       },
     },
   })

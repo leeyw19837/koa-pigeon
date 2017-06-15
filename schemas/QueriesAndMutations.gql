@@ -51,11 +51,11 @@ type Mutation {
     note: String!
   ): Boolean!
 
-  saveAssessmentTimes(
+  saveAssessmentTime(
     treatmentStateId: String!,
     role: String!,
-    startAtString: String!,
-    stopAtString: String!
+    occurredAtString: String!,
+    action: String!
   ): Boolean!
 
   saveChatMessage(
