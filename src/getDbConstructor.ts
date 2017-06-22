@@ -1,10 +1,10 @@
 import { Db, MongoClient } from 'mongodb'
 
 
-export default (mongoUrl: string) => {
+export default (mongoUrl: string): () => Promise<Db> => {
   let dbPromise: Promise<Db> | null = null
 
-  return () => {
+  return (): Promise<Db> => {
     if (dbPromise) {
       return dbPromise
     }
