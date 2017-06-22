@@ -23,6 +23,6 @@ export default (mongoUrl: string): () => Promise<Db> => {
       dbPromise = null
       return Promise.reject(error)
     })
-    return dbPromise
+    return dbPromise as Promise<Db>
   }
 }
