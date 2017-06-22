@@ -9,14 +9,23 @@ export default (mongoUrl: string): () => Promise<Db> => {
       return dbPromise
     }
 
+    console.log(`Connecting to ${mongoUrl}...`)
     dbPromise = MongoClient.connect(mongoUrl).then((db: Db) => {
       if (!db) {
         dbPromise = null
         throw new Error('db is falsy')
       }
 
-      db.on('error', () => dbPromise = null)
-      db.on('close', () => dbPromise = null)
+      console.log('Connected')
+
+      db.on('error', () => {
+        console.log('Db connection error')
+        dbPromise = null
+      })
+      db.on('close', () => {
+        console.log('Db connection closed')
+        dbPromise = null
+      })
 
       return db
     }).catch(error => {
