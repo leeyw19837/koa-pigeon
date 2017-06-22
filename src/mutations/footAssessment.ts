@@ -58,7 +58,7 @@ export const saveFootAssessment = async (_, args, { getDb }: IContext) => {
       patientId: treatmentState.patientId,
       createdAt: new Date(updatedAtString),
     })
-  } catch (e) { ; }
+  } catch (e) { console.log(`Couldn't save event: ${e.message}`) }
 
   return null
 }
