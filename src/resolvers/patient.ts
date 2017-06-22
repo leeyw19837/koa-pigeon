@@ -1,5 +1,10 @@
+import { IContext } from '../types'
+
+
 export const Patient = {
-  footAssessmentPhotos: async (patient, _, { db }) => {
+  footAssessmentPhotos: async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+
     return db
       .collection('photos')
       .find({

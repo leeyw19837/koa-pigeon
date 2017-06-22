@@ -1,7 +1,9 @@
 import { flatten, mean, range, zip } from 'lodash'
-import { Db } from 'mongodb'
 import moment = require('moment')
 import { std } from 'mathjs'
+
+import { IContext } from '../../types'
+
 
 const getTimeRange = (from: Date, intervalInDays: number, count: number) => {
   const dates = [from]
@@ -16,7 +18,9 @@ const getTimeRange = (from: Date, intervalInDays: number, count: number) => {
   return dates
 }
 
-export const timeBetweenAppointments = async (_, args, { db }: { db: Db }) => {
+export const timeBetweenAppointments = async (_, args, { getDb }: IContext) => {
+  const db = await getDb()
+
   const dates = getTimeRange(new Date(), 7, 16)
 
   const appointmentsByDate = await Promise.all(

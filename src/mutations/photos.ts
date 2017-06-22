@@ -1,7 +1,10 @@
+import { IContext } from '../types'
 import { uploadBase64Img } from '../utils/ks3'
 
 
-export const savePhoto = async (_, args, { db }) => {
+export const savePhoto = async (_, args, { getDb }: IContext) => {
+  const db = await getDb()
+
   const { patientId, data, owner, note } = args
 
   const photoUrlKey = `${patientId}${Date.now()}`

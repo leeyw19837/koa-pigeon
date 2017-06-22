@@ -1,8 +1,11 @@
 import moment = require('moment')
-import { Db } from 'mongodb'
+
+import { IContext } from '../types'
 
 
-export const treatmentState = async (_, args, { db }: { db: Db }) => {
+export const treatmentState = async (_, args, { getDb }: IContext) => {
+  const db = await getDb()
+
   let query = {}
 
   if (args.day) {

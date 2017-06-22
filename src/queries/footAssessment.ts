@@ -1,9 +1,11 @@
-import { Db } from 'mongodb'
+import { IContext } from '../types'
 import moment = require('moment')
 import freshId from 'fresh-id'
 
 
-export const footAssessment = async (_, args, { db }: { db: Db }) => {
+export const footAssessment = async (_, args, { getDb }: IContext) => {
+  const db = await getDb()
+
   let query = {}
 
   if (args.day) {

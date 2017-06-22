@@ -1,7 +1,9 @@
-import { Db } from 'mongodb'
+import { IContext } from '../types'
 
 
-export const saveChatMessage = async (_, args, { db }: { db: Db }) => {
+export const saveChatMessage = async (_, args, { getDb }: IContext) => {
+  const db = await getDb()
+
   const {
     content,
     sentAtString,

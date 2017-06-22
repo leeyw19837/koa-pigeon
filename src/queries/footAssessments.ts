@@ -1,7 +1,9 @@
-import { Db } from 'mongodb'
+import { IContext } from '../types'
 
 
-export const footAssessments = async (_, args, { db }: { db: Db }) => {
+export const footAssessments = async (_, args, { getDb }: IContext) => {
+  const db = await getDb()
+
   const footAssessmentObjects = await db
     .collection('footAssessment')
     .find({ patientId: args.patientId })

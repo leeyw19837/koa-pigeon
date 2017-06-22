@@ -1,8 +1,10 @@
-import { Db } from 'mongodb'
 import moment = require('moment')
+import { IContext } from '../../types'
 
 
-export const activePatients = async (_, args, { db }: { db: Db }) => {
+export const activePatients = async (_, args, { getDb }: IContext) => {
+  const db = await getDb()
+
   const dataPoints: any[] = []
 
   let statisticDate = new Date('2016-10-15')

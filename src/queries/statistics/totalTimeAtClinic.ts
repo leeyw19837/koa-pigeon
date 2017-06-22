@@ -1,7 +1,9 @@
-import { Db } from 'mongodb'
+import { IContext } from '../../types'
 
 
-export const totalTimeAtClinic = async (_, args, { db }: { db: Db }) => {
+export const totalTimeAtClinic = async (_, args, { getDb }: IContext) => {
+  const db = await getDb()
+
   const averages = await db
     .collection('treatmentState')
     .aggregate([

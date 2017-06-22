@@ -4,12 +4,13 @@ const convert = require('koa-convert')
 const graphqlHTTP = require('koa-graphql')
 import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
-import { MongoClient } from 'mongodb'
 const cors = require('koa-cors')
 
+import getDbConstructor from './getDbConstructor'
 import * as Mutation from './mutations'
 import * as Query from './queries'
 import * as resolvers from './resolvers'
+import { IContext } from './types'
 import formatError from './utils/formatError'
 
 
@@ -49,18 +50,21 @@ if (MONGODB_URL === undefined) {
   process.exit(-1)
 }
 
-MongoClient.connect(MONGODB_URL).then(db => {
-  router.all(`/${SECRET}`, convert(graphqlHTTP({
-    context: { db },
-    schema,
-    graphiql: true,
-    formatError,
-  })))
+const getDb = getDbConstructor(MONGODB_URL)
+const context: IContext = {
+  getDb,
+}
 
-  app
-    .use(router.routes())
-    .use(router.allowedMethods())
+router.all(`/${SECRET}`, convert(graphqlHTTP({
+  context,
+  schema,
+  graphiql: true,
+  formatError,
+})))
 
-  console.log(`Running at ${PORT}`)
-  app.listen(PORT)
-}).catch(error => console.error(`Error: ${JSON.stringify(error.message)}`))
+app
+  .use(router.routes())
+  .use(router.allowedMethods())
+
+console.log(`Running at ${PORT}`)
+app.listen(PORT)

@@ -1,9 +1,11 @@
 import { parse } from 'date-aware-json'
-import { Db } from 'mongodb'
+import { IContext } from '../types'
 import highRiskFoot from '../utils/highRiskFoot'
 
 
-export const saveFootAssessment = async (_, args, { db }: { db: Db }) => {
+export const saveFootAssessment = async (_, args, { getDb }: IContext) => {
+  const db = await getDb()
+
   const {
     recordId,
     updatedAtString,
