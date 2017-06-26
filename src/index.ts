@@ -35,14 +35,14 @@ const schema = makeExecutableSchema({
   typeDefs: schemasText,
 })
 
-const PORT = 3080
+const PORT = process.env.PORT || 3080
 
 const app = new Koa()
 app.use(convert(cors()))
 
 const router = new Router()
 
-const MONGODB_URL = process.env.MONGODB_URL
+const MONGODB_URL = process.env.MONGODB_URL || process.env.MONGO_URL
 const SECRET = process.env.SECRET
 
 if (MONGODB_URL === undefined) {
@@ -54,6 +54,10 @@ const getDb = getDbConstructor(MONGODB_URL)
 const context: IContext = {
   getDb,
 }
+
+router.get('/', ctx => {
+  ctx.body = 'OK'
+})
 
 router.all(`/${SECRET}`, convert(graphqlHTTP({
   context,
