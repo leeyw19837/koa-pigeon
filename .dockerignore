@@ -1,6 +1,7 @@
 .dockerignore
 .git
 .gitignore
+.nvmrc
 node_modules
 test
 docker-compose.dev.yml
@@ -8,3 +9,4 @@ docker-compose.prod.yml
 Dockerfile
 README.md
 TODO.md
+yarn.lock

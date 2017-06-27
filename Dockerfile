@@ -1,8 +1,7 @@
-FROM node:7.7.2-alpine
+FROM node:8.0.0-alpine
 WORKDIR /usr/src/app
-# moved package first to enabled package caching in docker build step
 COPY package.json .
-RUN yarn install
+RUN npm i --production
 COPY . .
-RUN yarn build
+RUN npm run build
 CMD [ "node", "dist/index.js" ]
