@@ -68,6 +68,9 @@ const context: IContext = {
 router.get('/', ctx => {
   ctx.body = 'OK'
 })
+router.get('/healthcheck', ctx => {
+  ctx.body = 'OK'
+})
 
 router.all(`/${SECRET}`, convert(graphqlHTTP({
   context,
