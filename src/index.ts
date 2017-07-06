@@ -60,7 +60,7 @@ if (MONGODB_URL === undefined) {
   process.exit(-1)
 }
 
-const getDb = getDbConstructor(MONGODB_URL)
+const getDb = getDbConstructor(MONGODB_URL || '')
 const context: IContext = {
   getDb,
 }
