@@ -255,6 +255,10 @@ bytes@2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-2.4.0.tgz#7d97196f9d5baf7f6935e25985549edd2a6c2339"
 
+bytes@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.npmjs.org/bytes/-/bytes-2.5.0.tgz#4c9423ea2d252c270c41b2bdefeff9bb6b62c06a"
+
 caseless@~0.12.0:
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
@@ -816,6 +820,10 @@ humanize-ms@^1.2.0:
   dependencies:
     ms "^2.0.0"
 
+humanize-number@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.npmjs.org/humanize-number/-/humanize-number-0.0.2.tgz#11c0af6a471643633588588048f1799541489c18"
+
 husky@^0.13.2:
   version "0.13.4"
   resolved "https://registry.yarnpkg.com/husky/-/husky-0.13.4.tgz#48785c5028de3452a51c48c12c4f94b2124a1407"
@@ -1058,6 +1066,15 @@ koa-graphql@^0.6.2:
 koa-is-json@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/koa-is-json/-/koa-is-json-1.0.0.tgz#273c07edcdcb8df6a2c1ab7d59ee76491451ec14"
+
+koa-logger@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.npmjs.org/koa-logger/-/koa-logger-3.0.1.tgz#82a8c993c4de932052743229d600e8e8b1ab7ed1"
+  dependencies:
+    bytes "^2.5.0"
+    chalk "^1.1.3"
+    humanize-number "0.0.2"
+    passthrough-counter "^1.0.0"
 
 koa-mount@^2.0.0:
   version "2.0.0"
@@ -1488,6 +1505,10 @@ parse-glob@^3.0.4:
 parseurl@^1.3.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.1.tgz#c8ab8c9223ba34888aa64a297b28853bec18da56"
+
+passthrough-counter@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/passthrough-counter/-/passthrough-counter-1.0.0.tgz#1967d9e66da572b5c023c787db112a387ab166fa"
 
 path-is-absolute@^1.0.0:
   version "1.0.1"

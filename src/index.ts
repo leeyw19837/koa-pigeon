@@ -5,6 +5,7 @@ const graphqlHTTP = require('koa-graphql')
 import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 const cors = require('koa-cors')
+const logger = require('koa-logger')
 
 import getDbConstructor from './getDbConstructor'
 import * as Mutation from './mutations'
@@ -38,6 +39,15 @@ const schema = makeExecutableSchema({
 const PORT = process.env.PORT || 3080
 
 const app = new Koa()
+const opts = {
+    name: 'yet-another-koa-app', // log name
+    logRequest: false, // log request
+    logResponse: true, // log response
+    logError: true, // log error
+    serializers: {}, // bunyan serializers, { logId, req, res, ctx, err, start, responseTime, contentLength }
+    bunyanArgs: {}, // other bunyan arguments
+}
+app.use(logger(opts))
 app.use(convert(cors()))
 
 const router = new Router()
