@@ -33,7 +33,7 @@
     "koa-convert": "^1.2.0",
     "koa-cors": "^0.0.16",
     "koa-graphql": "^0.6.2",
-    "koa-logger": "^3.0.1",
+    "koa-morgan": "^1.0.1",
     "koa-mount": "^2.0.0",
     "koa-router": "7",
     "ks3": "^0.4.2",
@@ -52,7 +52,7 @@
     "concurrently": "^3.4.0",
     "husky": "^0.13.2",
     "nodemon": "^1.11.0",
-    "tslint": "^5.4.3",
-    "typescript": "^2.3.4"
+    "tslint": "^5.5.0",
+    "typescript": "^2.4.1"
   }
 }
