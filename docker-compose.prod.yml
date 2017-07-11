@@ -8,5 +8,7 @@ services:
       - "3080:3080"
     restart: always
     environment:
-      - MONGODB_URL=mongodb://paperKingByiHealth:djsdF3fQa@120.131.8.26:27017,120.131.8.27:27017,120.131.8.46:27017/paper-king?replicaSet=iHealthMongo
+      - MONGO_URL=mongodb://paperKingByiHealth:djsdF3fQa@120.131.8.26:27017,120.131.8.27:27017,120.131.8.46:27017/paper-king?replicaSet=iHealthMongo
       - SECRET=8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo
+      - PORT=3080
+      - NODE_ENV=production

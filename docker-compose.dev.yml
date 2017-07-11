@@ -3,7 +3,7 @@
 version: '3'
 services:
   api:
-    image: node:7.7.2-alpine
+    image: node:8.0.0-alpine
     volumes:
       - yarn:/root/.cache/yarn
       - ./:/usr/src/app
@@ -12,8 +12,10 @@ services:
       - "3080:3080"
     command: yarn build && yarn watch
     environment:
-      - MONGODB_URL=mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@120.131.8.26:27017/paper-king-developing
+      - MONGO_URL=mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@120.131.8.26:27017/paper-king-developing
       - SECRET=8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo
+      - PORT=3080
+      - NODE_ENV=development
 
 volumes:
   yarn:
