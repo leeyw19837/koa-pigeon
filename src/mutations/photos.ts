@@ -1,5 +1,5 @@
 import { IContext } from '../types'
-import { uploadBase64Img } from '../utils/ks3'
+import { uploadBase64Img } from '../utils'
 
 
 export const savePhoto = async (_, args, { getDb }: IContext) => {

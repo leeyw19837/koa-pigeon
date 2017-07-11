@@ -5,18 +5,26 @@ const graphqlHTTP = require('koa-graphql')
 import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 const cors = require('koa-cors')
-const logger = require('koa-logger')
+import * as morgan from 'koa-morgan'
 
 import getDbConstructor from './getDbConstructor'
-import * as Mutation from './mutations'
-import * as Query from './queries'
+import Mutation from './mutations'
+import Query from './queries'
 import * as resolvers from './resolvers'
 import { IContext } from './types'
-import formatError from './utils/formatError'
+import { formatError } from './utils'
 
 
-// This is necessary because otherwise, graphql-tools
-// looks for __esModule in the schema
+const {
+  NODE_ENV,
+  PORT,
+  MONGO_URL,
+  SECRET,
+} = process.env
+
+
+// This is necessary because graphql-tools
+// looks for __esModule in the schema otherwise
 delete (resolvers as any).__esModule
 
 const resolverMap = {
@@ -36,38 +44,29 @@ const schema = makeExecutableSchema({
   typeDefs: schemasText,
 })
 
-const PORT = process.env.PORT || 3080
 
 const app = new Koa()
-const opts = {
-    name: 'yet-another-koa-app', // log name
-    logRequest: false, // log request
-    logResponse: true, // log response
-    logError: true, // log error
-    serializers: {}, // bunyan serializers, { logId, req, res, ctx, err, start, responseTime, contentLength }
-    bunyanArgs: {}, // other bunyan arguments
-}
-app.use(logger(opts))
+// if (NODE_ENV === 'production') {
+//   app.use(morgan('combined'))
+// } else {
+//   app.use(morgan('dev'))
+// }
 app.use(convert(cors()))
 
-const router = new Router()
 
-const MONGODB_URL = process.env.MONGODB_URL || process.env.MONGO_URL
-const SECRET = process.env.SECRET
-
-if (MONGODB_URL === undefined) {
+if (MONGO_URL === undefined) {
   console.error('Run with `yarn docker:dev`!')
   process.exit(-1)
 }
 
-const getDb = getDbConstructor(MONGODB_URL || '')
+const getDb = getDbConstructor(MONGO_URL || '')
 const context: IContext = {
   getDb,
 }
 
-router.get('/', ctx => {
-  ctx.body = 'OK'
-})
+
+const router = new Router()
+
 router.get('/healthcheck', ctx => {
   ctx.body = 'OK'
 })
@@ -83,5 +82,5 @@ app
   .use(router.routes())
   .use(router.allowedMethods())
 
-console.log(`Running at ${PORT}`)
+console.log(`Running at ${PORT}; Node env: ${NODE_ENV}`)
 app.listen(PORT)

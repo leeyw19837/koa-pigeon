@@ -1,7 +1,27 @@
-export * from './footAssessment'
-export * from './footAssessments'
-export * from './photos'
-export * from './treatmentState'
-export * from './treatmentStates'
-export * from './statistics'
-export * from './chatMessages'
+import * as chatMessages from './chatMessages'
+import * as footAssessment from './footAssessment'
+import * as footAssessments from './footAssessments'
+import * as photos from './photos'
+import * as statistics from './statistics'
+import * as treatmentState from './treatmentState'
+import * as treatmentStates from './treatmentStates'
+
+import { logQueryOrMutation } from '../utils'
+
+
+const queries = {
+  ...chatMessages,
+  ...footAssessment,
+  ...footAssessments,
+  ...photos,
+  ...statistics,
+  ...treatmentState,
+  ...treatmentStates,
+}
+
+const queriesWithLogging = {}
+Object.keys(queries).map((queryName: string) =>
+  queriesWithLogging[queryName] = logQueryOrMutation('QUERY', queryName, queries[queryName]),
+)
+
+export default queriesWithLogging

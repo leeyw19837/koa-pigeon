@@ -52,7 +52,7 @@ const getBoneAndJoint = (boneAndJoint = {}, skinConditions) => {
     && footBad.filter(o => get(boneAndJoint, `deformity${item}.${o}`)).length).length
 }
 
-export default data => {
+export const highRiskFoot = data => {
   const { medicalHistory, peripheralVessel,
     peripheralNerve, boneAndJoint, skinConditions } = data
   const isFootUlcer = get(medicalHistory, 'had') && get(medicalHistory, 'footUlcer')
@@ -68,15 +68,15 @@ export default data => {
   const level2 = !isFootUlcer && !isAmputated && (isFootDeformity ||
     (isBadForPeripheralVessel && isBadForPeripheralNerve))
   const level3 = isFootUlcer || isAmputated
-  let highRiskFoot = ''
+  let highRiskFootResult = ''
   if (level0) {
-    highRiskFoot = 'level0'
+    highRiskFootResult = 'level0'
   } else if (level1) {
-    highRiskFoot = 'level1'
+    highRiskFootResult = 'level1'
   } else if (level2) {
-    highRiskFoot = 'level2'
+    highRiskFootResult = 'level2'
   } else if (level3) {
-    highRiskFoot = 'level3'
+    highRiskFootResult = 'level3'
   }
-  return highRiskFoot
+  return highRiskFootResult
 }
