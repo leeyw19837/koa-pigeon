@@ -1,0 +1,15 @@
+type Sms {
+  _id: ID,
+  mobile: String,
+  createdAt: String,
+  details: String
+}
+
+type SmsReponse {
+  sms: [Sms],
+  timestamp: String,
+  currPage: Int,
+  totalPage: Int,
+  size: Int,
+  totalRecords: Int
+}

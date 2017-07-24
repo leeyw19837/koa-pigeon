@@ -33,6 +33,7 @@ type Query {
   timeBetweenAppointments: [DataPointNumberNumberStdDev!]!
   activePatients: [DataPointNumberNumber!]!
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
+  smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
 }
 
 type Mutation {
