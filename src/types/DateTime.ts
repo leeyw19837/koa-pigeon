@@ -2,15 +2,15 @@
 import { GraphQLScalarType } from 'graphql'
 import { GraphQLError } from 'graphql/error'
 import { Kind } from 'graphql/language'
-let moment = require('moment')
+const moment = require('moment')
 
 
-//not finished yet.
+// not finished yet.
 function parseDate(value) {
   if (!value)
     throw new TypeError('Invalid date: ' + value)
   try {
-    let result = new moment(value)
+    const result = new moment(value)
     return result.toDate()
   } catch (exp) {
     throw new TypeError('Invalid date: ' + value)
@@ -34,5 +34,5 @@ module.exports = new GraphQLScalarType({
     } catch (exp) {
       throw new GraphQLError('Query error: ' + exp.message, [ast])
     }
-  }
+  },
 })

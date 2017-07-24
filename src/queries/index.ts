@@ -2,10 +2,10 @@ import * as chatMessages from './chatMessages'
 import * as footAssessment from './footAssessment'
 import * as footAssessments from './footAssessments'
 import * as photos from './photos'
+import * as sms from './sms'
 import * as statistics from './statistics'
 import * as treatmentState from './treatmentState'
 import * as treatmentStates from './treatmentStates'
-import * as sms from './sms'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -18,7 +18,7 @@ const queries = {
   ...statistics,
   ...treatmentState,
   ...treatmentStates,
-  ...sms
+  ...sms,
 }
 
 const queriesWithLogging = {}
