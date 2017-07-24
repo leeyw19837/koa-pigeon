@@ -36,6 +36,7 @@ type Query {
     from: Date
     to: Date
   ): [BloodGlucoseMeasurement]
+  smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
 }
 
 type Mutation {

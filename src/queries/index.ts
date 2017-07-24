@@ -4,6 +4,7 @@ import * as footAssessment from './footAssessment'
 import * as footAssessments from './footAssessments'
 import * as patients from './patients'
 import * as photos from './photos'
+import * as sms from './sms'
 import * as statistics from './statistics'
 import * as treatmentPlan from './treatmentPlan'
 import * as treatmentState from './treatmentState'
@@ -22,6 +23,7 @@ const queries = {
   ...treatmentState,
   ...treatmentStates,
   ...treatmentPlan,
+  ...sms,
 }
 
 const queriesWithLogging = {}
