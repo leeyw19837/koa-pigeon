@@ -13,11 +13,7 @@ import Mutation from './mutations'
 import Query from './queries'
 import * as resolvers from './resolvers'
 import { IContext } from './types'
-<<<<<<< HEAD
 import { Date, formatError } from './utils'
-=======
-import { formatError } from './utils'
->>>>>>> :truck: Move getDb constructor to its own package
 
 const { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 

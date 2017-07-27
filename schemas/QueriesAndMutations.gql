@@ -1,4 +1,5 @@
 # TODO(jan): Add a Date type and get rid of all the ...AtString parameters
+scalar GraphQLDateTime
 
 type Query {
   footAssessment(
@@ -37,6 +38,7 @@ type Query {
     to: Date
   ): [BloodGlucoseMeasurement]
   smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
+  
 }
 
 type Mutation {
