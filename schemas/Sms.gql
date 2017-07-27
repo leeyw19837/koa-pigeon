@@ -7,7 +7,7 @@ type Sms {
 
 type SmsReponse {
   sms: [Sms],
-  timestamp: String,
+  timestamp: GraphQLDateTime,
   currPage: Int,
   totalPage: Int,
   size: Int,
