@@ -8,12 +8,16 @@ const cors = require('koa-cors')
 const bodyParser = require('koa-bodyparser')
 import * as morgan from 'koa-morgan'
 
-import getDbConstructor from './getDbConstructor'
+import constructGetDb from 'mongodb-auto-reconnect'
 import Mutation from './mutations'
 import Query from './queries'
 import * as resolvers from './resolvers'
 import { IContext } from './types'
+<<<<<<< HEAD
 import { Date, formatError } from './utils'
+=======
+import { formatError } from './utils'
+>>>>>>> :truck: Move getDb constructor to its own package
 
 const { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 
@@ -51,7 +55,7 @@ if (MONGO_URL === undefined) {
   process.exit(-1)
 }
 
-const getDb = getDbConstructor(MONGO_URL || '')
+const getDb = constructGetDb(MONGO_URL || '')
 const context: IContext = {
   getDb,
 }

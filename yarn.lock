@@ -1326,6 +1326,12 @@ moment@^2.17.1:
   version "2.18.1"
   resolved "http://registry.npm.taobao.org/moment/download/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
 
+mongodb-auto-reconnect@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/mongodb-auto-reconnect/-/mongodb-auto-reconnect-0.0.1.tgz#e77dad08b45e101522aec30f1889ab365cda7995"
+  dependencies:
+    mongodb "^2.2.30"
+
 mongodb-core@2.1.14:
   version "2.1.14"
   resolved "http://registry.npm.taobao.org/mongodb-core/download/mongodb-core-2.1.14.tgz#13cba2764226b5be3d18992af0c963ce5ea0f0fd"
@@ -1333,7 +1339,7 @@ mongodb-core@2.1.14:
     bson "~1.0.4"
     require_optional "~1.0.0"
 
-mongodb@^2.2.24:
+mongodb@^2.2.24, mongodb@^2.2.30:
   version "2.2.30"
   resolved "http://registry.npm.taobao.org/mongodb/download/mongodb-2.2.30.tgz#8ccd801f676c8172040c2f2b47e9602a0d5634ab"
   dependencies:
