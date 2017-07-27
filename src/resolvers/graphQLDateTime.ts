@@ -10,7 +10,7 @@ function parseDate(value) {
   if (!value)
     throw new TypeError('Invalid date: ' + value)
   try {
-    const result = new moment(value)
+    const result = new moment(new Date(value))
     return result.toDate()
   } catch (exp) {
     throw new TypeError('Invalid date: ' + value)
