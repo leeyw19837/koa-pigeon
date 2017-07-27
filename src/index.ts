@@ -14,7 +14,6 @@ import * as resolvers from './resolvers'
 import { IContext } from './types'
 import { formatError } from './utils'
 
-
 const {
   NODE_ENV,
   PORT,

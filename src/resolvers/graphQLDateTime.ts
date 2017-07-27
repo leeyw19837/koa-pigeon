@@ -17,8 +17,9 @@ function parseDate(value) {
   }
 }
 
-module.exports = new GraphQLScalarType({
-  name: 'DateTime',
+export const GraphQLDateTime = new GraphQLScalarType({
+  name: 'GraphQLDateTime',
+  description: 'Date custom scalar type',
   serialize(value) {
     return parseDate(value).toJSON()
   },
