@@ -6,8 +6,8 @@ import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 const cors = require('koa-cors')
 import * as morgan from 'koa-morgan'
-
 import constructGetDb from 'mongodb-auto-reconnect'
+
 import Mutation from './mutations'
 import Query from './queries'
 import * as resolvers from './resolvers'
