@@ -1,0 +1,44 @@
+scalar Date
+
+enum DeviceModel {
+	  BG1
+}
+
+enum Codename {
+  TBA
+}
+
+type Location {
+  # 纬度
+  latitude: Float!
+  # 经度
+  longitude: Float!
+}
+
+type BloodGlucose {
+  # defaults to mmol/L | US standard is : mg/dl
+  unit: String!
+  value: Float!
+}
+
+type BloodGlucoseMeasurement {
+  patient: Patient!
+  # 血糖 Measures the pressure in your blood vessels when your heart beats.
+  bloodGlucose: BloodGlucose!
+  # 脉搏
+  pulse: Int!
+  # The address of the device that was used to take the measurement.
+  measurementDeviceAddress: String!
+  # The model of the device that was used to take the measurement (e.g. BG1)
+  measurementDeviceModel: DeviceModel!
+  # 测量时间
+  measuredAt: Date!
+  # 手机型号 The model of the phone that was used to connect to the measuring device.
+  phoneModel: String
+  # 应用名字 The name of the app that was used to connect to the measuring device.
+  appName: Codename
+  # 应用版本 The version of the app that was used to connect to the measuring device.
+  appVersion: String
+  # 位置 The location of the user at the time of taking the measurement
+  location: Location
+}

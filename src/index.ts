@@ -12,7 +12,7 @@ import Mutation from './mutations'
 import Query from './queries'
 import * as resolvers from './resolvers'
 import { IContext } from './types'
-import { formatError } from './utils'
+import { formatError, Date } from "./utils";
 
 
 const {
@@ -31,6 +31,7 @@ const resolverMap = {
   ...resolvers,
   Query,
   Mutation,
+  Date
 } as any // TODO(jan): Find a way to make this typed
 
 const schemasText = fs
@@ -42,6 +43,7 @@ const schemasText = fs
 const schema = makeExecutableSchema({
   resolvers: resolverMap,
   typeDefs: schemasText,
+
 })
 
 
