@@ -34,11 +34,15 @@ type Query {
   activePatients: [DataPointNumberNumber!]!
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
 
+  # Users
   patient(patientId: ID!): Patient
   patients: [Patient]
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
+
+  # Measurements
+  bloodGlucoseMeasurements: [BloodGlucoseMeasurement]
 }
 
 type Mutation {

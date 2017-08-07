@@ -20,13 +20,50 @@ type BloodGlucose {
   unit: String!
   value: Float!
 }
+enum RelationshipToMealTime {
+  # 空腹
+  EMPTY_STOMACH
+  # 早餐／饭前
+  BEFORE_BREAKFAST
+  # 早餐／饭后
+  AFTER_BREAKFAST
+  # 午餐／饭前
+  BEFORE_LUNCH
+  # 午餐／饭后
+  AFTER_LUNCH
+  # 晚餐／饭前
+  BEFORE_DINNER
+  # 晚餐／饭后
+  AFTER_DINNER
+  # 睡前
+  BEFORE_BED
+  # 凌晨／半夜
+  BEFORE_DAWN
+  # 零食后
+  AFTER_SNACK
+  # 随机
+  RANDOM
+  # data is 0 or 10
+  UNKNOWN
+}
+
+type Medication {
+  type: String
+  unit: String
+  value: String
+}
 
 type BloodGlucoseMeasurement {
   patient: Patient!
   # 血糖 Measures the pressure in your blood vessels when your heart beats.
   bloodGlucose: BloodGlucose!
-  # 脉搏
-  pulse: Int!
+  # (e.g. before dinner)
+  relationshipToMealTime: RelationshipToMealTime
+  # 手动测量结果 Manually entered test result
+  manual: Boolean!
+
+  medication: [Medication]
+
   # The address of the device that was used to take the measurement.
   measurementDeviceAddress: String!
   # The model of the device that was used to take the measurement (e.g. BG1)

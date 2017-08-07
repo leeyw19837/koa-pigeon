@@ -1,3 +1,4 @@
+import * as bloodGlucoseMeasurements from './bloodGlucoseMeasurements'
 import * as chatMessages from './chatMessages'
 import * as footAssessment from './footAssessment'
 import * as footAssessments from './footAssessments'
@@ -10,6 +11,7 @@ import * as treatmentStates from './treatmentStates'
 import { logQueryOrMutation } from '../utils'
 
 const queries = {
+  ...bloodGlucoseMeasurements,
   ...chatMessages,
   ...footAssessment,
   ...footAssessments,
