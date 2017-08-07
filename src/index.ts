@@ -12,16 +12,9 @@ import Mutation from './mutations'
 import Query from './queries'
 import * as resolvers from './resolvers'
 import { IContext } from './types'
-import { formatError, Date } from "./utils";
+import { Date, formatError } from './utils'
 
-
-const {
-  NODE_ENV,
-  PORT,
-  MONGO_URL,
-  SECRET,
-} = process.env
-
+const { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 
 // This is necessary because graphql-tools
 // looks for __esModule in the schema otherwise
@@ -31,21 +24,17 @@ const resolverMap = {
   ...resolvers,
   Query,
   Mutation,
-  Date
+  Date,
 } as any // TODO(jan): Find a way to make this typed
 
 const schemasText = fs
   .readdirSync('./schemas/')
-  .map(fileName =>
-    fs.readFileSync(`./schemas/${fileName}`, 'utf-8'),
-)
+  .map(fileName => fs.readFileSync(`./schemas/${fileName}`, 'utf-8'))
 
 const schema = makeExecutableSchema({
   resolvers: resolverMap,
   typeDefs: schemasText,
-
 })
-
 
 const app = new Koa()
 // if (NODE_ENV === 'production') {
@@ -54,7 +43,6 @@ const app = new Koa()
 //   app.use(morgan('dev'))
 // }
 app.use(convert(cors()))
-
 
 if (MONGO_URL === undefined) {
   console.error('Run with `yarn docker:dev`!')
@@ -66,23 +54,25 @@ const context: IContext = {
   getDb,
 }
 
-
 const router = new Router()
 
 router.get('/healthcheck', ctx => {
   ctx.body = 'OK'
 })
 
-router.all(`/${SECRET}`, convert(graphqlHTTP({
-  context,
-  schema,
-  graphiql: true,
-  formatError,
-})))
+router.all(
+  `/${SECRET}`,
+  convert(
+    graphqlHTTP({
+      context,
+      schema,
+      graphiql: true,
+      formatError,
+    }),
+  ),
+)
 
-app
-  .use(router.routes())
-  .use(router.allowedMethods())
+app.use(router.routes()).use(router.allowedMethods())
 
 console.log(`Running at ${PORT}/${SECRET}; Node env: ${NODE_ENV}`)
 app.listen(PORT)
