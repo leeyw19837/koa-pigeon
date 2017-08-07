@@ -33,6 +33,10 @@ type Query {
   timeBetweenAppointments: [DataPointNumberNumberStdDev!]!
   activePatients: [DataPointNumberNumber!]!
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
+
+  patient(patientId: ID!): Patient
+  patientsByStatus(status: String!): [Patient]
+  staffMembers: [Patient]
 }
 
 type Mutation {

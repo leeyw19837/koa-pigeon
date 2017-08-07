@@ -82,5 +82,5 @@ app
   .use(router.routes())
   .use(router.allowedMethods())
 
-console.log(`Running at ${PORT}; Node env: ${NODE_ENV}`)
+console.log(`Running at ${PORT}/${SECRET}; Node env: ${NODE_ENV}`)
 app.listen(PORT)

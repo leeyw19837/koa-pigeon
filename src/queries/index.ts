@@ -1,7 +1,8 @@
 import * as chatMessages from './chatMessages'
 import * as footAssessment from './footAssessment'
 import * as footAssessments from './footAssessments'
-import * as photos from './photos'
+import * as patients from "./patients";
+import * as photos from "./photos";
 import * as statistics from './statistics'
 import * as treatmentState from './treatmentState'
 import * as treatmentStates from './treatmentStates'
@@ -13,11 +14,12 @@ const queries = {
   ...chatMessages,
   ...footAssessment,
   ...footAssessments,
+  ...patients,
   ...photos,
   ...statistics,
   ...treatmentState,
-  ...treatmentStates,
-}
+  ...treatmentStates
+};
 
 const queriesWithLogging = {}
 Object.keys(queries).map((queryName: string) =>
