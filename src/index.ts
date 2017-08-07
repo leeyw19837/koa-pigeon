@@ -12,7 +12,7 @@ import Mutation from './mutations'
 import Query from './queries'
 import * as resolvers from './resolvers'
 import { IContext } from './types'
-import { formatError } from './utils'
+import { Date, formatError } from './utils'
 
 const { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 
@@ -24,6 +24,7 @@ const resolverMap = {
   ...resolvers,
   Query,
   Mutation,
+  Date,
 } as any // TODO(jan): Find a way to make this typed
 
 const schemasText = fs
@@ -73,5 +74,5 @@ router.all(
 
 app.use(router.routes()).use(router.allowedMethods())
 
-console.log(`Running at ${PORT}; Node env: ${NODE_ENV}`)
+console.log(`Running at ${PORT}/${SECRET}; Node env: ${NODE_ENV}`)
 app.listen(PORT)
