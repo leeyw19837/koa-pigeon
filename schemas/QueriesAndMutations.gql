@@ -2,76 +2,60 @@
 
 type Query {
   footAssessment(
-    patientId: ID!,
-    day: String!,
-    timezone: String = "+0800",
+    patientId: ID!
+    day: String!
+    timezone: String = "+0800"
     # Remove this, the time on the server is accurate, it's just set to GMT
     nowString: String = "1970-01-01T00:00:00.000Z"
   ): FootAssessment!
-
-  footAssessments(
-    patientId: ID!  
-  ): [FootAssessment!]!
-
+  footAssessments(patientId: ID!): [FootAssessment!]!
   treatmentState(
-    patientId: ID!,
-    day: String,
+    patientId: ID!
+    day: String
     timezone: String = "+0800"
   ): TreatmentState!
-
-  treatmentStates(
-    day: String,
-    timezone: String = "+0800"
-  ): [TreatmentState!]!
-
+  treatmentStates(day: String, timezone: String = "+0800"): [TreatmentState!]!
   photos(patientId: ID!, owner: String!): [Photo!]!
-
   chatMessages(appointmentId: ID!): ChatMessagesResponse!
-
   # Statistics
   totalTimeAtClinic: [DataPointNumberNumber!]!
   timeBetweenAppointments: [DataPointNumberNumberStdDev!]!
   activePatients: [DataPointNumberNumber!]!
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
-
   # Users
   patient(patientId: ID!): Patient
   patients: [Patient]
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
-
   # Measurements
-  bloodGlucoseMeasurements: [BloodGlucoseMeasurement]
+  bloodGlucoseMeasurements(patientId: ID!): [BloodGlucoseMeasurement]
 }
 
 type Mutation {
   saveFootAssessment(
-    recordId: ID!,
-    updatedAtString: String!,
-    assessmentDetailsJson: String!,
-    treatmentStateId: ID!,
+    recordId: ID!
+    updatedAtString: String!
+    assessmentDetailsJson: String!
+    treatmentStateId: ID!
     footBloodAt: Boolean
   ): String
-
   savePhoto(
-    patientId: ID!,
-    data: String!,
-    owner: String!,
+    patientId: ID!
+    data: String!
+    owner: String!
     note: String!
   ): Boolean!
-
   saveAssessmentTime(
-    treatmentStateId: String!,
-    role: String!,
-    occurredAtString: String!,
+    treatmentStateId: String!
+    role: String!
+    occurredAtString: String!
     action: String!
   ): Boolean!
-
   saveChatMessage(
-    content: String!,
-    sentAtString: String!,
-    appointmentId: ID!,
+    content: String!
+    sentAtString: String!
+    appointmentId: ID!
     senderNickname: String!
   ): Boolean!
 }

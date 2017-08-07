@@ -8,7 +8,7 @@ export const bloodGlucoseMeasurements = async (
   const db = await getDb()
   const a = await db
     .collection('bloodglucoses')
-    .find({}, { limit: 50 })
+    .find({ author: args.patientId }, {})
     .toArray()
   return a.map(x => ({
     ...x,
