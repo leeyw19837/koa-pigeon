@@ -3,3 +3,9 @@ type Patient {
   nickname: String
   footAssessmentPhotos: [Photo]
 }
+
+type HealthcareProfessional {
+  _id: ID
+  nickname: String
+  role: String
+}
