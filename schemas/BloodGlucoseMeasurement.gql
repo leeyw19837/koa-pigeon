@@ -22,30 +22,30 @@ type BloodGlucose {
   value: Float!
 }
 
-enum DigestiveState {
+enum DigestiveState { # NOTE below are usage stats
   # 空腹
   EMPTY_STOMACH
-  # 早餐／饭前
+  # 早餐／饭前    早餐前 2641
   BEFORE_BREAKFAST
-  # 早餐／饭后
+  # 早餐／饭后    早餐后 913
   AFTER_BREAKFAST
-  # 午餐／饭前
+  # 午餐／饭前     午餐前 1311        中餐前 2
   BEFORE_LUNCH
-  # 午餐／饭后
+  # 午餐／饭后     午餐后 667         中餐后 5
   AFTER_LUNCH
-  # 晚餐／饭前
+  # 晚餐／饭前     晚饭前 1137        晚餐前 49
   BEFORE_DINNER
-  # 晚餐／饭后
+  # 晚餐／饭后     晚饭后 833         晚餐后 38
   AFTER_DINNER
-  # 睡前
+  # 睡前          睡前 15
   BEFORE_BED
-  # 凌晨／半夜
+  # 凌晨／半夜     半夜 354           凌晨 5
   BEFORE_DAWN
-  # 零食后
+  # 零食后        零食后 18
   AFTER_SNACK
-  # 随机
+  # 随机          随机 74
   RANDOM
-  # data is 0 or 10
+  # data is 0 or 10                 0 3
   UNKNOWN
 }
 

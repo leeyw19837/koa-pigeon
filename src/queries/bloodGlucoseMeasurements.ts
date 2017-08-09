@@ -15,7 +15,7 @@ export const bloodGlucoseMeasurements = async (
     measuredAt: x.createdAt,
     patient: { _id: x.author },
     digestiveState: DigestiveStateLookup[x.dinnerSituation],
-    bloodGlucose: { value: (+x.bgValue).toFixed(2), unit: 'mmol/L' },
+    bloodGlucose: { value: (+x.bgValue).toFixed(2), unit: 'mg/dL' },
     manual: !!x.source,
     medication: structureMedication(x.pillNote),
     appName: !!x.iGlucoseDataId && 'IGLUCO',
