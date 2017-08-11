@@ -40,8 +40,7 @@ export const saveBloodGlucoseMeasurement = async (
     createdAt: measuredAt,
   }
   const objectToWrite = { ...oldFormat, ...newFormat }
-  console.log('write this to db', objectToWrite)
-  // await db.collection('bloodglucoses').insertOne(objectToWrite)
+  await db.collection('bloodglucoses').insertOne(objectToWrite)
 
   return true
 }
