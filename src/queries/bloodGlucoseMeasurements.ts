@@ -1,5 +1,5 @@
 import { IContext } from '../types'
-
+import { DigestiveStateLookup } from '../utils/i18n'
 export const bloodGlucoseMeasurements = async (
   _,
   args,
@@ -44,26 +44,4 @@ const structureMedication = pillNote => {
 const ChineseBoolean = {
   是: true,
   否: false,
-}
-const DigestiveStateLookup = {
-  空腹: 'EMPTY_STOMACH',
-  早餐前: 'BEFORE_BREAKFAST',
-  早饭前: 'BEFORE_BREAKFAST',
-  早餐后: 'AFTER_BREAKFAST',
-  早饭后: 'AFTER_BREAKFAST',
-  午餐前: 'BEFORE_LUNCH',
-  午饭前: 'BEFORE_LUNCH',
-  午餐后: 'AFTER_LUNCH',
-  午饭后: 'AFTER_LUNCH',
-  晚饭前: 'BEFORE_DINNER',
-  晚餐前: 'BEFORE_DINNER',
-  晚饭后: 'AFTER_DINNER',
-  晚餐后: 'AFTER_DINNER',
-  睡前: 'BEFORE_BED',
-  凌晨: 'BEFORE_DAWN',
-  半夜: 'BEFORE_DAWN',
-  随机: 'RANDOM',
-  零食后: 'AFTER_SNACK',
-  0: 'UNKNOWN',
-  10: 'UNKNOWN',
 }
