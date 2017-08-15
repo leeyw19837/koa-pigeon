@@ -1,3 +1,4 @@
+import freshId from 'fresh-id'
 import { IContext } from '../types'
 import { DigestiveStateLookup } from '../utils/i18n'
 
@@ -38,6 +39,7 @@ export const saveBloodGlucoseMeasurement = async (
     dinnerSituation,
     author: patientId,
     createdAt: measuredAt,
+    iGlucoseDataId: freshId(17), // this is forced to unique so this is a hack
   }
   const objectToWrite = { ...oldFormat, ...newFormat }
   await db.collection('bloodglucoses').insertOne(objectToWrite)
