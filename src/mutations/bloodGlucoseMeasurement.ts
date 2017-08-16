@@ -26,16 +26,21 @@ export const saveBloodGlucoseMeasurement = async (
     measuredAt,
     appName,
   }
-
   const dinnerSituation = Object.entries(DigestiveStateLookup).find(
     ([key, value]) => value === digestiveState,
   )![0]
   const convertGlucoseTypeToUSString = value => {
     if (!value) return ''
-    return `${value * 18}`
+    return `${Math.round(value * 18)}`
   }
+  let bgValue = ''
+  if (bloodGlucose.unit === 'mg/dl') bgValue = bloodGlucose.value
+
+  if (bloodGlucose.unit === 'mmol/l')
+    bgValue = convertGlucoseTypeToUSString(bloodGlucose.value)
+
   const oldFormat = {
-    bgValue: convertGlucoseTypeToUSString(bloodGlucose.value),
+    bgValue,
     dinnerSituation,
     author: patientId,
     createdAt: measuredAt,
