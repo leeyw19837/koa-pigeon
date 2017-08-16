@@ -34,9 +34,9 @@ export const saveBloodGlucoseMeasurement = async (
     return `${Math.round(value * 18)}`
   }
   let bgValue = ''
-  if (bloodGlucose.unit === 'mg/dl') bgValue = bloodGlucose.value
+  if (bloodGlucose.unit.toLowerCase() === 'mg/dl') bgValue = bloodGlucose.value
 
-  if (bloodGlucose.unit === 'mmol/l')
+  if (bloodGlucose.unit.toLowerCase() === 'mmol/l')
     bgValue = convertGlucoseTypeToUSString(bloodGlucose.value)
 
   const oldFormat = {
