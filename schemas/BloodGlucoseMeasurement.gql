@@ -9,13 +9,6 @@ enum Codename {
   IGLUCO
 }
 
-type Location {
-  # 纬度
-  latitude: Float!
-  # 经度
-  longitude: Float!
-}
-
 type BloodGlucose {
   # defaults to mmol/L | US standard is : mg/dl
   unit: String!
@@ -76,6 +69,68 @@ type Carbohydrates {
   value: Float
 }
 
+input DeviceContextInput {
+  # 纬度
+  latitude: Float
+  # 经度
+  longitude: Float
+  # 应用名字 The name of the app that was used to connect to the measuring device.
+  appName: Codename
+  # 应用版本 The version of the app that was used to connect to the measuring device.
+  appVersion: String
+  isEmulator: Boolean
+  isTablet: Boolean
+  brand: String
+  buildNumber: Int
+  bundleId: String
+  deviceCountry: String
+  deviceId: String
+  deviceLocale: String
+  manufacturer: String
+  # 手机型号 The model of the phone that was used to connect to the measuring device.
+  model: String
+  readableVersion: String
+  # Operating system
+  systemName: String
+  # Operating system version
+  systemVersion: String
+  timezone: String
+  # Operating system version
+  uniqueID: String
+  userAgent: String
+}
+
+type DeviceContext {
+  # 纬度
+  latitude: Float
+  # 经度
+  longitude: Float
+  # 应用名字 The name of the app that was used to connect to the measuring device.
+  appName: Codename
+  # 应用版本 The version of the app that was used to connect to the measuring device.
+  appVersion: String
+  isEmulator: Boolean
+  isTablet: Boolean
+  brand: String
+  buildNumber: Int
+  bundleId: String
+  deviceCountry: String
+  deviceId: String
+  deviceLocale: String
+  manufacturer: String
+  # 手机型号 The model of the phone that was used to connect to the measuring device.
+  model: String
+  readableVersion: String
+  # Operating system
+  systemName: String
+  # Operating system version
+  systemVersion: String
+  timezone: String
+  # Operating system version
+  uniqueID: String
+  userAgent: String
+}
+
 type BloodGlucoseMeasurement {
   patient: Patient!
   # 血糖 Measures the pressure in your blood vessels when your heart beats.
@@ -96,12 +151,6 @@ type BloodGlucoseMeasurement {
   measurementDeviceModel: DeviceModel
   # 测量时间
   measuredAt: Date!
-  # 手机型号 The model of the phone that was used to connect to the measuring device.
-  phoneModel: String
-  # 应用名字 The name of the app that was used to connect to the measuring device.
-  appName: Codename!
-  # 应用版本 The version of the app that was used to connect to the measuring device.
-  appVersion: String
-  # 位置 The location of the user at the time of taking the measurement
-  location: Location
+  # The device taking the measurement
+  deviceContext: DeviceContext
 }

@@ -19,7 +19,6 @@ export const bloodGlucoseMeasurements = async (
     bloodGlucose: { value: (+x.bgValue).toFixed(2), unit: 'mg/dL' },
     manual: !!x.source,
     medication: structureMedication(x.pillNote),
-    appName: !!x.iGlucoseDataId && 'IGLUCO',
     measurementDeviceModel: !!x.iGlucoseDataId && 'BG1',
     carbohydratesConsumed: structureCarbohydrates(x.mealNote),
     hadTakenInsulin: ChineseBoolean[x.insulinInjection],

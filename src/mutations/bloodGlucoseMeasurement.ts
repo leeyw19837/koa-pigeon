@@ -15,7 +15,7 @@ export const saveBloodGlucoseMeasurement = async (
     digestiveState,
     measurementDeviceModel,
     measuredAt,
-    appName,
+    deviceContext,
   } = args
 
   const newFormat = {
@@ -24,7 +24,7 @@ export const saveBloodGlucoseMeasurement = async (
     digestiveState,
     measurementDeviceModel,
     measuredAt,
-    appName,
+    deviceContext,
   }
   const dinnerSituation = Object.entries(DigestiveStateLookup).find(
     ([key, value]) => value === digestiveState,

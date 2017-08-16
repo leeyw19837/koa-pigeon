@@ -58,17 +58,13 @@ type Mutation {
     appointmentId: ID!
     senderNickname: String!
   ): Boolean!
-  # TODO get this data
-  # phoneModel: String
-  # appVersion: String
-  # location: Location
   saveBloodGlucoseMeasurement(
     patientId: ID!
     bloodGlucose: BloodGlucoseInput!
     digestiveState: DigestiveState!
     measurementDeviceModel: DeviceModel!
     measuredAt: Date!
-    appName: Codename!
+    deviceContext: DeviceContextInput!
   ): Boolean!
 }
 
