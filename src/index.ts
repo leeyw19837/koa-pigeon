@@ -62,8 +62,8 @@ router.get('/healthcheck', ctx => {
   ctx.body = 'OK'
 })
 
-router.post('/log', context => {
-  console.log(context.request.body)
+router.post('/log', ctx => {
+  console.log(ctx.request.body)
 })
 
 router.all(
