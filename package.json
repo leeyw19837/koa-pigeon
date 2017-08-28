@@ -47,6 +47,7 @@
     "@types/graphql": "^0.8.6",
     "@types/graphql-date": "^1.0.0",
     "@types/koa": "^2.0.39",
+    "@types/koa-bodyparser": "^3.0.24",
     "@types/koa-router": "^7.0.21",
     "@types/lodash": "^4.14.55",
     "@types/mongodb": "^2.1.41",
