@@ -29,7 +29,11 @@ type Query {
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
   # Measurements
-  bloodGlucoseMeasurements(patientId: ID!): [BloodGlucoseMeasurement]
+  bloodGlucoseMeasurements(
+    patientId: ID!
+    from: Date
+    to: Date
+  ): [BloodGlucoseMeasurement]
 }
 
 type Mutation {
