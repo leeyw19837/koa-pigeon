@@ -6,14 +6,14 @@ export const bloodGlucoseMeasurements = async (
   { getDb }: IContext,
 ) => {
   const db = await getDb()
-
-  let dateQuery = {}
-  if (args.from) dateQuery = { $gt: args.from }
-  if (args.to) dateQuery = { ...dateQuery, $lt: args.to }
+  const cursor = { author: args.patientId }
+  if (args.from && args.to) {
+    Object.assign(cursor, { createdAt: { $gt: args.from, $lt: args.to } })
+  }
 
   const a = await db
     .collection('bloodglucoses')
-    .find({ author: args.patientId, createdAt: { ...dateQuery } })
+    .find(cursor)
     .sort({ createdAt: -1 })
     .toArray()
   return a.map(x => ({
