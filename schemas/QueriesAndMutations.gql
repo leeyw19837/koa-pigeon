@@ -29,7 +29,7 @@ type Query {
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
   # Treatment plans
-  treatmentPlans(patientId: ID!): [TreatmentPlan]
+  treatmentPlan(patientId: ID!): [TreatmentPlan]
   # Measurements
   bloodGlucoseMeasurements(
     patientId: ID!

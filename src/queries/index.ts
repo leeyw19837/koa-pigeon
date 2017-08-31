@@ -7,6 +7,7 @@ import * as photos from './photos'
 import * as statistics from './statistics'
 import * as treatmentState from './treatmentState'
 import * as treatmentStates from './treatmentStates'
+import * as treatmentPlan from './treatmentPlan'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -20,6 +21,7 @@ const queries = {
   ...statistics,
   ...treatmentState,
   ...treatmentStates,
+  ...treatmentPlan,
 }
 
 const queriesWithLogging = {}
