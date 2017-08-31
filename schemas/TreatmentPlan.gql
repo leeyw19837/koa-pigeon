@@ -1,0 +1,11 @@
+type TreatmentPlan {
+  Monday: [DigestiveState]
+  Tuesday: [DigestiveState]
+  Wednesday: [DigestiveState]
+  Thursday: [DigestiveState]
+  Friday: [DigestiveState]
+  Saturday: [DigestiveState]
+  Sunday: [DigestiveState]
+  startAt: Date
+  endAt: Date
+}

@@ -28,6 +28,8 @@ type Query {
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
+  # Treatment plans
+  treatmentPlans(patientId: ID!): [TreatmentPlan]
   # Measurements
   bloodGlucoseMeasurements(
     patientId: ID!
