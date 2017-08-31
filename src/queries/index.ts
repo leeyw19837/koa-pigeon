@@ -5,9 +5,9 @@ import * as footAssessments from './footAssessments'
 import * as patients from './patients'
 import * as photos from './photos'
 import * as statistics from './statistics'
+import * as treatmentPlan from './treatmentPlan'
 import * as treatmentState from './treatmentState'
 import * as treatmentStates from './treatmentStates'
-import * as treatmentPlan from './treatmentPlan'
 
 import { logQueryOrMutation } from '../utils'
 
