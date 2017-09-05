@@ -19,12 +19,14 @@ export const treatmentPlan = async (_, args, { getDb }: IContext) => {
   return result.map(item => ({
     startAt: item.startAt,
     endAt: item.endAt,
-    Monday: convertObjectToArray(item.Monday),
-    Tuesday: convertObjectToArray(item.Tuesday),
-    Wednesday: convertObjectToArray(item.Wednesday),
-    Thursday: convertObjectToArray(item.Thursday),
-    Friday: convertObjectToArray(item.Friday),
-    Saturday: convertObjectToArray(item.Saturday),
-    Sunday: convertObjectToArray(item.Sunday),
+    testTimes: {
+      monday: convertObjectToArray(item.Monday),
+      tuesday: convertObjectToArray(item.Tuesday),
+      wednesday: convertObjectToArray(item.Wednesday),
+      thursday: convertObjectToArray(item.Thursday),
+      friday: convertObjectToArray(item.Friday),
+      saturday: convertObjectToArray(item.Saturday),
+      sunday: convertObjectToArray(item.Sunday),
+    },
   }))
 }
