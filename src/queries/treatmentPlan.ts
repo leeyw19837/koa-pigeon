@@ -8,6 +8,7 @@ export const treatmentPlan = async (_, args, { getDb }: IContext) => {
   const result = await db
     .collection('bg_measure_module')
     .find({ patientId: args.patientId })
+    .sort({ createdAt: -1 })
     .toArray()
 
   const convertCamelCaseToUpperCase = str =>

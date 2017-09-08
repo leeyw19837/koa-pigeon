@@ -1,11 +1,13 @@
+import { ObjectID } from 'mongodb'
 import { IContext } from '../types'
 
 export const patient = async (_, args, { getDb }: IContext) => {
   const db = await getDb()
   if (args.patientId) {
-    return db
-      .collection('users')
-      .findOne({ _id: args.patientId, patientState: { $exists: 1 } })
+    return db.collection('users').findOne({
+      _id: ObjectID.createFromHexString(args.patientId),
+      patientState: { $exists: 1 },
+    })
   }
   return db.collection('users').findOne({
     username: `${args.telephone}@ijk.com`,
@@ -15,12 +17,18 @@ export const patient = async (_, args, { getDb }: IContext) => {
 
 export const patients = async (_, args, { getDb }: IContext) => {
   const db = await getDb()
-  return db.collection('users').find({ patientState: { $exists: 1 } }).toArray()
+  return db
+    .collection('users')
+    .find({ patientState: { $exists: 1 } })
+    .toArray()
 }
 
 export const patientsByStatus = async (_, args, { getDb }: IContext) => {
   const db = await getDb()
-  return db.collection('users').find({ status: args.status }).toArray()
+  return db
+    .collection('users')
+    .find({ status: args.status })
+    .toArray()
 }
 
 export const healthCareProfessional = async (_, args, { getDb }: IContext) => {
@@ -32,5 +40,8 @@ export const healthCareProfessional = async (_, args, { getDb }: IContext) => {
 
 export const healthCareProfessionals = async (_, args, { getDb }: IContext) => {
   const db = await getDb()
-  return db.collection('users').find({ patientState: { $exists: 0 } }).toArray()
+  return db
+    .collection('users')
+    .find({ patientState: { $exists: 0 } })
+    .toArray()
 }

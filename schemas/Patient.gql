@@ -1,6 +1,7 @@
 type Patient {
   _id: ID
   nickname: String
+  username: String
   footAssessmentPhotos: [Photo]
 }
 
