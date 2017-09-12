@@ -46,9 +46,11 @@ enum DigestiveState { # NOTE below are usage stats
   #
   # 睡前          睡前 15
   BEFORE_BED
+  BEFORE_SLEEP
   #
   # 凌晨／半夜     半夜 354           凌晨 5
   BEFORE_DAWN
+  MIDNIGHT
   #
   # 零食后        零食后 18
   AFTER_SNACK
