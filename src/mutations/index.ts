@@ -2,20 +2,30 @@ import * as assessmentTime from './assessmentTime'
 import * as chatMessages from './chatMessages'
 import * as footAssessment from './footAssessment'
 import * as photos from './photos'
+import * as needleSendAudioChatMessage from './NeedleSendAudioChatMessage'
+import * as needleSendImageChatMessage from './NeedleSendImageChatMessage'
+import * as needleSendTextChatMessage from './NeedleSendTextChatMessage'
 
 import { logQueryOrMutation } from '../utils'
-
 
 const mutations = {
   ...assessmentTime,
   ...chatMessages,
   ...footAssessment,
   ...photos,
+  ...needleSendAudioChatMessage,
+  ...needleSendImageChatMessage,
+  ...needleSendTextChatMessage,
 }
 
 const mutationsWithLogging = {}
-Object.keys(mutations).map((mutationName: string) =>
-  mutationsWithLogging[mutationName] = logQueryOrMutation('MUTATION', mutationName, mutations[mutationName]),
+Object.keys(mutations).map(
+  (mutationName: string) =>
+    (mutationsWithLogging[mutationName] = logQueryOrMutation(
+      'MUTATION',
+      mutationName,
+      mutations[mutationName],
+    )),
 )
 
 export default mutationsWithLogging
