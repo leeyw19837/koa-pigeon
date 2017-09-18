@@ -1,5 +1,5 @@
 import freshId from 'fresh-id'
-import { uploadFile } from '../../ks3'
+import { uploadFile } from '../utils/ks3'
 
 export const sendAudioChatMessage = async (_, args, context) => {
   const db = await context.getDb()
