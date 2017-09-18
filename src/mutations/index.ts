@@ -18,6 +18,7 @@ const mutations = {
   ...needleSendAudioChatMessage,
   ...needleSendImageChatMessage,
   ...needleSendTextChatMessage,
+  ...bloodGlucoseMeasurement,
 }
 
 const mutationsWithLogging = {}

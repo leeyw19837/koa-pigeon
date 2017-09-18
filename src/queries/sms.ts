@@ -15,9 +15,15 @@ export const smses = async (_, args, { getDb }: IContext) => {
     mobileFilter = new RegExp(lodash.trim(args.mobile))
   }
 
-  const sms: any[] = await db.collection('sms').find({
-    mobile: mobileFilter,
-  }).sort({ createdAt: -1 }).skip(currPage * size).limit(size).toArray()
+  const sms: any[] = await db
+    .collection('sms')
+    .find({
+      mobile: mobileFilter,
+    })
+    .sort({ createdAt: -1 })
+    .skip(currPage * size)
+    .limit(size)
+    .toArray()
 
   sms.forEach(item => {
     item.details = JSON.stringify(item)

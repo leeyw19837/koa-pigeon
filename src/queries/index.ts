@@ -24,6 +24,7 @@ const queries = {
   ...treatmentStates,
   ...treatmentPlan,
   ...sms,
+  ...treatmentPlan,
 }
 
 const queriesWithLogging = {}

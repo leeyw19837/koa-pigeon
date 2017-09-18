@@ -37,6 +37,7 @@ type Query {
     from: Date
     to: Date
   ): [BloodGlucoseMeasurement]
+  # Sms
   smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
 }
 
@@ -87,6 +88,14 @@ type Mutation {
   ): NeedleImageMessage!
   # Posts an text chat message to the given chat room.
   sendNeedleTextChatMessage(chatRoomId: ID!, text: String!): NeedleTextMessage!
+  saveBloodGlucoseMeasurement(
+    patientId: ID!
+    bloodGlucose: BloodGlucoseInput!
+    digestiveState: DigestiveState!
+    measurementDeviceModel: DeviceModel!
+    measuredAt: Date!
+    deviceContext: DeviceContextInput!
+  ): Boolean!
 }
 
 schema {
