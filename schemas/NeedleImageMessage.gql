@@ -1,0 +1,7 @@
+type ImageMessage implements ChatMessage {
+  _id: ID!
+  imageUrl: String!
+  sender: User!
+  createdAt: Date!
+  chatRoom: ChatRoom!
+}
