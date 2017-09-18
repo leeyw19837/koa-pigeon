@@ -1,0 +1,23 @@
+// NOTE order is significant
+export const DigestiveStateLookup = {
+  空腹: 'EMPTY_STOMACH',
+  早餐前: 'BEFORE_BREAKFAST',
+  早饭前: 'BEFORE_BREAKFAST',
+  早餐后: 'AFTER_BREAKFAST',
+  早饭后: 'AFTER_BREAKFAST',
+  午餐前: 'BEFORE_LUNCH',
+  午饭前: 'BEFORE_LUNCH',
+  午餐后: 'AFTER_LUNCH',
+  午饭后: 'AFTER_LUNCH',
+  晚饭前: 'BEFORE_DINNER',
+  晚餐前: 'BEFORE_DINNER',
+  晚饭后: 'AFTER_DINNER',
+  晚餐后: 'AFTER_DINNER',
+  睡前: 'BEFORE_SLEEP',
+  凌晨: 'MIDNIGHT',
+  半夜: 'MIDNIGHT',
+  随机: 'UNKNOWN',
+  零食后: 'AFTER_SNACK',
+  0: 'UNKNOWN',
+  10: 'UNKNOWN',
+}

@@ -24,13 +24,19 @@ type Query {
   activePatients: [DataPointNumberNumber!]!
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
   # Users
-  patient(patientId: ID!): Patient
+  patient(patientId: ID, telephone: String): Patient
   patients: [Patient]
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
+  # Treatment plans
+  treatmentPlan(patientId: ID!): [TreatmentPlan]
   # Measurements
-  bloodGlucoseMeasurements(patientId: ID!): [BloodGlucoseMeasurement]
+  bloodGlucoseMeasurements(
+    patientId: ID!
+    from: Date
+    to: Date
+  ): [BloodGlucoseMeasurement]
   # Sms
   smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
 }
@@ -74,6 +80,14 @@ type Mutation {
   ): NeedleImageMessage!
   # Posts an text chat message to the given chat room.
   sendNeedleTextChatMessage(chatRoomId: ID!, text: String!): NeedleTextMessage!
+  saveBloodGlucoseMeasurement(
+    patientId: ID!
+    bloodGlucose: BloodGlucoseInput!
+    digestiveState: DigestiveState!
+    measurementDeviceModel: DeviceModel!
+    measuredAt: Date!
+    deviceContext: DeviceContextInput!
+  ): Boolean!
 }
 
 schema {

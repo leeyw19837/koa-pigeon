@@ -5,6 +5,7 @@ const graphqlHTTP = require('koa-graphql')
 import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 const cors = require('koa-cors')
+const bodyParser = require('koa-bodyparser')
 import * as morgan from 'koa-morgan'
 import constructGetDb from 'mongodb-auto-reconnect'
 
@@ -43,6 +44,7 @@ const app = new Koa()
 //   app.use(morgan('dev'))
 // }
 app.use(convert(cors()))
+app.use(bodyParser())
 
 if (MONGO_URL === undefined) {
   console.error('Run with `yarn docker:dev`!')
@@ -58,6 +60,10 @@ const router = new Router()
 
 router.get('/healthcheck', ctx => {
   ctx.body = 'OK'
+})
+
+router.post('/log', ctx => {
+  console.log(ctx.request.body)
 })
 
 router.all(

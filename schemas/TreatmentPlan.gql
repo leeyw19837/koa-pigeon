@@ -1,0 +1,15 @@
+type TreatmentPlan {
+  testTimes: TestTimes
+  startAt: Date
+  endAt: Date
+}
+
+type TestTimes {
+  monday: [DigestiveState]
+  tuesday: [DigestiveState]
+  wednesday: [DigestiveState]
+  thursday: [DigestiveState]
+  friday: [DigestiveState]
+  saturday: [DigestiveState]
+  sunday: [DigestiveState]
+}

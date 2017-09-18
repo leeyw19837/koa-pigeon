@@ -1,6 +1,11 @@
 {
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "**/*.spec.ts"],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
   "compilerOptions": {
     "target": "es3",
     "noImplicitAny": false,
@@ -8,6 +13,8 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "allowJs": true,
-    "lib": ["es2015"]
+    "lib": [
+      "es2017"
+    ]
   }
 }

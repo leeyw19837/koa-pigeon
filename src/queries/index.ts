@@ -6,6 +6,7 @@ import * as patients from './patients'
 import * as photos from './photos'
 import * as sms from './sms'
 import * as statistics from './statistics'
+import * as treatmentPlan from './treatmentPlan'
 import * as treatmentState from './treatmentState'
 import * as treatmentStates from './treatmentStates'
 
@@ -22,6 +23,7 @@ const queries = {
   ...treatmentState,
   ...treatmentStates,
   ...sms,
+  ...treatmentPlan,
 }
 
 const queriesWithLogging = {}

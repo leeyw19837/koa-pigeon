@@ -5,15 +5,8 @@ enum DeviceModel {
 }
 
 enum Codename {
-  TBA
+  NEEDLE
   IGLUCO
-}
-
-type Location {
-  # 纬度
-  latitude: Float!
-  # 经度
-  longitude: Float!
 }
 
 type BloodGlucose {
@@ -22,30 +15,48 @@ type BloodGlucose {
   value: Float!
 }
 
-enum DigestiveState {
+input BloodGlucoseInput {
+  # defaults to mmol/L | US standard is : mg/dl
+  unit: String!
+  value: Float!
+}
+
+enum DigestiveState { # NOTE below are usage stats
+  #
   # 空腹
   EMPTY_STOMACH
-  # 早餐／饭前
+  #
+  # 早餐／饭前     早餐前 2641
   BEFORE_BREAKFAST
-  # 早餐／饭后
+  #
+  # 早餐／饭后     早餐后 913
   AFTER_BREAKFAST
-  # 午餐／饭前
+  #
+  # 午餐／饭前     午餐前 1311        中餐前 2
   BEFORE_LUNCH
-  # 午餐／饭后
+  #
+  # 午餐／饭后     午餐后 667         中餐后 5
   AFTER_LUNCH
-  # 晚餐／饭前
+  #
+  # 晚餐／饭前     晚饭前 1137        晚餐前 49
   BEFORE_DINNER
-  # 晚餐／饭后
+  #
+  # 晚餐／饭后     晚饭后 833         晚餐后 38
   AFTER_DINNER
-  # 睡前
+  #
+  # 睡前          睡前 15
   BEFORE_BED
-  # 凌晨／半夜
+  BEFORE_SLEEP
+  #
+  # 凌晨／半夜     半夜 354           凌晨 5
   BEFORE_DAWN
-  # 零食后
+  MIDNIGHT
+  #
+  # 零食后        零食后 18
   AFTER_SNACK
-  # 随机
-  RANDOM
-  # data is 0 or 10
+  #
+  # 随机          随机 74
+  # data is 0 or 10                 0 3
   UNKNOWN
 }
 
@@ -58,6 +69,68 @@ type Medication {
 type Carbohydrates {
   unit: String
   value: Float
+}
+
+input DeviceContextInput {
+  # 纬度
+  latitude: Float
+  # 经度
+  longitude: Float
+  # 应用名字 The name of the app that was used to connect to the measuring device.
+  appName: Codename
+  # 应用版本 The version of the app that was used to connect to the measuring device.
+  appVersion: String
+  isEmulator: Boolean
+  isTablet: Boolean
+  brand: String
+  buildNumber: Int
+  bundleId: String
+  deviceCountry: String
+  deviceId: String
+  deviceLocale: String
+  manufacturer: String
+  # 手机型号 The model of the phone that was used to connect to the measuring device.
+  model: String
+  readableVersion: String
+  # Operating system
+  systemName: String
+  # Operating system version
+  systemVersion: String
+  timezone: String
+  # Operating system version
+  uniqueID: String
+  userAgent: String
+}
+
+type DeviceContext {
+  # 纬度
+  latitude: Float
+  # 经度
+  longitude: Float
+  # 应用名字 The name of the app that was used to connect to the measuring device.
+  appName: Codename
+  # 应用版本 The version of the app that was used to connect to the measuring device.
+  appVersion: String
+  isEmulator: Boolean
+  isTablet: Boolean
+  brand: String
+  buildNumber: Int
+  bundleId: String
+  deviceCountry: String
+  deviceId: String
+  deviceLocale: String
+  manufacturer: String
+  # 手机型号 The model of the phone that was used to connect to the measuring device.
+  model: String
+  readableVersion: String
+  # Operating system
+  systemName: String
+  # Operating system version
+  systemVersion: String
+  timezone: String
+  # Operating system version
+  uniqueID: String
+  userAgent: String
 }
 
 type BloodGlucoseMeasurement {
@@ -80,12 +153,6 @@ type BloodGlucoseMeasurement {
   measurementDeviceModel: DeviceModel
   # 测量时间
   measuredAt: Date!
-  # 手机型号 The model of the phone that was used to connect to the measuring device.
-  phoneModel: String
-  # 应用名字 The name of the app that was used to connect to the measuring device.
-  appName: Codename!
-  # 应用版本 The version of the app that was used to connect to the measuring device.
-  appVersion: String
-  # 位置 The location of the user at the time of taking the measurement
-  location: Location
+  # The device taking the measurement
+  deviceContext: DeviceContext
 }
