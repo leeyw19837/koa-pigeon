@@ -1,0 +1,4 @@
+extend type Mutation {
+  # Posts an text chat message to the given chat room.
+  sendTextChatMessage(chatRoomId: ID!, text: String!): TextMessage!
+}

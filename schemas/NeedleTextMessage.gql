@@ -1,0 +1,7 @@
+type TextMessage implements ChatMessage {
+  _id: ID!
+  text: String!
+  sender: User!
+  createdAt: Date!
+  chatRoom: ChatRoom!
+}

@@ -1,0 +1,9 @@
+type ChatRoom {
+  _id: ID!
+  # The users in this chat room
+  participants: [User!]!
+  messages(before: Date, limit: Int = 10): [ChatMessage!]!
+  latestMessage: ChatMessage
+  # This is specific to the currently logged in user
+  unreadMessageCount: Int!
+}

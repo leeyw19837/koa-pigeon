@@ -1,0 +1,8 @@
+extend type Mutation {
+  # Posts an audio chat message to the given chat room.
+  sendImageChatMessage(
+    chatRoomId: ID!
+    # The base64 encoded audio data. This gets turned into a URL on the server.
+    base64EncodedImageData: String!
+  ): ImageMessage!
+}

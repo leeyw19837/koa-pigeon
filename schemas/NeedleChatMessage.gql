@@ -1,0 +1,6 @@
+interface ChatMessage {
+  _id: ID!
+  sender: User!
+  createdAt: Date!
+  chatRoom: ChatRoom!
+}
