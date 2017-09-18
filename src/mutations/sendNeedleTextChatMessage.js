@@ -3,8 +3,7 @@ import freshId from 'fresh-id'
 export const sendNeedleTextChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
-  const { chatRoomId, text } = args
-  const { userType, userId } = context.state
+  const { userId, chatRoomId, text } = args
 
   let user
 
@@ -36,7 +35,7 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
     _id: freshId(),
     messageType: 'TEXT',
     text,
-    sender: { userType, userId },
+    senderId: userId,
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
   }

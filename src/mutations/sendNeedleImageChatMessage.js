@@ -1,11 +1,10 @@
 import freshId from 'fresh-id'
-import { uploadFile } from '../utils/ks3'
+import { uploadBase64Img } from '../utils/ks3'
 
-export const sendNeedleAudioChatMessage = async (_, args, context) => {
+export const sendNeedleImageChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
-  const { chatRoomId, base64EncodedAudioData } = args
-  const { userType, userId } = context.state
+  const { userId, chatRoomId, base64EncodedImageData } = args
 
   const chatRoom = await db
     .collection('needleChatRooms')
@@ -20,20 +19,16 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
   if (!participantObject) {
     throw new Error('You can not post to chat rooms you are not a member of')
   }
-
-  const audioUrlKey = `${userId}${Date.now()}`
-  const audioUrl = await uploadFile(audioUrlKey, base64EncodedAudioData)
-
+  const imageUrlKey = `${userId}${Date.now()}`
+  const imageUrl = await uploadBase64Img(imageUrlKey, base64EncodedImageData)
   const newChatMessage = {
     _id: freshId(),
-    messageType: 'AUDIO',
-    audioUrl,
-    sender: { userType, userId },
+    messageType: 'IMAGE',
+    imageUrl,
+    senderId: userId,
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
   }
-
   await db.collection('needleChatMessages').insertOne(newChatMessage)
-
   return newChatMessage
 }
