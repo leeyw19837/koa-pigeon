@@ -1,7 +1,7 @@
 import freshId from 'fresh-id'
 import { uploadFile } from '../utils/ks3'
 
-export const sendAudioChatMessage = async (_, args, context) => {
+export const sendNeedleAudioChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
   const { chatRoomId, base64EncodedAudioData } = args

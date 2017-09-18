@@ -1,6 +1,6 @@
-interface ChatMessage {
+interface NeedleChatMessage {
   _id: ID!
   sender: User!
   createdAt: Date!
-  chatRoom: ChatRoom!
+  needleChatRoom: NeedleChatRoom!
 }

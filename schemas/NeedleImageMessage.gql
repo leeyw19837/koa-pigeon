@@ -1,7 +1,7 @@
-type ImageMessage implements ChatMessage {
+type NeedleImageMessage implements NeedleChatMessage {
   _id: ID!
   imageUrl: String!
   sender: User!
   createdAt: Date!
-  chatRoom: ChatRoom!
+  needleChatRoom: NeedleChatRoom!
 }

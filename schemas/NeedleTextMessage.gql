@@ -1,7 +1,7 @@
-type TextMessage implements ChatMessage {
+type NeedleTextMessage implements NeedleChatMessage {
   _id: ID!
   text: String!
   sender: User!
   createdAt: Date!
-  chatRoom: ChatRoom!
+  needleChatRoom: NeedleChatRoom!
 }

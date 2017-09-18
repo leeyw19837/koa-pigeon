@@ -1,7 +1,7 @@
-type AudioMessage implements ChatMessage {
+type NeedleAudioMessage implements NeedleChatMessage {
   _id: ID!
   audioUrl: String!
   sender: User!
   createdAt: Date!
-  chatRoom: ChatRoom!
+  needleChatRoom: NeedleChatRoom!
 }

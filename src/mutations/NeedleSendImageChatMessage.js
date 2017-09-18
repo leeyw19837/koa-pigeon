@@ -1,7 +1,7 @@
 import freshId from 'fresh-id'
 import { uploadBase64Img } from '../utils/ks3'
 
-export const sendImageChatMessage = async (_, args, context) => {
+export const sendNeedleImageChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
   const { chatRoomId, base64EncodedImageData } = args
