@@ -19,7 +19,9 @@ export const sendImageChatMessage = async (_, args, context) => {
   // } else {
   //   throw new Error('You have to log in before you can chat.')
   // }
-  const chatRoom = await db.collection('chatRooms').findOne({ _id: chatRoomId })
+  const chatRoom = await db
+    .collection('needleChatRooms')
+    .findOne({ _id: chatRoomId })
 
   if (!chatRoom) {
     throw new Error('Can not find chat room')
@@ -40,7 +42,7 @@ export const sendImageChatMessage = async (_, args, context) => {
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
   }
-  await db.collection('chatMessages').insertOne(newChatMessage)
-  pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
+  await db.collection('needleChatMessages').insertOne(newChatMessage)
+  pubsub.publish('needleChatMessageAdded', { chatMessageAdded: newChatMessage })
   return newChatMessage
 }
