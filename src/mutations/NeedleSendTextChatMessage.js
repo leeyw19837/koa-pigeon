@@ -1,6 +1,6 @@
 import freshId from 'fresh-id'
 
-export const sendTextChatMessage = async (_, args, context) => {
+export const sendNeedleTextChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
   const { chatRoomId, text } = args

@@ -61,6 +61,19 @@ type Mutation {
     appointmentId: ID!
     senderNickname: String!
   ): Boolean!
+  sendNeedleAudioChatMessage(
+    chatRoomId: ID!
+    # The base64 encoded audio data. This gets turned into a URL on the server.
+    base64EncodedAudioData: String!
+  ): NeedleAudioMessage!
+  # Posts an audio chat message to the given chat room.
+  sendNeedleImageChatMessage(
+    chatRoomId: ID!
+    # The base64 encoded audio data. This gets turned into a URL on the server.
+    base64EncodedImageData: String!
+  ): NeedleImageMessage!
+  # Posts an text chat message to the given chat room.
+  sendNeedleTextChatMessage(chatRoomId: ID!, text: String!): NeedleTextMessage!
 }
 
 schema {
