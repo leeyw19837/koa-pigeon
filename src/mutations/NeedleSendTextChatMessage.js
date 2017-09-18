@@ -1,5 +1,4 @@
 import freshId from 'fresh-id'
-import { pubsub } from '../pubsub'
 
 export const sendTextChatMessage = async (_, args, context) => {
   const db = await context.getDb()
@@ -43,6 +42,5 @@ export const sendTextChatMessage = async (_, args, context) => {
   }
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
-  pubsub.publish('needleChatMessageAdded', { chatMessageAdded: newChatMessage })
   return newChatMessage
 }

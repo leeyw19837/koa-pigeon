@@ -1,5 +1,4 @@
 import freshId from 'fresh-id'
-import { pubsub } from '../pubsub'
 import { uploadFile } from '../../ks3'
 
 export const sendAudioChatMessage = async (_, args, context) => {
@@ -35,7 +34,6 @@ export const sendAudioChatMessage = async (_, args, context) => {
   }
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
-  pubsub.publish('needleChatMessageAdded', { chatMessageAdded: newChatMessage })
 
   return newChatMessage
 }
