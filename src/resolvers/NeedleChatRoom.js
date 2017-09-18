@@ -5,19 +5,10 @@ export const NeedleChatRoom = {
     let users = []
 
     for (const participant of needleChatRoom.participants) {
-      if (participant.userType === 'PATIENT') {
-        const patient = await db
-          .collection('patients')
-          .findOne({ _id: participant.userId })
-        users.push(patient)
-      } else if (participant.userType === 'HEALTH_CARE_PROFESSIONAL') {
-        const healthCareProfessional = await db
-          .collection('healthCareProfessionals')
-          .findOne({ _id: participant.userId })
-        users.push(healthCareProfessional)
-      } else {
-        throw new Error(`Unrecognized userType: ${participant.userType}`)
-      }
+      const patient = await db
+        .collection('users')
+        .findOne({ _id: participant.userId })
+      users.push(patient)
     }
 
     return users
@@ -28,7 +19,10 @@ export const NeedleChatRoom = {
     const { before, limit } = args
     const messages = await db
       .collection('needleChatMessages')
-      .find({ chatRoomId: needleChatRoom._id, createdAt: { $lt: before } })
+      .find({
+        chatRoomId: needleChatRoom._id,
+        createdAt: { $lt: new Date(before) },
+      })
       .sort({ createdAt: -1 })
       .limit(limit)
       .toArray()
