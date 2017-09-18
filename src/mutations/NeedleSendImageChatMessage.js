@@ -1,5 +1,5 @@
 import freshId from 'fresh-id'
-import { uploadBase64Img } from '../../ks3'
+import { uploadBase64Img } from '../utils/ks3'
 
 export const sendImageChatMessage = async (_, args, context) => {
   const db = await context.getDb()
