@@ -1,5 +1,4 @@
 import freshId from 'fresh-id'
-import { pubsub } from '../pubsub'
 import { uploadBase64Img } from '../../ks3'
 
 export const sendImageChatMessage = async (_, args, context) => {
@@ -43,6 +42,5 @@ export const sendImageChatMessage = async (_, args, context) => {
     chatRoomId: chatRoom._id,
   }
   await db.collection('needleChatMessages').insertOne(newChatMessage)
-  pubsub.publish('needleChatMessageAdded', { chatMessageAdded: newChatMessage })
   return newChatMessage
 }
