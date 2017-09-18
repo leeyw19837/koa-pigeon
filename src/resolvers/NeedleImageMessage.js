@@ -1,5 +1,5 @@
 import { sharedNeedleChatMessageResolvers } from './NeedleChatMessage'
 
-export const NeedleTextMessage = {
+export const NeedleImageMessage = {
   ...sharedNeedleChatMessageResolvers,
 }

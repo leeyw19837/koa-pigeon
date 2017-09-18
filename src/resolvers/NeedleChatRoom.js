@@ -1,12 +1,14 @@
-export const ChatRoom = {
-  async participants(chatRoom, _, { getDb }) {
+export const NeedleChatRoom = {
+  async participants(needleChatRoom, _, { getDb }) {
     const db = await getDb()
 
     let users = []
 
-    for (const participant of chatRoom.participants) {
+    for (const participant of needleChatRoom.participants) {
       if (participant.userType === 'PATIENT') {
-        const patient = await db.collection('patients').findOne({ _id: participant.userId })
+        const patient = await db
+          .collection('patients')
+          .findOne({ _id: participant.userId })
         users.push(patient)
       } else if (participant.userType === 'HEALTH_CARE_PROFESSIONAL') {
         const healthCareProfessional = await db
@@ -20,13 +22,13 @@ export const ChatRoom = {
 
     return users
   },
-  async messages(chatRoom, args, { getDb }) {
+  async messages(needleChatRoom, args, { getDb }) {
     const db = await getDb()
 
     const { before, limit } = args
     const messages = await db
-      .collection('chatMessages')
-      .find({ chatRoomId: chatRoom._id, createdAt: { $lt: before } })
+      .collection('needleChatMessages')
+      .find({ chatRoomId: needleChatRoom._id, createdAt: { $lt: before } })
       .sort({ createdAt: -1 })
       .limit(limit)
       .toArray()
@@ -36,7 +38,7 @@ export const ChatRoom = {
   async latestMessage(chatRoom, _, { getDb }) {
     const db = await getDb()
     const messageArray = await db
-      .collection('chatMessages')
+      .collection('needleChatMessages')
       .find({ chatRoomId: chatRoom._id })
       .sort({ createdAt: -1 })
       .limit(1)
@@ -50,7 +52,7 @@ export const ChatRoom = {
       return user.userId === userId
     })
     return await db
-      .collection('chatMessages')
+      .collection('needleChatMessages')
       .count({ chatRoomId: chatRoom._id, createdAt: { $gt: me.lastSeenAt } })
   },
 }
