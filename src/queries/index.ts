@@ -1,5 +1,6 @@
 import * as bloodGlucoseMeasurements from './bloodGlucoseMeasurements'
 import * as chatMessages from './chatMessages'
+import * as fetchOrCreateNeedleChatRoom from './fetchOrCreateNeedleChatRoom'
 import * as footAssessment from './footAssessment'
 import * as footAssessments from './footAssessments'
 import * as patients from './patients'
@@ -9,7 +10,6 @@ import * as statistics from './statistics'
 import * as treatmentPlan from './treatmentPlan'
 import * as treatmentState from './treatmentState'
 import * as treatmentStates from './treatmentStates'
-import * as fetchOrCreateNeedleChatRoom from './fetchOrCreateNeedleChatRoom'
 
 import { logQueryOrMutation } from '../utils'
 
