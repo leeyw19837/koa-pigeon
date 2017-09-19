@@ -94,6 +94,7 @@ type Mutation {
     chatRoomId: ID!
     text: String!
   ): NeedleTextMessage!
+  fetchOrCreateNeedleChatRoom(userId: ID!): NeedleChatRoom!
 }
 
 schema {

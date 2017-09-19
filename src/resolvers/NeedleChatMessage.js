@@ -1,3 +1,5 @@
+import { maybeCreateFromHexString } from '../utils'
+
 export const NeedleChatMessage = {
   __resolveType(obj, context, info) {
     if (obj.messageType === 'TEXT') {
@@ -17,7 +19,9 @@ export const sharedNeedleChatMessageResolvers = {
   async sender(needleChatMessage, _, { getDb }) {
     const db = getDb === undefined ? global.db : await getDb()
 
-    return db.collection('users').findOne({ _id: needleChatMessage.senderId })
+    return db
+      .collection('users')
+      .findOne({ _id: maybeCreateFromHexString(needleChatMessage.senderId) })
   },
   async needleChatRoom(needleChatMessage, _, { getDb }) {
     const db = getDb === undefined ? global.db : await getDb()

@@ -5,6 +5,8 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
 
   const { userId, chatRoomId, text } = args
 
+  const userObjectId = ObjectId.createFromHexString(userId)
+
   const chatRoom = await db
     .collection('needleChatRooms')
     .findOne({ _id: chatRoomId })
