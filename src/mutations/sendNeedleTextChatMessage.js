@@ -5,18 +5,6 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
 
   const { userId, chatRoomId, text } = args
 
-  let user
-
-  if (userType === 'PATIENT') {
-    user = await db.collection('patients').findOne({ _id: userId })
-  } else if (userType === 'HEALTH_CARE_PROFESSIONAL') {
-    user = await db
-      .collection('healthCareProfessionals')
-      .findOne({ _id: userId })
-  } else {
-    throw new Error('You have to log in before you can chat.')
-  }
-
   const chatRoom = await db
     .collection('needleChatRooms')
     .findOne({ _id: chatRoomId })
