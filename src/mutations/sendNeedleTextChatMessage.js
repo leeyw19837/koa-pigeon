@@ -1,4 +1,5 @@
 import freshId from 'fresh-id'
+import { ObjectId } from 'mongodb'
 
 export const sendNeedleTextChatMessage = async (_, args, context) => {
   const db = await context.getDb()
