@@ -9,6 +9,7 @@ import * as statistics from './statistics'
 import * as treatmentPlan from './treatmentPlan'
 import * as treatmentState from './treatmentState'
 import * as treatmentStates from './treatmentStates'
+import * as fetchOrCreateNeedleChatRoom from './fetchOrCreateNeedleChatRoom'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -24,6 +25,7 @@ const queries = {
   ...treatmentStates,
   ...sms,
   ...treatmentPlan,
+  ...fetchOrCreateNeedleChatRoom,
 }
 
 const queriesWithLogging = {}

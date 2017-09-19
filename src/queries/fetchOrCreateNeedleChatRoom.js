@@ -1,5 +1,6 @@
 import freshId from 'fresh-id'
 import { uploadFile } from '../utils/ks3'
+import { maybeCreateFromHexString } from '../utils'
 import { ObjectId } from 'mongodb'
 
 export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
@@ -10,7 +11,7 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
   const userObjectId = ObjectId.createFromHexString(userId)
 
   const user = await db.collection('users').findOne({ _id: userObjectId })
-
+  console.log(userObjectId, user)
   let chatRoom
   if (user.needleChatRoomId) {
     chatRoom = await db
@@ -21,7 +22,8 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
       _id: freshId(),
       participants: [
         { userId, lastSeenAt: new Date() },
-        // TODO(jan): Add doctor to chat room
+        // { userId: '66728d10dc75bc6a43052036', lastSeenAt: new Date() },
+        // TODO(tang): Hard code(use yushuiqing's account)
       ],
     }
     await db.collection('needleChatRooms').insertOne(chatRoom)
