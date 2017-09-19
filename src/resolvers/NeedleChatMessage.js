@@ -19,9 +19,13 @@ export const sharedNeedleChatMessageResolvers = {
   async sender(needleChatMessage, _, { getDb }) {
     const db = getDb === undefined ? global.db : await getDb()
 
-    return db
-      .collection('users')
-      .findOne({ _id: maybeCreateFromHexString(needleChatMessage.senderId) })
+    // TODO(tangweikun) Hard Cord should replace of healthCareProfessional id
+    const userId =
+      needleChatMessage.senderId === '66728d10dc75bc6a43052036'
+        ? needleChatMessage.senderId
+        : maybeCreateFromHexString(needleChatMessage.senderId)
+
+    return db.collection('users').findOne({ _id: userId })
   },
   async needleChatRoom(needleChatMessage, _, { getDb }) {
     const db = getDb === undefined ? global.db : await getDb()

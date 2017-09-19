@@ -10,8 +10,10 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
 
   const userObjectId = ObjectId.createFromHexString(userId)
 
-  const user = await db.collection('users').findOne({ _id: userObjectId })
-  console.log(userObjectId, user)
+  const user = await db.collection('users').findOne({
+    _id: userId === '66728d10dc75bc6a43052036' ? userId : userObjectId,
+  })
+
   let chatRoom
   if (user.needleChatRoomId) {
     chatRoom = await db
@@ -22,17 +24,19 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
       _id: freshId(),
       participants: [
         { userId, lastSeenAt: new Date() },
-        // { userId: '66728d10dc75bc6a43052036', lastSeenAt: new Date() },
-        // TODO(tang): Hard code(use yushuiqing's account)
+        { userId: '66728d10dc75bc6a43052036', lastSeenAt: new Date() },
+        // TODO(tangweikun): Hard code(use yushuiqing's account)
       ],
     }
     await db.collection('needleChatRooms').insertOne(chatRoom)
-    await db
-      .collection('users')
-      .update(
-        { _id: userObjectId },
-        { $set: { needleChatRoomId: chatRoom._id } },
-      )
+    if (userId !== '66728d10dc75bc6a43052036') {
+      await db
+        .collection('users')
+        .update(
+          { _id: userObjectId },
+          { $set: { needleChatRoomId: chatRoom._id } },
+        )
+    }
   }
 
   return chatRoom
