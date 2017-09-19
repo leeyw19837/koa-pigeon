@@ -39,6 +39,7 @@ type Query {
   ): [BloodGlucoseMeasurement]
   # Sms
   smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
+  fetchOrCreateNeedleChatRoom(userId: ID!): NeedleChatRoom!
 }
 
 type Mutation {
@@ -102,7 +103,6 @@ type Mutation {
     chatRoomId: ID!
     text: String!
   ): NeedleTextMessage!
-  fetchOrCreateNeedleChatRoom(userId: ID!): NeedleChatRoom!
 }
 
 schema {
