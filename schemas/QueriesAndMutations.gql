@@ -95,6 +95,7 @@ type Mutation {
     chatRoomId: ID!
     text: String!
   ): NeedleTextMessage!
+  updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
 }
 
 schema {
