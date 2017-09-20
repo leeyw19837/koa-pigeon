@@ -12,4 +12,13 @@ export const Patient = {
       })
       .toArray()
   },
+  needleChatRoom: async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+
+    return db
+      .collection('needleChatRooms')
+      .findOne({
+        _id: patient.needleChatRoomId,
+      })
+  },
 }

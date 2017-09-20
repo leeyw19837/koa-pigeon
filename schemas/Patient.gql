@@ -2,6 +2,10 @@ type Patient {
   _id: ID
   nickname: String
   username: String
+  gender: String
+  dateOfBirth: Date
+  avatar: String
+  needleChatRoom: NeedleChatRoom
   footAssessmentPhotos: [Photo]
 }
 
