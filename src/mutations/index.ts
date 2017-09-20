@@ -2,6 +2,7 @@ import * as assessmentTime from './assessmentTime'
 import * as bloodGlucoseMeasurement from './bloodGlucoseMeasurement'
 import * as chatMessages from './chatMessages'
 import * as footAssessment from './footAssessment'
+import * as needleChatMessages from './needleChatMessages'
 import * as photos from './photos'
 import * as sendNeedleAudioChatMessage from './sendNeedleAudioChatMessage'
 import * as sendNeedleImageChatMessage from './sendNeedleImageChatMessage'
@@ -18,6 +19,7 @@ const mutations = {
   ...sendNeedleAudioChatMessage,
   ...sendNeedleImageChatMessage,
   ...sendNeedleTextChatMessage,
+  ...needleChatMessages,
 }
 
 const mutationsWithLogging = {}
