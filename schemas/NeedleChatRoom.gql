@@ -5,5 +5,5 @@ type NeedleChatRoom {
   messages(before: String, limit: Int = 100): [NeedleChatMessage!]!
   latestMessage: NeedleChatMessage
   # This is specific to the currently logged in user
-  unreadMessageCount: Int!
+  unreadMessageCount(userId: ID!): Int!
 }

@@ -40,24 +40,23 @@ export const NeedleChatRoom = {
 
     return messages.reverse()
   },
-  // async latestMessage(chatRoom, _, { getDb }) {
-  //   const db = await getDb()
-  //   const messageArray = await db
-  //     .collection('needleChatMessages')
-  //     .find({ chatRoomId: chatRoom._id })
-  //     .sort({ createdAt: -1 })
-  //     .limit(1)
-  //     .toArray()
-  //   return messageArray[0] || null
-  // },
-  // async unreadMessageCount(chatRoom, _, context) {
-  //   const { userId } = context.state
-  //   const db = await context.getDb()
-  //   const me = chatRoom.participants.find(user => {
-  //     return user.userId === userId
-  //   })
-  //   return await db
-  //     .collection('needleChatMessages')
-  //     .count({ chatRoomId: chatRoom._id, createdAt: { $gt: me.lastSeenAt } })
-  // },
+  async latestMessage(needleChatRoom, _, { getDb }) {
+    const db = await getDb()
+    const messageArray = await db
+      .collection('needleChatMessages')
+      .find({ chatRoomId: needleChatRoom._id })
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .toArray()
+    return messageArray[0] || null
+  },
+  async unreadMessageCount(needleChatRoom, args, context) {
+    const db = await context.getDb()
+    const me = needleChatRoom.participants.find(user => {
+      return user.userId === args.userId
+    })
+    return await db
+      .collection('needleChatMessages')
+      .count({ chatRoomId: needleChatRoom._id, createdAt: { $gt: me.lastSeenAt } })
+  },
 }
