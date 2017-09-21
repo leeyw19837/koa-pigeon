@@ -6,4 +6,5 @@ type NeedleChatRoom {
   latestMessage: NeedleChatMessage
   # This is specific to the currently logged in user
   unreadMessageCount(userId: ID!): Int!
+  lastSeenAt(userId: ID!): Date!
 }

@@ -59,4 +59,10 @@ export const NeedleChatRoom = {
       .collection('needleChatMessages')
       .count({ chatRoomId: needleChatRoom._id, createdAt: { $gt: me.lastSeenAt } })
   },
+  async lastSeenAt(needleChatRoom, args, context) {
+    const me = needleChatRoom.participants.find(user => {
+      return user.userId === args.userId
+    })
+    return me && me.lastSeenAt
+  }
 }
