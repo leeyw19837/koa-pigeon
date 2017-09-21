@@ -15,6 +15,7 @@ import { SubscriptionServer } from 'subscriptions-transport-ws'
 import Mutation from './mutations'
 import Query from './queries'
 import * as resolvers from './resolvers'
+import * as subscriptions from './subscriptions'
 import { IContext } from './types'
 import { Date, formatError } from './utils'
 
@@ -28,6 +29,7 @@ const resolverMap = {
   ...resolvers,
   Query,
   Mutation,
+  Subscription: { ...subscriptions },
   Date,
 } as any // TODO(jan): Find a way to make this typed
 
