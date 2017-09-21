@@ -59,9 +59,11 @@ export const unreadMessages = async (_, args, context) => {
       const me = participants.find(item => item.userId === userId) || {}
       const { lastSeenAt = new Date() } = me
 
-      return await db
-        .collection('needleChatMessages')
-        .count({ chatRoomId: needleChatRoomId, createdAt: { $gt: lastSeenAt } })
+      return await db.collection('needleChatMessages').count({
+        chatRoomId: needleChatRoomId,
+        senderId: { $ne: userId },
+        createdAt: { $gt: lastSeenAt },
+      })
     }
   }
 
