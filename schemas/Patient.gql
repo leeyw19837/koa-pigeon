@@ -3,7 +3,7 @@ type Patient {
   nickname: String
   username: String
   gender: String
-  dateOfBirth: Date
+  dateOfBirth: String
   avatar: String
   needleChatRoom: NeedleChatRoom
   footAssessmentPhotos: [Photo]
