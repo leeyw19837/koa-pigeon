@@ -108,7 +108,7 @@ type Mutation {
 }
 
 type Subscription {
-  chatMessageAdded: String
+  chatMessageAdded: NeedleChatMessage!
 }
 
 schema {
