@@ -14,7 +14,7 @@
     "moduleResolution": "node",
     "allowJs": true,
     "lib": [
-      "es2017"
+      "es2017", "esnext.asynciterable"
     ]
   }
 }

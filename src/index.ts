@@ -8,6 +8,9 @@ const cors = require('koa-cors')
 const bodyParser = require('koa-bodyparser')
 import * as morgan from 'koa-morgan'
 import constructGetDb from 'mongodb-auto-reconnect'
+import { createServer } from 'http'
+import { execute, subscribe } from 'graphql'
+import { SubscriptionServer } from 'subscriptions-transport-ws'
 
 import Mutation from './mutations'
 import Query from './queries'
@@ -79,6 +82,21 @@ router.all(
 )
 
 app.use(router.routes()).use(router.allowedMethods())
-
+const ws = createServer(app.callback())
+  ws.listen(PORT, () => {
+    console.log(`Apollo Server is now running on http://localhost:${PORT}`)
+    // Set up the WebSocket for handling GraphQL subscriptions
+    new SubscriptionServer(
+      {
+        execute,
+        subscribe,
+        schema: schema as any,
+      },
+      {
+        server: ws,
+        path: '/feedback',
+      },
+    )
+  })
 console.log(`Running at ${PORT}/${SECRET}; Node env: ${NODE_ENV}`)
-app.listen(PORT)
+// app.listen(PORT)
