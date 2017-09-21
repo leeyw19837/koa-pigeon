@@ -20,8 +20,10 @@ export const patients = async (_, args, { getDb }: IContext) => {
   return db
     .collection('users')
     .find({
-      patientState: { $ne: ['REMOVE', 'ARCHIVE'] },
-      roles: { $exists: 0 },
+      $and: [
+        { patientState: { $ne: ['REMOVED', 'ARCHIVE'] } },
+        { roles: { $exists: 0 } }
+      ]
     })
     .toArray()
 }
