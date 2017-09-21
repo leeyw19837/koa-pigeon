@@ -41,3 +41,29 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
 
   return chatRoom
 }
+
+export const unreadMessages = async (_, args, context) => {
+  const db = await context.getDb()
+  const { userId } = args
+  const userObjectId = ObjectId.createFromHexString(userId)
+  const user = await db.collection('users').findOne({ _id: userObjectId })
+
+  if (user) {
+    const { needleChatRoomId } = user
+    const chatRoom = await db
+      .collection('needleChatRooms')
+      .findOne({ _id: needleChatRoomId })
+
+    if (chatRoom) {
+      const { participants } = chatRoom
+      const me = participants.find(item => item.userId === userId) || {}
+      const { lastSeenAt = new Date() } = me
+
+      return await db
+        .collection('needleChatMessages')
+        .count({ chatRoomId: needleChatRoomId, createdAt: { $gt: lastSeenAt } })
+    }
+  }
+
+  return 0
+}
