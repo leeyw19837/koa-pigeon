@@ -4,6 +4,8 @@ type Patient {
   username: String
   gender: String
   dateOfBirth: String
+  diabetesType: String
+  startOfIllness: String
   avatar: String
   needleChatRoom: NeedleChatRoom
   footAssessmentPhotos: [Photo]
