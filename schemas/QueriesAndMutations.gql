@@ -107,7 +107,12 @@ type Mutation {
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
 }
 
+type Subscription {
+  chatMessageAdded: String
+}
+
 schema {
   query: Query
   mutation: Mutation
+  subscription: Subscription
 }
