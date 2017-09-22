@@ -69,14 +69,6 @@ type Mutation {
     appointmentId: ID!
     senderNickname: String!
   ): Boolean!
-  saveBloodGlucoseMeasurement(
-    patientId: ID!
-    bloodGlucose: BloodGlucoseInput!
-    digestiveState: DigestiveState!
-    measurementDeviceModel: DeviceModel!
-    measuredAt: Date!
-    deviceContext: DeviceContextInput!
-  ): Boolean!
   sendNeedleAudioChatMessage(
     userId: String!
     chatRoomId: ID!

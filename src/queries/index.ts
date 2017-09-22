@@ -23,7 +23,6 @@ const queries = {
   ...statistics,
   ...treatmentState,
   ...treatmentStates,
-  ...treatmentPlan,
   ...sms,
   ...treatmentPlan,
   ...fetchOrCreateNeedleChatRoom,
