@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
+    "start": "npm run docker:dev",
     "build": "tsc",
     "watch": "concurrently 'tsc --watch' 'nodemon --watch \"dist\" --watch \"schemas\" --ext js,ts,gql dist/index.js'",
     "lint": "tslint 'src/**/*.ts'",
