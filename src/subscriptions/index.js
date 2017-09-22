@@ -1,1 +1,1 @@
-export * from './ChatMessageAdded'
+export * from './chatMessageAdded'
