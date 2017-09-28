@@ -33,7 +33,6 @@ const resolverMap = {
   Date,
 } as any // TODO(jan): Find a way to make this typed
 
-
 const schemasText = fs
   .readdirSync('./schemas/')
   .map(fileName => fs.readFileSync(`./schemas/${fileName}`, 'utf-8'))

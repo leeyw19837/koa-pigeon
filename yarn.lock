@@ -25,13 +25,17 @@
   dependencies:
     "@types/graphql" "*"
 
-"@types/graphql@*", "@types/graphql@^0.8.5":
+"@types/graphql@*", "@types/graphql@^0.11.4":
+  version "0.11.4"
+  resolved "http://r.cnpmjs.org/@types/graphql/download/@types/graphql-0.11.4.tgz#6e067838246ec741be3950211323726a77147472"
+
+"@types/graphql@^0.8.5":
   version "0.8.6"
   resolved "http://registry.npm.taobao.org/@types/graphql/download/@types/graphql-0.8.6.tgz#b34fb880493ba835b0c067024ee70130d6f9bb68"
 
-"@types/graphql@^0.11.4":
-  version "0.11.4"
-  resolved "http://r.cnpmjs.org/@types/graphql/download/@types/graphql-0.11.4.tgz#6e067838246ec741be3950211323726a77147472"
+"@types/graphql@^0.9.1":
+  version "0.9.4"
+  resolved "http://r.cnpmjs.org/@types/graphql/download/@types/graphql-0.9.4.tgz#cdeb6bcbef9b6c584374b81aa7f48ecf3da404fa"
 
 "@types/http-assert@*":
   version "1.2.0"
@@ -535,13 +539,13 @@ error-inject@~1.0.0:
   version "1.0.0"
   resolved "http://registry.npm.taobao.org/error-inject/download/error-inject-1.0.0.tgz#e2b3d91b54aed672f309d950d154850fa11d4f37"
 
-es6-promise@3.2.1:
+es6-promise@3.2.1, es6-promise@^3.0.2:
   version "3.2.1"
   resolved "http://registry.npm.taobao.org/es6-promise/download/es6-promise-3.2.1.tgz#ec56233868032909207170c39448e24449dd1fc4"
 
-es6-promise@^3.0.2, es6-promise@^3.2.1:
-  version "3.3.1"
-  resolved "http://registry.npm.taobao.org/es6-promise/download/es6-promise-3.3.1.tgz#a08cdde84ccdbf34d027a1451bc91d4bcd28a613"
+es6-promise@^4.0.5:
+  version "4.1.1"
+  resolved "http://r.cnpmjs.org/es6-promise/download/es6-promise-4.1.1.tgz#8811e90915d9a0dba36274f0b242dbda78f9c92a"
 
 escape-html@~1.0.1:
   version "1.0.3"
@@ -753,11 +757,13 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.2:
   version "4.1.11"
   resolved "http://registry.npm.taobao.org/graceful-fs/download/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
 
-graphql-subscriptions@^0.3.0:
-  version "0.3.1"
-  resolved "http://registry.npm.taobao.org/graphql-subscriptions/download/graphql-subscriptions-0.3.1.tgz#0cedc2d507420cf26cf414080b079f05402f0303"
+graphql-subscriptions@^0.4.4:
+  version "0.4.4"
+  resolved "http://r.cnpmjs.org/graphql-subscriptions/download/graphql-subscriptions-0.4.4.tgz#39cff32d08dd3c990113864bab77154403727e9b"
   dependencies:
-    es6-promise "^3.2.1"
+    "@types/graphql" "^0.9.1"
+    es6-promise "^4.0.5"
+    iterall "^1.1.1"
 
 graphql-tools@^0.10.1:
   version "0.10.1"
@@ -769,11 +775,11 @@ graphql-tools@^0.10.1:
   optionalDependencies:
     "@types/graphql" "^0.8.5"
 
-graphql@^0.9.1:
-  version "0.9.6"
-  resolved "http://registry.npm.taobao.org/graphql/download/graphql-0.9.6.tgz#514421e9d225c29dfc8fd305459abae58815ef2c"
+graphql@^0.10.5:
+  version "0.10.5"
+  resolved "http://r.cnpmjs.org/graphql/download/graphql-0.10.5.tgz#c9be17ca2bdfdbd134077ffd9bbaa48b8becd298"
   dependencies:
-    iterall "^1.0.0"
+    iterall "^1.1.0"
 
 har-schema@^1.0.5:
   version "1.0.5"
@@ -1003,7 +1009,7 @@ isstream@~0.1.2:
   version "0.1.2"
   resolved "http://registry.npm.taobao.org/isstream/download/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
-iterall@^1.0.0, iterall@^1.1.1:
+iterall@^1.1.0, iterall@^1.1.1:
   version "1.1.1"
   resolved "http://registry.npm.taobao.org/iterall/download/iterall-1.1.1.tgz#f7f0af11e9a04ec6426260f5019d9fcca4d50214"
 

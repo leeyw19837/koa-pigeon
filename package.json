@@ -26,8 +26,8 @@
   "dependencies": {
     "date-aware-json": "^0.1.0",
     "fresh-id": "^1.1.0",
-    "graphql": "^0.9.1",
-    "graphql-subscriptions": "^0.3.0",
+    "graphql": "^0.10.5",
+    "graphql-subscriptions": "^0.4.4",
     "graphql-tools": "^0.10.1",
     "koa": "^2.2.0",
     "koa-bodyparser": "^4.2.0",
