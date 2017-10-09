@@ -62,9 +62,6 @@ const context: IContext = {
   getDb,
 }
 
-// var a:any = await getDb()
-// declare var global: global
-console.log(global)
 ;(global as any).db = await getDb()
 
 const router = new Router()
