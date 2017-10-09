@@ -25,6 +25,7 @@ const { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 // looks for __esModule in the schema otherwise
 delete (resolvers as any).__esModule
 
+;(async () => {
 const resolverMap = {
   ...resolvers,
   Subscription,
@@ -60,6 +61,11 @@ const getDb = constructGetDb(MONGO_URL || '')
 const context: IContext = {
   getDb,
 }
+
+// var a:any = await getDb()
+// declare var global: global
+console.log(global)
+;(global as any).db = await getDb()
 
 const router = new Router()
 
@@ -102,3 +108,4 @@ const ws = createServer(app.callback())
   })
 console.log(`Running at ${PORT}/${SECRET}; Node env: ${NODE_ENV}`)
 // app.listen(PORT)
+})()
