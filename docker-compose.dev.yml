@@ -16,6 +16,9 @@ services:
       - SECRET=8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo
       - PORT=3080
       - NODE_ENV=development
+      - RIGHTEOUS_RAVEN_URL=https://raven.internal.ihealthcn.com
+      - RIGHTEOUS_RAVEN_ID=hwX6aOr1
+      - RIGHTEOUS_RAVEN_KEY=af3da1c0-5cd9-11e7-8401-fb7c0283f83d
 
 volumes:
   yarn:

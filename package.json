@@ -43,6 +43,7 @@
     "moment": "^2.17.1",
     "mongodb": "^2.2.24",
     "mongodb-auto-reconnect": "^0.0.1",
+    "righteous-raven": "^1.0.5",
     "subscriptions-transport-ws": "^0.9.0"
   },
   "devDependencies": {

@@ -102,6 +102,7 @@ type Mutation {
     text: String!
   ): NeedleTextMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
+  sendMobileVerificationCode(mobile: String!): Int!
 }
 
 type Subscription {
