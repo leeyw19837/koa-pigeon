@@ -1,0 +1,13 @@
+type LoginOrSignUpResponse {
+  didCreateNewPatient: Boolean!
+  _id: ID!
+  avatar: String
+  nickname: String
+}
+
+extend type Mutation {
+  loginOrSignUp(
+    mobile: String!
+    verificationCode: String!
+  ): LoginOrSignUpResponse!
+}

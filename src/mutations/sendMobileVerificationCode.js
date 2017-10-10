@@ -7,6 +7,7 @@ const EXPIRES_IN = 300
 
 export const sendMobileVerificationCode = async (_, args, context) => {
   const { mobile } = args
+  console.log('---->>', mobile,RIGHTEOUS_RAVEN_URL, RIGHTEOUS_RAVEN_ID)
 
   await code(RIGHTEOUS_RAVEN_URL, {
     client_id: RIGHTEOUS_RAVEN_ID,

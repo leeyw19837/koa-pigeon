@@ -19,7 +19,7 @@ import * as Subscription from './subscriptions'
 import { IContext } from './types'
 import { Date, formatError } from './utils'
 
-const { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
+const { NODE_ENV, PORT, MONGO_URL, SECRET, JWT_SECRET } = process.env
 
 // This is necessary because graphql-tools
 // looks for __esModule in the schema otherwise
@@ -87,6 +87,7 @@ router.all(
 )
 
 app.use(router.routes()).use(router.allowedMethods())
+
 const ws = createServer(app.callback())
   ws.listen(PORT, () => {
     console.log(`Apollo Server is now running on http://localhost:${PORT}`)

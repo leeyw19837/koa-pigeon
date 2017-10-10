@@ -8,6 +8,7 @@ import * as sendNeedleAudioChatMessage from './sendNeedleAudioChatMessage'
 import * as sendNeedleImageChatMessage from './sendNeedleImageChatMessage'
 import * as sendNeedleTextChatMessage from './sendNeedleTextChatMessage'
 import * as sendMobileVerificationCode from './sendMobileVerificationCode'
+import * as loginOrSignUp from './loginOrSignUp'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -22,6 +23,7 @@ const mutations = {
   ...sendNeedleTextChatMessage,
   ...needleChatMessages,
   ...sendMobileVerificationCode,
+  ...loginOrSignUp,
 }
 
 const mutationsWithLogging = {}
