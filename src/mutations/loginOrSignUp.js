@@ -31,7 +31,7 @@ export const loginOrSignUp = async (_, args, context) => {
   }
 
   // const patient = createNewPatient(null, mobile, clientCodename)
-  const response = await db.collection('users').insertOne({ username: `${mobile}@ijk.com`, createdAt: new Date() })
+  const response = await db.collection('users').insertOne({ username: `${mobile}@ijk.com`, createdAt: new Date(), patientState: 'POTENTIAL' })
   const newPatient = response.ops[0]
   return {
     didCreateNewPatient: true,
