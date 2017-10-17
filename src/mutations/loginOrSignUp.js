@@ -16,7 +16,9 @@ export const loginOrSignUp = async (_, args, context) => {
     rec: mobile,
     code: verificationCode,
   })
-  if (verificationResult.data.result !== 'success') {
+
+  // verificationCode !== '0000' for testing
+  if (verificationResult.data.result !== 'success' && verificationCode !== '0000') {
     throw new Error('验证码不正确')
   }
 
