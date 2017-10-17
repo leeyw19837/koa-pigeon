@@ -27,6 +27,7 @@ export const loginOrSignUp = async (_, args, context) => {
       _id: existingPatient._id,
       avatar: existingPatient.avatar,
       nickname: existingPatient.nickname,
+      patientState: existingPatient.patientState,
     }
   }
 
@@ -38,5 +39,6 @@ export const loginOrSignUp = async (_, args, context) => {
     _id: newPatient._id,
     avatar: newPatient.avatar,
     nickname: newPatient.nickname,
+    patientState: existingPatient.patientState,
   }
 }

@@ -3,6 +3,7 @@ type LoginOrSignUpResponse {
   _id: ID!
   avatar: String
   nickname: String
+  patientState: String
 }
 
 extend type Mutation {
