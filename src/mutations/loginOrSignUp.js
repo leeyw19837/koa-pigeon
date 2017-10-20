@@ -30,7 +30,7 @@ export const loginOrSignUp = async (_, args, context) => {
       )
     }
     return {
-      _id: existingPatient._id,
+      patientId: existingPatient._id,
       avatar: existingPatient.avatar,
       nickname: existingPatient.nickname,
       patientState: existingPatient.patientState,
@@ -43,7 +43,7 @@ export const loginOrSignUp = async (_, args, context) => {
   const response = await db.collection('users').insertOne(patientInfo)
   const newPatient = response.ops[0]
   return {
-    _id: newPatient._id,
+    patientId: newPatient._id,
     avatar: newPatient.avatar,
     nickname: newPatient.nickname,
     patientState: newPatient.patientState,

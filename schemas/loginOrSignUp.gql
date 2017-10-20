@@ -1,5 +1,5 @@
 type LoginOrSignUpResponse {
-  _id: ID
+  patientId: ID
   avatar: String
   nickname: String
   patientState: String
