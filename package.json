@@ -24,6 +24,7 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
+    "co-wechat-oauth": "^2.0.1",
     "date-aware-json": "^0.1.0",
     "fresh-id": "^1.1.0",
     "graphql": "^0.10.5",

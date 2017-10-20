@@ -9,6 +9,7 @@ import * as sendNeedleImageChatMessage from './sendNeedleImageChatMessage'
 import * as sendNeedleTextChatMessage from './sendNeedleTextChatMessage'
 import * as sendMobileVerificationCode from './sendMobileVerificationCode'
 import * as loginOrSignUp from './loginOrSignUp'
+import * as wechatLoginOrSignUp from './wechatLoginOrSignUp'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -24,6 +25,7 @@ const mutations = {
   ...needleChatMessages,
   ...sendMobileVerificationCode,
   ...loginOrSignUp,
+  ...wechatLoginOrSignUp,
 }
 
 const mutationsWithLogging = {}
