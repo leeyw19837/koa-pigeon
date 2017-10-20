@@ -23,7 +23,7 @@ export const wechatLoginOrSignUp = async (_, args, context) => {
       didCreateNewPatient: false,
     }
   }
-  console.log('not-exist--->')
+  console.log('not-exist--->', openid)
   const wechatInfo = await client.getUser(openid)
   await db.collection('wechats').update({ openid }, { ...wechatInfo, updatedAt: new Date() }, { upsert: true })
 
