@@ -1,11 +1,11 @@
 import { ObjectID } from 'mongodb'
 
-
-export const Outreach ={
-  patinet = async (patinet, _, { getDb }) => {
+export const Outreach = {
+  patient: async (outreach, _, { getDb }) => {
     const db = await getDb()
-    return db.collection('users').find({
-      _id: ObjectID.createFromHexString(patient._id)
+    console.log(outreach.patientId)
+    return db.collection('users').findOne({
+      _id: ObjectID.createFromHexString(outreach.patientId)
     })
   }
 }
