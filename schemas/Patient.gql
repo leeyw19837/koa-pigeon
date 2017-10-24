@@ -10,6 +10,7 @@ type Patient {
   needleChatRoom: NeedleChatRoom
   footAssessmentPhotos: [Photo]
   closestAppointment: Appointment
+  communications: [Communication]
 }
 
 type HealthcareProfessional {

@@ -27,10 +27,22 @@ export const Patient = {
     const endOfToday = moment().endOf('day')._d
     const result = await db.collection('appointments').find({
       patientId: patient._id.toString(),
+      status: 0,
       appointmentTime: {
         $gt: endOfToday,
       },
     }).sort({appointmentTime: 1}).toArray()
     return result[0] || null
-  }
+  },
+  communications: async(patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    
+    return db
+      .collection('communication')
+      .find({
+        patientId: patient._id.toString(),
+      })
+      .sort({ createdAt: 1})
+      .toArray()
+  },
 }
