@@ -105,6 +105,7 @@ type Mutation {
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
   saveCommunication(
+    _id: ID
     patientId: ID!
     currentTopic: String!
     initiator: Roles!
