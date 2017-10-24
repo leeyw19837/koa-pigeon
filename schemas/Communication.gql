@@ -10,6 +10,7 @@ enum Method {
 }
 
 type Communication {
+  _id: ID!
   patientId: ID!
   currentTopic: String!
   initiator: Roles!
