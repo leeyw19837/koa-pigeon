@@ -42,7 +42,7 @@ export const Patient = {
       .find({
         patientId: patient._id.toString(),
       })
-      .sort({ createdAt: 1})
+      .sort({ createdAt: -1})
       .toArray()
   },
 }
