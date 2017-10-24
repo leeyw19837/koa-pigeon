@@ -12,7 +12,7 @@ services:
       - "3080:3080"
     command: yarn build && yarn watch
     environment:
-      - MONGO_URL=mongodb://paperKingStagingByiHealth:d3Sid92jcxe9W@mongodev.ihealthcn.com:27017,mongodev.ihealthcn.com:27018,mongodev.ihealthcn.com:27019,mongodev1.ihealthcn.com:27017,mongodev2.ihealthcn.com:27018,mongodev3.ihealthcn.com:27019/paper-king-staging?replicaSet=rs
+      - MONGO_URL=mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@mongodev.ihealthcn.com:27017,mongodev.ihealthcn.com:27018,mongodev.ihealthcn.com:27019,mongodev1.ihealthcn.com:27017,mongodev2.ihealthcn.com:27018,mongodev3.ihealthcn.com:27019/paper-king-developing?replicaSet=rs
       - SECRET=8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo
       - PORT=3080
       - NODE_ENV=development

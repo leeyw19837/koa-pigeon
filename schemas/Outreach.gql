@@ -1,0 +1,7 @@
+type Outreach {
+  _id: ID
+  patient: Patient
+  appointmentTime: Date
+  source: [String]
+  createdAt: Date
+}
