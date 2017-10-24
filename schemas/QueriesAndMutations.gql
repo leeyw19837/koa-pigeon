@@ -46,7 +46,7 @@ type Query {
   smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
   fetchOrCreateNeedleChatRoom(userId: ID!): NeedleChatRoom!
   unreadMessages(userId: String!): Int!
-  outreachs(period: String!): [Outreach]
+  outreachs(period: String, startDay: Date): [Outreach]
 }
 
 type Mutation {
