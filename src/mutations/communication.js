@@ -18,7 +18,7 @@ export const saveCommunication = async (_, args, { getDb }) => {
     initiator,
     method,
     nextTopic,
-    nextDate: new Date(nextDate),
+    nextDate: nextDate ? new Date(nextDate) : null,
     createdAt: new Date(),
     createdBy: '66728d10dc75bc6a43052036', // TODO
   }
