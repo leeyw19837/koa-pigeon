@@ -1,0 +1,18 @@
+type Appointment {
+  _id: ID
+  source: String
+  isTelephoneFollowUp: Boolean
+  isOutPatient: Boolean
+  status: Int
+  type: String
+  nickname: String
+  hisNumber: String
+  mobile: String
+  createdAt: Date
+  expectedTime: Date
+  patientId: ID!
+  updatedAt: Date
+  confirmStatus: String
+  institutionId: ID
+  healthCareTeamId: ID
+}
