@@ -11,7 +11,7 @@ type LoginOrSignUpResponse {
   height: String
   weight: String
   diabetesType: String
-  startOffIllness: String
+  startOfIllness: String
   targetWeight: String
 }
 
