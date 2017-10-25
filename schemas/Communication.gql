@@ -13,7 +13,7 @@ enum Method {
 
 type Communication {
   _id: ID!
-  patientId: ID!
+  patient: Patient!
   currentTopic: String!
   initiator: Roles
   method: Method

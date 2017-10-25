@@ -12,6 +12,7 @@ export const saveCommunication = async (_, args, { getDb }) => {
     nextDate,
   } = args
   if (!_id){
+    const now = new Date()
     const newRecord = {
       _id: freshId(),
       patientId,
@@ -20,23 +21,30 @@ export const saveCommunication = async (_, args, { getDb }) => {
       method,
       nextTopic,
       nextDate: nextDate ? new Date(nextDate) : null,
-      createdAt: new Date(),
+      createdAt: now,
       createdBy: '66728d10dc75bc6a43052036', // TODO
     }
     await db.collection('communication').insertOne(newRecord)
+
+    await db.collection('outreachs').update({
+      patientId,
+      status: 'PENDING',
+      appointmentTime: {$lt: now}
+    }, {$set: {status: 'PROCESSED'}})
+
     if (nextDate) {
       const newOutreachs = {
         _id: freshId(),
         patientId,
-        isHandle: false,
-        source: ['communication'],
+        status: 'PENDING',
+        source: ['COMMUNICATION'],
         plannedDate: new Date(nextDate),
-        createdAt: new Date(),        
+        createdAt: now,        
       }
       await db.collection('outreachs').insertOne(newOutreachs)
     }
   } else {
-    const $set = { currentTopic, initiator, method, nextTopic, updatedAt: new Date() }
+    const $set = { currentTopic, initiator, method, nextTopic, updatedAt: now }
     await db.collection('communication').update({ _id }, { $set })
   }
   
