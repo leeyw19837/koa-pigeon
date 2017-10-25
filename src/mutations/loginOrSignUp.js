@@ -41,6 +41,7 @@ export const loginOrSignUp = async (_, args, context) => {
       diabetesType: existingPatient.diabetesType,
       startOfIllness: existingPatient.startOfIllness,
       targetWeight: existingPatient.targetWeight,
+      mobile: existingPatient.username.replace('@ijk.com', ''),
     }
   }
 

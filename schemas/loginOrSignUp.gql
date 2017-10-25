@@ -13,6 +13,7 @@ type LoginOrSignUpResponse {
   diabetesType: String
   startOfIllness: String
   targetWeight: String
+  mobile: String
 }
 
 extend type Mutation {

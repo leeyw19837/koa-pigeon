@@ -28,6 +28,7 @@ export const wechatLoginOrSignUp = async (_, args, context) => {
       diabetesType: existingPatient.diabetesType,
       startOfIllness: existingPatient.startOfIllness,
       targetWeight: existingPatient.targetWeight,
+      username: existingPatient.username.replace('@ijk.com', ''),
     }
   }
   console.log('not-exist--->', openid)
