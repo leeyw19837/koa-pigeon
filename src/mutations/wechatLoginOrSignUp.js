@@ -20,6 +20,8 @@ export const wechatLoginOrSignUp = async (_, args, context) => {
       avatar: existingPatient.avatar,
       nickname: existingPatient.nickname,
       patientState: existingPatient.patientState,
+      birthday: existingPatient.dateOfBirth,
+      gender: existingPatient.gender,
       didCreateNewPatient: false,
     }
   }

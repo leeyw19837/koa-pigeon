@@ -34,6 +34,8 @@ export const loginOrSignUp = async (_, args, context) => {
       avatar: existingPatient.avatar,
       nickname: existingPatient.nickname,
       patientState: existingPatient.patientState,
+      birthday: existingPatient.dateOfBirth,
+      gender: existingPatient.gender,
     }
   }
 

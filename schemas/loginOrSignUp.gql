@@ -3,6 +3,8 @@ type LoginOrSignUpResponse {
   avatar: String
   nickname: String
   patientState: String
+  birthday: Date
+  gender: String
   openid: String
   wechatOpenId: ID
   didCreateNewPatient: Boolean
