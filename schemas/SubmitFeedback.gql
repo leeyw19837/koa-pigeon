@@ -1,0 +1,3 @@
+extend type Mutation {
+  submitFeedback(text: String!, patientId: ID!): String!
+}

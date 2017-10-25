@@ -11,6 +11,7 @@ import * as sendMobileVerificationCode from './sendMobileVerificationCode'
 import * as loginOrSignUp from './loginOrSignUp'
 import * as wechatLoginOrSignUp from './wechatLoginOrSignUp'
 import * as communicationMutations from './communication'
+import * as submitFeedback from './submitFeedback'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -28,6 +29,7 @@ const mutations = {
   ...loginOrSignUp,
   ...wechatLoginOrSignUp,
   ...communicationMutations,
+  ...submitFeedback,
 }
 
 const mutationsWithLogging = {}
