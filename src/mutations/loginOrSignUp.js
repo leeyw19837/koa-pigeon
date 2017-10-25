@@ -55,5 +55,6 @@ export const loginOrSignUp = async (_, args, context) => {
     avatar: newPatient.avatar,
     nickname: newPatient.nickname,
     patientState: newPatient.patientState,
+    mobile: newPatient.username.replace('@ijk.com', ''),
   }
 }
