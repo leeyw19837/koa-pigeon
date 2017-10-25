@@ -108,8 +108,8 @@ type Mutation {
     _id: ID
     patientId: ID!
     currentTopic: String!
-    initiator: Roles!
-    method: Method!
+    initiator: Roles
+    method: Method
     nextTopic: String
     nextDate: Date
   ): Boolean!
