@@ -23,6 +23,11 @@ export const wechatLoginOrSignUp = async (_, args, context) => {
       birthday: existingPatient.dateOfBirth,
       gender: existingPatient.gender,
       didCreateNewPatient: false,
+      height: existingPatient.height,
+      weight: existingPatient.weight,
+      diabetesType: existingPatient.diabetesType,
+      startOffIllness: existingPatient.startOffIllness,
+      targetWeight: existingPatient.targetWeight,
     }
   }
   console.log('not-exist--->', openid)

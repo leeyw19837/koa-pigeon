@@ -36,6 +36,11 @@ export const loginOrSignUp = async (_, args, context) => {
       patientState: existingPatient.patientState,
       birthday: existingPatient.dateOfBirth,
       gender: existingPatient.gender,
+      height: existingPatient.height,
+      weight: existingPatient.weight,
+      diabetesType: existingPatient.diabetesType,
+      startOffIllness: existingPatient.startOffIllness,
+      targetWeight: existingPatient.targetWeight,
     }
   }
 

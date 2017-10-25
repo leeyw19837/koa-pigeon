@@ -8,6 +8,11 @@ type LoginOrSignUpResponse {
   openid: String
   wechatOpenId: ID
   didCreateNewPatient: Boolean
+  height: String
+  weight: String
+  diabetesType: String
+  startOffIllness: String
+  targetWeight: String
 }
 
 extend type Mutation {
