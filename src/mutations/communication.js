@@ -1,4 +1,5 @@
 import freshId from 'fresh-id'
+const moment = require('moment')
 
 export const saveCommunication = async (_, args, { getDb }) => {
   const db = await getDb()
@@ -20,7 +21,7 @@ export const saveCommunication = async (_, args, { getDb }) => {
       initiator,
       method,
       nextTopic,
-      nextDate: nextDate ? new Date(nextDate) : null,
+      nextDate: nextDate ? moment(nextDate).startOf('day')._d : null,
       createdAt: now,
       createdBy: '66728d10dc75bc6a43052036', // TODO
     }
@@ -37,8 +38,8 @@ export const saveCommunication = async (_, args, { getDb }) => {
         _id: freshId(),
         patientId,
         status: 'PENDING',
-        source: ['COMMUNICATION'],
-        plannedDate: new Date(nextDate),
+        source: ['communication'],
+        plannedDate: moment(nextDate).startOf('day')._d,
         createdAt: now,        
       }
       await db.collection('outreachs').insertOne(newOutreachs)
