@@ -8,5 +8,5 @@ export const submitFeedback = async (_, args, context) => {
     text,
   })
 
-  return text
+  return true
 }
