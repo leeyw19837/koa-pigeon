@@ -2,21 +2,19 @@ enum Roles {
   PATIENT
   DOCTOR
   ASSISTANT
-  UNSET
 }
 
 enum Method {
   ONLINE_CHAT
   PHONE
-  UNSET
 }
 
 type Communication {
   _id: ID!
   patient: Patient!
   currentTopic: String!
-  initiator: Roles
-  method: Method
+  initiator: Roles!
+  method: Method!
   nextTopic: String
   nextDate: Date
   createdAt: Date!
