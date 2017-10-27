@@ -27,11 +27,11 @@ export const saveCommunication = async (_, args, { getDb }) => {
     }
     await db.collection('communication').insertOne(newRecord)
 
-    const endOfToday = moment(now).endOf('d')._d
+    const startOfToday = moment(now).startOf('d')._d
     await db.collection('outreachs').update({
       patientId,
       status: 'PENDING',
-      appointmentTime: {$lte: endOfToday}
+      appointmentTime: {$gte: startOfToday}
     }, {$set: {status: 'PROCESSED'}})
 
     if (nextDate) {
