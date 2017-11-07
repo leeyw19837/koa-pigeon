@@ -1,0 +1,8 @@
+input Food {
+  key: String!
+  portionSize: Int!
+}
+
+extend type Mutation {
+  saveMeals(patientId: ID!, mealTime: String!, food: [Food!]!): Boolean!
+}
