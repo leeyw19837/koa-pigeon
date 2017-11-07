@@ -1,0 +1,15 @@
+enum OutreachStatus {
+  PENDING
+  PROCESSED
+  OVERDUE
+}
+
+type Outreach {
+  _id: ID
+  patient: Patient
+  appointmentTime: Date
+  status: OutreachStatus
+  source: [String]
+  plannedDate: Date
+  createdAt: Date
+}

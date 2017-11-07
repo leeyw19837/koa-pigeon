@@ -3,3 +3,4 @@ npm-debug.log
 dist
 .vscode
 .idea/
+yarn-error.log

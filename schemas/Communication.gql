@@ -1,0 +1,22 @@
+enum Roles {
+  PATIENT
+  DOCTOR
+  ASSISTANT
+}
+
+enum Method {
+  ONLINE_CHAT
+  PHONE
+}
+
+type Communication {
+  _id: ID!
+  patient: Patient!
+  currentTopic: String!
+  initiator: Roles!
+  method: Method!
+  nextTopic: String
+  nextDate: Date
+  createdAt: Date!
+  createdBy: ID!
+}

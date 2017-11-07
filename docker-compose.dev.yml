@@ -12,10 +12,15 @@ services:
       - "3080:3080"
     command: yarn build && yarn watch
     environment:
-      - MONGO_URL=mongodb://paperKingStagingByiHealth:d3Sid92jcxe9W@mongodev.ihealthcn.com:27017,mongodev.ihealthcn.com:27018,mongodev.ihealthcn.com:27019,mongodev1.ihealthcn.com:27017,mongodev2.ihealthcn.com:27018,mongodev3.ihealthcn.com:27019/paper-king-staging?replicaSet=rs
+      - MONGO_URL=mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@mongodev.ihealthcn.com:27017,mongodev.ihealthcn.com:27018,mongodev.ihealthcn.com:27019,mongodev1.ihealthcn.com:27017,mongodev2.ihealthcn.com:27018,mongodev3.ihealthcn.com:27019/paper-king-developing?replicaSet=rs
       - SECRET=8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo
       - PORT=3080
       - NODE_ENV=development
+      - RIGHTEOUS_RAVEN_URL=https://raven.internal.ihealthcn.com
+      - RIGHTEOUS_RAVEN_ID=hwX6aOr1
+      - RIGHTEOUS_RAVEN_KEY=af3da1c0-5cd9-11e7-8401-fb7c0283f83d
+      - APP_ID=wx915efa8b538a4df4
+      - APP_SECRET=d7be675b1fa83094a446087a90cf4f76
 
 volumes:
   yarn:

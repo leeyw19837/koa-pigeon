@@ -46,6 +46,7 @@ type Query {
   smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
   fetchOrCreateNeedleChatRoom(userId: ID!): NeedleChatRoom!
   unreadMessages(userId: String!): Int!
+  outreachs(period: String, startDay: Date): [Outreach]
 }
 
 type Mutation {
@@ -102,6 +103,16 @@ type Mutation {
     text: String!
   ): NeedleTextMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
+  sendMobileVerificationCode(mobile: String!): Int!
+  saveCommunication(
+    _id: ID
+    patientId: ID!
+    currentTopic: String!
+    initiator: Roles!
+    method: Method!
+    nextTopic: String
+    nextDate: Date
+  ): Boolean!
 }
 
 type Subscription {

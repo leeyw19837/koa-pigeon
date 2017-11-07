@@ -9,6 +9,8 @@ type Patient {
   avatar: String
   needleChatRoom: NeedleChatRoom
   footAssessmentPhotos: [Photo]
+  closestAppointment: Appointment
+  communications: [Communication]
 }
 
 type HealthcareProfessional {

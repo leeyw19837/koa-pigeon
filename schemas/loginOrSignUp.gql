@@ -1,0 +1,26 @@
+type LoginOrSignUpResponse {
+  patientId: ID
+  avatar: String
+  nickname: String
+  patientState: String
+  birthday: Date
+  gender: String
+  openid: String
+  wechatOpenId: ID
+  didCreateNewPatient: Boolean
+  height: String
+  weight: String
+  diabetesType: String
+  startOfIllness: String
+  targetWeight: String
+  mobile: String
+}
+
+extend type Mutation {
+  loginOrSignUp(
+    mobile: String!
+    verificationCode: String!
+    wechatOpenId: ID
+  ): LoginOrSignUpResponse!
+  wechatLoginOrSignUp(wechatCode: String!): LoginOrSignUpResponse!
+}
