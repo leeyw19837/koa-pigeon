@@ -1,0 +1,27 @@
+type Food {
+  key: String!
+  portionSize: Int!
+}
+
+type Diet {
+  mealTime: String!
+  food: [Food]!
+}
+
+type DietsByDate {
+  _id: String!
+  items: [Diet]!
+}
+
+input FoodInput {
+  key: String!
+  portionSize: Int!
+}
+
+extend type Mutation {
+  saveMeals(patientId: ID!, mealTime: String!, food: [FoodInput!]!): Boolean!
+}
+
+extend type Query {
+  fetchDiets(patientId: ID!): [DietsByDate]!
+}

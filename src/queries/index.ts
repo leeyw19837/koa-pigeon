@@ -12,6 +12,8 @@ import * as treatmentState from './treatmentState'
 import * as treatmentStates from './treatmentStates'
 import * as bloodGlucoseMeasurementsAndTreatmentPlans from './bloodGlucoseMeasurementsAndTreatmentPlans'
 import * as outreachs from './outreachs'
+import * as diet from './diet'
+
 
 import { logQueryOrMutation } from '../utils'
 
@@ -30,6 +32,7 @@ const queries = {
   ...fetchOrCreateNeedleChatRoom,
   ...bloodGlucoseMeasurementsAndTreatmentPlans,
   ...outreachs,
+  ...diet,
 }
 
 const queriesWithLogging = {}
