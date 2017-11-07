@@ -14,7 +14,7 @@ export const updatePatientDemographics = async (_, args, context) => {
   await db
     .collection('users')
     .update(
-      { _id: patientId },
+      { _id: ObjectId.createFromHexString(patientId) },
       { $set: { birthday, height, weight, gender, updateAt: new Date() } },
     )
   return true
