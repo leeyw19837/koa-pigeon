@@ -24,7 +24,7 @@ extend type Mutation {
   ): LoginOrSignUpResponse!
   wechatLoginOrSignUp(wechatCode: String!): LoginOrSignUpResponse!
   updatePatientDemographics(
-    patientId: String!
+    mobile: String!
     height: String!
     weight: String!
     gender: String!
