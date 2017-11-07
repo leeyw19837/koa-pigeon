@@ -10,12 +10,12 @@ const {
 } = process.env
 export const updatePatientDemographics = async (_, args, context) => {
   const db = await context.getDb()
-  const { patientId, birthday, height, weight, gender } = args
+  const { mobile, birthday, height, weight, gender } = args
   await db
     .collection('users')
     .update(
-      { _id: ObjectId.createFromHexString(patientId) },
-      { $set: { birthday, height, weight, gender, updateAt: new Date() } },
+      { username: `${mobile}@ijk.com` },
+      { $set: { birthday, height, weight, gender, updatedAt: new Date() } },
     )
   return true
 }
@@ -47,7 +47,7 @@ export const loginOrSignUp = async (_, args, context) => {
         .collection('users')
         .update(
           { username: `${mobile}@ijk.com` },
-          { $set: { wechatOpenId, updateAt: new Date() } },
+          { $set: { wechatOpenId, updatedAt: new Date() } },
         )
     }
     return {
