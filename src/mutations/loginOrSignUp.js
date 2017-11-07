@@ -15,7 +15,15 @@ export const updatePatientDemographics = async (_, args, context) => {
     .collection('users')
     .update(
       { username: `${mobile}@ijk.com` },
-      { $set: { birthday, height, weight, gender, updatedAt: new Date() } },
+      {
+        $set: {
+          dateOfBirth: birthday,
+          height,
+          weight,
+          gender,
+          updatedAt: new Date(),
+        },
+      },
     )
   return true
 }
