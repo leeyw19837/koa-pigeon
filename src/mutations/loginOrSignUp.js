@@ -8,7 +8,17 @@ const {
   RIGHTEOUS_RAVEN_ID,
   RIGHTEOUS_RAVEN_KEY,
 } = process.env
-
+export const updatePatientDemographics = async (_, args, context) => {
+  const db = await context.getDb()
+  const { patientId, birthday, height, weight, gender } = args
+  await db
+    .collection('users')
+    .update(
+      { _id: patientId },
+      { $set: { birthday, height, weight, gender, updateAt: new Date() } },
+    )
+  return true
+}
 export const loginOrSignUp = async (_, args, context) => {
   const db = await context.getDb()
   // const clientCodename = context.state.clientCodename
