@@ -1,0 +1,6 @@
+type HealthcareProfessional {
+  _id: ID
+  nickname: String
+  role: String
+  healthCareTeams: [HealthCareTeam]
+}

@@ -12,9 +12,3 @@ type Patient {
   closestAppointment: Appointment
   communications: [Communication]
 }
-
-type HealthcareProfessional {
-  _id: ID
-  nickname: String
-  role: String
-}
