@@ -52,6 +52,7 @@ export const footAssessment = async (_, args, { getDb }: IContext) => {
     _id: freshId(17),
     _client: 'pigeon',
     patientId: args.patientId,
+    healthCareTeamId: args.healthCareTeamId,
     createdAt: moment(args.day)
       .utcOffset(args.timezone)
       .startOf('day')
@@ -75,6 +76,7 @@ export const footAssessment = async (_, args, { getDb }: IContext) => {
       type: 'CREATE_NEW_FOOT_ASSESSMENT',
       recordId: newFootAssessment._id,
       patientId: args.patientId,
+      healthCareTeamId: args.healthCareTeamId,
       createdAt: new Date(args.nowString),
     })
   } catch (e) { console.log(e.message) }

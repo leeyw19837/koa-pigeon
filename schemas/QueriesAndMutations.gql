@@ -4,6 +4,7 @@ scalar GraphQLDateTime
 type Query {
   footAssessment(
     patientId: ID!
+    healthCareTeamId: ID!
     day: String!
     timezone: String = "+0800"
     # Remove this, the time on the server is accurate, it's just set to GMT
@@ -58,6 +59,7 @@ type Mutation {
     assessmentDetailsJson: String!
     treatmentStateId: ID!
     footBloodAt: Boolean
+    healthCareTeamId: ID!
   ): String
   savePhoto(
     patientId: ID!
