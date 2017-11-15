@@ -49,7 +49,7 @@ type Query {
   unreadMessages(userId: String!): Int!
   outreachs(period: String, startDay: Date): [Outreach]
 
-  professionalLogin(mobile: String!, password: String!): HealthcareProfessional
+  professionalLogin(username: String!, password: String!): HealthcareProfessional
 }
 
 type Mutation {
