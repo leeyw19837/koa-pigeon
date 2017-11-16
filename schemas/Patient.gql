@@ -11,4 +11,5 @@ type Patient {
   footAssessmentPhotos: [Photo]
   closestAppointment: Appointment
   communications: [Communication]
+  caseRecords: [CaseRecord]
 }

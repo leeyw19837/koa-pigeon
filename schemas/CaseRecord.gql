@@ -1,0 +1,95 @@
+enum CaseRecordStatus {
+  first
+  quarter
+  addition
+  year
+  darft
+}
+
+enum LevelOfBGControl {
+    LOOSE
+    STRICT
+    CUSTOM
+    default
+}
+
+type BGControlLevel {
+    level: LevelOfBGControl
+    beforeMealLow: Float
+    beforeMealHigh: Float
+    afterMealLow: Float
+    afterMealHigh: Float
+    beforeSleepLow: Float
+    beforeSleepHigh: Float
+}
+
+type SelfManageFactor {
+    factor_0: Boolean
+    factor_1: Boolean
+    factor_2: Boolean
+    factor_3: Boolean
+    factor_4: Boolean
+    factor_5: Boolean
+    factor_6: Boolean
+    factor_7: Boolean
+    factor_8: Boolean
+    factor_9: Boolean
+    factor_10: Boolean
+    factor_11: Boolean
+    factor_12: Boolean
+    factor_13: Boolean
+    factor_14: Boolean
+    factor_15: Boolean
+    factor_16: Boolean
+    factor_17: Boolean
+    factor_Remark: String
+}
+
+type NeedOutOfHospitalInterfere {
+    interfere_1: Boolean
+    interfere_2: Boolean
+    interfere_3: Boolean
+    interfere_4: Boolean
+    interfere_5: Boolean
+    interfere_6: Boolean
+    interfere_7: Boolean
+    interfere_8: Boolean
+    interfere_Remark: String
+}
+
+type DiscussionComplicationAffect {
+    affect_1: Boolean
+    affect_2: Boolean
+    affect_3: Boolean
+    affect_4: Boolean
+    affect_5: Boolean
+    affect_6: Boolean
+    affect_Remark: String
+}
+
+type CaseRecordOtherEvaluate {
+    BGControlLevel: BGControlLevel
+    selfManageFactor: SelfManageFactor
+    needOutOfHospitalInterfere: NeedOutOfHospitalInterfere
+    discussionComplicationAffect: DiscussionComplicationAffect
+}
+
+type CRPrescription {
+    isTelephoneFollowUp: Boolean
+}
+
+type CaseRecordContent {
+    prescription: CRPrescription
+}
+
+type CaseRecord {
+  _id: ID!
+  createdAt: Date
+  caseRecordAt: Date
+  status: CaseRecordStatus!
+  patient: Patient!
+  appointment: Appointment
+  doctor: HealthcareProfessional
+  caseContent: CaseRecordContent
+  otherEvaluate: CaseRecordOtherEvaluate
+}
