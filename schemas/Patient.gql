@@ -11,6 +11,9 @@ type Patient {
   footAssessmentPhotos: [Photo]
   closestAppointment: Appointment
   communications: [Communication]
+  height: String
+  weight: String
+  targetWeight: String
 }
 
 type HealthcareProfessional {
