@@ -15,10 +15,3 @@ type Patient {
   weight: String
   targetWeight: String
 }
-
-type HealthcareProfessional {
-  _id: ID
-  nickname: String
-  role: String
-  caseRecords: [CaseRecord]
-}
