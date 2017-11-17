@@ -12,6 +12,7 @@ export const saveFootAssessment = async (_, args, { getDb }: IContext) => {
     assessmentDetailsJson,
     treatmentStateId,
     footBloodAt,
+    healthCareTeamId,
   } = args
 
   const record = await db.collection('footAssessment').findOne({ _id: recordId })
@@ -35,6 +36,7 @@ export const saveFootAssessment = async (_, args, { getDb }: IContext) => {
           ...assessmentDetails,
           highRiskFoot: highRiskFoot(assessmentDetails),
           treatmentDate: treatmentState.appointmentTime,
+          healthCareTeamId,
         },
       },
     )
@@ -45,7 +47,7 @@ export const saveFootAssessment = async (_, args, { getDb }: IContext) => {
 
   const treatmentStateResult = await db
     .collection('treatmentState')
-    .findOneAndUpdate({ _id: treatmentStateId }, { $set: { footBloodAt, footAt: true } })
+    .findOneAndUpdate({ _id: treatmentStateId }, { $set: { healthCareTeamId, footBloodAt, footAt: true } })
 
   if (!treatmentStateResult.ok) {
     return `Error updating treatmentState: ${JSON.stringify(treatmentStateResult.lastErrorObject)}`
@@ -54,6 +56,7 @@ export const saveFootAssessment = async (_, args, { getDb }: IContext) => {
   try {
     await db.collection('event').insert({
       type: 'SAVE_FOOT_ASSESSMENT',
+      healthCareTeamId,
       recordId,
       patientId: treatmentState.patientId,
       createdAt: new Date(updatedAtString),

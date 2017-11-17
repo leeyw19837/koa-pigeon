@@ -13,6 +13,7 @@ import * as treatmentStates from './treatmentStates'
 import * as bloodGlucoseMeasurementsAndTreatmentPlans from './bloodGlucoseMeasurementsAndTreatmentPlans'
 import * as outreachs from './outreachs'
 import * as diet from './diet'
+import * as professionalLogin from './healthCareProfessional'
 
 
 import { logQueryOrMutation } from '../utils'
@@ -33,6 +34,7 @@ const queries = {
   ...bloodGlucoseMeasurementsAndTreatmentPlans,
   ...outreachs,
   ...diet,
+  ...professionalLogin,
 }
 
 const queriesWithLogging = {}
