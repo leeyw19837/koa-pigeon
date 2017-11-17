@@ -19,4 +19,5 @@ type Patient {
   preYearApTime: Date
   district: String
   caseRecords: [CaseRecord]
+  remarks: String
 }
