@@ -14,4 +14,5 @@ type Patient {
   height: String
   weight: String
   targetWeight: String
+  caseRecords: [CaseRecord]
 }
