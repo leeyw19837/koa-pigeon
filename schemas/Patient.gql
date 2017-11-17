@@ -14,5 +14,9 @@ type Patient {
   height: String
   weight: String
   targetWeight: String
+  idCard: String
+  createdAt: Date
+  preYearApTime: Date
+  district: String
   caseRecords: [CaseRecord]
 }
