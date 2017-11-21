@@ -1,6 +1,6 @@
 type HealthcareProfessional {
   _id: ID
   nickname: String
-  role: String
+  roles: String
   healthCareTeams: [HealthCareTeam]
 }

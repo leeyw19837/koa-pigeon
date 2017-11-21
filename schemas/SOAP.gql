@@ -1,0 +1,6 @@
+type SOAP {
+  _id: ID!
+  plan: String
+  appointmentTime: Date
+  doctor: HealthcareProfessional
+}

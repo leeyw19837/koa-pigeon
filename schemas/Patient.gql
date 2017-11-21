@@ -20,4 +20,5 @@ type Patient {
   district: String
   caseRecords: [CaseRecord]
   remarks: String
+  soaps: [SOAP]
 }

@@ -53,4 +53,14 @@ export const Patient = {
       .sort({ createdAt: -1 })
       .toArray()
   },
+  soaps: async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    return db
+      .collection('soap')
+      .find({
+        patientId: patient._id.toString(),
+      })
+      .sort({ createdAt: -1 })
+      .toArray()
+  },
 }
