@@ -31,7 +31,7 @@ export const saveCommunication = async (_, args, { getDb }) => {
     await db.collection('outreachs').update({
       patientId,
       status: 'PENDING',
-      appointmentTime: {$gte: startOfToday}
+      // appointmentTime: {$gte: startOfToday} // 与水清沟通后决定先去除
     }, {$set: {status: 'PROCESSED'}})
 
     if (nextDate) {
