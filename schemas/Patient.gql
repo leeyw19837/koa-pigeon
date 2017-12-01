@@ -21,4 +21,5 @@ type Patient {
   caseRecords: [CaseRecord]
   remarks: String
   soaps: [SOAP]
+  appointments: [Appointment]
 }
