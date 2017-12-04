@@ -1,5 +1,6 @@
 type HealthCareTeam {
   _id: ID
   name: String!
+  institutionName: String
   institution: Institution!
 }
