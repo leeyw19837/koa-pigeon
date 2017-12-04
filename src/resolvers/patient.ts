@@ -75,4 +75,14 @@ export const Patient = {
     }
     return []
   },
+  appointments: async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    return db
+      .collection('appointments')
+      .find({
+        patientId: patient._id.toString(),
+      })
+      .sort({ appointmentTime: 1 })
+      .toArray()
+  },
 }

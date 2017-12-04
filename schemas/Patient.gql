@@ -22,4 +22,5 @@ type Patient {
   remarks: String
   soaps: [SOAP]
   healthCareTeam: [HealthCareTeam]
+  appointments: [Appointment]
 }
