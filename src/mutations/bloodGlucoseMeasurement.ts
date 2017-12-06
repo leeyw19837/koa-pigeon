@@ -1,6 +1,7 @@
 import freshId from 'fresh-id'
 import { IContext } from '../types'
 import { DigestiveStateLookup } from '../utils/i18n'
+import {maybeCreateFromHexString} from '../utils/maybeCreateFromHexString'
 
 export const saveBloodGlucoseMeasurement = async (
   _,
@@ -47,7 +48,24 @@ export const saveBloodGlucoseMeasurement = async (
     iGlucoseDataId: freshId(17), // this is forced to unique so this is a hack
   }
   const objectToWrite = { ...oldFormat, ...newFormat }
-  await db.collection('bloodglucoses').insertOne(objectToWrite)
+  const retVal = await db.collection('bloodglucoses').insertOne(objectToWrite)
 
-  return true
+  return !!retVal.result.ok ? retVal.insertedId : null
+}
+export const updateRemarkOfBloodglucoses = async (
+  _,
+  args,
+  { getDb }: IContext,
+) => {
+  const db = await getDb()
+
+  const {
+    _id,
+    remark,
+  } = args
+
+
+  
+  const retVal = await db.collection('bloodglucoses').update({_id:maybeCreateFromHexString(_id)},{$set:{remark}})
+  return !!retVal.result.ok
 }
