@@ -155,4 +155,6 @@ type BloodGlucoseMeasurement {
   measuredAt: Date!
   # The device taking the measurement
   deviceContext: DeviceContext
+  # 测量结果备注
+  remark:String
 }

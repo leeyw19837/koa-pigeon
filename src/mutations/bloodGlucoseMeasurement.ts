@@ -64,8 +64,6 @@ export const updateRemarkOfBloodglucoses = async (
     remark,
   } = args
 
-
-  
   const retVal = await db.collection('bloodglucoses').update({_id:maybeCreateFromHexString(_id)},{$set:{remark}})
   return !!retVal.result.ok
 }
