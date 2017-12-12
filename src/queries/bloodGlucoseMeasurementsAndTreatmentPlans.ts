@@ -54,6 +54,7 @@ export const bloodGlucoseMeasurementsAndTreatmentPlans = async (
     measurementDeviceModel: !!x.iGlucoseDataId && 'BG1',
     carbohydratesConsumed: structureCarbohydrates(x.mealNote),
     hadTakenInsulin: ChineseBoolean[x.insulinInjection],
+    measureResultId:x._id,
     remark:x.remark?x.remark:""
   }))
   return { bloodGlucoseMeasurements, treatmentPlans }
