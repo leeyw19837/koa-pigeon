@@ -155,6 +155,8 @@ type BloodGlucoseMeasurement {
   measuredAt: Date!
   # The device taking the measurement
   deviceContext: DeviceContext
+  # 返回此条记录的ID
+  measureResultId:String
   # 测量结果备注
   remark:String
 }
