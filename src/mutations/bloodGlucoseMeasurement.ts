@@ -67,3 +67,17 @@ export const updateRemarkOfBloodglucoses = async (
   const retVal = await db.collection('bloodglucoses').update({_id:maybeCreateFromHexString(_id)},{$set:{remark}})
   return !!retVal.result.ok
 }
+
+export const deleteOfBloodglucoses = async(
+ _,
+ args,
+ { getDb }:IContext
+) =>{
+  const db = await getDb()
+
+  const {
+    _id
+  } = args
+  const retValue = await db.collection('bloodglucoses').deleteOne({_id:maybeCreateFromHexString(_id)})
+  return !!retValue.result.ok
+}

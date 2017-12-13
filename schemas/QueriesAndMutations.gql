@@ -121,6 +121,9 @@ type Mutation {
     _id: ID!
     remark:String
   ):Boolean!
+  updateRemarkOfBloodglucoses(
+    _id:ID!
+  ):Boolean!
 }
 
 type Subscription {
