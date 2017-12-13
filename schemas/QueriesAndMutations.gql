@@ -121,7 +121,8 @@ type Mutation {
     _id: ID!
     remark:String
   ):Boolean!
-  updateRemarkOfBloodglucoses(
+
+  deleteOfBloodglucoses(
     _id:ID!
   ):Boolean!
 }
