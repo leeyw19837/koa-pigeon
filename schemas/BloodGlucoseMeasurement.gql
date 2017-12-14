@@ -1,6 +1,7 @@
 scalar Date
 
 enum DeviceModel {
+  Manual
   BG1
 }
 
