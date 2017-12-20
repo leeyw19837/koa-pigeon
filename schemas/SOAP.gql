@@ -1,6 +1,44 @@
+enum SeverityValue {
+  SERIOUS_PROBLEM
+  NEED_ATTENTION
+  SLIGHT_ABNORMAL
+  FINE
+  NOT_ASSESSMENT
+}
+
+type SeverityObj {
+  value: SeverityValue
+  createdAt: Date
+}
+type Severity {
+  medicine: SeverityObj!
+  monitor: SeverityObj!
+  diet: SeverityObj!
+  solution: SeverityObj!
+  sports: SeverityObj!
+  healthAdjustment: SeverityObj!
+  reduceRisk: SeverityObj!
+}
+
 type SOAP {
   _id: ID!
+  subjective: String
+  objective: String
+  assessment: String
   plan: String
+  severity: Severity
+  createdAt: Date
   appointmentTime: Date
   doctor: HealthcareProfessional
+}
+
+type SOAPCorpus {
+  _id: ID!
+  category: String!
+  group: String!
+  segment: String!
+  value: String!
+  createdAt: Date!
+  dependence: SOAPCorpus
+  recentUseAt: Date!
 }
