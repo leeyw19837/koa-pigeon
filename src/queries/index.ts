@@ -10,6 +10,7 @@ import * as statistics from './statistics'
 import * as treatmentPlan from './treatmentPlan'
 import * as treatmentState from './treatmentState'
 import * as treatmentStates from './treatmentStates'
+import * as treatmentStateApp from './treatmentStateApp'
 import * as bloodGlucoseMeasurementsAndTreatmentPlans from './bloodGlucoseMeasurementsAndTreatmentPlans'
 import * as outreachs from './outreachs'
 import * as diet from './diet'
@@ -28,6 +29,7 @@ const queries = {
   ...statistics,
   ...treatmentState,
   ...treatmentStates,
+  ...treatmentStateApp,
   ...sms,
   ...treatmentPlan,
   ...fetchOrCreateNeedleChatRoom,

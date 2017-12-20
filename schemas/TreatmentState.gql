@@ -5,3 +5,17 @@ type TreatmentState {
   footBloodAt: Boolean
   checkIn: Boolean
 }
+type TreatmentStateApp{
+  _id: ID!
+  patient: Patient!
+  healthCareTeamId:String
+  appointmentTime:Date
+  type:String
+  blood:Boolean
+  footAt: Boolean
+  eyeGroundAt:Boolean
+  insulinAt:Boolean
+  nutritionAt:Boolean
+  quantizationAt:Boolean
+  healthTech:Boolean
+}
