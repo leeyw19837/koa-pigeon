@@ -1,4 +1,6 @@
 import { IContext } from '../types'
+import { ObjectID } from 'mongodb'
+import { isEmpty } from 'lodash'
 
 export const treatmentStateApp = async(_,args,{getDb}:IContext)=>{
   const db = await getDb()
@@ -18,13 +20,15 @@ export const treatmentStateApp = async(_,args,{getDb}:IContext)=>{
     appointmentTime:-1
   }
 
-  const nextRecord =  await db
+  let nextRecord =  await db
   .collection('treatmentState')
   .find(queryOne)
   .sort(sort)
   .limit(1)
   .toArray()
 
+  nextRecord = isEmpty(nextRecord) ? null : nextRecord[0]
+  
   const historyRecords = await db
   .collection('treatmentState')
   .find(queryTwo)

@@ -5,9 +5,10 @@ type TreatmentState {
   footBloodAt: Boolean
   checkIn: Boolean
 }
-type nextRecord{
+
+type TreatmentStateRecord{
   _id: ID!
-  healthCareTeamId:String
+  healthCareTeam: HealthCareTeam
   appointmentTime:Date
   type:String
   checkIn:Boolean
@@ -19,21 +20,8 @@ type nextRecord{
   quantizationAt:Boolean
   healthTech:Boolean
 }
-type historyRecords{
-  _id: ID!
-  healthCareTeamId:String
-  appointmentTime:Date
-  type:String
-  checkIn:Boolean
-  blood:Boolean
-  footAt: Boolean
-  eyeGroundAt:Boolean
-  insulinAt:Boolean
-  nutritionAt:Boolean
-  quantizationAt:Boolean
-  healthTech:Boolean
-}
+
 type TreatmentStateApp{
-  nextRecord:[nextRecord]!
-  historyRecords:[historyRecords]!
+  nextRecord:TreatmentStateRecord
+  historyRecords:[TreatmentStateRecord]
 }
