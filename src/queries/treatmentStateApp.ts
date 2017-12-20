@@ -23,12 +23,13 @@ export const treatmentStateApp = async(_,args,{getDb}:IContext)=>{
   .find(queryOne)
   .sort(sort)
   .limit(1)
-  .toArray()[0]
+  .toArray()
 
   const historyRecords = await db
   .collection('treatmentState')
   .find(queryTwo)
   .sort(sort)
+  .toArray()
 
-  return [nextRecord,historyRecords]
+  return {nextRecord,historyRecords}
 }

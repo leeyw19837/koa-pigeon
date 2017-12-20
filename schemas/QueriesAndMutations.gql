@@ -18,7 +18,7 @@ type Query {
   ): TreatmentState!
   treatmentStateApp(
     patientId:ID!
-  ):treatmentStateApp
+  ):TreatmentStateApp!
   treatmentStates(day: String, healthCareTeamId: ID!, timezone: String = "+0800"): [TreatmentState!]!
   photos(patientId: ID!, owner: String!): [Photo!]!
   chatMessages(appointmentId: ID!): ChatMessagesResponse!
