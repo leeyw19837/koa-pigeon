@@ -31,3 +31,14 @@ type SOAP {
   appointmentTime: Date
   doctor: HealthcareProfessional
 }
+
+type SOAPCorpus {
+  _id: ID!
+  category: String!
+  group: String!
+  segment: String!
+  value: String!
+  createdAt: Date!
+  dependence: SOAPCorpus
+  recentUseAt: Date!
+}
