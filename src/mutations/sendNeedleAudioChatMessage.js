@@ -36,9 +36,7 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
   }
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
-<<<<<<< Updated upstream
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
-=======
 
   chatRoom.participants.map(async p => {
     if(p.userId === userId){
@@ -53,6 +51,5 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
     }
   })
 
->>>>>>> Stashed changes
   return newChatMessage
 }
