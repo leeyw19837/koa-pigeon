@@ -5,11 +5,28 @@ enum Uses {
     BLOOD_PRESSURE_ASSISTANT
 }
 
+enum SoapCategory {
+  MEDICINE
+  MONITOR
+  DIET
+  SOLUTION
+  SPORTS
+  HEALTH_ADJUSTMENT
+  REDUCE_RISK
+}
+
+enum SoapSegment {
+  SUBJECTIVE
+  OBJECTIVE
+  ASSESSMENT
+  PLAN
+}
+
 type Sentence {
   _id: ID!
-  category: String
+  category: SoapCategory
   group: String
-  segment: String
+  segment: SoapSegment
   author: String
   value: String
   createdAt: Date!

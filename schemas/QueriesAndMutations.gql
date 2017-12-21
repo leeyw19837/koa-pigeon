@@ -54,7 +54,7 @@ type Query {
 
   professionalLogin(username: String!, password: String!): HealthcareProfessional
 
-  sentences(usedFor: String, authors: [String!]): [Sentence]
+  sentences(usedFor: Uses, authors: [String!]): [Sentence]
 }
 
 type Mutation {
@@ -130,6 +130,15 @@ type Mutation {
   deleteOfBloodglucoses(
     _id:ID!
   ):Boolean!
+
+  addSentence(
+    category: SoapCategory!
+    segment: SoapSegment!
+    dependence: ID
+    value: String!
+    usedFor: Uses!
+  ): Boolean!
+  removeSentence(_id: ID!): Boolean!
 }
 
 type Subscription {

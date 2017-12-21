@@ -13,6 +13,7 @@ import * as wechatLoginOrSignUp from './wechatLoginOrSignUp'
 import * as communicationMutations from './communication'
 import * as submitFeedback from './submitFeedback'
 import * as saveMeals from './saveMeals'
+import * as sentence from './sentence'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -32,6 +33,7 @@ const mutations = {
   ...communicationMutations,
   ...submitFeedback,
   ...saveMeals,
+  ...sentence,
 }
 
 const mutationsWithLogging = {}
