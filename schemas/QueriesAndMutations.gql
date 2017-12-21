@@ -139,6 +139,26 @@ type Mutation {
     usedFor: Uses!
   ): Boolean!
   removeSentence(_id: ID!): Boolean!
+
+  addOutHospitalSoap(
+    subjective: String
+    objective: String
+    assessment: String
+    plan: String
+    severity: SeverityInput
+    patientId: ID!
+  ): Boolean
+
+  updateOutHospitalSoap(
+    _id: ID!
+    subjective: String
+    objective: String
+    assessment: String
+    plan: String
+    severity: SeverityInput
+  ): Boolean
+
+  removeOutHospitalSoap(_id: ID!): Boolean
 }
 
 type Subscription {
