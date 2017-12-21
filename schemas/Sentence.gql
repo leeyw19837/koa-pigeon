@@ -1,0 +1,19 @@
+enum Uses {
+    BLOOD_GLUCOSE_DOCTOR
+    BLOOD_GLUCOSE_ASSISTANT
+    BLOOD_PRESSURE_DOCTOR
+    BLOOD_PRESSURE_ASSISTANT
+}
+
+type Sentence {
+  _id: ID!
+  category: String
+  group: String
+  segment: String
+  author: String
+  value: String
+  createdAt: Date!
+  dependence: ID
+  recentUseAt: Date
+  usedFor: Uses
+}
