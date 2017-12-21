@@ -17,6 +17,8 @@ import * as diet from './diet'
 import * as professionalLogin from './healthCareProfessional'
 import * as laboratoryExamination from './LaboratoryExamination'
 
+import * as warningsOfLow from './warningsOfLow'
+import * as warningsOfHigh from './warningsOfHigh'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -39,6 +41,8 @@ const queries = {
   ...diet,
   ...professionalLogin,
   ...laboratoryExamination,
+  ...warningsOfLow,
+  ...warningsOfHigh,
 }
 
 const queriesWithLogging = {}
