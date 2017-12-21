@@ -15,6 +15,8 @@ export const APP_SECRET = {
 export const ALIAS_URL = `${MI_PUSH_URL}/v${VERSION}/message/alias`
 
 export const TYPE_MAP = {
-  MEASURE_PLAN: 1,
+  MEASURE_PLAN: 1,//测量
   CHAT: 2,
+  EXAMINE: 3,//就诊
+  DRUGS: 4,//用药
 }

@@ -38,7 +38,7 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
 
   chatRoom.participants.map(async p => {
-    if(p.userId === userId){
+    if(p.userId !== userId){
       const user = await db.collection('users').findOne({ _id: ObjectID.createFromHexString(p.userId) })
       if(!user.roles){
         pushChatNotification({

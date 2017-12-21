@@ -1,4 +1,3 @@
-import { find } from 'lodash'
 import { sender } from './sender'
 export const pushChatNotification = ({ patient, messageType, text, db }) => {
     if(patient){
