@@ -78,8 +78,23 @@ type CRPrescription {
   isTelephoneFollowUp: Boolean
 }
 
+type BodyCheckup {
+   heert:String
+   neck:String
+   chest:String
+   heart:String
+   adb:String
+   ext:String
+   weight:String
+   height:String
+   bmi:String
+   HP:String
+   LP:String
+}
+
 type CaseRecordContent {
   prescription: CRPrescription
+  bodyCheckup:BodyCheckup
 }
 
 type CaseRecord {

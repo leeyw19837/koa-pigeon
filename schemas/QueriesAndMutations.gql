@@ -53,6 +53,11 @@ type Query {
   outreachs(period: String, startDay: Date): [Outreach]
 
   professionalLogin(username: String!, password: String!): HealthcareProfessional
+
+  # 化验结果 查体结果
+  laboratoryExaminationResults(
+    patientId:ID!
+  ):LaboratoryExamination
 }
 
 type Mutation {
