@@ -1,0 +1,11 @@
+type Warning {
+  _id: ID
+  createdAt: Date
+  dinnerSituation:String
+  bgValue: Int
+  nickname: String
+  gender: String
+  mobile: String
+  patientId: ID
+  dateOfBirth: Date
+}

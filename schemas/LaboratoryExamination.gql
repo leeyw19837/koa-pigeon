@@ -1,0 +1,29 @@
+# 化验结果
+type ClinicalLabResult{
+  _id: ID!
+  # 化验时间
+  testDate:Date
+  # 糖化血红蛋白
+  glycatedHemoglobin:String
+  # 低密度脂蛋白
+  lowDensityLipoprotein:String
+  # 肌酐
+  creatinine:String
+  # eGFR
+  eGFR:String
+  # MA/UCREA
+  microalbumin:String
+  # 24h尿蛋白
+  urineProtein:String
+  # 总胆固醇
+  totalCholesterin:String
+  # 甘油三脂
+  triglyceride:String
+  # 高密度脂蛋白
+  highDensityLipoprotein:String
+}
+
+type LaboratoryExamination{
+  clinicalLabResults:[ClinicalLabResult]
+  bodyCheckResults:[CaseRecord]
+}

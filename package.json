@@ -45,7 +45,8 @@
     "mongodb": "^2.2.24",
     "mongodb-auto-reconnect": "^0.0.1",
     "righteous-raven": "^1.0.5",
-    "subscriptions-transport-ws": "^0.9.0"
+    "subscriptions-transport-ws": "^0.9.0",
+    "request-promise": "^4.2.2"
   },
   "devDependencies": {
     "@types/graphql": "^0.11.4",
