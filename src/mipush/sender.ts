@@ -5,8 +5,8 @@ const request = require('request-promise')
 export const sender = async ({ type = 'CHAT', pushId, description, db, title = '护血糖' }) =>{
 
     const temp = await db.collection('bloodglucoses').find({patientId:pushId}).sort({createdAt:-1}).limit(1).toArray()[0]
-    console.log(temp,'-----')
-    const systemName = get(temp,'deviceContext.systemName','ios')
+    const systemName = get(temp,'deviceContext.systemName','android').toLowerCase()
+    
     const notifyForeGround = type === 'CHAT' ? '0' : '1'
     //请求小米发出推送
     const formData = {
