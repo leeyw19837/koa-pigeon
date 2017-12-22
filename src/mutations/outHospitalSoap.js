@@ -3,7 +3,7 @@ import transform from 'lodash/transform'
 
 export const addOutHospitalSoap = async(_, args, context) => {
     const db= await context.getDb()
-    const { subjective, objective, assessment, plan, severity, patientId } = args
+    const { subjective, objective, assessment, plan, severity, patientId, nextCommunicationDate } = args
     const result = await db.collection('outHospitalSoap').insert({
         _id: freshId(),
         subjective,
@@ -12,6 +12,7 @@ export const addOutHospitalSoap = async(_, args, context) => {
         plan,
         severity,
         patientId,
+        nextCommunicationDate,
         operator: {
             _id: '66728d10dc75bc6a43052036',
         },
@@ -23,7 +24,7 @@ export const addOutHospitalSoap = async(_, args, context) => {
 export const updateOutHospitalSoap = async (_, args, context) => {
   const db = await context.getDb()
 
-  const { _id, subjective, objective, assessment, plan, severity } = args
+  const { _id, subjective, objective, assessment, plan, severity, nextCommunicationDate } = args
 
   const result = await db.collection('outHospitalSoap').update(
       {_id},
@@ -33,6 +34,7 @@ export const updateOutHospitalSoap = async (_, args, context) => {
           assessment,
           plan,
           severity,
+          nextCommunicationDate,
       }}
   )
   return !!result.result.ok

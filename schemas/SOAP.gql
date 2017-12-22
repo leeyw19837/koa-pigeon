@@ -29,6 +29,7 @@ type SOAP {
   severity: Severity
   createdAt: Date
   appointmentTime: Date
+  nextCommunicationDate: Date
   doctor: HealthcareProfessional
 }
 

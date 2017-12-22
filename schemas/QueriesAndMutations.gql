@@ -153,6 +153,7 @@ type Mutation {
     plan: String
     severity: SeverityInput
     patientId: ID!
+    nextCommunicationDate: Date
   ): Boolean
 
   updateOutHospitalSoap(
@@ -162,6 +163,7 @@ type Mutation {
     assessment: String
     plan: String
     severity: SeverityInput
+    nextCommunicationDate: Date
   ): Boolean
 
   removeOutHospitalSoap(_id: ID!): Boolean
