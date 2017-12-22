@@ -74,7 +74,48 @@ type CaseRecordOtherEvaluate {
   discussionComplicationAffect: DiscussionComplicationAffect
 }
 
+type Medicine{
+    # 药物名
+    name:String
+    # 口服药一天吃几次 胰岛素一次注射多少质量单位
+    frequency:String
+    # 药物类型 oral：口服 insulin:胰岛素
+    medicineType:String
+    # 一次吃多少
+    quantity:String
+    # 单位
+    unit:String
+    # 是否分餐
+    separateByRelationToMealTime:Boolean
+    # 分餐计划
+    mealOptions:MealOptions
+}
+
+type MealOptions{
+  # 早餐前
+  beforeBreakfast:String,  
+  # 早餐中
+  duringBreakfast:String   
+  # 早餐后
+  afterBreakfast:String  
+  # 午餐前  
+  beforeLunch:String  
+  # 午餐中    
+  duringLunch:String  
+  # 午餐后    
+  afterLunch:String  
+  # 晚餐前      
+  beforeDinner:String
+  # 晚餐中     
+  duringDinner:String
+  # 晚餐后      
+  afterDinner:String
+  # 睡前       
+  beforeSleep:String       
+}
+
 type CRPrescription {
+  medicines:[Medicine]
   isTelephoneFollowUp: Boolean
 }
 
