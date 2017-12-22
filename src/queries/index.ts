@@ -15,7 +15,7 @@ import * as bloodGlucoseMeasurementsAndTreatmentPlans from './bloodGlucoseMeasur
 import * as outreachs from './outreachs'
 import * as diet from './diet'
 import * as professionalLogin from './healthCareProfessional'
-import * as laboratoryExamination from './laboratoryExamination'
+import * as laboratoryExamination from './LaboratoryExamination'
 
 import * as warningsOfLow from './warningsOfLow'
 import * as warningsOfHigh from './warningsOfHigh'
