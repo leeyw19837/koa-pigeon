@@ -53,6 +53,8 @@ type Query {
   outreachs(period: String, startDay: Date): [Outreach]
 
   professionalLogin(username: String!, password: String!): HealthcareProfessional
+
+  sentences(usedFor: Uses, authors: [String!]): [Sentence]
   # 化验结果 查体结果
   laboratoryExaminationResults(
     patientId:ID!
@@ -134,6 +136,35 @@ type Mutation {
   deleteOfBloodglucoses(
     _id:ID!
   ):Boolean!
+
+  addSentence(
+    category: SoapCategory!
+    segment: SoapSegment!
+    dependence: ID
+    value: String!
+    usedFor: Uses!
+  ): Boolean!
+  removeSentence(_id: ID!): Boolean!
+
+  addOutHospitalSoap(
+    subjective: String
+    objective: String
+    assessment: String
+    plan: String
+    severity: SeverityInput
+    patientId: ID!
+  ): Boolean
+
+  updateOutHospitalSoap(
+    _id: ID!
+    subjective: String
+    objective: String
+    assessment: String
+    plan: String
+    severity: SeverityInput
+  ): Boolean
+
+  removeOutHospitalSoap(_id: ID!): Boolean
 }
 
 type Subscription {

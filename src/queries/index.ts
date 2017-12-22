@@ -15,7 +15,8 @@ import * as bloodGlucoseMeasurementsAndTreatmentPlans from './bloodGlucoseMeasur
 import * as outreachs from './outreachs'
 import * as diet from './diet'
 import * as professionalLogin from './healthCareProfessional'
-import * as laboratoryExamination from './LaboratoryExamination'
+import * as sentences from './sentences'
+import * as laboratoryExamination from './laboratoryExamination'
 
 import * as warningsOfLow from './warningsOfLow'
 import * as warningsOfHigh from './warningsOfHigh'
@@ -40,6 +41,7 @@ const queries = {
   ...outreachs,
   ...diet,
   ...professionalLogin,
+  ...sentences,
   ...laboratoryExamination,
   ...warningsOfLow,
   ...warningsOfHigh,

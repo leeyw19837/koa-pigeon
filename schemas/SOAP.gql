@@ -8,7 +8,7 @@ enum SeverityValue {
 
 type SeverityObj {
   value: SeverityValue
-  createdAt: Date
+  updatedAt: Date
 }
 type Severity {
   medicine: SeverityObj!
@@ -41,4 +41,18 @@ type SOAPCorpus {
   createdAt: Date!
   dependence: SOAPCorpus
   recentUseAt: Date!
+}
+
+input SeverityInput {
+  medicine: SeverityObjInput
+  monitor: SeverityObjInput
+  diet: SeverityObjInput
+  solution: SeverityObjInput
+  sports: SeverityObjInput
+  healthAdjustment: SeverityObjInput
+  reduceRisk: SeverityObjInput
+}
+input SeverityObjInput {
+  value: SeverityValue!
+  updatedAt: Date
 }

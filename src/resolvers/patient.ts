@@ -63,6 +63,16 @@ export const Patient = {
       .sort({ createdAt: -1 })
       .toArray()
   },
+  outHospitalSoaps: async(patient, _, {getDb}: IContext) => {
+    const db = await getDb()
+    return db
+      .collection('outHospitalSoap')
+      .find({
+        patientId: patient._id.toString(),
+      })
+      .sort({ createdAt: -1 })
+      .toArray()
+  },
   healthCareTeam: async (patient, _, { getDb }: IContext) => {
     const db = await getDb()
     if (patient.healthCareTeamId && patient.healthCareTeamId.length > 0) {
