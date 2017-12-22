@@ -5,7 +5,7 @@ export const warningsOfLow = async (_, args, { getDb }) => {
   const { period } = args
   let query = {
     warningType: 'LOW_GLUCOSE',
-    createAt: { $gte: moment().startOf('day')._d },
+    createdAt: { $gte: moment().startOf('day')._d},
     $or : [
       {isHandle: { $exists: false }},
       {isHandle: false},
@@ -15,7 +15,7 @@ export const warningsOfLow = async (_, args, { getDb }) => {
     case 'threeDays':
       query = {
         warningType: 'LOW_GLUCOSE',
-        createAt: { $gte: moment().subtract(2, 'd').startOf('day')._d },
+        createdAt: { $gte: moment().subtract(2, 'd').startOf('day')._d },
         $or : [
           {isHandle: { $exists: false }},
           {isHandle: false},
@@ -25,7 +25,7 @@ export const warningsOfLow = async (_, args, { getDb }) => {
     case 'sevenDays':
     query = {
       warningType: 'LOW_GLUCOSE',
-      createAt: { $gte: moment().subtract(6, 'd').startOf('day')._d },
+      createdAt: { $gte: moment().subtract(6, 'd').startOf('day')._d },
       $or : [
         {isHandle: { $exists: false }},
         {isHandle: false},
@@ -43,5 +43,6 @@ export const warningsOfLow = async (_, args, { getDb }) => {
       break
     default:
   }
+  console.log(query)
   return db.collection('warnings').find(query).toArray()
 }
