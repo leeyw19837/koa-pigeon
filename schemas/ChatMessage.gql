@@ -7,3 +7,8 @@ type ChatMessagesResponse {
   messages: [ChatMessage!]!
   timestamp: String
 }
+
+type UnReadMessage {
+  chatRoomId: String
+  count: Int
+}
