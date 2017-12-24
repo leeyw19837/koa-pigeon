@@ -3,13 +3,14 @@ import freshId from 'fresh-id'
 export const addSentence = async (_, args, context) => {
     const db = await context.getDb()
 
-  const { category, segment, dependence, value, usedFor } = args
+  const { category, group, segment, dependence, value, usedFor } = args
 
   const userId = '66728d10dc75bc6a43052036' // TODO
 
   const newSentence = {
     _id: freshId(),
     category,
+    group,
     segment,
     dependence,
     value,
