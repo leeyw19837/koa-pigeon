@@ -61,6 +61,8 @@ type Query {
   ):LaboratoryExamination
   warningsOfLow(period: String): [Warning]
   warningsOfHigh(period: String, rangeLow: Float, rangeHigh: Float): [Warning]
+
+  latestCaseRecordBeforeDate(patientId: ID!, now: Date!): CaseRecord
 }
 
 type Mutation {
