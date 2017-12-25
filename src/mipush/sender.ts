@@ -9,10 +9,18 @@ export const sender = async ({ type = 'CHAT', pushId, description, db, title = '
         .sort({createdAt: -1}).limit(1).toArray()
     const data = arr[0]
     console.log(data, 'mipush=00=======')
-         
-    const systemName = get(data,'deviceContext.systemName','android').toLowerCase()
+    if(data && data.deviceContext.systemName){
+        const systemName = get(data,'deviceContext.systemName','android').toLowerCase()
+        realSender({type, pushId, description, db, title,systemName})
+    } else{
+        realSender({type, pushId, description, db, title,systemName:'android'})
+        realSender({type, pushId, description, db, title,systemName:'ios'})
+    }
+}
 
+const realSender = async ({ type = 'CHAT', pushId, description, db, title = '护血糖',systemName }) =>{
     const notifyForeGround = type === 'CHAT' ? '0' : '1'
+
     //请求小米发出推送
     const formData = {
         alias: pushId,
