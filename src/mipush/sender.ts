@@ -2,14 +2,16 @@
 import { APP_SECRET, PACKAGE_NAME, ALIAS_URL, TYPE_MAP } from './constants'
 import { get } from 'lodash'
 const request = require('request-promise')
+
 export const sender = async ({ type = 'CHAT', pushId, description, db, title = '护血糖' }) =>{
 
-    const temp = await db.collection('bloodglucoses').find({author:pushId})
-            .sort({createdAt:-1}).limit(1).toArray()[0]
-    
-    console.log(temp, 'mipush')
-    const systemName = get(temp,'deviceContext.systemName','ios').toLowerCase()
-    
+    const arr = await db.collection('bloodglucoses').find({author: pushId})
+        .sort({createdAt: -1}).limit(1).toArray()
+    const data = arr[0]
+    console.log(data, 'mipush=00=======')
+         
+    const systemName = get(data,'deviceContext.systemName','android').toLowerCase()
+
     const notifyForeGround = type === 'CHAT' ? '0' : '1'
     //请求小米发出推送
     const formData = {
