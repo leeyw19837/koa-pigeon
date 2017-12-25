@@ -4,7 +4,7 @@ import { get } from 'lodash'
 const request = require('request-promise')
 export const sender = async ({ type = 'CHAT', pushId, description, db, title = '护血糖' }) =>{
 
-    const temp = await db.collection('bloodglucoses').find({patientId:pushId}).sort({createdAt:-1}).limit(1).toArray()[0]
+    const temp = await db.collection('bloodglucoses').find({author:pushId}).sort({createdAt:-1}).limit(1).toArray()[0]
     const systemName = get(temp,'deviceContext.systemName','android').toLowerCase()
     
     const notifyForeGround = type === 'CHAT' ? '0' : '1'
@@ -32,7 +32,7 @@ export const sender = async ({ type = 'CHAT', pushId, description, db, title = '
         form: formData,
     }
 
-    console.log(formData, 'mipush')
+    console.log(options, 'mipush')
     const response = await request(options)
 
     console.log(response, 'mipush')
