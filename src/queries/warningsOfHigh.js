@@ -49,5 +49,5 @@ export const warningsOfHigh = async (_, args, { getDb }) => {
       break
     default:
   }
-  return db.collection('warnings').find(query).toArray()
+  return db.collection('warnings').find(query).sort({ createdAt: -1 }).toArray()
 }
