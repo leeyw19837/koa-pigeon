@@ -4,7 +4,7 @@ import transform from 'lodash/transform'
 export const addOutHospitalSoap = async(_, args, context) => {
     const db= await context.getDb()
     const { subjective, objective, assessment, plan, severity, patientId, nextCommunicationDate } = args
-    const result = await db.collection('outHospitalSoap').insert({
+    let result = await db.collection('outHospitalSoap').insert({
         _id: freshId(),
         subjective,
         objective,
@@ -18,7 +18,22 @@ export const addOutHospitalSoap = async(_, args, context) => {
         },
         createdAt: new Date(),
     })
-    return !!result.result.ok
+    if(!!result.result.ok){
+        result = await db.collection('outreachs').update({
+            patientId,
+            status: 'PENDING',
+            // appointmentTime: {$gte: startOfToday} // 与水清沟通后决定先去除
+          }, {$set: {status: 'PROCESSED'}}, {multi: true})
+    
+        result = await db.collection('warnings').update({
+            isHandle: {$ne: true},
+            patientId
+        }, {$set: {
+            isHandle: true
+        }}, {multi: true})
+        return !!result.result.ok
+    }
+    return false
 }
 
 export const updateOutHospitalSoap = async (_, args, context) => {
