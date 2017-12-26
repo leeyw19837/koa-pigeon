@@ -21,7 +21,7 @@ export const treatmentStateApp = async(_,args,{getDb}:IContext)=>{
   }
 
   let nextRecord =  await db
-  .collection('treatmentState')
+  .collection('appointments')
   .find(queryOne)
   .sort(sort)
   .limit(1)
