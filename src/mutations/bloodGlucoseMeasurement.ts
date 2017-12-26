@@ -117,6 +117,6 @@ export const deleteOfBloodglucoses = async(
     _id
   } = args
   const retValue = await db.collection('bloodglucoses').deleteOne({_id:maybeCreateFromHexString(_id)})
-  await db.collection('warnings').deleteOne({bloodglucoseId: _id})
+  await db.collection('warnings').deleteOne({bloodglucoseId: maybeCreateFromHexString(_id)})
   return !!retValue.result.ok
 }

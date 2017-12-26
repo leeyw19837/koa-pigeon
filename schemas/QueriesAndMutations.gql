@@ -49,7 +49,7 @@ type Query {
   # Sms
   smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
   fetchOrCreateNeedleChatRoom(userId: ID!): NeedleChatRoom!
-  unreadMessages(userId: String!): Int!
+  unreadMessages(userId: String!): UnReadMessage
   outreachs(period: String, startDay: Date): [Outreach]
 
   professionalLogin(username: String!, password: String!): HealthcareProfessional
@@ -61,6 +61,8 @@ type Query {
   ):LaboratoryExamination
   warningsOfLow(period: String): [Warning]
   warningsOfHigh(period: String, rangeLow: Float, rangeHigh: Float): [Warning]
+
+  latestCaseRecordBeforeDate(patientId: ID!, now: Date!): CaseRecord
 }
 
 type Mutation {
@@ -139,6 +141,7 @@ type Mutation {
 
   addSentence(
     category: SoapCategory!
+    group: String!
     segment: SoapSegment!
     dependence: ID
     value: String!
@@ -153,6 +156,7 @@ type Mutation {
     plan: String
     severity: SeverityInput
     patientId: ID!
+    nextCommunicationDate: Date
   ): Boolean
 
   updateOutHospitalSoap(
@@ -162,6 +166,7 @@ type Mutation {
     assessment: String
     plan: String
     severity: SeverityInput
+    nextCommunicationDate: Date
   ): Boolean
 
   removeOutHospitalSoap(_id: ID!): Boolean

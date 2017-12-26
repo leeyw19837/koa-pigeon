@@ -5,10 +5,9 @@ export const warningsOfHigh = async (_, args, { getDb }) => {
   const { period, rangeLow = 10, rangeHigh = 33.3 } = args
   let bgLow = rangeLow * 18
   let bgHigh = rangeHigh * 18
-  console.log('bgrange:', bgLow, '--' , bgHigh )
   let query = {
     warningType: 'HIGH_GLUCOSE',
-    createAt: { $gte: moment().startOf('day')._d },
+    createdAt: { $gte: moment().startOf('day')._d },
     bgValue: { $gte: bgLow, $lte: bgHigh },
     $or : [
       {isHandle: { $exists: false }},
@@ -19,7 +18,7 @@ export const warningsOfHigh = async (_, args, { getDb }) => {
     case 'threeDays':
       query = {
         warningType: 'HIGH_GLUCOSE',
-        createAt: { $gte: moment().subtract(2, 'd').startOf('day')._d },
+        createdAt: { $gte: moment().subtract(2, 'd').startOf('day')._d },
         bgValue: { $gte: bgLow, $lte: bgHigh },
         $or : [
           {isHandle: { $exists: false }},
@@ -30,7 +29,7 @@ export const warningsOfHigh = async (_, args, { getDb }) => {
     case 'sevenDays':
       query = {
         warningType: 'HIGH_GLUCOSE',
-        createAt: { $gte: moment().subtract(6, 'd').startOf('day')._d },
+        createdAt: { $gte: moment().subtract(6, 'd').startOf('day')._d },
         bgValue: { $gte: bgLow, $lte: bgHigh },
         $or : [
           {isHandle: { $exists: false }},
@@ -50,5 +49,5 @@ export const warningsOfHigh = async (_, args, { getDb }) => {
       break
     default:
   }
-  return db.collection('warnings').find(query).toArray()
+  return db.collection('warnings').find(query).sort({ createdAt: -1 }).toArray()
 }
