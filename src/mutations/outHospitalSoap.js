@@ -1,5 +1,6 @@
 import freshId from 'fresh-id'
 import transform from 'lodash/transform'
+const moment = require('moment')
 
 export const addOutHospitalSoap = async(_, args, context) => {
     const db= await context.getDb()
@@ -31,6 +32,18 @@ export const addOutHospitalSoap = async(_, args, context) => {
         }, {$set: {
             isHandle: true
         }}, {multi: true})
+
+        if (nextCommunicationDate) {
+            const newOutreachs = {
+              _id: freshId(),
+              patientId,
+              status: 'PENDING',
+              source: ['communication'],
+              plannedDate: moment(nextCommunicationDate).startOf('day')._d,
+              createdAt: new Date(),        
+            }
+            await db.collection('outreachs').insertOne(newOutreachs)
+          }
         return !!result.result.ok
     }
     return false
