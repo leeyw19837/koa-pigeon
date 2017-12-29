@@ -173,7 +173,7 @@ type Mutation {
 }
 
 type Subscription {
-  chatMessageAdded: NeedleChatMessage!
+  chatMessageAdded(chatRoomId: ID): NeedleChatMessage!
 }
 
 schema {
