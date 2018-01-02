@@ -70,7 +70,7 @@ pipeline:
     when:
       branch: develop
       event: push
-  report-deploy:
+  report-deploy_forTangTang:
     image: clem109/drone-wechat
     secrets:
       - plugin_corp_secret
