@@ -57,3 +57,33 @@ pipeline:
       status:
         - success
         - failure
+  rancher_forTangTang:
+    image: peloton/drone-rancher
+    url: 'http://rancher.ihealthcn.com/v2-beta/projects/1a847'
+    access_key: 47DFE99D2A2F5E4E81E2
+    secret_key: mEoJd1s3hMa79KdCzgvpKRoZjfHja8C4tXu9fnTY
+    service: gtzh-play/pigeon
+    docker_image: 'harbor.ihealthcn.com/pigeon/pigeon:latest'
+    batch_size: 1
+    timeout: 600
+    confirm: true
+    when:
+      branch: develop
+      event: push
+  report-deploy:
+    image: clem109/drone-wechat
+    secrets:
+      - plugin_corp_secret
+      - plugin_corpid
+      - plugin_agent_id
+    title: '${DRONE_REPO_NAME}'
+    description: |
+      构建序列: ${DRONE_BUILD_NUMBER} ForTangTang部署成功！ 🕊🕊🕊🕊🕊🕊🕊🕊🕊🕊！
+      更新内容: ${DRONE_COMMIT_MESSAGE}
+    msg_url: 'http://120.92.88.112:7001/'
+    btn_txt: 查看运行状况
+    when:
+      branch: develop
+      status:
+        - success
+        - failure
