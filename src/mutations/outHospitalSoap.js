@@ -25,8 +25,15 @@ export const addOutHospitalSoap = async(_, args, context) => {
             status: 'PENDING',
             // appointmentTime: {$gte: startOfToday} // 与水清沟通后决定先去除
           }, {$set: {status: 'PROCESSED'}}, {multi: true})
-    
+
         result = await db.collection('warnings').update({
+            isHandle: {$ne: true},
+            patientId
+        }, {$set: {
+            isHandle: true
+        }}, {multi: true})
+
+        result = await db.collection('clinicalLabResults').update({
             isHandle: {$ne: true},
             patientId
         }, {$set: {
@@ -40,7 +47,7 @@ export const addOutHospitalSoap = async(_, args, context) => {
               status: 'PENDING',
               source: ['communication'],
               plannedDate: moment(nextCommunicationDate).startOf('day')._d,
-              createdAt: new Date(),        
+              createdAt: new Date(),
             }
             await db.collection('outreachs').insertOne(newOutreachs)
           }
@@ -67,11 +74,10 @@ export const updateOutHospitalSoap = async (_, args, context) => {
   )
   return !!result.result.ok
   }
-  
+
   export const removeOutHospitalSoap = async (_, { _id }, context) => {
     const db = await context.getDb()
-  
+
     const result = await db.collection('outHospitalSoap').remove({ _id })
     return !!result.result.ok
   }
-  

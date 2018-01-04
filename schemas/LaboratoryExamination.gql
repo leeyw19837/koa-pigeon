@@ -21,6 +21,9 @@ type ClinicalLabResult{
   triglyceride:String
   # 高密度脂蛋白
   highDensityLipoprotein:String
+  patientId: ID
+  patient: Patient
+  isHandle: Boolean
 }
 
 type LaboratoryExamination{

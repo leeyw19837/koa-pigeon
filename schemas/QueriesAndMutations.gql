@@ -62,6 +62,8 @@ type Query {
   warningsOfLow(period: String): [Warning]
   warningsOfHigh(period: String, rangeLow: Float, rangeHigh: Float): [Warning]
 
+  getClinicalLabResult: [[ClinicalLabResult]]
+
   latestCaseRecordBeforeDate(patientId: ID!, now: Date!): CaseRecord
 }
 
