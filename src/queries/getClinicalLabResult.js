@@ -6,8 +6,9 @@ export const getClinicalLabResult = async (_, args, { getDb }) => {
   const result = [[],[],[],[],[],[]]
   const asd = await db.collection('clinicalLabResults').aggregate([
     { $sort: { testDate: -1 }},
-    { $group: { _id: '$patientId', patientId: {$first: '$patientId'}, isHandle: { $first: '$isHandle' }, glycatedHemoglobin: { $first: '$glycatedHemoglobin'} }},
+    { $group: { _id: '$patientId', patientId: {$first: '$patientId'}, isHandle: { $first: '$isHandle' }, glycatedHemoglobin: { $first: '$glycatedHemoglobin'}, testDate: { $first: '$testDate'} }},
     { $match: { 'glycatedHemoglobin' : { $gte: '7.0' } } },
+    { $sort: { testDate: -1 }},
   ]).toArray()
   asd.forEach(item => {
     let value = 9.5
