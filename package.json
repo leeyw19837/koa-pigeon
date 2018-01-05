@@ -30,7 +30,7 @@
     "graphql": "^0.10.5",
     "graphql-subscriptions": "^0.4.4",
     "graphql-tools": "^0.10.1",
-    "koa": "^2.4.1",
+    "koa": "^2.2.0",
     "koa-bodyparser": "^4.2.0",
     "koa-convert": "^1.2.0",
     "koa-cors": "^0.0.16",
@@ -51,7 +51,7 @@
   "devDependencies": {
     "@types/graphql": "^0.11.4",
     "@types/graphql-date": "^1.0.0",
-    "@types/koa": "^2.0.43",
+    "@types/koa": "^2.0.39",
     "@types/koa-bodyparser": "^3.0.24",
     "@types/koa-router": "^7.0.21",
     "@types/lodash": "^4.14.55",
