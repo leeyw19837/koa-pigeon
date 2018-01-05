@@ -56,7 +56,6 @@ pipeline:
       branch: develop
       status:
         - success
-        - failure
   rancher_forTangTang:
     image: peloton/drone-rancher
     url: 'http://rancher.ihealthcn.com/v2-beta/projects/1a847'
@@ -86,4 +85,3 @@ pipeline:
       branch: develop
       status:
         - success
-        - failure

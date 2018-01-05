@@ -49,6 +49,7 @@
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
+    "@types/node": "4.0.35",
     "@types/graphql": "^0.11.4",
     "@types/graphql-date": "^1.0.0",
     "@types/koa": "^2.0.39",
