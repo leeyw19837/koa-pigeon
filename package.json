@@ -30,7 +30,7 @@
     "graphql": "^0.10.5",
     "graphql-subscriptions": "^0.4.4",
     "graphql-tools": "^0.10.1",
-    "koa": "^2.2.0",
+    "koa": "^2.4.1",
     "koa-bodyparser": "^4.2.0",
     "koa-convert": "^1.2.0",
     "koa-cors": "^0.0.16",
