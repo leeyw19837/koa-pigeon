@@ -1,4 +1,6 @@
 import moment = require('moment')
+import filter = require("lodash/filter")
+import get = require("lodash/get")
 
 import { IContext } from '../types'
 
@@ -22,6 +24,17 @@ export const laboratoryExaminationResults = async (_, args, { getDb }: IContext)
   .find(query)
   .sort(sort_bodyCheckResults)
   .toArray()
+
+
+  bodyCheckResults.map(value=>{
+    const medicines = value.caseContent.prescription.medicines
+    const newMedicines = filter(medicines,item=>{
+      const status = get(item,"status")
+      return status!="stop"
+    })
+    value.caseContent.prescription.medicines = newMedicines
+  }) 
+
 
   return {clinicalLabResults,bodyCheckResults}
 }
