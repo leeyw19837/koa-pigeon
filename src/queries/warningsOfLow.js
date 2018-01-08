@@ -43,6 +43,5 @@ export const warningsOfLow = async (_, args, { getDb }) => {
       break
     default:
   }
-  console.log(query)
   return db.collection('warnings').find(query).sort({ createdAt: -1 }).toArray()
 }

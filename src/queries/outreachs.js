@@ -5,7 +5,7 @@ export const outreachs = async (_, args, { getDb }) => {
   const { period, startDay = new Date('1949/10/1') } = args
   let query = {
     status: 'PENDING',
-    appointmentTime: { $gt: moment(startDay).startOf('day')._d }
+    appointmentTime: { $gte: moment(startDay).startOf('day')._d }
   }
 
   switch (period) {

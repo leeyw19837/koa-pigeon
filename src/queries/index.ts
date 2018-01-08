@@ -20,7 +20,7 @@ import * as laboratoryExamination from './laboratoryExamination'
 
 import * as warningsOfLow from './warningsOfLow'
 import * as warningsOfHigh from './warningsOfHigh'
-
+import * as getClinicalLabResult from './getClinicalLabResult'
 import { logQueryOrMutation } from '../utils'
 
 const queries = {
@@ -45,6 +45,7 @@ const queries = {
   ...laboratoryExamination,
   ...warningsOfLow,
   ...warningsOfHigh,
+  ...getClinicalLabResult,
 }
 
 const queriesWithLogging = {}
