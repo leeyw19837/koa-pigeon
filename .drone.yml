@@ -13,6 +13,20 @@ pipeline:
     when:
       branch: develop
       event: push
+  build_step:
+    image: plugins/docker
+    username: ihealth
+    password: iHealthStrategy2018
+    registry: harbor.ihealthcn.com
+    repo: harbor.ihealthcn.com/pigeon/pigeon
+    mirror: 'http://f95ba185.m.daocloud.io'
+    tag:
+      - '${DRONE_BUILD_NUMBER}-master'
+      - master
+    dockerfile: Dockerfile
+    when:
+      branch: master
+      event: push
   report-build:
     image: clem109/drone-wechat
     secrets:
