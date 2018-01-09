@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/iHealthLab/pigeon#readme",
   "engines": {
-    "node": ">=7.6.0"
+    "node": ">=8.1.4"
   },
   "dependencies": {
     "co-wechat-oauth": "^2.0.1",
