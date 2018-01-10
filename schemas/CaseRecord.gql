@@ -9,6 +9,7 @@ enum CaseRecordStatus {
 enum LevelOfBGControl {
   LOOSE
   STRICT
+  NORMAL
   CUSTOM
   default
 }
@@ -93,25 +94,25 @@ type Medicine{
 
 type MealOptions{
   # 早餐前
-  beforeBreakfast:String,  
+  beforeBreakfast:String,
   # 早餐中
-  duringBreakfast:String   
+  duringBreakfast:String
   # 早餐后
-  afterBreakfast:String  
-  # 午餐前  
-  beforeLunch:String  
-  # 午餐中    
-  duringLunch:String  
-  # 午餐后    
-  afterLunch:String  
-  # 晚餐前      
+  afterBreakfast:String
+  # 午餐前
+  beforeLunch:String
+  # 午餐中
+  duringLunch:String
+  # 午餐后
+  afterLunch:String
+  # 晚餐前
   beforeDinner:String
-  # 晚餐中     
+  # 晚餐中
   duringDinner:String
-  # 晚餐后      
+  # 晚餐后
   afterDinner:String
-  # 睡前       
-  beforeSleep:String       
+  # 睡前
+  beforeSleep:String
 }
 
 type CRPrescription {
