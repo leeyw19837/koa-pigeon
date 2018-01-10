@@ -16,10 +16,12 @@ type Query {
     day: String
     timezone: String = "+0800"
   ): TreatmentState!
-  treatmentStateApp(
-    patientId:ID!
-  ):TreatmentStateApp!
-  treatmentStates(day: String, healthCareTeamId: ID!, timezone: String = "+0800"): [TreatmentState!]!
+  treatmentStateApp(patientId: ID!): TreatmentStateApp!
+  treatmentStates(
+    day: String
+    healthCareTeamId: ID!
+    timezone: String = "+0800"
+  ): [TreatmentState!]!
   photos(patientId: ID!, owner: String!): [Photo!]!
   chatMessages(appointmentId: ID!): ChatMessagesResponse!
   # Statistics
@@ -52,13 +54,14 @@ type Query {
   unreadMessages(userId: String!): UnReadMessage
   outreachs(period: String, startDay: Date): [Outreach]
 
-  professionalLogin(username: String!, password: String!): HealthcareProfessional
+  professionalLogin(
+    username: String!
+    password: String!
+  ): HealthcareProfessional
 
   sentences(usedFor: Uses, authors: [String!]): [Sentence]
   # 化验结果 查体结果
-  laboratoryExaminationResults(
-    patientId:ID!
-  ):LaboratoryExamination
+  laboratoryExaminationResults(patientId: ID!): LaboratoryExamination
   warningsOfLow(period: String): [Warning]
   warningsOfHigh(period: String, rangeLow: Float, rangeHigh: Float): [Warning]
 
@@ -132,14 +135,9 @@ type Mutation {
     nextTopic: String
     nextDate: Date
   ): Boolean!
-  updateRemarkOfBloodglucoses(
-    _id: ID!
-    remark:String
-  ):Boolean!
+  updateRemarkOfBloodglucoses(_id: ID!, remark: String): Boolean!
 
-  deleteOfBloodglucoses(
-    _id:ID!
-  ):Boolean!
+  deleteOfBloodglucoses(_id: ID!): Boolean!
 
   addSentence(
     category: SoapCategory!
@@ -176,6 +174,7 @@ type Mutation {
 
 type Subscription {
   chatMessageAdded(chatRoomId: ID): NeedleChatMessage!
+  chatRoomDynamics(userId: ID): NeedleChatRoom!
 }
 
 schema {

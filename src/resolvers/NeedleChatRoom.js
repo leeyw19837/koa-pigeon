@@ -41,7 +41,7 @@ export const NeedleChatRoom = {
     return messages.reverse()
   },
   async latestMessage(needleChatRoom, _, { getDb }) {
-    const db = await getDb()
+    const db = getDb === undefined ? global.db : await getDb()
     const messageArray = await db
       .collection('needleChatMessages')
       .find({ chatRoomId: needleChatRoom._id })
@@ -55,14 +55,15 @@ export const NeedleChatRoom = {
     const me = needleChatRoom.participants.find(user => {
       return user.userId === args.userId
     })
-    return await db
-      .collection('needleChatMessages')
-      .count({ chatRoomId: needleChatRoom._id, createdAt: { $gt: me.lastSeenAt } })
+    return await db.collection('needleChatMessages').count({
+      chatRoomId: needleChatRoom._id,
+      createdAt: { $gt: me.lastSeenAt },
+    })
   },
   async lastSeenAt(needleChatRoom, args, context) {
     const me = needleChatRoom.participants.find(user => {
       return user.userId === args.userId
     })
     return me && me.lastSeenAt
-  }
+  },
 }
