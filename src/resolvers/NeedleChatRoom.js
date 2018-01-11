@@ -50,8 +50,8 @@ export const NeedleChatRoom = {
       .toArray()
     return messageArray[0] || null
   },
-  async unreadMessageCount(needleChatRoom, args, context) {
-    const db = await context.getDb()
+  async unreadMessageCount(needleChatRoom, args, { getDb }) {
+    const db = getDb === undefined ? global.db : await getDb()
     const me = needleChatRoom.participants.find(user => {
       return user.userId === args.userId
     })
