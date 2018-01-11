@@ -9,9 +9,12 @@ export const chatRoomDynamics = {
   subscribe: withFilter(
     () => pubsub.asyncIterator('chatRoomDynamics'),
     (payload, variables) => {
-      return !!find(payload.participants, {
-        userId: variables.userId,
-      })
+      return (
+        payload &&
+        !!find(payload.participants, {
+          userId: variables.userId,
+        })
+      )
     }
   ),
 }
