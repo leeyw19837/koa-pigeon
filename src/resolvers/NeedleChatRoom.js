@@ -57,6 +57,7 @@ export const NeedleChatRoom = {
     })
     return await db.collection('needleChatMessages').count({
       chatRoomId: needleChatRoom._id,
+      senderId: { $ne: me.userId },
       createdAt: { $gt: me.lastSeenAt },
     })
   },

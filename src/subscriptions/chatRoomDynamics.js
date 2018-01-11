@@ -3,8 +3,7 @@ import { withFilter } from 'graphql-subscriptions'
 const find = require('lodash/find')
 
 export const chatRoomDynamics = {
-  resolve: (payload, variables) => {
-    console.log(payload, variables, '====')
+  resolve: payload => {
     return payload
   },
   subscribe: withFilter(
