@@ -95,4 +95,15 @@ export const Patient = {
       .sort({ appointmentTime: 1 })
       .toArray()
   },
+  lastAppointment: async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    const result = await db
+      .collection('appointments')
+        .find({
+          patientId: patient._id.toString(),
+        })
+        .sort({ appointmentTime: -1 })
+        .toArray()
+    return result[0] || null
+  },
 }
