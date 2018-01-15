@@ -6,7 +6,7 @@ const moment = require('moment')
 
 export const terribleMeasure = async (_, args, { getDb }) => {
   const db = await getDb()
-  const startOfCurrentWeek = moment('2017-11-21').startOf('isoWeek')
+  const startOfCurrentWeek = moment().startOf('isoWeek')
   const startOfLastWeek = moment(startOfCurrentWeek._d).subtract(1, 'w')
   const endOfLastWeek = moment(startOfLastWeek._d).add(7, 'd')
   const queryTerribleMeasure = await db.collection('warnings').find({
@@ -16,7 +16,8 @@ export const terribleMeasure = async (_, args, { getDb }) => {
             { createdAt: { $gte: startOfLastWeek._d } },
             { createdAt: { $lte: endOfLastWeek._d } },
         ],
-  }).sort({ createdAt: -1 }).toArray()
+  }).limit(40).sort({ createdAt: -1 }).toArray()
+  console.log('queryTerribleMeasure', queryTerribleMeasure)
   // const formatData = await db.collection('bloodglucoses').aggregate([
   //   { $match: { 'createdAt' : { $gte: startOfLastWeek._d, $lte: endOfLastWeek._d } }},
   //   { $project: { _id: 1,
