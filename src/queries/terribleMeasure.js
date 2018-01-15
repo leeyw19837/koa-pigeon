@@ -10,7 +10,7 @@ export const terribleMeasure = async (_, args, { getDb }) => {
   const startOfLastWeek = moment(startOfCurrentWeek._d).subtract(1, 'w')
   const endOfLastWeek = moment(startOfLastWeek._d).add(7, 'd')
   const queryTerribleMeasure = await db.collection('warnings').find({
-    warningType: 'WITHOUT_MEASURE',
+    warningType: 'WITHOUT_MEASURE_test',
     $and:
         [
             { createdAt: { $gte: startOfLastWeek._d } },
