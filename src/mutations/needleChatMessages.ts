@@ -1,11 +1,12 @@
 import { IContext } from '../types'
+import { pubsub } from '../pubsub'
 
 export const updateLastSeenAt = async (_, args, { getDb }: IContext) => {
   const db = await getDb()
 
   const { chatRoomId, userId } = args
 
-  const chatRoom = await db
+  let chatRoom = await db
     .collection('needleChatRooms')
     .findOne({ _id: chatRoomId })
 
@@ -19,6 +20,9 @@ export const updateLastSeenAt = async (_, args, { getDb }: IContext) => {
         { _id: chatRoomId },
         { $set: { [`participants.${index}.lastSeenAt`]: new Date() } },
       )
+    
+    chatRoom = await db.collection('needleChatRooms').findOne({ _id: chatRoomId })
+    pubsub.publish('chatRoomDynamics', chatRoom)
   }
 
   return true

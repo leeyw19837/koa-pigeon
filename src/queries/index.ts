@@ -23,6 +23,8 @@ import * as warningsOfHigh from './warningsOfHigh'
 import * as getClinicalLabResult from './getClinicalLabResult'
 import { logQueryOrMutation } from '../utils'
 
+import * as terribleMeasure from './terribleMeasure'
+
 const queries = {
   ...bloodGlucoseMeasurements,
   ...chatMessages,
@@ -46,6 +48,7 @@ const queries = {
   ...warningsOfLow,
   ...warningsOfHigh,
   ...getClinicalLabResult,
+  ...terribleMeasure,
 }
 
 const queriesWithLogging = {}

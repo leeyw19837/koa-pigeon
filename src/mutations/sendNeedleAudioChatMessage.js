@@ -9,7 +9,7 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
 
   const { userId, chatRoomId, base64EncodedAudioData } = args
 
-  const chatRoom = await db
+  let chatRoom = await db
     .collection('needleChatRooms')
     .findOne({ _id: chatRoomId })
 
@@ -36,15 +36,38 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
   }
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
+
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
 
+  const participants = chatRoom.participants.map(p => {
+    if (p.userId === userId) {
+      return { ...p, lastSeenAt: new Date() }
+    }
+    return p
+  })
+  await db.collection('needleChatRooms').update(
+    {
+      _id: chatRoomId,
+    },
+    {
+      $set: {
+        participants,
+      },
+    }
+  )
+  chatRoom = await db.collection('needleChatRooms').findOne({ _id: chatRoomId })
+
+  pubsub.publish('chatRoomDynamics', chatRoom)
+
   chatRoom.participants.map(async p => {
-    if(p.userId !== userId){
-      const user = await db.collection('users').findOne({ _id: ObjectID.createFromHexString(p.userId) })
-      if(!user.roles){
+    if (p.userId !== userId) {
+      const user = await db
+        .collection('users')
+        .findOne({ _id: ObjectID.createFromHexString(p.userId) })
+      if (!user.roles) {
         pushChatNotification({
-          patient:user,
-          messageType:'AUDIO',
+          patient: user,
+          messageType: 'AUDIO',
           db,
         })
       }

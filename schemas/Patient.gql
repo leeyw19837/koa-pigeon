@@ -25,4 +25,6 @@ type Patient {
   outHospitalSoaps: [SOAP]
   healthCareTeam: [HealthCareTeam]
   appointments: [Appointment]
+  lastAppointment: Appointment
+  isLiDocter: Boolean
 }

@@ -8,4 +8,7 @@ type Warning {
   mobile: String
   patientId: ID
   dateOfBirth: Date
+  patient: Patient
+  appointmentTime: Date
+  count: Int
 }
