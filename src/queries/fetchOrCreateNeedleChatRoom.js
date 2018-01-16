@@ -37,6 +37,8 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
           { $set: { needleChatRoomId: chatRoom._id } },
         )
     }
+
+    pubsub.publish('chatRoomDynamics', chatRoom)
   }
 
   return chatRoom
