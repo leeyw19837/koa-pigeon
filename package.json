@@ -51,7 +51,7 @@
   "devDependencies": {
     "@types/node": "8.5.7",
     "@types/graphql": "^0.11.4",
-    "@types/graphql-date": "^1.0.0",
+    "@types/graphql-date": "^1.0.2",
     "@types/koa": "^2.0.43",
     "@types/koa-bodyparser": "^3.0.24",
     "@types/koa-router": "^7.0.21",
