@@ -3,7 +3,7 @@
 version: '3'
 services:
   api:
-    image: node:8.0.0-alpine
+    image: node:8.9.4-alpine
     volumes:
       - yarn:/root/.cache/yarn
       - ./:/usr/src/app
