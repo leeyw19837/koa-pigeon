@@ -1,5 +1,5 @@
+import get = require('lodash/get')
 import { IContext } from '../types'
-import get = require("lodash/get")
 
 const moment = require('moment')
 
@@ -65,7 +65,7 @@ export const Patient = {
       .sort({ createdAt: -1 })
       .toArray()
   },
-  outHospitalSoaps: async(patient, _, {getDb}: IContext) => {
+  outHospitalSoaps: async (patient, _, {getDb}: IContext) => {
     const db = await getDb()
     return db
       .collection('outHospitalSoap')
@@ -108,52 +108,44 @@ export const Patient = {
         .toArray()
     return result[0] || null
   },
-  useIGluco:async (patient, _, { getDb }: IContext) => {
+  useIGluco: async (patient, _, { getDb }: IContext) => {
     const db = await getDb()
     const result = await db
       .collection('users')
         .find({
-          patientId: patient._id.toString(),
+          _id: patient._id.toString(),
         })
         .toArray()
-    const isUseIGluco = !!get(result[0],"iGlucoseUserId")
-    return isUseIGluco
+    return !!get(result[0], 'iGlucoseUserId')
   },
-  // useNeedle:async (patient, _, { getDb }: IContext) => {
-  //   const db = await getDb()
-  //   const result = await db
-  //     .collection('bloodglucoses')
-  //       .find({
-  //         author: patient._id.toString(),
-  //       })
-  //       .toArray()
-  //   let _isExistsDeviceContext = true
-  //   result.map((item)=>{
-  //     let isExistsDeviceContext = !!item.deviceContext
-  //     _isExistsDeviceContext = _isExistsDeviceContext || isExistsDeviceContext
-  //   })
-  //   return _isExistsDeviceContext
-  // },
-  useSPT:async (patient, _, { getDb }: IContext) => {
+  useNeedle: async (patient, _, { getDb }: IContext) => {
     const db = await getDb()
     const result = await db
       .collection('users')
         .find({
-          patientId: patient._id.toString(),
+          _id: patient._id.toString(),
         })
         .toArray()
-    const isUseSPT = !!get(result[0],"deviceSPT")
-    return isUseSPT
+    return !!get(result[0], 'isUseNeedle')
   },
-  usePublicNumber:async (patient, _, { getDb }: IContext) => {
+  useSPT: async (patient, _, { getDb }: IContext) => {
     const db = await getDb()
     const result = await db
       .collection('users')
         .find({
-          patientId: patient._id.toString(),
+          _id: patient._id.toString(),
         })
         .toArray()
-    const isUsePublicNumber = !!get(result[0],"wechatTag")
-    return isUsePublicNumber
+    return !!get(result[0], 'deviceSPT')
+  },
+  usePublicNumber: async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    const result = await db
+      .collection('users')
+        .find({
+          _id: patient._id.toString(),
+        })
+        .toArray()
+    return !!get(result[0], 'wechatTag')
   },
 }
