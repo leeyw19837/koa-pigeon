@@ -61,6 +61,6 @@
     "husky": "^0.13.2",
     "nodemon": "^1.11.0",
     "tslint": "^5.5.0",
-    "typescript": "^2.4.1"
+    "typescript": "^2.6.2"
   }
 }
