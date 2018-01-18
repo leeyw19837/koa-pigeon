@@ -49,10 +49,19 @@ export const healthCareProfessionals = async (_, args, { getDb }: IContext) => {
     .toArray()
 }
 
-export const latestCaseRecordBeforeDate = async(_, args, { getDb }: IContext) => {
+export const latestCaseRecordBeforeDate = async (
+  _,
+  args,
+  { getDb }: IContext,
+) => {
   const db = await getDb()
   const { patientId, now } = args
-  const cr = await db.collection('caseRecord').find({ patientId, createdAt: {$lt: now}}).sort({createdAt: -1}).limit(1).toArray()
-  if(!!cr.length) return cr[0]
+  const cr = await db
+    .collection('caseRecord')
+    .find({ patientId, createdAt: { $lt: now } })
+    .sort({ createdAt: -1 })
+    .limit(1)
+    .toArray()
+  if (!!cr.length) return cr[0]
   return null
 }
