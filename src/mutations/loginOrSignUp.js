@@ -55,7 +55,7 @@ export const loginOrSignUp = async (_, args, context) => {
         .collection('users')
         .update(
           { username: `${mobile}@ijk.com` },
-          { $set: { wechatOpenId, updatedAt: new Date() } },
+          { $set: { wechatOpenId, updatedAt: new Date(),isUseNeedle: true, } },
         )
     }
     return {
@@ -79,6 +79,7 @@ export const loginOrSignUp = async (_, args, context) => {
     username: `${mobile}@ijk.com`,
     createdAt: new Date(),
     patientState: 'POTENTIAL',
+    isUseNeedle: true,
   }
   if (wechatOpenId) patientInfo.wechatOpenId = wechatOpenId
 

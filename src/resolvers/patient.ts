@@ -1,4 +1,6 @@
 import { IContext } from '../types'
+import get = require("lodash/get")
+
 const moment = require('moment')
 
 export const Patient = {
@@ -105,5 +107,53 @@ export const Patient = {
         .sort({ appointmentTime: -1 })
         .toArray()
     return result[0] || null
+  },
+  useIGluco:async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    const result = await db
+      .collection('users')
+        .find({
+          patientId: patient._id.toString(),
+        })
+        .toArray()
+    const isUseIGluco = !!get(result[0],"iGlucoseUserId")
+    return isUseIGluco
+  },
+  useNeedle:async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    const result = await db
+      .collection('bloodglucoses')
+        .find({
+          author: patient._id.toString(),
+        })
+        .toArray()
+    let _isExistsDeviceContext = true
+    result.map((item)=>{
+      let isExistsDeviceContext = !!item.deviceContext
+      _isExistsDeviceContext = _isExistsDeviceContext || isExistsDeviceContext
+    })
+    return _isExistsDeviceContext
+  },
+  useSPT:async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    const result = await db
+      .collection('users')
+        .find({
+          patientId: patient._id.toString(),
+        })
+        .toArray()
+    const isUseSPT = !!get(result[0],"deviceSPT")
+    return isUseSPT
+  },
+  usePublicNumber:async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    const result = await db
+      .collection('users')
+        .find({
+          patientId: patient._id.toString(),
+        })
+        .toArray()
+    const isUsePublicNumber = !!get(result[0],"wechatTag")
+    return isUsePublicNumber
   },
 }
