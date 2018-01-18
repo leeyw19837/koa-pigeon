@@ -30,4 +30,5 @@ type Patient {
   useNeedle: Boolean
   useSPT: Boolean
   usePublicNumber: Boolean
+  isLiDocter: Boolean
 }
