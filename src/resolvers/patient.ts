@@ -119,21 +119,21 @@ export const Patient = {
     const isUseIGluco = !!get(result[0],"iGlucoseUserId")
     return isUseIGluco
   },
-  useNeedle:async (patient, _, { getDb }: IContext) => {
-    const db = await getDb()
-    const result = await db
-      .collection('bloodglucoses')
-        .find({
-          author: patient._id.toString(),
-        })
-        .toArray()
-    let _isExistsDeviceContext = true
-    result.map((item)=>{
-      let isExistsDeviceContext = !!item.deviceContext
-      _isExistsDeviceContext = _isExistsDeviceContext || isExistsDeviceContext
-    })
-    return _isExistsDeviceContext
-  },
+  // useNeedle:async (patient, _, { getDb }: IContext) => {
+  //   const db = await getDb()
+  //   const result = await db
+  //     .collection('bloodglucoses')
+  //       .find({
+  //         author: patient._id.toString(),
+  //       })
+  //       .toArray()
+  //   let _isExistsDeviceContext = true
+  //   result.map((item)=>{
+  //     let isExistsDeviceContext = !!item.deviceContext
+  //     _isExistsDeviceContext = _isExistsDeviceContext || isExistsDeviceContext
+  //   })
+  //   return _isExistsDeviceContext
+  // },
   useSPT:async (patient, _, { getDb }: IContext) => {
     const db = await getDb()
     const result = await db
