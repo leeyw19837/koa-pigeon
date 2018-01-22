@@ -117,7 +117,6 @@ export const Patient = {
         _id: maybeCreateFromHexString(patient._id),
       })
       .toArray()
-    console.log('==========useIGluco/result=======', result)
     return !!get(result[0], 'iGlucoseUserId')
   },
   useNeedle: async (patient, _, { getDb }: IContext) => {
