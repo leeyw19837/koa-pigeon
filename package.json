@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npm run docker:dev",
     "build": "tsc",
-    "watch": "concurrently 'tsc --watch' 'nodemon --watch \"dist\" --watch \"schemas\" --ext js,ts,gql dist/index.js'",
+    "watch":
+      "concurrently 'tsc --watch' 'nodemon --watch \"dist\" --watch \"schemas\" --ext js,ts,gql dist/index.js'",
     "lint": "tslint 'src/**/*.ts'",
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
     "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
@@ -27,14 +28,14 @@
     "co-wechat-oauth": "^2.0.1",
     "date-aware-json": "^0.1.0",
     "fresh-id": "^1.1.0",
-    "graphql": "^0.10.5",
-    "graphql-subscriptions": "^0.4.4",
-    "graphql-tools": "^0.10.1",
+    "graphql": "^0.11.7",
+    "graphql-subscriptions": "^0.5.6",
+    "graphql-tools": "^2.18.0",
     "koa": "^2.2.0",
     "koa-bodyparser": "^4.2.0",
     "koa-convert": "^1.2.0",
     "koa-cors": "^0.0.16",
-    "koa-graphql": "^0.6.2",
+    "koa-graphql": "^0.7.3",
     "koa-morgan": "^1.0.1",
     "koa-mount": "^2.0.0",
     "koa-router": "7",
@@ -44,23 +45,23 @@
     "moment": "^2.17.1",
     "mongodb": "^2.2.24",
     "mongodb-auto-reconnect": "^0.0.1",
+    "request": "^2.34",
+    "request-promise": "^4.2.2",
     "righteous-raven": "^1.0.5",
-    "subscriptions-transport-ws": "^0.9.0",
-    "request-promise": "^4.2.2"
+    "subscriptions-transport-ws": "^0.9.0"
   },
   "devDependencies": {
-    "@types/node": "8.5.7",
-    "@types/graphql": "^0.11.4",
-    "@types/graphql-date": "^1.0.0",
+    "@types/graphql": "^0.11.7",
     "@types/koa": "^2.0.43",
     "@types/koa-bodyparser": "^3.0.24",
     "@types/koa-router": "^7.0.21",
     "@types/lodash": "^4.14.55",
     "@types/mongodb": "^2.1.41",
+    "@types/node": "8.5.7",
     "concurrently": "^3.4.0",
     "husky": "^0.13.2",
     "nodemon": "^1.11.0",
     "tslint": "^5.5.0",
-    "typescript": "^2.4.1"
+    "typescript": "^2.6.2"
   }
 }
