@@ -31,4 +31,5 @@ type Patient {
   useSPT: Boolean
   usePublicNumber: Boolean
   isLiDocter: Boolean
+  tempFilter: Boolean
 }
