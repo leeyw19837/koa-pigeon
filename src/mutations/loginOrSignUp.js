@@ -11,20 +11,18 @@ const {
 export const updatePatientDemographics = async (_, args, context) => {
   const db = await context.getDb()
   const { mobile, birthday, height, weight, gender } = args
-  await db
-    .collection('users')
-    .update(
-      { username: `${mobile}@ijk.com` },
-      {
-        $set: {
-          dateOfBirth: birthday,
-          height,
-          weight,
-          gender,
-          updatedAt: new Date(),
-        },
+  await db.collection('users').update(
+    { username: `${mobile}@ijk.com` },
+    {
+      $set: {
+        dateOfBirth: birthday,
+        height,
+        weight,
+        gender,
+        updatedAt: new Date(),
       },
-    )
+    },
+  )
   return true
 }
 export const loginOrSignUp = async (_, args, context) => {
@@ -55,7 +53,14 @@ export const loginOrSignUp = async (_, args, context) => {
         .collection('users')
         .update(
           { username: `${mobile}@ijk.com` },
-          { $set: { wechatOpenId, updatedAt: new Date(),isUseNeedle: true, } },
+          { $set: { wechatOpenId, updatedAt: new Date(), isUseNeedle: true } },
+        )
+    } else {
+      await db
+        .collection('users')
+        .update(
+          { username: `${mobile}@ijk.com` },
+          { $set: { updatedAt: new Date(), isUseNeedle: true } },
         )
     }
     return {
