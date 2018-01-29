@@ -32,4 +32,5 @@ type Patient {
   usePublicNumber: Boolean
   isLiDocter: Boolean
   tempFilter: Boolean
+  lastHbAlc: String
 }
