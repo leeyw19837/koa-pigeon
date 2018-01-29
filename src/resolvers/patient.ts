@@ -149,4 +149,18 @@ export const Patient = {
       .toArray()
     return !!get(result[0], 'wechatTag')
   },
+  lastHbAlc: async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    const result = await db
+      .collection('clinicalLabResults')
+      .find({
+        patientId: patient._id.toString(),
+      })
+      .sort({ testDate: -1 })
+      .toArray()
+    if (result.length > 0) {
+      return result[0].glycatedHemoglobin
+    }
+    return null
+  },
 }
