@@ -26,6 +26,7 @@ type Patient {
   healthCareTeam: [HealthCareTeam]
   appointments: [Appointment]
   lastAppointment: Appointment
+  lastCheckAppointment: Appointment
   useIGluco: Boolean
   useNeedle: Boolean
   useSPT: Boolean
