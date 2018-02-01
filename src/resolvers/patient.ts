@@ -109,6 +109,19 @@ export const Patient = {
       .toArray()
     return result[0] || null
   },
+  lastCheckAppointment: async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    const result = await db
+      .collection('appointments')
+      .find({
+        patientId: patient._id.toString(),
+        isOutPatient: true,
+        type: { $nin: ['addition'] },
+      })
+      .sort({ appointmentTime: -1 })
+      .toArray()
+    return result[0] || null
+  },
   useIGluco: async (patient, _, { getDb }: IContext) => {
     const db = await getDb()
     const result = await db
