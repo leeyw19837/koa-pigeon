@@ -1,0 +1,16 @@
+type Evaluate {
+  _id: ID
+  inValue: String
+  nickname: String
+  category: String
+  a1cForecast: String
+  a1cLatest: String
+  measureCount: String
+  doctors: String
+  rangeOfCircle: String
+}
+
+extend type Query {
+  fetchEvaluate(selectedDay: String!): [Evaluate]
+  getOrderedDays: [String]
+}
