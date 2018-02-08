@@ -24,6 +24,8 @@ type Patient {
   soaps: [SOAP]
   outHospitalSoaps: [SOAP]
   healthCareTeam: [HealthCareTeam]
+  healthCareTeamId: [String]
+  institutionId: String
   appointments: [Appointment]
   lastAppointment: Appointment
   lastCheckAppointment: Appointment
