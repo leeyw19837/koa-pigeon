@@ -1,53 +1,44 @@
+import { lte, gte } from 'lodash'
+
 const moment = require('moment')
 
 export const warningsOfHigh = async (_, args, { getDb }) => {
   const db = await getDb()
   const { period, rangeLow = 10, rangeHigh = 33.3 } = args
-  let bgLow = rangeLow * 18
-  let bgHigh = rangeHigh * 18
   let query = {
     warningType: 'HIGH_GLUCOSE',
     createdAt: { $gte: moment().startOf('day')._d },
-    bgValue: { $gte: bgLow, $lte: bgHigh },
-    $or : [
-      {isHandle: { $exists: false }},
-      {isHandle: false},
-    ],
+    $or: [{ isHandle: { $exists: false } }, { isHandle: false }],
   }
   switch (period) {
     case 'threeDays':
-      query = {
-        warningType: 'HIGH_GLUCOSE',
-        createdAt: { $gte: moment().subtract(2, 'd').startOf('day')._d },
-        bgValue: { $gte: bgLow, $lte: bgHigh },
-        $or : [
-          {isHandle: { $exists: false }},
-          {isHandle: false},
-        ],
+      query.createdAt = {
+        $gte: moment()
+          .subtract(2, 'd')
+          .startOf('day')._d,
       }
       break
     case 'sevenDays':
-      query = {
-        warningType: 'HIGH_GLUCOSE',
-        createdAt: { $gte: moment().subtract(6, 'd').startOf('day')._d },
-        bgValue: { $gte: bgLow, $lte: bgHigh },
-        $or : [
-          {isHandle: { $exists: false }},
-          {isHandle: false},
-        ],
+      query.createdAt = {
+        $gte: moment()
+          .subtract(6, 'd')
+          .startOf('day')._d,
       }
-      break;
+      break
     case 'all':
-      query = {
-        warningType: 'HIGH_GLUCOSE',
-        bgValue: { $gte: bgLow, $lte: bgHigh },
-        $or : [
-          {isHandle: { $exists: false }},
-          {isHandle: false},
-        ],
+      query.createdAt = {
+        $exists: true,
       }
       break
     default:
   }
-  return db.collection('warnings').find(query).sort({ createdAt: -1 }).toArray()
+  const warninglists = await db
+    .collection('warnings')
+    .find(query)
+    .sort({ createdAt: -1 })
+    .toArray()
+  return warninglists.filter(
+    item =>
+      gte(item.bgValue, 18 * rangeLow) && lte(item.bgValue, 18 * rangeHigh),
+  )
 }
