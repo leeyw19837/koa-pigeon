@@ -16,21 +16,30 @@ export const fetchEvaluate = async (_, args, context) => {
       $lt: endAt,
     }
   }).toArray()
+  const patientsId = appointments.map(o => o.patientId)
   if (appointments.length) {
-    const options = {
-      method: 'GET',
-      uri: `${URi}evaluate/getPatientDetail/${selectedDay}`,
+    // const options = {
+    //   method: 'GET',
+    //   uri: `${URi}evaluate/getPatientDetail/${selectedDay}`,
+    //   json: true,
+    // }
+
+    const optionInAdvance = {
+      method: 'POST',
+      uri: `${URi}analysis/patients`,
       json: true,
+      body: {
+        userId: patientsId.join(','),
+      }
     }
-    const results = await request(options)
+    const results = await request(optionInAdvance)
     const keyNames = [
-      'inValue', 'nickname', 'category',
+      '_id', 'nickname', 'category', 'inValue',
       'a1cForecast', 'a1cLatest', 'measureCount',
-      'doctors', '_id',
+      'doctors', 'nextConsultationMin', 'nextConsultationMax'
     ]
     return results.map(detail => ({
       ...pick(detail, keyNames),
-      rangeOfCircle: `${detail.d75} ~ ${detail.d105}`
     }))
   }
 }
