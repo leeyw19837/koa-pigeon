@@ -10,22 +10,28 @@ type Evaluate {
   nextConsultationMin: String
   nextConsultationMax: String
 }
+#
+# type ForecaseDetail {
+#   _id: ID
+#   caclDay: String
+#   actualDay: Date
+#   inValue: Int
+#   fcInValue: Int
+#   a1cGood: Int
+#   fcA1cGood: Int
+#   inMgtPatients: Int
+#   fcInMgtPatients: Int
+#   a1cPercent: String
+#   inMgtPercent: String
+#   liAngPatients: Int
+# }
 
 type ForecaseDetail {
-  _id: ID
-  caclDay: String
-  actualDay: Date
-  inValue: Int
-  fcInValue: Int
-  a1cGood: Int
-  fcA1cGood: Int
-  inMgtPatients: Int
-  fcInMgtPatients: Int
-  a1cPercent: String
-  inMgtPercent: String
-  liAngPatients: Int
+  inValue: Int,
+  a1cGood: Int,
+  a1cGoodPercent: String,
+  activePatient: Int,
 }
-
 extend type Query {
   fetchEvaluate(selectedDay: String!): [Evaluate]
   getOrderedDays: [String]

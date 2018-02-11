@@ -14,16 +14,11 @@ export const fetchEvaluate = async (_, args, context) => {
     appointmentTime: {
       $gt: startAt,
       $lt: endAt,
-    }
+    },
+    type: {$nin: ['addition', 'first']}
   }).toArray()
   const patientsId = appointments.map(o => o.patientId)
   if (appointments.length) {
-    // const options = {
-    //   method: 'GET',
-    //   uri: `${URi}evaluate/getPatientDetail/${selectedDay}`,
-    //   json: true,
-    // }
-
     const optionInAdvance = {
       method: 'POST',
       uri: `${URi}analysis/patients`,
@@ -38,7 +33,8 @@ export const fetchEvaluate = async (_, args, context) => {
       'a1cForecast', 'a1cLatest', 'measureCount',
       'doctors', 'nextConsultationMin', 'nextConsultationMax'
     ]
-    return results.map(detail => ({
+
+    return results.filter(p => p.patientState == 'ACTIVE').map(detail => ({
       ...pick(detail, keyNames),
     }))
   }
@@ -84,15 +80,24 @@ export const getOrderedDays = async (_, args, context) => {
 export const fetchForecaseDetail = async (_, args, context) => {
   const db = await context.getDb()
   const { selectedDay = '2018-03-31' } = args
-  const options = {
+  // const options = {
+  //   method: 'GET',
+  //   uri: `${URi}evaluate/getForecaseDetail/${selectedDay}`,
+  //   // uri: 'http://127.0.0.1:9901/evaluate/getForecaseDetail/2018-02-13',
+  //   json: true,
+  // }
+  const optionInNew = {
     method: 'GET',
-    uri: `${URi}evaluate/getForecaseDetail/${selectedDay}`,
-    // uri: 'http://127.0.0.1:9901/evaluate/getForecaseDetail/2018-02-13',
+    uri: `${URi}evaluate/getNewForecaseDetail/${selectedDay}`,
     json: true,
   }
-  const result = await request(options)
+  // const keyNames = [
+  //   'inValue', 'a1cGood',
+  //   'a1cGoodPercent', 'activePatient',
+  // ]
+  const result = await request(optionInNew)
   return {
     ...result,
-    actualDay: new Date(result.actualDay),
+    // actualDay: new Date(result.actualDay),
   }
 }
