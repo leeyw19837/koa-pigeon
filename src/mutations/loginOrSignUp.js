@@ -12,7 +12,7 @@ export const updatePatientDemographics = async (_, args, context) => {
   const db = await context.getDb()
   const { mobile, birthday, height, weight, gender } = args
   await db.collection('users').update(
-    { username: `${mobile}@ijk.com` },
+    { username: mobile },
     {
       $set: {
         dateOfBirth: birthday,
@@ -46,20 +46,20 @@ export const loginOrSignUp = async (_, args, context) => {
 
   const existingPatient = await db
     .collection('users')
-    .findOne({ username: `${mobile}@ijk.com` })
+    .findOne({ username: mobile })
   if (existingPatient) {
     if (wechatOpenId && !existingPatient.wechatOpenId) {
       await db
         .collection('users')
         .update(
-          { username: `${mobile}@ijk.com` },
+          { username: mobile },
           { $set: { wechatOpenId, updatedAt: new Date(), isUseNeedle: true } },
         )
     } else {
       await db
         .collection('users')
         .update(
-          { username: `${mobile}@ijk.com` },
+          { username: mobile },
           { $set: { updatedAt: new Date(), isUseNeedle: true } },
         )
     }
@@ -81,7 +81,7 @@ export const loginOrSignUp = async (_, args, context) => {
   }
 
   const patientInfo = {
-    username: `${mobile}@ijk.com`,
+    username: mobile,
     createdAt: new Date(),
     patientState: 'POTENTIAL',
     isUseNeedle: true,
