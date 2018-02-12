@@ -27,10 +27,12 @@ type Evaluate {
 # }
 
 type ForecaseDetail {
-  inValue: Int,
-  a1cGood: Int,
-  a1cGoodPercent: String,
-  activePatient: Int,
+  inValue: Int
+  a1cGood: Int
+  a1cGoodPercent: String
+  inMgt: Int
+  inMgtPercent: String
+  activePatient: Int
 }
 extend type Query {
   fetchEvaluate(selectedDay: String!): [Evaluate]
