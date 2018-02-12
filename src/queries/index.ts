@@ -21,6 +21,7 @@ import * as laboratoryExamination from './laboratoryExamination'
 import * as warningsOfLow from './warningsOfLow'
 import * as warningsOfHigh from './warningsOfHigh'
 import * as getClinicalLabResult from './getClinicalLabResult'
+import * as evaluate from './evaluate'
 import { logQueryOrMutation } from '../utils'
 
 import * as terribleMeasure from './terribleMeasure'
@@ -49,6 +50,7 @@ const queries = {
   ...warningsOfHigh,
   ...getClinicalLabResult,
   ...terribleMeasure,
+  ...evaluate,
 }
 
 const queriesWithLogging = {}
