@@ -65,6 +65,8 @@ type Query {
   getClinicalLabResult: [[ClinicalLabResult]]
   terribleMeasure: [Warning]
   latestCaseRecordBeforeDate(patientId: ID!, now: Date!): CaseRecord
+  # 订单信息
+  orders(patientId: ID!): [Order]
 }
 
 type Mutation {
