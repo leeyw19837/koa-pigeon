@@ -1,6 +1,5 @@
-import { IContext } from '../types'
-
-export const orders = async (_, args, { getDb }: IContext) => {
+// import { IContext } from '../types'
+export const orders = async (_, args, { getDb }) => {
   const db = await getDb()
 
   return db

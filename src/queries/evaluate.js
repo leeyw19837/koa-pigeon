@@ -126,7 +126,7 @@ export const fetchMgtPatients = async (_, args, context) => {
   const options = {
     method: 'GET',
     // uri: `http://172.16.0.62:9901/evaluate/getDiffPatients/${startAt}~${endAt}`
-    uri: `${URi}evaluate/getDiffPatients/${startAt}~${endAt}`
+    uri: `${URi}evaluate/getDiffPatients/${startAt}~${endAt}`,
     json: true,
   }
   const result = await request(options)
