@@ -10,6 +10,9 @@ type Evaluate {
   doctors: String
   nextConsultationMin: String
   nextConsultationMax: String
+  availableCategory: String
+  categoryChange: String
+  rangeChange: String
 }
 
 #
@@ -41,4 +44,5 @@ extend type Query {
   fetchEvaluate(selectedDay: String!): [Evaluate]
   getOrderedDays: [String]
   fetchForecaseDetail(selectedDay: String): ForecaseDetail
+  fetchMgtPatients(startAt: String, endAt: String): [Evaluate]
 }
