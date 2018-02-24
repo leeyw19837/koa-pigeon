@@ -1,5 +1,6 @@
 type Evaluate {
   _id: ID
+  patientId: ID
   inValue: String
   nickname: String
   category: String
@@ -10,6 +11,7 @@ type Evaluate {
   nextConsultationMin: String
   nextConsultationMax: String
 }
+
 #
 # type ForecaseDetail {
 #   _id: ID
@@ -34,6 +36,7 @@ type ForecaseDetail {
   inMgtPercent: String
   activePatient: Int
 }
+
 extend type Query {
   fetchEvaluate(selectedDay: String!): [Evaluate]
   getOrderedDays: [String]
