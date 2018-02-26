@@ -1,0 +1,29 @@
+type Order {
+  _id: ID!
+  # 病人编号
+  patientId: ID!
+  #  订单编号
+  orderId: ID!
+  #  订单时间
+  orderTime: Date
+  #  订单状态 1：已经下单 2：其他
+  orderStatus: Int
+  #  收货人
+  receiver: String
+  #  联系电话
+  phoneNumber: String
+  #  收货地址
+  receiveAddress: String
+  #  商品类型： 1：iHealth血糖试纸 2：其他
+  goodsType: Int
+  #  商品单价
+  goodsUnitPrice: Int
+  #  商品规格
+  goodsSpecification: String
+  #  购买数量
+  purchaseQuantity: Int
+  #  运费
+  freightPrice: Int
+  #  总价
+  totalPrice: Int
+}
