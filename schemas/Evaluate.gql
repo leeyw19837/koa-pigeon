@@ -13,6 +13,8 @@ type Evaluate {
   availableCategory: String
   categoryChange: String
   rangeChange: String
+  a1cChange: String
+  measureChange: String
 }
 
 #
