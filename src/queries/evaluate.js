@@ -55,6 +55,27 @@ export const fetchEvaluate = async (_, args, context) => {
   }
 }
 
+export const getPatientsFlag = async (_, args, context) => {
+  const { selectedDay = '2018-02-28' } = args
+  const optionInAdvance = {
+    method: 'POST',
+    uri: `${URi}analysis/patients`,
+    json: true,
+    body: {
+      createdAt: selectedDay,
+    },
+  }
+  const results = await request(optionInAdvance)
+  const keyNames = [
+    'nickname',
+    'flag',
+    'category',
+  ]
+  return results.filter(p => p.patientState == 'ACTIVE').map(detail => ({
+    ...pick(detail, keyNames),
+  }))
+}
+
 export const getOrderedDays = async (_, args, context) => {
   const db = await context.getDb()
   const appointments = await db

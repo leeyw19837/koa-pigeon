@@ -17,6 +17,17 @@ type Evaluate {
   measureChange: String
 }
 
+type Flag {
+  date: String
+  desc: String
+}
+
+type PatientsFlag {
+  nickname: String
+  flag: [Flag]
+  category: String
+}
+
 #
 # type ForecaseDetail {
 #   _id: ID
@@ -44,6 +55,7 @@ type ForecaseDetail {
 
 extend type Query {
   fetchEvaluate(selectedDay: String!): [Evaluate]
+  getPatientsFlag(selectedDay: String!): [PatientsFlag]
   getOrderedDays: [String]
   fetchForecaseDetail(selectedDay: String): ForecaseDetail
   fetchMgtPatients(startAt: String, endAt: String): [Evaluate]
