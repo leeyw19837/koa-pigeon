@@ -16,6 +16,7 @@ import * as sendNeedleTextChatMessage from './sendNeedleTextChatMessage'
 import * as sentence from './sentence'
 import * as submitFeedback from './submitFeedback'
 import * as wechatLoginOrSignUp from './wechatLoginOrSignUp'
+import * as changeUsername from './changeUsername'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -38,6 +39,7 @@ const mutations = {
   ...sentence,
   ...outHospitalSoap,
   ...addOrder,
+  ...changeUsername,
 }
 
 const mutationsWithLogging = {}

@@ -53,21 +53,17 @@ type Query {
   fetchOrCreateNeedleChatRoom(userId: ID!): NeedleChatRoom!
   unreadMessages(userId: String!): UnReadMessage
   outreachs(period: String, startDay: Date): [Outreach]
-
   professionalLogin(
     username: String!
     password: String!
   ): HealthcareProfessional
-
   sentences(usedFor: Uses, authors: [String!]): [Sentence]
   # 化验结果 查体结果
   laboratoryExaminationResults(patientId: ID!): LaboratoryExamination
   warningsOfLow(period: String): [Warning]
   warningsOfHigh(period: String, rangeLow: Float, rangeHigh: Float): [Warning]
-
   getClinicalLabResult: [[ClinicalLabResult]]
   terribleMeasure: [Warning]
-
   latestCaseRecordBeforeDate(patientId: ID!, now: Date!): CaseRecord
   # 订单信息
   orders(patientId: ID!): [Order]
@@ -139,9 +135,7 @@ type Mutation {
     nextDate: Date
   ): Boolean!
   updateRemarkOfBloodglucoses(_id: ID!, remark: String): Boolean!
-
   deleteOfBloodglucoses(_id: ID!): Boolean!
-
   addSentence(
     category: SoapCategory!
     group: String!
@@ -151,7 +145,6 @@ type Mutation {
     usedFor: Uses!
   ): Boolean!
   removeSentence(_id: ID!): Boolean!
-
   addOutHospitalSoap(
     subjective: String
     objective: String
@@ -161,7 +154,6 @@ type Mutation {
     patientId: ID!
     nextCommunicationDate: Date
   ): Boolean
-
   updateOutHospitalSoap(
     _id: ID!
     subjective: String
@@ -171,7 +163,7 @@ type Mutation {
     severity: SeverityInput
     nextCommunicationDate: Date
   ): Boolean
-
+  changeUsername(patientId: ID!, newUsername: String!): Boolean!
   removeOutHospitalSoap(_id: ID!): Boolean
   addOrder(
     # 病人编号
