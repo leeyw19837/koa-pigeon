@@ -10,7 +10,7 @@ export const patient = async (_, args, { getDb }: IContext) => {
     })
   }
   return db.collection('users').findOne({
-    username: `${args.telephone}@ijk.com`,
+    username: args.telephone,
     patientState: { $exists: 1 },
   })
 }
