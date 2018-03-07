@@ -159,17 +159,20 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     return { power: 1, group1, group2 }
   }
-  // firstDay = '2018-02-24'
-  // secondDay = '2018-03-01'
+  // firstDay = '2018-03-01'
+  // secondDay = '2018-03-07'
   let secondResult = []
   let firstResult = []
+  let tempFirstResult = []
+  let tempSecondResult = []
   if (firstDay) {
     const option = {
       method: 'GET',
       uri: `${Url}evaluate/getAllPatientsCalc/${firstDay}`,
       json: true,
     }
-    firstResult = await request(option)
+    tempFirstResult = await request(option)
+    firstResult = tempFirstResult.filter(item => item.patientState === 'ACTIVE')
   }
   if (secondDay) {
     const option = {
@@ -177,42 +180,85 @@ export const getAllPatientsForCalc = async (_, args, context) => {
       uri: `${Url}evaluate/getAllPatientsCalc/${secondDay}`,
       json: true,
     }
-    secondResult = await request(option)
+    tempSecondResult = await request(option)
+    secondResult = tempSecondResult.filter(
+      item => item.patientState === 'ACTIVE',
+    )
   }
   const coming = {
     type: 'Coming',
     data: [],
     diff: [],
-    count: [0],
+    count: secondDay && firstDay ? [0, 0] : [0],
     children: [
       {
         type: 'in',
         data: [],
         diff: [],
-        count: [0],
+        count: secondDay && firstDay ? [0, 0] : [0],
         children: [
           {
             type: 'Less',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
           {
             type: 'GreaterThan',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
         ],
@@ -221,30 +267,70 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         type: 'out',
         data: [],
         diff: [],
-        count: [0],
+        count: secondDay && firstDay ? [0, 0] : [0],
         children: [
           {
             type: 'First',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
           {
             type: 'Return',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
         ],
@@ -261,30 +347,70 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         type: 'in',
         data: [],
         diff: [],
-        count: [0],
+        count: secondDay && firstDay ? [0, 0] : [0],
         children: [
           {
             type: 'Less',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
           {
             type: 'GreaterThan',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
         ],
@@ -293,30 +419,70 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         type: 'out',
         data: [],
         diff: [],
-        count: [0],
+        count: secondDay && firstDay ? [0, 0] : [0],
         children: [
           {
             type: 'First',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
           {
             type: 'Return',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
         ],
@@ -333,30 +499,70 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         type: 'in',
         data: [],
         diff: [],
-        count: [0],
+        count: secondDay && firstDay ? [0, 0] : [0],
         children: [
           {
             type: 'Less',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
           {
             type: 'GreaterThan',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
         ],
@@ -365,30 +571,70 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         type: 'out',
         data: [],
         diff: [],
-        count: [0],
+        count: secondDay && firstDay ? [0, 0] : [0],
         children: [
           {
             type: 'First',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
           {
             type: 'Return',
-            count: [0],
+            count: secondDay && firstDay ? [0, 0] : [0],
             diff: [],
             children: [
-              { type: 'A', count: [0], diff: [] },
-              { type: 'B', count: [0], diff: [] },
-              { type: 'C', count: [0], diff: [] },
-              { type: 'D', count: [0], diff: [] },
-              { type: 'E', count: [0], diff: [] },
+              {
+                type: 'A',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'B',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'C',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'D',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
+              {
+                type: 'E',
+                count: secondDay && firstDay ? [0, 0] : [0],
+                diff: [],
+              },
             ],
           },
         ],
@@ -397,19 +643,19 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   }
   const outOut = {
     type: 'OutOut',
-    count: [0],
+    count: secondDay && firstDay ? [0, 0] : [0],
     diff: [],
     children: [
-      { type: 'A', count: [0], diff: [] },
-      { type: 'B', count: [0], diff: [] },
-      { type: 'C', count: [0], diff: [] },
-      { type: 'D', count: [0], diff: [] },
-      { type: 'E', count: [0], diff: [] },
+      { type: 'A', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
+      { type: 'B', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
+      { type: 'C', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
+      { type: 'D', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
+      { type: 'E', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
     ],
   }
   const calData = {
     type: 'All',
-    count: [0],
+    count: secondDay && firstDay ? [0, 0] : [0],
     data: [],
     diff: [],
     children: [outOut, coming, flexable, waiting],
@@ -482,26 +728,13 @@ export const getAllPatientsForCalc = async (_, args, context) => {
 
   if (firstResult.length > 0 && secondResult.length === 0) {
     setCount(firstResult, 0)
-    // firstResult.map(item => {
-    //   const group = item.flag[0].desc.split('_')
-    //   const children1 = group[1] === 'in' ? 0 : 1
-    //   const children2 = group[2] === 'L' || group[2] === 'F' ? 0 : 1
-    //   const typeAtoE = getType(item.category)
-
-    //   if (item.flag[0].desc === 'C_OO_NA') {
-    //     calData.children[0].count[0] += 1
-    //   } else {
-    //     pushData(getGroup(group[0]), children1, children2, typeAtoE, 0)
-    //   }
-    // })
     calData.data = firstResult
-    // calData.count[0] = firstResult.length
   } else if (firstResult.length > 0 && secondResult.length > 0) {
     setCount(firstResult, 0)
     setCount(secondResult, 1)
     const diff = xorBy(firstResult, secondResult, 'patientId')
     const same = intersectionBy(firstResult, secondResult, 'patientId')
-    const newtest = []
+    const diffSourceData = []
     same.map(item => {
       const Arr2Item = find(secondResult, { patientId: item.patientId })
       const firstType = getType(item.category)
@@ -554,26 +787,62 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             calData.children[0].children[firstType].diff.push(change)
             calData.children[0].children[secondType].diff.push(change)
           }
+          const temp = Arr2Item
+          temp.rangeChange = `${item.flag[0].desc}->${Arr2Item.flag[0].desc}`
+          temp.a1cChange = `${item.a1cLatest}->${Arr2Item.a1cLatest}`
+          temp.measureChange = `${item.measureCount}->${Arr2Item.measureCount}`
+          calData.data.push(temp)
         } else {
           pushDiff(DiffType, firstType, secondType, change)
+          const temp = Arr2Item
+          temp.rangeChange = `${item.flag[0].desc}->${Arr2Item.flag[0].desc}`
+          temp.a1cChange = `${item.a1cLatest}->${Arr2Item.a1cLatest}`
+          temp.measureChange = `${item.measureCount}->${Arr2Item.measureCount}`
+          calData.data.push(temp)
         }
       }
     })
     diff.map(item => {
-      const inBefore = find(firstResult, { patientId: item.patientId })
-      if (inBefore) {
+      const inAfter = find(secondResult, { patientId: item.patientId })
+      const isArchived = find(tempFirstResult, {
+        patientId: item.patientId,
+        patientState: 'ARCHIVED',
+      })
+      const temp = inAfter
+      if (inAfter) {
+        if (isArchived) {
+          temp.rangeChange = `${isArchived.flag[0].desc}->${inAfter.flag[0]
+            .desc}`
+          temp.a1cChange = `${isArchived.a1cLatest}->${inAfter.a1cLatest}`
+          temp.measureChange = `${isArchived.measureCount}->${inAfter.measureCount}`
+          calData.data.push(temp)
+          calData.diff.push({
+            patientId: item.patientId,
+            move: `ARCHIVED->${item.flag[0].desc}_${item.category.split(
+              '',
+            )[0]}`,
+          })
+        } else {
+          temp.rangeChange = `无->${inAfter.flag[0].desc}`
+          temp.a1cChange = `无->${inAfter.a1cLatest}`
+          temp.measureChange = `无->${inAfter.measureCount}`
+          calData.data.push(temp)
+          calData.diff.push({
+            patientId: item.patientId,
+            move: `First->${item.flag[0].desc}_${item.category.split('')[0]}`,
+          })
+        }
+      } else {
         calData.diff.push({
           patientId: item.patientId,
           move: `${item.flag[0].desc}_${item.category.split('')[0]}->ARCHIVED`,
         })
-      } else {
-        const from = 'Active'
-        calData.diff.push({
-          patientId: item.patientId,
-          move: `${from}->${item.flag[0].desc}_${item.category.split('')[0]}`,
-        })
+        const inBefore = find(firstResult, { patientId: item.patientId })
+        inBefore.rangeChange = `${inAfter.flag[0].desc}->无`
+        inBefore.a1cChange = `${inAfter.a1cLatest}->无`
+        inBefore.measureChange = `${inAfter.measureCount}->无`
+        calData.data.push(inBefore)
       }
-      // const inAfter = find(secondResult, { patientId: item.patientId })
     })
   }
   return calData
