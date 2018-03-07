@@ -185,13 +185,13 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     count: [0, 0],
     children: [
       {
-        type: 'In',
+        type: 'in',
         data: [],
         diff: [],
         count: [0, 0],
         children: [
           {
-            type: 'less',
+            type: 'Less',
             count: [0, 0],
             diff: [],
             children: [
@@ -203,7 +203,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             ],
           },
           {
-            type: 'greaterThan',
+            type: 'GreaterThan',
             count: [0, 0],
             diff: [],
             children: [
@@ -217,13 +217,13 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         ],
       },
       {
-        type: 'Out',
+        type: 'out',
         data: [],
         diff: [],
         count: [0, 0],
         children: [
           {
-            type: 'first',
+            type: 'First',
             count: [0, 0],
             diff: [],
             children: [
@@ -235,7 +235,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             ],
           },
           {
-            type: 'return',
+            type: 'Return',
             count: [0, 0],
             diff: [],
             children: [
@@ -257,13 +257,13 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     count: [0, 0],
     children: [
       {
-        type: 'In',
+        type: 'in',
         data: [],
         diff: [],
         count: [0, 0],
         children: [
           {
-            type: 'less',
+            type: 'Less',
             count: [0, 0],
             diff: [],
             children: [
@@ -275,7 +275,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             ],
           },
           {
-            type: 'greaterThan',
+            type: 'GreaterThan',
             count: [0, 0],
             diff: [],
             children: [
@@ -289,13 +289,13 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         ],
       },
       {
-        type: 'Out',
+        type: 'out',
         data: [],
         diff: [],
         count: [0, 0],
         children: [
           {
-            type: 'first',
+            type: 'First',
             count: [0, 0],
             diff: [],
             children: [
@@ -307,7 +307,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             ],
           },
           {
-            type: 'return',
+            type: 'Return',
             count: [0, 0],
             diff: [],
             children: [
@@ -329,13 +329,13 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     count: [0, 0],
     children: [
       {
-        type: 'In',
+        type: 'in',
         data: [],
         diff: [],
         count: [0, 0],
         children: [
           {
-            type: 'less',
+            type: 'Less',
             count: [0, 0],
             diff: [],
             children: [
@@ -347,7 +347,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             ],
           },
           {
-            type: 'greaterThan',
+            type: 'GreaterThan',
             count: [0, 0],
             diff: [],
             children: [
@@ -361,13 +361,13 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         ],
       },
       {
-        type: 'Out',
+        type: 'out',
         data: [],
         diff: [],
         count: [0, 0],
         children: [
           {
-            type: 'first',
+            type: 'First',
             count: [0, 0],
             diff: [],
             children: [
@@ -379,7 +379,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             ],
           },
           {
-            type: 'return',
+            type: 'Return',
             count: [0, 0],
             diff: [],
             children: [
@@ -407,7 +407,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     ],
   }
   const calData = {
-    type: 'all',
+    type: 'All',
     count: [0, 0],
     data: [],
     children: [comming, wait, flexable, outOut],

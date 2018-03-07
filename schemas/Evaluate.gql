@@ -72,21 +72,6 @@ type diffData {
   move: String
 }
 
-# type CalcChildren {
-#   type: String
-#   count: [Int]
-#   children: [CalcChildren2]
-# }
-
-# type CalcChildren2 {
-#   type: String
-#   count: [Int]
-#   children: {
-#     type: String
-#     count: [Int]
-#   }
-# }
-
 extend type Query {
   fetchEvaluate(selectedDay: String!): [Evaluate]
   getPatientsFlag(selectedDay: String!): [PatientsFlag]
