@@ -341,7 +341,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     type: 'Waiting',
     data: [],
     diff: [],
-    count: [0],
+    count: secondDay && firstDay ? [0, 0] : [0],
     children: [
       {
         type: 'in',
@@ -493,7 +493,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     type: 'Flexable',
     data: [],
     diff: [],
-    count: [0],
+    count: secondDay && firstDay ? [0, 0] : [0],
     children: [
       {
         type: 'in',
