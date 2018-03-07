@@ -118,7 +118,9 @@ export const getOrderedDays = async (_, args, context) => {
 
 export const getAllPatientsForCalc = async (_, args, context) => {
   const db = await context.getDb()
-  let { firstDay = '2018-03-01', secondDay = '2018-02-24' } = args
+  let { selectedDays = [] } = args
+  let firstDay = selectedDays[0] || moment().format('YYYY-MM-DD')
+  let secondDay = selectedDays[1]
   if (firstDay && secondDay) {
     if (moment(firstDay).isAfter(secondDay)) {
       let temp = secondDay
@@ -136,11 +138,11 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   }
   const getGroup = group => {
     if (group === 'C') {
-      return 0
-    } else if (group === 'W') {
       return 1
-    } else if (group === 'F') {
+    } else if (group === 'W') {
       return 2
+    } else if (group === 'F') {
+      return 3
     }
     return -1
   }
@@ -158,7 +160,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     return { power: 1, group1, group2 }
   }
   // if (!firstDay) {
-  // firstDay = '2018-02-24'
+  //   firstDay = '2018-02-24'
   // }
   let secondResult = []
   let firstResult = []
@@ -410,7 +412,8 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     type: 'All',
     count: [0, 0],
     data: [],
-    children: [comming, wait, flexable, outOut],
+    diff: [],
+    children: [outOut, comming, wait, flexable],
   }
   const pushData = (arr1, position1, position2, type) => {
     calData.children[arr1].count[0] += 1
@@ -467,13 +470,9 @@ export const getAllPatientsForCalc = async (_, args, context) => {
       const typeAtoE = getType(item.category)
 
       if (item.flag[0].desc === 'C_OO_NA') {
-        calData.children[3].count[0] += 1
-      } else if (group[0] === 'C') {
-        pushData(0, children1, children2, typeAtoE)
-      } else if (group[0] === 'W') {
-        pushData(1, children1, children2, typeAtoE)
-      } else if (group[0] === 'F') {
-        pushData(2, children1, children2, typeAtoE)
+        calData.children[0].count[0] += 1
+      } else {
+        pushData(getGroup(group[0]), children1, children2, typeAtoE)
       }
     })
     calData.data = results

@@ -75,7 +75,7 @@ type diffData {
 extend type Query {
   fetchEvaluate(selectedDay: String!): [Evaluate]
   getPatientsFlag(selectedDay: String!): [PatientsFlag]
-  getAllPatientsForCalc(firstDay: String, secondDay: String): CalcResult
+  getAllPatientsForCalc(selectedDays: [String]): CalcResult
   getOrderedDays: [String]
   fetchForecaseDetail(selectedDay: String): ForecaseDetail
   fetchMgtPatients(startAt: String, endAt: String): [Evaluate]
