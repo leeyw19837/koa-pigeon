@@ -57,6 +57,7 @@ type CalcResult {
   type: String
   count: [Int]
   data: [Evaluate]
+  diff: [diffData]
   children: [CalcItem]
 }
 

@@ -119,8 +119,8 @@ export const getOrderedDays = async (_, args, context) => {
 export const getAllPatientsForCalc = async (_, args, context) => {
   const db = await context.getDb()
   let { selectedDays = [] } = args
-  let firstDay = selectedDays[0] || moment().format('YYYY-MM-DD')
-  let secondDay = selectedDays[1]
+  let firstDay = selectedDays ? selectedDays[0] : moment().format('YYYY-MM-DD')
+  let secondDay = selectedDays ? selectedDays[1] : undefined
   if (firstDay && secondDay) {
     if (moment(firstDay).isAfter(secondDay)) {
       let temp = secondDay
@@ -140,9 +140,9 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     if (group === 'C') {
       return 1
     } else if (group === 'W') {
-      return 2
-    } else if (group === 'F') {
       return 3
+    } else if (group === 'F') {
+      return 2
     }
     return -1
   }
@@ -159,9 +159,8 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     return { power: 1, group1, group2 }
   }
-  // if (!firstDay) {
-  //   firstDay = '2018-02-24'
-  // }
+  // firstDay = '2018-02-24'
+  // secondDay = '2018-03-01'
   let secondResult = []
   let firstResult = []
   if (firstDay) {
@@ -180,40 +179,40 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     secondResult = await request(option)
   }
-  const comming = {
-    type: 'Comming',
+  const coming = {
+    type: 'Coming',
     data: [],
     diff: [],
-    count: [0, 0],
+    count: [0],
     children: [
       {
         type: 'in',
         data: [],
         diff: [],
-        count: [0, 0],
+        count: [0],
         children: [
           {
             type: 'Less',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
           {
             type: 'GreaterThan',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
         ],
@@ -222,70 +221,70 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         type: 'out',
         data: [],
         diff: [],
-        count: [0, 0],
+        count: [0],
         children: [
           {
             type: 'First',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
           {
             type: 'Return',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
         ],
       },
     ],
   }
-  const wait = {
-    type: 'Wait',
+  const waiting = {
+    type: 'Waiting',
     data: [],
     diff: [],
-    count: [0, 0],
+    count: [0],
     children: [
       {
         type: 'in',
         data: [],
         diff: [],
-        count: [0, 0],
+        count: [0],
         children: [
           {
             type: 'Less',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
           {
             type: 'GreaterThan',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
         ],
@@ -294,30 +293,30 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         type: 'out',
         data: [],
         diff: [],
-        count: [0, 0],
+        count: [0],
         children: [
           {
             type: 'First',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
           {
             type: 'Return',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
         ],
@@ -328,36 +327,36 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     type: 'Flexable',
     data: [],
     diff: [],
-    count: [0, 0],
+    count: [0],
     children: [
       {
         type: 'in',
         data: [],
         diff: [],
-        count: [0, 0],
+        count: [0],
         children: [
           {
             type: 'Less',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
           {
             type: 'GreaterThan',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
         ],
@@ -366,30 +365,30 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         type: 'out',
         data: [],
         diff: [],
-        count: [0, 0],
+        count: [0],
         children: [
           {
             type: 'First',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
           {
             type: 'Return',
-            count: [0, 0],
+            count: [0],
             diff: [],
             children: [
-              { type: 'A', count: [0, 0], diff: [] },
-              { type: 'B', count: [0, 0], diff: [] },
-              { type: 'C', count: [0, 0], diff: [] },
-              { type: 'D', count: [0, 0], diff: [] },
-              { type: 'E', count: [0, 0], diff: [] },
+              { type: 'A', count: [0], diff: [] },
+              { type: 'B', count: [0], diff: [] },
+              { type: 'C', count: [0], diff: [] },
+              { type: 'D', count: [0], diff: [] },
+              { type: 'E', count: [0], diff: [] },
             ],
           },
         ],
@@ -398,30 +397,32 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   }
   const outOut = {
     type: 'OutOut',
-    count: [0, 0],
+    count: [0],
     diff: [],
     children: [
-      { type: 'A', count: [0, 0], diff: [] },
-      { type: 'B', count: [0, 0], diff: [] },
-      { type: 'C', count: [0, 0], diff: [] },
-      { type: 'D', count: [0, 0], diff: [] },
-      { type: 'E', count: [0, 0], diff: [] },
+      { type: 'A', count: [0], diff: [] },
+      { type: 'B', count: [0], diff: [] },
+      { type: 'C', count: [0], diff: [] },
+      { type: 'D', count: [0], diff: [] },
+      { type: 'E', count: [0], diff: [] },
     ],
   }
   const calData = {
     type: 'All',
-    count: [0, 0],
+    count: [0],
     data: [],
     diff: [],
-    children: [outOut, comming, wait, flexable],
+    children: [outOut, coming, flexable, waiting],
   }
-  const pushData = (arr1, position1, position2, type) => {
-    calData.children[arr1].count[0] += 1
-    calData.children[arr1].children[position1].count[0] += 1
-    calData.children[arr1].children[position1].children[position2].count[0] += 1
+  const pushData = (arr1, position1, position2, type, returnResult) => {
+    calData.children[arr1].count[returnResult] += 1
+    calData.children[arr1].children[position1].count[returnResult] += 1
+    calData.children[arr1].children[position1].children[position2].count[
+      returnResult
+    ] += 1
     calData.children[arr1].children[position1].children[position2].children[
       type
-    ].count[0] += 1
+    ].count[returnResult] += 1
   }
   const pushDiffData = (power, arr1, position1, position2, type, change) => {
     if (power >= 4) calData.children[arr1].diff.push(change)
@@ -462,22 +463,42 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     )
   }
 
-  if (firstResult.length > 0 && secondResult.length === 0) {
-    firstResult.map(item => {
+  const setCount = (result, order) => {
+    result.map(item => {
       const group = item.flag[0].desc.split('_')
       const children1 = group[1] === 'in' ? 0 : 1
       const children2 = group[2] === 'L' || group[2] === 'F' ? 0 : 1
       const typeAtoE = getType(item.category)
 
       if (item.flag[0].desc === 'C_OO_NA') {
-        calData.children[0].count[0] += 1
+        calData.children[0].count[order] += 1
+        calData.children[0].children[typeAtoE].count[order] += 1
       } else {
-        pushData(getGroup(group[0]), children1, children2, typeAtoE)
+        pushData(getGroup(group[0]), children1, children2, typeAtoE, order)
       }
     })
-    calData.data = results
-    calData.count[0] = results.length
+    calData.count[order] = result.length
+  }
+
+  if (firstResult.length > 0 && secondResult.length === 0) {
+    setCount(firstResult, 0)
+    // firstResult.map(item => {
+    //   const group = item.flag[0].desc.split('_')
+    //   const children1 = group[1] === 'in' ? 0 : 1
+    //   const children2 = group[2] === 'L' || group[2] === 'F' ? 0 : 1
+    //   const typeAtoE = getType(item.category)
+
+    //   if (item.flag[0].desc === 'C_OO_NA') {
+    //     calData.children[0].count[0] += 1
+    //   } else {
+    //     pushData(getGroup(group[0]), children1, children2, typeAtoE, 0)
+    //   }
+    // })
+    calData.data = firstResult
+    // calData.count[0] = firstResult.length
   } else if (firstResult.length > 0 && secondResult.length > 0) {
+    setCount(firstResult, 0)
+    setCount(secondResult, 1)
     const diff = xorBy(firstResult, secondResult, 'patientId')
     const same = intersectionBy(firstResult, secondResult, 'patientId')
     const newtest = []
@@ -496,7 +517,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         }
         const DiffType = getDiffType(item.flag[0].desc, Arr2Item.flag[0].desc)
         if (DiffType.power === 0) {
-          let treeLocation = {}
+          let treeLocation = []
           let treeType = 0
           let treeTypeOhter = 0
           if (
@@ -527,16 +548,32 @@ export const getAllPatientsForCalc = async (_, args, context) => {
               treeTypeOhter,
               change,
             )
-            calData.children[3].diff.push(change)
-            calData.children[3].children[treeType].diff.push(change)
+            calData.children[0].diff.push(change)
+            calData.children[0].children[treeType].diff.push(change)
           } else {
-            calData.children[3].children[firstType].diff.push(change)
-            calData.children[3].children[secondType].diff.push(change)
+            calData.children[0].children[firstType].diff.push(change)
+            calData.children[0].children[secondType].diff.push(change)
           }
         } else {
           pushDiff(DiffType, firstType, secondType, change)
         }
       }
+    })
+    diff.map(item => {
+      const inBefore = find(firstResult, { patientId: item.patientId })
+      if (inBefore) {
+        calData.diff.push({
+          patientId: item.patientId,
+          move: `${item.flag[0].desc}_${item.category.split('')[0]}->ARCHIVED`,
+        })
+      } else {
+        const from = 'Active'
+        calData.diff.push({
+          patientId: item.patientId,
+          move: `${from}->${item.flag[0].desc}_${item.category.split('')[0]}`,
+        })
+      }
+      // const inAfter = find(secondResult, { patientId: item.patientId })
     })
   }
   return calData
