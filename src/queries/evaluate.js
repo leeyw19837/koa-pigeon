@@ -118,9 +118,15 @@ export const getOrderedDays = async (_, args, context) => {
 
 export const getAllPatientsForCalc = async (_, args, context) => {
   const db = await context.getDb()
-  let { selectedDays = [] } = args
+  let { selectedDays = [], HospitalAndName = [] } = args
   let firstDay = selectedDays ? selectedDays[0] : moment().format('YYYY-MM-DD')
   let secondDay = selectedDays ? selectedDays[1] : undefined
+  let hospitalName = '北大医院'
+  let doctorName = '李昂'
+  if (HospitalAndName && HospitalAndName.length === 2) {
+    hospitalName = HospitalAndName[0]
+    doctorName = HospitalAndName[1]
+  }
   if (firstDay && secondDay) {
     if (moment(firstDay).isAfter(secondDay)) {
       let temp = secondDay
@@ -159,26 +165,36 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     return { power: 1, group1, group2 }
   }
-  // firstDay = '2018-03-01'
-  // secondDay = '2018-03-07'
+  // firstDay = '2018-02-24'
+  // secondDay = '2018-03-01'
   let secondResult = []
   let firstResult = []
   let tempFirstResult = []
   let tempSecondResult = []
   if (firstDay) {
     const option = {
-      method: 'GET',
-      uri: `${Url}evaluate/getAllPatientsCalc/${firstDay}`,
+      method: 'POST',
+      uri: `${Url}evaluate/getAllPatientsCalc`,
       json: true,
+      body: {
+        selectedDay: firstDay,
+        hospitalName,
+        doctorName,
+      },
     }
     tempFirstResult = await request(option)
     firstResult = tempFirstResult.filter(item => item.patientState === 'ACTIVE')
   }
   if (secondDay) {
     const option = {
-      method: 'GET',
-      uri: `${Url}evaluate/getAllPatientsCalc/${secondDay}`,
+      method: 'POST',
+      uri: `${Url}evaluate/getAllPatientsCalc`,
       json: true,
+      body: {
+        selectedDay: secondDay,
+        hospitalName,
+        doctorName,
+      },
     }
     tempSecondResult = await request(option)
     secondResult = tempSecondResult.filter(
@@ -791,6 +807,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
           temp.rangeChange = `${item.flag[0].desc} -> ${Arr2Item.flag[0].desc}`
           temp.a1cChange = `${item.a1cLatest} -> ${Arr2Item.a1cLatest}`
           temp.measureChange = `${item.measureCount} -> ${Arr2Item.measureCount}`
+          temp.categoryChange = `${item.category} -> ${Arr2Item.category}`
           calData.data.push(temp)
         } else {
           pushDiff(DiffType, firstType, secondType, change)
@@ -798,6 +815,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
           temp.rangeChange = `${item.flag[0].desc} -> ${Arr2Item.flag[0].desc}`
           temp.a1cChange = `${item.a1cLatest} -> ${Arr2Item.a1cLatest}`
           temp.measureChange = `${item.measureCount} -> ${Arr2Item.measureCount}`
+          temp.categoryChange = `${item.category} -> ${Arr2Item.category}`
           calData.data.push(temp)
         }
       }
@@ -815,6 +833,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             .desc}`
           temp.a1cChange = `${isArchived.a1cLatest} -> ${inAfter.a1cLatest}`
           temp.measureChange = `${isArchived.measureCount} -> ${inAfter.measureCount}`
+          temp.categoryChange = `${isArchived.category} -> ${inAfter.category}`
           calData.data.push(temp)
           calData.diff.push({
             patientId: item.patientId,
@@ -826,6 +845,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
           temp.rangeChange = `无 -> ${inAfter.flag[0].desc}`
           temp.a1cChange = `无 -> ${inAfter.a1cLatest}`
           temp.measureChange = `无 -> ${inAfter.measureCount}`
+          temp.categoryChange = `无 -> ${inAfter.category}`
           calData.data.push(temp)
           calData.diff.push({
             patientId: item.patientId,
@@ -843,6 +863,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         inBefore.rangeChange = `${inAfter.flag[0].desc} -> 无`
         inBefore.a1cChange = `${inAfter.a1cLatest} -> 无`
         inBefore.measureChange = `${inAfter.measureCount} -> 无`
+        inBefore.categoryChange = `${isArchived.category} -> 无`
         calData.data.push(inBefore)
       }
     })
@@ -881,7 +902,7 @@ export const fetchMgtPatients = async (_, args, context) => {
   const options = {
     method: 'GET',
     // uri: `http://172.16.0.62:9901/evaluate/getDiffPatients/${startAt}~${endAt}`
-    uri: `http://172.16.0.92:9901/evaluate/getDiffPatients/${startAt}~${endAt}`,
+    uri: `${URi}evaluate/getDiffPatients/${startAt}~${endAt}`,
     json: true,
   }
   const result = await request(options)
