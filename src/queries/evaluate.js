@@ -165,8 +165,8 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     return { power: 1, group1, group2 }
   }
-  // firstDay = '2018-02-24'
-  // secondDay = '2018-03-01'
+  // firstDay = '2018-03-04'
+  // secondDay = '2018-03-06'
   let secondResult = []
   let firstResult = []
   let tempFirstResult = []
@@ -828,38 +828,74 @@ export const getAllPatientsForCalc = async (_, args, context) => {
       })
       const temp = inAfter
       if (inAfter) {
+        let treeLocation = inAfter.flag[0].desc.split('_')
+        const children1 = treeLocation[1] === 'in' ? 0 : 1
+        const children2 =
+          treeLocation[2] === 'L' || treeLocation[2] === 'F' ? 0 : 1
+
         if (isArchived) {
+          const change = {
+            patientId: item.patientId,
+            move: `ARCHIVED -> ${item.flag[0].desc}_${item.category.split(
+              '',
+            )[0]}`,
+          }
           temp.rangeChange = `${isArchived.flag[0].desc} -> ${inAfter.flag[0]
             .desc}`
           temp.a1cChange = `${isArchived.a1cLatest} -> ${inAfter.a1cLatest}`
           temp.measureChange = `${isArchived.measureCount} -> ${inAfter.measureCount}`
           temp.categoryChange = `${isArchived.category} -> ${inAfter.category}`
           calData.data.push(temp)
-          calData.diff.push({
-            patientId: item.patientId,
-            move: `ARCHIVED -> ${item.flag[0].desc}_${item.category.split(
-              '',
-            )[0]}`,
-          })
+          calData.diff.push(change)
+          pushDiffData(
+            4,
+            getGroup(treeLocation[0]),
+            children1,
+            children2,
+            getType(inAfter.category),
+            change,
+          )
         } else {
+          const change = {
+            patientId: item.patientId,
+            move: `First -> ${item.flag[0].desc}_${item.category.split('')[0]}`,
+          }
           temp.rangeChange = `无 -> ${inAfter.flag[0].desc}`
           temp.a1cChange = `无 -> ${inAfter.a1cLatest}`
           temp.measureChange = `无 -> ${inAfter.measureCount}`
           temp.categoryChange = `无 -> ${inAfter.category}`
           calData.data.push(temp)
-          calData.diff.push({
-            patientId: item.patientId,
-            move: `First -> ${item.flag[0].desc}_${item.category.split('')[0]}`,
-          })
+          calData.diff.push(change)
+          pushDiffData(
+            4,
+            getGroup(treeLocation[0]),
+            children1,
+            children2,
+            getType(inAfter.category),
+            change,
+          )
         }
       } else {
-        calData.diff.push({
+        const inBefore = find(firstResult, { patientId: item.patientId })
+        const change = {
           patientId: item.patientId,
           move: `${item.flag[0].desc}_${item.category.split(
             '',
           )[0]} -> ARCHIVED`,
-        })
-        const inBefore = find(firstResult, { patientId: item.patientId })
+        }
+        let treeLocation = inBefore.flag[0].desc.split('_')
+        const children1 = treeLocation[1] === 'in' ? 0 : 1
+        const children2 =
+          treeLocation[2] === 'L' || treeLocation[2] === 'F' ? 0 : 1
+        pushDiffData(
+          4,
+          getGroup(treeLocation[0]),
+          children1,
+          children2,
+          getType(inBefore.category),
+          change,
+        )
+        calData.diff.push(change)
         inBefore.rangeChange = `${inAfter.flag[0].desc} -> 无`
         inBefore.a1cChange = `${inAfter.a1cLatest} -> 无`
         inBefore.measureChange = `${inAfter.measureCount} -> 无`
