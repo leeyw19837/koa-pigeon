@@ -788,16 +788,16 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             calData.children[0].children[secondType].diff.push(change)
           }
           const temp = Arr2Item
-          temp.rangeChange = `${item.flag[0].desc}->${Arr2Item.flag[0].desc}`
-          temp.a1cChange = `${item.a1cLatest}->${Arr2Item.a1cLatest}`
-          temp.measureChange = `${item.measureCount}->${Arr2Item.measureCount}`
+          temp.rangeChange = `${item.flag[0].desc} -> ${Arr2Item.flag[0].desc}`
+          temp.a1cChange = `${item.a1cLatest} -> ${Arr2Item.a1cLatest}`
+          temp.measureChange = `${item.measureCount} -> ${Arr2Item.measureCount}`
           calData.data.push(temp)
         } else {
           pushDiff(DiffType, firstType, secondType, change)
           const temp = Arr2Item
-          temp.rangeChange = `${item.flag[0].desc}->${Arr2Item.flag[0].desc}`
-          temp.a1cChange = `${item.a1cLatest}->${Arr2Item.a1cLatest}`
-          temp.measureChange = `${item.measureCount}->${Arr2Item.measureCount}`
+          temp.rangeChange = `${item.flag[0].desc} -> ${Arr2Item.flag[0].desc}`
+          temp.a1cChange = `${item.a1cLatest} -> ${Arr2Item.a1cLatest}`
+          temp.measureChange = `${item.measureCount} -> ${Arr2Item.measureCount}`
           calData.data.push(temp)
         }
       }
@@ -811,36 +811,38 @@ export const getAllPatientsForCalc = async (_, args, context) => {
       const temp = inAfter
       if (inAfter) {
         if (isArchived) {
-          temp.rangeChange = `${isArchived.flag[0].desc}->${inAfter.flag[0]
+          temp.rangeChange = `${isArchived.flag[0].desc} -> ${inAfter.flag[0]
             .desc}`
-          temp.a1cChange = `${isArchived.a1cLatest}->${inAfter.a1cLatest}`
-          temp.measureChange = `${isArchived.measureCount}->${inAfter.measureCount}`
+          temp.a1cChange = `${isArchived.a1cLatest} -> ${inAfter.a1cLatest}`
+          temp.measureChange = `${isArchived.measureCount} -> ${inAfter.measureCount}`
           calData.data.push(temp)
           calData.diff.push({
             patientId: item.patientId,
-            move: `ARCHIVED->${item.flag[0].desc}_${item.category.split(
+            move: `ARCHIVED -> ${item.flag[0].desc}_${item.category.split(
               '',
             )[0]}`,
           })
         } else {
-          temp.rangeChange = `无->${inAfter.flag[0].desc}`
-          temp.a1cChange = `无->${inAfter.a1cLatest}`
-          temp.measureChange = `无->${inAfter.measureCount}`
+          temp.rangeChange = `无 -> ${inAfter.flag[0].desc}`
+          temp.a1cChange = `无 -> ${inAfter.a1cLatest}`
+          temp.measureChange = `无 -> ${inAfter.measureCount}`
           calData.data.push(temp)
           calData.diff.push({
             patientId: item.patientId,
-            move: `First->${item.flag[0].desc}_${item.category.split('')[0]}`,
+            move: `First -> ${item.flag[0].desc}_${item.category.split('')[0]}`,
           })
         }
       } else {
         calData.diff.push({
           patientId: item.patientId,
-          move: `${item.flag[0].desc}_${item.category.split('')[0]}->ARCHIVED`,
+          move: `${item.flag[0].desc}_${item.category.split(
+            '',
+          )[0]} -> ARCHIVED`,
         })
         const inBefore = find(firstResult, { patientId: item.patientId })
-        inBefore.rangeChange = `${inAfter.flag[0].desc}->无`
-        inBefore.a1cChange = `${inAfter.a1cLatest}->无`
-        inBefore.measureChange = `${inAfter.measureCount}->无`
+        inBefore.rangeChange = `${inAfter.flag[0].desc} -> 无`
+        inBefore.a1cChange = `${inAfter.a1cLatest} -> 无`
+        inBefore.measureChange = `${inAfter.measureCount} -> 无`
         calData.data.push(inBefore)
       }
     })
