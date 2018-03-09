@@ -193,6 +193,18 @@ type Mutation {
     #  总价
     totalPrice: Int
   ): Boolean
+  reportDevice(
+    # 病人编号
+    patientId: ID!
+    # 设备品牌
+    deviceBrand: String!
+    # 设备型号
+    deviceSystemVersion: String!
+    # 设备系统版本
+    deviceSystemName: String!
+    # 上报日期
+    reportDate: Date!
+  ): Boolean
 }
 
 type Subscription {
