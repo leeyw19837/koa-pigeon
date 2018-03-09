@@ -201,474 +201,46 @@ export const getAllPatientsForCalc = async (_, args, context) => {
       item => item.patientState === 'ACTIVE',
     )
   }
-  const coming = {
-    type: 'Coming',
-    data: [],
-    diff: [],
-    count: secondDay && firstDay ? [0, 0] : [0],
-    children: [
-      {
-        type: 'in',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'Less',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'GreaterThan',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'out',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'First',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'Return',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-    ],
+
+  const firstLivelChildren = type => {
+    return {
+      type,
+      count: secondDay && firstDay ? [0, 0] : [0],
+      diff: [],
+    }
   }
-  const waiting = {
-    type: 'Waiting',
-    data: [],
-    diff: [],
-    count: secondDay && firstDay ? [0, 0] : [0],
-    children: [
-      {
-        type: 'in',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'Less',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'GreaterThan',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'out',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'First',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'Return',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-    ],
+
+  const secondLevelChildren = (type, children) => {
+    return {
+      type,
+      count: secondDay && firstDay ? [0, 0] : [0],
+      diff: [],
+      children,
+    }
   }
-  const flexable = {
-    type: 'Flexable',
-    data: [],
-    diff: [],
-    count: secondDay && firstDay ? [0, 0] : [0],
-    children: [
-      {
-        type: 'in',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'Less',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'GreaterThan',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'out',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'First',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'Return',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  }
-  const outOut = {
-    type: 'OutOut',
-    count: secondDay && firstDay ? [0, 0] : [0],
-    diff: [],
-    children: [
-      { type: 'A', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
-      { type: 'B', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
-      { type: 'C', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
-      { type: 'D', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
-      { type: 'E', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
-    ],
-  }
+  const firstLivelChildrenGroup = () => [
+    firstLivelChildren('A'),
+    firstLivelChildren('B'),
+    firstLivelChildren('C'),
+    firstLivelChildren('D'),
+    firstLivelChildren('E'),
+  ]
+  const secondLevelChildrenGroupIn = () => [
+    secondLevelChildren('Less', firstLivelChildrenGroup()),
+    secondLevelChildren('GreaterThan', firstLivelChildrenGroup()),
+  ]
+  const secondLevelChildrenGroupOut = () => [
+    secondLevelChildren('First', firstLivelChildrenGroup()),
+    secondLevelChildren('Return', firstLivelChildrenGroup()),
+  ]
+  const thirdLevelChildrenGroup = () => [
+    secondLevelChildren('in', secondLevelChildrenGroupIn()),
+    secondLevelChildren('out', secondLevelChildrenGroupOut()),
+  ]
+  const coming = secondLevelChildren('Coming', thirdLevelChildrenGroup())
+  const waiting = secondLevelChildren('Waiting', thirdLevelChildrenGroup())
+  const flexable = secondLevelChildren('Flexable', thirdLevelChildrenGroup())
+  const outOut = secondLevelChildren('Outout', firstLivelChildrenGroup())
   const calData = {
     type: 'All',
     count: secondDay && firstDay ? [0, 0] : [0],
@@ -820,6 +392,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         }
       }
     })
+
     diff.map(item => {
       const inAfter = find(secondResult, { patientId: item.patientId })
       const isArchived = find(tempFirstResult, {
@@ -896,10 +469,10 @@ export const getAllPatientsForCalc = async (_, args, context) => {
           change,
         )
         calData.diff.push(change)
-        inBefore.rangeChange = `${inAfter.flag[0].desc} -> 无`
-        inBefore.a1cChange = `${inAfter.a1cLatest} -> 无`
-        inBefore.measureChange = `${inAfter.measureCount} -> 无`
-        inBefore.categoryChange = `${isArchived.category} -> 无`
+        inBefore.rangeChange = `${inBefore.flag[0].desc} -> 无`
+        inBefore.a1cChange = `${inBefore.a1cLatest} -> 无`
+        inBefore.measureChange = `${inBefore.measureCount} -> 无`
+        inBefore.categoryChange = `${inBefore.category} -> 无`
         calData.data.push(inBefore)
       }
     })
