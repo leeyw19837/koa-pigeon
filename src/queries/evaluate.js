@@ -178,7 +178,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   if (firstDay) {
     const option = {
       method: 'POST',
-      uri: `${Url}evaluate/getAllPatientsCalc`,
+      uri: `${URi}evaluate/getAllPatientsCalc`,
       json: true,
       body: {
         selectedDay: firstDay,
@@ -188,12 +188,12 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     tempFirstResult = await request(option)
     firstResult = tempFirstResult.filter(item => item.patientState === 'ACTIVE')
-    console.log(firstResult.length)
+    // console.log(firstResult.length)
   }
   if (secondDay) {
     const option = {
       method: 'POST',
-      uri: `${Url}evaluate/getAllPatientsCalc`,
+      uri: `${URi}evaluate/getAllPatientsCalc`,
       json: true,
       body: {
         selectedDay: secondDay,
@@ -205,7 +205,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     secondResult = tempSecondResult.filter(
       item => item.patientState === 'ACTIVE',
     )
-    console.log(secondResult.length)
+    // console.log(secondResult.length)
   }
   const isNeedDiff = secondDay && firstDay
   const firstLivelChildren = type => {
