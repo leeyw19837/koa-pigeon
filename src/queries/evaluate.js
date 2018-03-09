@@ -7,7 +7,7 @@ const xorBy = require('lodash/xorBy')
 const intersectionBy = require('lodash/intersectionBy')
 
 const URi = 'http://workwechat.ihealthcn.com/'
-const Url = 'http://172.16.0.22:9901/'
+const Url = 'http://172.16.0.92:9901/'
 
 export const fetchEvaluate = async (_, args, context) => {
   const db = await context.getDb()
@@ -122,7 +122,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   let firstDay = selectedDays ? selectedDays[0] : moment().format('YYYY-MM-DD')
   let secondDay = selectedDays ? selectedDays[1] : undefined
   let hospitalName = '北大医院'
-  let doctorName = '刘林'
+  let doctorName = '李昂'
   if (HospitalAndName && HospitalAndName.length === 2) {
     hospitalName = HospitalAndName[0]
     doctorName = HospitalAndName[1]
@@ -169,8 +169,8 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     return { power: 1, desc1, desc2 }
   }
-  firstDay = '2018-02-24'
-  secondDay = '2018-03-01'
+  // firstDay = '2018-02-26'
+  // secondDay = '2018-03-09'
   let secondResult = []
   let firstResult = []
   let tempFirstResult = []
@@ -178,7 +178,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   if (firstDay) {
     const option = {
       method: 'POST',
-      uri: `${URi}evaluate/getAllPatientsCalc`,
+      uri: `${Url}evaluate/getAllPatientsCalc`,
       json: true,
       body: {
         selectedDay: firstDay,
@@ -188,11 +188,12 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     tempFirstResult = await request(option)
     firstResult = tempFirstResult.filter(item => item.patientState === 'ACTIVE')
+    console.log(firstResult.length)
   }
   if (secondDay) {
     const option = {
       method: 'POST',
-      uri: `${URi}evaluate/getAllPatientsCalc`,
+      uri: `${Url}evaluate/getAllPatientsCalc`,
       json: true,
       body: {
         selectedDay: secondDay,
@@ -204,6 +205,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     secondResult = tempSecondResult.filter(
       item => item.patientState === 'ACTIVE',
     )
+    console.log(secondResult.length)
   }
   const isNeedDiff = secondDay && firstDay
   const firstLivelChildren = type => {
@@ -327,7 +329,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     return temp
   }
   setCount(firstResult, 0)
-  if (isNeedDiff) {
+  if (secondResult.length > 0 && firstResult.length > 0) {
     // setCount(firstResult, 0)
     setCount(secondResult, 1)
     const diff = xorBy(firstResult, secondResult, 'patientId')
