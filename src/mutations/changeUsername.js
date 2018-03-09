@@ -40,6 +40,7 @@ export const changeUsername = async (_, args, context) => {
                 author: old._id.toString(),
               },
             },
+            { multi: true },
           )
         })
       await db.collection('users').remove({ username: newUsername })
@@ -54,6 +55,18 @@ export const changeUsername = async (_, args, context) => {
         username: newUsername,
       },
     },
+  )
+  const changeAppoitmentMobile = await db.collection('appointments').update(
+    {
+      patientId,
+      appointmentTime: { $gte: new Date() },
+    },
+    {
+      $set: {
+        mobile: newUsername,
+      },
+    },
+    { multi: true },
   )
   return true
 }
