@@ -174,7 +174,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   if (firstDay) {
     const option = {
       method: 'POST',
-      uri: `${Url}evaluate/getAllPatientsCalc`,
+      uri: `${URi}evaluate/getAllPatientsCalc`,
       json: true,
       body: {
         selectedDay: firstDay,
@@ -188,7 +188,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   if (secondDay) {
     const option = {
       method: 'POST',
-      uri: `${Url}evaluate/getAllPatientsCalc`,
+      uri: `${URi}evaluate/getAllPatientsCalc`,
       json: true,
       body: {
         selectedDay: secondDay,
