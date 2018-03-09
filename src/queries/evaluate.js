@@ -122,7 +122,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   let firstDay = selectedDays ? selectedDays[0] : moment().format('YYYY-MM-DD')
   let secondDay = selectedDays ? selectedDays[1] : undefined
   let hospitalName = '北大医院'
-  let doctorName = '李昂'
+  let doctorName = '刘林'
   if (HospitalAndName && HospitalAndName.length === 2) {
     hospitalName = HospitalAndName[0]
     doctorName = HospitalAndName[1]
@@ -169,8 +169,8 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     return { power: 1, desc1, desc2 }
   }
-  // firstDay = '2018-02-24'
-  // secondDay = '2018-03-01'
+  firstDay = '2018-02-24'
+  secondDay = '2018-03-01'
   let secondResult = []
   let firstResult = []
   let tempFirstResult = []
@@ -244,7 +244,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   const coming = secondLevelChildren('Coming', thirdLevelChildrenGroup())
   const waiting = secondLevelChildren('Waiting', thirdLevelChildrenGroup())
   const flexable = secondLevelChildren('Flexable', thirdLevelChildrenGroup())
-  const outOut = secondLevelChildren('Outout', firstLivelChildrenGroup())
+  const outOut = secondLevelChildren('OutOut', firstLivelChildrenGroup())
   const calData = {
     type: 'All',
     count: isNeedDiff ? [0, 0] : [0],
