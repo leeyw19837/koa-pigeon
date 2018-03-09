@@ -7,7 +7,7 @@ const xorBy = require('lodash/xorBy')
 const intersectionBy = require('lodash/intersectionBy')
 
 const URi = 'http://workwechat.ihealthcn.com/'
-const Url = 'http://172.16.0.92:9901/'
+const Url = 'http://172.16.0.22:9901/'
 
 export const fetchEvaluate = async (_, args, context) => {
   const db = await context.getDb()

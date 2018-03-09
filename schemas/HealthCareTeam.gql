@@ -3,4 +3,9 @@ type HealthCareTeam {
   name: String!
   institutionName: String
   institution: Institution!
+  healthCareProfessionals: [HealthcareProfessional]
+}
+
+extend type Query {
+  healthCareTeams: [HealthCareTeam]
 }

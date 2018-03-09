@@ -26,6 +26,7 @@ import * as warningsOfLow from './warningsOfLow'
 
 import * as orders from './orders'
 import * as terribleMeasure from './terribleMeasure'
+import * as healthCareTeam from './healthCareTeam'
 
 const queries = {
   ...bloodGlucoseMeasurements,
@@ -53,6 +54,7 @@ const queries = {
   ...terribleMeasure,
   ...evaluate,
   ...orders,
+  ...healthCareTeam,
 }
 
 const queriesWithLogging = {}
