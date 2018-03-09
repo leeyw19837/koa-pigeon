@@ -169,7 +169,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     return { power: 1, desc1, desc2 }
   }
-  // firstDay = '2018-02-26'
+  firstDay = '2018-02-26'
   // secondDay = '2018-03-09'
   let secondResult = []
   let firstResult = []
@@ -328,9 +328,9 @@ export const getAllPatientsForCalc = async (_, args, context) => {
       : '无'}`
     return temp
   }
-  setCount(firstResult, 0)
+
   if (secondResult.length > 0 && firstResult.length > 0) {
-    // setCount(firstResult, 0)
+    setCount(firstResult, 0)
     setCount(secondResult, 1)
     const diff = xorBy(firstResult, secondResult, 'patientId')
     const same = intersectionBy(firstResult, secondResult, 'patientId')
@@ -400,7 +400,8 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         calData.data.push(setChangeRange(inBefore, null))
       }
     })
-  } else {
+  } else if (secondResult.length > 0) {
+    setCount(firstResult, 0)
     calData.data = firstResult
   }
   return calData
