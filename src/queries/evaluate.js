@@ -169,8 +169,6 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     return { power: 1, desc1, desc2 }
   }
-  // firstDay = '2018-03-11'
-  // secondDay = '2018-03-12'
   let secondResult = []
   let firstResult = []
   let tempFirstResult = []
@@ -400,7 +398,8 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         calData.data.push(setChangeRange(inBefore, null))
       }
     })
-  } else if (secondResult.length > 0) {
+  } else if (firstResult.length > 0) {
+    // console.log('firstResult', firstResult.length, calData)
     setCount(firstResult, 0)
     calData.data = firstResult
   }
