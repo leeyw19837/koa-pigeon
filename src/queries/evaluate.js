@@ -169,8 +169,8 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     return { power: 1, desc1, desc2 }
   }
-  firstDay = '2018-03-11'
-  secondDay = '2018-03-12'
+  // firstDay = '2018-03-11'
+  // secondDay = '2018-03-12'
   let secondResult = []
   let firstResult = []
   let tempFirstResult = []
