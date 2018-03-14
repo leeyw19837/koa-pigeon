@@ -10,4 +10,15 @@ export const HealthCareTeam = {
         _id: careTeam.institutionId,
       })
   },
+  healthCareProfessionals: async (careTeam, _, { getDb }: IContext ) => {
+    const db = await getDb()
+
+    const doctors = await db
+      .collection('users').find({
+        roles: '医生',
+        healthCareTeamId: careTeam._id,
+      }).toArray()
+    console.log(doctors, '@doctors')
+    return doctors
+  }
 }

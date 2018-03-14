@@ -15,6 +15,7 @@ type Evaluate {
   rangeChange: String
   a1cChange: String
   measureChange: String
+  flag: [Flag]
 }
 
 type Flag {

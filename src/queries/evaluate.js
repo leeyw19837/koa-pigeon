@@ -153,20 +153,22 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     return -1
   }
   const getDiffType = (desc1, desc2) => {
-    if (desc1 === 'C_OO_NA' || desc2 === 'C_OO_NA') return { power: 0 }
+    if (desc1 === 'C_OO_NA' && desc2 === 'C_OO_NA') return { power: 0, type: 1 }
+    else if (desc1 === 'C_OO_NA' && desc2 !== 'C_OO_NA')
+      return { power: 0, type: 2 }
+    else if (desc1 !== 'C_OO_NA' && desc2 === 'C_OO_NA')
+      return { power: 0, type: 3 }
     const group1 = desc1.split('_')
     const group2 = desc2.split('_')
     if (group1[0] !== group2[0]) {
-      return { power: 4, group1, group2 }
+      return { power: 4, desc1, desc2 }
     } else if (group1[1] !== group2[1]) {
-      return { power: 3, group1, group2 }
+      return { power: 3, desc1, desc2 }
     } else if (group1[2] !== group2[2]) {
-      return { power: 2, group1, group2 }
+      return { power: 2, desc1, desc2 }
     }
-    return { power: 1, group1, group2 }
+    return { power: 1, desc1, desc2 }
   }
-  // firstDay = '2018-03-04'
-  // secondDay = '2018-03-06'
   let secondResult = []
   let firstResult = []
   let tempFirstResult = []
@@ -174,7 +176,7 @@ export const getAllPatientsForCalc = async (_, args, context) => {
   if (firstDay) {
     const option = {
       method: 'POST',
-      uri: `${Url}evaluate/getAllPatientsCalc`,
+      uri: `${URi}evaluate/getAllPatientsCalc`,
       json: true,
       body: {
         selectedDay: firstDay,
@@ -184,11 +186,12 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     }
     tempFirstResult = await request(option)
     firstResult = tempFirstResult.filter(item => item.patientState === 'ACTIVE')
+    // console.log(firstResult.length)
   }
   if (secondDay) {
     const option = {
       method: 'POST',
-      uri: `${Url}evaluate/getAllPatientsCalc`,
+      uri: `${URi}evaluate/getAllPatientsCalc`,
       json: true,
       body: {
         selectedDay: secondDay,
@@ -200,478 +203,51 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     secondResult = tempSecondResult.filter(
       item => item.patientState === 'ACTIVE',
     )
+    // console.log(secondResult.length)
   }
-  const coming = {
-    type: 'Coming',
-    data: [],
-    diff: [],
-    count: secondDay && firstDay ? [0, 0] : [0],
-    children: [
-      {
-        type: 'in',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'Less',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'GreaterThan',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'out',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'First',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'Return',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-    ],
+  const isNeedDiff = secondDay && firstDay
+  const firstLivelChildren = type => {
+    return {
+      type,
+      count: isNeedDiff ? [0, 0] : [0],
+      diff: [],
+    }
   }
-  const waiting = {
-    type: 'Waiting',
-    data: [],
-    diff: [],
-    count: secondDay && firstDay ? [0, 0] : [0],
-    children: [
-      {
-        type: 'in',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'Less',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'GreaterThan',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'out',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'First',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'Return',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-    ],
+
+  const secondLevelChildren = (type, children) => {
+    return {
+      type,
+      count: isNeedDiff ? [0, 0] : [0],
+      diff: [],
+      children,
+    }
   }
-  const flexable = {
-    type: 'Flexable',
-    data: [],
-    diff: [],
-    count: secondDay && firstDay ? [0, 0] : [0],
-    children: [
-      {
-        type: 'in',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'Less',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'GreaterThan',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'out',
-        data: [],
-        diff: [],
-        count: secondDay && firstDay ? [0, 0] : [0],
-        children: [
-          {
-            type: 'First',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-          {
-            type: 'Return',
-            count: secondDay && firstDay ? [0, 0] : [0],
-            diff: [],
-            children: [
-              {
-                type: 'A',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'B',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'C',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'D',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-              {
-                type: 'E',
-                count: secondDay && firstDay ? [0, 0] : [0],
-                diff: [],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  }
-  const outOut = {
-    type: 'OutOut',
-    count: secondDay && firstDay ? [0, 0] : [0],
-    diff: [],
-    children: [
-      { type: 'A', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
-      { type: 'B', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
-      { type: 'C', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
-      { type: 'D', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
-      { type: 'E', count: secondDay && firstDay ? [0, 0] : [0], diff: [] },
-    ],
-  }
+  const firstLivelChildrenGroup = () => [
+    firstLivelChildren('A'),
+    firstLivelChildren('B'),
+    firstLivelChildren('C'),
+    firstLivelChildren('D'),
+    firstLivelChildren('E'),
+  ]
+  const secondLevelChildrenGroupIn = () => [
+    secondLevelChildren('Less', firstLivelChildrenGroup()),
+    secondLevelChildren('GreaterThan', firstLivelChildrenGroup()),
+  ]
+  const secondLevelChildrenGroupOut = () => [
+    secondLevelChildren('First', firstLivelChildrenGroup()),
+    secondLevelChildren('Return', firstLivelChildrenGroup()),
+  ]
+  const thirdLevelChildrenGroup = () => [
+    secondLevelChildren('in', secondLevelChildrenGroupIn()),
+    secondLevelChildren('out', secondLevelChildrenGroupOut()),
+  ]
+  const coming = secondLevelChildren('Coming', thirdLevelChildrenGroup())
+  const waiting = secondLevelChildren('Waiting', thirdLevelChildrenGroup())
+  const flexable = secondLevelChildren('Flexable', thirdLevelChildrenGroup())
+  const outOut = secondLevelChildren('OutOut', firstLivelChildrenGroup())
   const calData = {
     type: 'All',
-    count: secondDay && firstDay ? [0, 0] : [0],
+    count: isNeedDiff ? [0, 0] : [0],
     data: [],
     diff: [],
     children: [outOut, coming, flexable, waiting],
@@ -698,31 +274,24 @@ export const getAllPatientsForCalc = async (_, args, context) => {
         type
       ].diff.push(change)
   }
+
+  const pushDiffFormat = (power, desc, type, change) => {
+    const group = desc.split('_')
+    const firstLevel = group[1] === 'in' ? 0 : 1
+    const secondLevel = group[2] === 'L' || group[2] === 'F' ? 0 : 1
+    pushDiffData(
+      power,
+      getGroup(group[0]),
+      firstLevel,
+      secondLevel,
+      getType(type),
+      change,
+    )
+  }
+
   const pushDiff = (diffType, AEType1, AEType2, change) => {
-    const item1_group = getGroup(diffType.group1[0])
-    const item2_group = getGroup(diffType.group2[0])
-    const item1children1 = diffType.group1[1] === 'in' ? 0 : 1
-    const item1children2 =
-      diffType.group1[2] === 'L' || diffType.group1[2] === 'F' ? 0 : 1
-    const item2children1 = diffType.group2[1] === 'in' ? 0 : 1
-    const item2children2 =
-      diffType.group2[2] === 'L' || diffType.group2[2] === 'F' ? 0 : 1
-    pushDiffData(
-      diffType.power,
-      item1_group,
-      item1children1,
-      item1children2,
-      AEType1,
-      change,
-    )
-    pushDiffData(
-      diffType.power,
-      item2_group,
-      item2children1,
-      item2children2,
-      AEType2,
-      change,
-    )
+    pushDiffFormat(diffType.power, diffType.desc1, AEType1, change)
+    pushDiffFormat(diffType.power, diffType.desc2, AEType2, change)
   }
 
   const setCount = (result, order) => {
@@ -741,11 +310,24 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     })
     calData.count[order] = result.length
   }
+  const setChangeRange = (item1, item2) => {
+    const temp = item2 || item1
+    temp.rangeChange = `${item1 ? item1.flag[0].desc : '无'} -> ${item2
+      ? item2.flag[0].desc
+      : '无'}`
+    temp.a1cChange = `${item1 ? item1.a1cLatest : '无'} -> ${item2
+      ? item2.a1cLatest
+      : '无'}`
+    temp.measureChange = `${item1 ? item1.measureCount : '无'} -> ${item2
+      ? item2.measureCount
+      : '无'}`
+    temp.categoryChange = `${item1 ? item1.category : '无'} -> ${item2
+      ? item2.category
+      : '无'}`
+    return temp
+  }
 
-  if (firstResult.length > 0 && secondResult.length === 0) {
-    setCount(firstResult, 0)
-    calData.data = firstResult
-  } else if (firstResult.length > 0 && secondResult.length > 0) {
+  if (secondResult.length > 0 && firstResult.length > 0) {
     setCount(firstResult, 0)
     setCount(secondResult, 1)
     const diff = xorBy(firstResult, secondResult, 'patientId')
@@ -765,116 +347,44 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             .flag[0].desc}_${Arr2Item.category.split('')[0]}`,
         }
         const DiffType = getDiffType(item.flag[0].desc, Arr2Item.flag[0].desc)
+        calData.data.push(setChangeRange(item, Arr2Item))
         if (DiffType.power === 0) {
-          let treeLocation = []
-          let treeType = 0
-          let treeTypeOhter = 0
-          if (
-            item.flag[0].desc === 'C_OO_NA' &&
-            Arr2Item.flag[0].desc !== 'C_OO_NA'
-          ) {
-            treeLocation = Arr2Item.flag[0].desc.split('_')
-            treeType = firstType
-            treeTypeOhter = secondType
-          } else if (
-            item.flag[0].desc !== 'C_OO_NA' &&
-            Arr2Item.flag[0].desc === 'C_OO_NA'
-          ) {
-            treeLocation = item.flag[0].desc.split('_')
-            treeType = secondType
-            treeTypeOhter = firstType
-          }
-          if (treeLocation.length > 0) {
-            const children1 = treeLocation[1] === 'in' ? 0 : 1
-            const children2 =
-              treeLocation[2] === 'L' || treeLocation[2] === 'F' ? 0 : 1
-            const item1_group = getGroup(treeLocation[0])
-            pushDiffData(
+          if (DiffType.type === 1) {
+            calData.children[0].children[firstType].diff.push(change)
+            calData.children[0].children[secondType].diff.push(change)
+          } else {
+            const notOOItem = DiffType.type === 2 ? Arr2Item : item
+            const OOitemType = DiffType.type === 2 ? firstType : secondType
+            pushDiffFormat(
               4,
-              getGroup(treeLocation[0]),
-              children1,
-              children2,
-              treeTypeOhter,
+              notOOItem.flag[0].desc,
+              notOOItem.category,
               change,
             )
             calData.children[0].diff.push(change)
-            calData.children[0].children[treeType].diff.push(change)
-          } else {
-            calData.children[0].children[firstType].diff.push(change)
-            calData.children[0].children[secondType].diff.push(change)
+            calData.children[0].children[OOitemType].diff.push(change)
           }
-          const temp = Arr2Item
-          temp.rangeChange = `${item.flag[0].desc} -> ${Arr2Item.flag[0].desc}`
-          temp.a1cChange = `${item.a1cLatest} -> ${Arr2Item.a1cLatest}`
-          temp.measureChange = `${item.measureCount} -> ${Arr2Item.measureCount}`
-          temp.categoryChange = `${item.category} -> ${Arr2Item.category}`
-          calData.data.push(temp)
         } else {
-          pushDiff(DiffType, firstType, secondType, change)
-          const temp = Arr2Item
-          temp.rangeChange = `${item.flag[0].desc} -> ${Arr2Item.flag[0].desc}`
-          temp.a1cChange = `${item.a1cLatest} -> ${Arr2Item.a1cLatest}`
-          temp.measureChange = `${item.measureCount} -> ${Arr2Item.measureCount}`
-          temp.categoryChange = `${item.category} -> ${Arr2Item.category}`
-          calData.data.push(temp)
+          pushDiff(DiffType, item.category, Arr2Item.category, change)
         }
       }
     })
+
     diff.map(item => {
       const inAfter = find(secondResult, { patientId: item.patientId })
       const isArchived = find(tempFirstResult, {
         patientId: item.patientId,
         patientState: 'ARCHIVED',
       })
-      const temp = inAfter
       if (inAfter) {
-        let treeLocation = inAfter.flag[0].desc.split('_')
-        const children1 = treeLocation[1] === 'in' ? 0 : 1
-        const children2 =
-          treeLocation[2] === 'L' || treeLocation[2] === 'F' ? 0 : 1
-
-        if (isArchived) {
-          const change = {
-            patientId: item.patientId,
-            move: `ARCHIVED -> ${item.flag[0].desc}_${item.category.split(
-              '',
-            )[0]}`,
-          }
-          temp.rangeChange = `${isArchived.flag[0].desc} -> ${inAfter.flag[0]
-            .desc}`
-          temp.a1cChange = `${isArchived.a1cLatest} -> ${inAfter.a1cLatest}`
-          temp.measureChange = `${isArchived.measureCount} -> ${inAfter.measureCount}`
-          temp.categoryChange = `${isArchived.category} -> ${inAfter.category}`
-          calData.data.push(temp)
-          calData.diff.push(change)
-          pushDiffData(
-            4,
-            getGroup(treeLocation[0]),
-            children1,
-            children2,
-            getType(inAfter.category),
-            change,
-          )
-        } else {
-          const change = {
-            patientId: item.patientId,
-            move: `First -> ${item.flag[0].desc}_${item.category.split('')[0]}`,
-          }
-          temp.rangeChange = `无 -> ${inAfter.flag[0].desc}`
-          temp.a1cChange = `无 -> ${inAfter.a1cLatest}`
-          temp.measureChange = `无 -> ${inAfter.measureCount}`
-          temp.categoryChange = `无 -> ${inAfter.category}`
-          calData.data.push(temp)
-          calData.diff.push(change)
-          pushDiffData(
-            4,
-            getGroup(treeLocation[0]),
-            children1,
-            children2,
-            getType(inAfter.category),
-            change,
-          )
+        const change = {
+          patientId: item.patientId,
+          move: `${isArchived ? 'ARCHIVED' : 'First'} -> ${item.flag[0]
+            .desc}_${item.category.split('')[0]}`,
         }
+        pushDiffFormat(4, inAfter.flag[0].desc, inAfter.category, change)
+        calData.data.push(setChangeRange(isArchived, inAfter))
+        calData.diff.push(change)
       } else {
         const inBefore = find(firstResult, { patientId: item.patientId })
         const change = {
@@ -883,26 +393,15 @@ export const getAllPatientsForCalc = async (_, args, context) => {
             '',
           )[0]} -> ARCHIVED`,
         }
-        let treeLocation = inBefore.flag[0].desc.split('_')
-        const children1 = treeLocation[1] === 'in' ? 0 : 1
-        const children2 =
-          treeLocation[2] === 'L' || treeLocation[2] === 'F' ? 0 : 1
-        pushDiffData(
-          4,
-          getGroup(treeLocation[0]),
-          children1,
-          children2,
-          getType(inBefore.category),
-          change,
-        )
+        pushDiffFormat(4, inBefore.flag[0].desc, inBefore.category, change)
         calData.diff.push(change)
-        inBefore.rangeChange = `${inAfter.flag[0].desc} -> 无`
-        inBefore.a1cChange = `${inAfter.a1cLatest} -> 无`
-        inBefore.measureChange = `${inAfter.measureCount} -> 无`
-        inBefore.categoryChange = `${isArchived.category} -> 无`
-        calData.data.push(inBefore)
+        calData.data.push(setChangeRange(inBefore, null))
       }
     })
+  } else if (firstResult.length > 0) {
+    // console.log('firstResult', firstResult.length, calData)
+    setCount(firstResult, 0)
+    calData.data = firstResult
   }
   return calData
 }
