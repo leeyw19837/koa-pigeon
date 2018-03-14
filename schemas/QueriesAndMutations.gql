@@ -203,7 +203,7 @@ type Mutation {
     # 设备系统版本
     deviceSystemName: String!
     # 上报日期
-    reportDate: Date!
+    reportDate: Date
   ): Boolean
 }
 
