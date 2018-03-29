@@ -29,21 +29,22 @@ export const loginOrSignUp = async (_, args, context) => {
   const db = await context.getDb()
   // const clientCodename = context.state.clientCodename
   const { mobile, verificationCode, wechatOpenId } = args
-  const verificationResult = await verify(RIGHTEOUS_RAVEN_URL, {
-    client_id: RIGHTEOUS_RAVEN_ID,
-    client_key: RIGHTEOUS_RAVEN_KEY,
-    rec: mobile,
-    code: verificationCode,
-  })
 
-  // verificationCode !== '0000' for testing
-  if (
-    verificationResult.data.result !== 'success' &&
-    verificationCode !== '0000'
-  ) {
-    throw new Error('验证码不正确')
+  if (verificationCode !== '0000') {
+    const verificationResult = await verify(RIGHTEOUS_RAVEN_URL, {
+      client_id: RIGHTEOUS_RAVEN_ID,
+      client_key: RIGHTEOUS_RAVEN_KEY,
+      rec: mobile,
+      code: verificationCode,
+    })
+    // verificationCode !== '0000' for testing
+    if (
+      verificationResult.data.result !== 'success' &&
+      verificationCode !== '0000'
+    ) {
+      throw new Error('验证码不正确')
+    }
   }
-
   const existingPatient = await db
     .collection('users')
     .findOne({ username: { $regex: mobile } })
