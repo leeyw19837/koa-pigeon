@@ -30,6 +30,10 @@ export const loginOrSignUp = async (_, args, context) => {
   // const clientCodename = context.state.clientCodename
   const { mobile, verificationCode, wechatOpenId } = args
 
+  if (!/^1[3|4|5|7|8][0-9]\d{8}$/.test(mobile)) {
+    throw new Error('手机号码格式不正确')
+    return
+  }
   if (verificationCode !== '0000') {
     const verificationResult = await verify(RIGHTEOUS_RAVEN_URL, {
       client_id: RIGHTEOUS_RAVEN_ID,
