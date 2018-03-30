@@ -15,7 +15,7 @@ pipeline:
       - latest
     dockerfile: Dockerfile
     when:
-      branch: develop
+      branch: remender_module
       event: push
   build_step:
     image: plugins/docker
