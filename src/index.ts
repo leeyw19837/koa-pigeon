@@ -18,6 +18,7 @@ import * as resolvers from './resolvers'
 import * as Subscription from './subscriptions'
 import { IContext } from './types'
 import { Date, formatError } from './utils'
+import cronJobRouter from './cronJob/router'
 
 const { NODE_ENV, PORT, MONGO_URL, SECRET, JWT_SECRET } = process.env
 
@@ -73,6 +74,8 @@ router.get('/healthcheck', ctx => {
 router.post('/log', ctx => {
   console.log(ctx.request.body)
 })
+
+router.use('/cron-job', cronJobRouter.routes())
 
 router.all(
   `/${SECRET}`,
