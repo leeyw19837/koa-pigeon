@@ -30,10 +30,6 @@ export const reminder = async (weekday, aPatientsId) => {
   const measureModules = await getMeasureModules(patientsId, compareDate)
   const result = []
   for (let i = 0, pLength = patients.length; i < pLength; i++) {
-    // test
-    let notCompletedMeasure = {}
-    let actualMeasure = {}
-    let acturlMeasureModule = {}
     const { _id, username, nickname, healthCareTeamId } = patients[i]
     const patientId = _id.toString()
     const pMeasurePlan = measureModules
@@ -54,33 +50,32 @@ export const reminder = async (weekday, aPatientsId) => {
       if (currentDay === 1) {
         options.params.measureModule = typeTextMap[type]
         options.templateId = MONDAY_TEXT_ID
+        // TEST
+        result.push({ options, bgMeasureModule })
       } else if (currentDay === 3) {
         options.params.measureModule = typeTextMap[type]
         options.templateId = WEDNESDAY_TEXT_ID
         noSender = !!bloodGlucoses.filter(o => o.author === patientId).length
+        // TEST
+        if(noSender) {
+          result.push({ noSender: '不应该发送' })
+        } else {
+          result.push({ options, bgMeasureModule })
+        }
       } else if (currentDay === 7) {
-         const feedBackObj = getMeasureFeedback({
+         const { notCompletedMeasure, actualMeasure, configOption} = getMeasureFeedback({
           bloodGlucoses,
           patientId,
           bgMeasureModule,
         })
-        // TEST
-        notCompletedMeasure = feedBackObj.notCompletedMeasure
-        actualMeasure = feedBackObj.actualMeasure
-        acturlMeasureModule = bgMeasureModule
-
         options.params.measureModule = feedBackObj.configOption.measureModule
         options.templateId = feedBackObj.configOption.templateId
+        // TEST
+        result.push({ notCompletedMeasure, actualMeasure, options, bgMeasureModule })
       }
       if(!noSender) {
         // await sendMeasurePlan(options)
       }
-      result.push({
-        notCompletedMeasure,
-        actualMeasure,
-        acturlMeasureModule,
-        options,
-      })
     }
   }
   return result

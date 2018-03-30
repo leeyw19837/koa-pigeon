@@ -92,7 +92,7 @@ export const getMeasureFeedback = ({
     // Test
     acM = actualMeasure
     noC = notCompletedMeasure
-    configOption.templateId = isEmpty(notCompletedMeasure) ? SUNDAY_TEXT_NO_COMPLETED_ID : SUNDAY_TEXT_COMPLETED_ID
+    configOption.templateId = isEmpty(notCompletedMeasure) ? SUNDAY_TEXT_COMPLETED_ID : SUNDAY_TEXT_NO_COMPLETED_ID
   }
   return {
     configOption,
