@@ -48,7 +48,7 @@ export const reminder = async (weekday, aPatientsId) => {
       }
       let noSender = false
       if (currentDay === 1) {
-        options.params.measureModule = typeTextMap[type]
+        options.params.measureModule = typeTextMap[type] || generateCustomText(bgMeasureModule)
         options.templateId = MONDAY_TEXT_ID
         // TEST
         result.push({ options, bgMeasureModule })
