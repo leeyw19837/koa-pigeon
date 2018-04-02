@@ -4,7 +4,7 @@ import {
   getPatients, getBloodGlucoses, getMeasureModules
 } from './dataServices'
 import { getMeasureFeedback } from './getMeasureFeedback'
-import { MONDAY_TEXT_ID , WEDNESDAY_TEXT_ID, typeTextMap } from './constants'
+import { MONDAY_TEXT_ID , WEDNESDAY_TEXT_ID, typeTextMap, generateCustomText } from './constants'
 
 const moment = require('moment')
 
@@ -53,7 +53,7 @@ export const reminder = async (weekday, aPatientsId) => {
         // TEST
         result.push({ options, bgMeasureModule })
       } else if (currentDay === 3) {
-        options.params.measureModule = typeTextMap[type]
+        options.params.measureModule = typeTextMap[type] || generateCustomText(bgMeasureModule)
         options.templateId = WEDNESDAY_TEXT_ID
         noSender = !!bloodGlucoses.filter(o => o.author === patientId).length
         // TEST

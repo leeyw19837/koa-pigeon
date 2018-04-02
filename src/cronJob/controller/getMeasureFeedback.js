@@ -1,6 +1,6 @@
 import { sendMeasurePlan } from './sendTxt'
 import {
-  shouldCheckProps, unitTextMap, periodTextMap, dinnerMap, sameMap,
+  shouldCheckProps, periodTextMap, dinnerMap, sameMap,
   SUNDAY_TEXT_NO_MEASURE_ID, SUNDAY_TEXT_NO_COMPLETED_ID, SUNDAY_TEXT_COMPLETED_ID
 } from './constants'
 

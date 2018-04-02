@@ -1,9 +1,18 @@
+const isEmpty = require('lodash/isEmpty')
 
 export const shouldCheckProps = ['morning', 'midday', 'evening', 'beforeSleep', 'noLimit']
 
 export const unitTextMap = {
-  pairing: '对',
-  count: '次',
+  pairing: {
+    unit: '对',
+    meal: '餐前后',
+    text: '的血糖配对测量',
+  },
+  count: {
+    unit: '次',
+    meal: '餐前',
+    text: '进行测量',
+  },
 }
 
 export const periodTextMap = {
@@ -37,6 +46,37 @@ export const typeTextMap = {
   D: '可以选早、中、晚各1对餐前后的血糖配对测量和一次睡前血糖的测量',
   E: '需要检测早餐前、晚餐前各7次血糖',
   F: '需要检测早餐前、午餐前、晚餐前各3次血糖',
+}
+
+export const generateCustomText = (measurePlan) => {
+  let text = ''
+  if(!isEmpty(measurePlan.noLimit) && measurePlan.noLimit.quantity) {
+    const { quantity, unit } = measurePlan.noLimit
+    const tempObj = unitTextMap[unit] || {}
+    text = `可以任意选择${quantity}${tempObj.unit}${tempObj.meal}${tempObj.text}`
+  } else {
+    let mealPeriod = ''
+    let sleepText = '';
+
+    ['morning', 'midday', 'evening'].forEach(o => {
+      const { quantity, unit } = measurePlan[o] || {}
+      if(!isEmpty(measurePlan[o]) && quantity) {
+        text = '可以选择'
+        const tempObj = unitTextMap[unit] || {}
+        mealPeriod += `${quantity}${tempObj.unit}${periodTextMap[o]}${tempObj.meal} `
+      }
+    })
+    if(!isEmpty(measurePlan.beforeSleep) && measurePlan.beforeSleep.quantity) {
+      text = '可以选择'
+      const { quantity, unit } = measurePlan.beforeSleep
+      const tempObj = unitTextMap[unit] || {}
+      sleepText = `${quantity}${tempObj.unit}睡前血糖`
+    }
+    if (sleepText || mealPeriod) {
+      text += `${mealPeriod}${sleepText}进行测量`
+    }
+  }
+  return text
 }
 
 export const MONDAY_TEXT_ID = 'SMS_129746087'
