@@ -68,7 +68,6 @@ export const reminder = async (weekday, aPatientsId) => {
           patientId,
           bgMeasureModule,
         })
-        options.params.measureModule = configOption.measureModule
         options.templateId = configOption.templateId
         // TEST
         result.push({ notCompletedMeasure, actualMeasure, options, bgMeasureModule })
