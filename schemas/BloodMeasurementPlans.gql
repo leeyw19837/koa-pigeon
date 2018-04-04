@@ -1,0 +1,39 @@
+type BloodMeasurementPlans {
+  type: String
+  notCompletedMeasure: noC
+  actualMeasure: acM
+  modules: modules
+}
+
+type noC {
+  morning: quantityAndUnit
+  midday: quantityAndUnit
+  evening: quantityAndUnit
+  beforeSleep: quantityAndUnit
+}
+
+type modules {
+  type: String
+  morning: quantityAndUnit
+  midday: quantityAndUnit
+  evening: quantityAndUnit
+  beforeSleep: quantityAndUnit
+  noLimit: quantityAndUnit
+}
+
+type pairingAndCount {
+  pairing: Int
+  count: Int
+}
+
+type quantityAndUnit {
+  quantity: Int
+  unit: String
+}
+
+type acM {
+  morning: pairingAndCount
+  midday: pairingAndCount
+  evening: pairingAndCount
+  beforeSleep: pairingAndCount
+}

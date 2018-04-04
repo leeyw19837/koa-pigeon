@@ -1,3 +1,4 @@
+import * as bloodMeasurementPlans from './bloodMeasurementPlans'
 import * as bloodGlucoseMeasurements from './bloodGlucoseMeasurements'
 import * as bloodGlucoseMeasurementsAndTreatmentPlans from './bloodGlucoseMeasurementsAndTreatmentPlans'
 import * as chatMessages from './chatMessages'
@@ -55,6 +56,7 @@ const queries = {
   ...evaluate,
   ...orders,
   ...healthCareTeam,
+  ...bloodMeasurementPlans,
 }
 
 const queriesWithLogging = {}
