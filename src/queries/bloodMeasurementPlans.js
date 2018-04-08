@@ -52,21 +52,17 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
   let define = []
 
   const db = await getDb()
-  //   const cursor = { author: args.patientId }
-  //   if (args.from && args.to) {
-  //     Object.assign(cursor, { createdAt: { $gt: args.from, $lt: args.to } })
-  //   }
 
-  const dateofweek = moment('2017-10-21').startOf('isoWeek')
+  const dateofweek = moment().startOf('isoWeek')
   const measureModules = await db
     .collection('measureModules')
     .find({
       patientId: args.patientId,
       startAt: {
-        $lte: '2017-10-21',
+        $lte: dateofweek.format('YYYY-MM-DD'),
       },
       endAt: {
-        $gte: '2017-12-01',
+        $gte: dateofweek.format('YYYY-MM-DD'),
       },
     })
     .toArray()

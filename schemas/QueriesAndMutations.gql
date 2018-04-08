@@ -68,11 +68,7 @@ type Query {
   # 订单信息
   orders(patientId: ID!): [Order]
   # 新模板血糖测量作业
-  bloodMeasurementPlans(
-    patientId: ID!
-    from: Date
-    to: Date
-  ): BloodMeasurementPlans
+  bloodMeasurementPlans(patientId: ID!): BloodMeasurementPlans
 }
 
 type Mutation {
