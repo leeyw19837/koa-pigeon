@@ -8,7 +8,7 @@ import { MONDAY_TEXT_ID , WEDNESDAY_TEXT_ID, typeTextMap, generateCustomText } f
 
 const moment = require('moment')
 
-export const reminder = async (weekday, aPatientsId) => {
+export const reminder = async (weekday, aPatientsId, isTest) => {
   if (!db) {
     console.error('Run with `yarn docker:dev`!')
     process.exit(-1)
@@ -72,7 +72,7 @@ export const reminder = async (weekday, aPatientsId) => {
         // TEST
         result.push({ notCompletedMeasure, actualMeasure, options, bgMeasureModule })
       }
-      if(!noSender) {
+      if(!noSender && !isTest) {
         await sendMeasurePlan(options)
       }
     }
