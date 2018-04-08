@@ -56,16 +56,21 @@ export const getMeasureFeedback = ({
 
     Object.keys(hasMeasureData).forEach(o => {
       const item = hasMeasureData[o];
-      ['morning', 'midday', 'evening', 'beforeSleep'].forEach(key => {
-        const beforeKey = `${key}_b`
-        const afterKey = `${key}_a`
-        if (item[beforeKey]) {
-          actualMeasure[key].count += 1
-          if (item[afterKey]) {
-            actualMeasure[key].pairing += 1
+      if (item.beforeSleep) {
+        actualMeasure.beforeSleep.count += 1
+      } else {
+        const keys = ['morning', 'midday', 'evening']
+        keys.forEach(key => {
+          const beforeKey = `${key}_b`
+          const afterKey = `${key}_a`
+          if (item[beforeKey]) {
+            actualMeasure[key].count += 1
+            if (item[afterKey]) {
+              actualMeasure[key].pairing += 1
+            }
           }
-        }
-      })
+        })
+      }
     })
     const notCompletedMeasure = {}
     shouldCheckProps.forEach(prop => {

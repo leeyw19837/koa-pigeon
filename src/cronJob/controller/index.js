@@ -73,7 +73,7 @@ export const reminder = async (weekday, aPatientsId) => {
         result.push({ notCompletedMeasure, actualMeasure, options, bgMeasureModule })
       }
       if(!noSender) {
-        // await sendMeasurePlan(options)
+        await sendMeasurePlan(options)
       }
     }
   }
