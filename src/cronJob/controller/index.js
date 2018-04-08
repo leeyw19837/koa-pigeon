@@ -14,7 +14,7 @@ export const reminder = async (weekday, aPatientsId) => {
     process.exit(-1)
   }
 
-  const currentDay = +weekday || moment().isoWeekday()
+  const currentDay = weekday ? +weekday : moment().isoWeekday()
   const bgMeasureModules = await getBgMeasureModules()
   const hcts = await getHcts()
   const hctIds = hcts.map(o => o._id)
