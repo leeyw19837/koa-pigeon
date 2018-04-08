@@ -108,6 +108,7 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
       ;['morning', 'midday', 'evening', 'beforeSleep'].forEach(key => {
         const beforeKey = `${key}_b`
         const afterKey = `${key}_a`
+        if (key === 'beforeSleep' && item[key]) actualMeasure[key].count += 1
         if (item[beforeKey]) {
           actualMeasure[key].count += 1
           if (item[afterKey]) {
