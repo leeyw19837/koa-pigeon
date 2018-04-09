@@ -30,7 +30,9 @@ export const sharedNeedleChatMessageResolvers = {
       avatar: user.avatar ? user.avatar :
         needleChatMessage.senderId === '66728d10dc75bc6a43052036'
         ? 'https://prod.gtzh.51ijk.com/imgs/app/avatars/doctor.png'
-        : 'https://prod.gtzh.51ijk.com/imgs/app/avatars/patient.png',
+        : (user.gender === 'male'
+            ?'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+            :'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'),
     }
   },
   async needleChatRoom(needleChatMessage, _, { getDb }) {
