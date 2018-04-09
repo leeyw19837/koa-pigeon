@@ -73,7 +73,11 @@ export const reminder = async (weekday, aPatientsId, isTest) => {
         result.push({ notCompletedMeasure, actualMeasure, options, bgMeasureModule })
       }
       if(!noSender && !isTest) {
-        await sendMeasurePlan(options)
+        try {
+          await sendMeasurePlan(options)
+        } catch (e) {
+          console.log(e, 'error')
+        }
       }
     }
   }

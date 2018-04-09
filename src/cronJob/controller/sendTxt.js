@@ -7,12 +7,16 @@ const {
 
 export const sendMeasurePlan = async (options) => {
   const { mobile, templateId, params } = options
-  await send(RIGHTEOUS_RAVEN_URL, {
-    client_id: RIGHTEOUS_RAVEN_ID,
-    client_key: RIGHTEOUS_RAVEN_KEY,
-    rec: mobile,
-    prefix: '共同照护门诊',
-    template: templateId,
-    params,
-  })
+  try {
+    await send(RIGHTEOUS_RAVEN_URL, {
+      client_id: RIGHTEOUS_RAVEN_ID,
+      client_key: RIGHTEOUS_RAVEN_KEY,
+      rec: mobile,
+      prefix: '共同照护门诊',
+      template: templateId,
+      params,
+    })
+  } catch (e) {
+    console.log(e, 'send txt error')
+  }
 }
