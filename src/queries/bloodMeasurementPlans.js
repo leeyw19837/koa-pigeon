@@ -64,7 +64,7 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
         $lte: dateofweek.format('YYYY-MM-DD'),
       },
       endAt: {
-        $gte: dateofweek.format('YYYY-MM-DD'),
+        $gte: endofweek.format('YYYY-MM-DD'),
       },
     })
     .toArray()
