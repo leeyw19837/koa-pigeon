@@ -56,7 +56,9 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
   const dateofweek = moment().startOf('isoWeek')
   const endofweek = moment().endOf('isoWeek')
 
-  const measureModules = await db
+  let measureModules = []
+
+  measureModules = await db
     .collection('measureModules')
     .find({
       patientId: args.patientId,
@@ -68,6 +70,19 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
       },
     })
     .toArray()
+
+  if (measureModules.length <= 0) {
+    measureModules = await db.collection('measureModules').find({
+      patientId: args.patientId,
+      startAt: {
+        $lte: moment().format('YYYY-MM-DD'),
+      },
+      endAt: {
+        $gte: moment().format('YYYY-MM-DD'),
+      },
+    })
+  }
+
   if (measureModules.length > 0) {
     const activeModule = sortBy(measureModules, [
       'endAt',
