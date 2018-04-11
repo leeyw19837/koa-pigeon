@@ -70,17 +70,19 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
       },
     })
     .toArray()
-
   if (measureModules.length <= 0) {
-    measureModules = await db.collection('measureModules').find({
-      patientId: args.patientId,
-      startAt: {
-        $lte: moment().format('YYYY-MM-DD'),
-      },
-      endAt: {
-        $gte: moment().format('YYYY-MM-DD'),
-      },
-    })
+    measureModules = await db
+      .collection('measureModules')
+      .find({
+        patientId: args.patientId,
+        startAt: {
+          $lte: moment().format('YYYY-MM-DD'),
+        },
+        endAt: {
+          $gte: moment().format('YYYY-MM-DD'),
+        },
+      })
+      .toArray()
   }
 
   if (measureModules.length > 0) {
