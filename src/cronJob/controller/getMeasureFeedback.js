@@ -21,7 +21,7 @@ export const getMeasureFeedback = ({
   // TEST
   let acM = {}
   let noC = {}
-  const pBgDatas = bloodGlucoses.filter(o => o.author === patientId)
+  const pBgDatas = bloodGlucoses.filter(o => o.patientId === patientId)
   if (!pBgDatas.length) {
     configOption.templateId = SUNDAY_TEXT_NO_MEASURE_ID
   } else {
