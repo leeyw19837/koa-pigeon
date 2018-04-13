@@ -22,6 +22,7 @@ export const getMeasureFeedback = ({
   let acM = {}
   let noC = {}
   const pBgDatas = bloodGlucoses.filter(o => o.patientId === patientId)
+  console.log('pBgDatas', pBgDatas.length, patientId)
   if (!pBgDatas.length) {
     configOption.templateId = SUNDAY_TEXT_NO_MEASURE_ID
   } else {
@@ -52,6 +53,7 @@ export const getMeasureFeedback = ({
       const { measuredAt, measurementTime } = bgItem
       const formatMeasureDate = moment(measuredAt).format('YYYY-MM-DD')
       const key = dinnerMap[measurementTime]
+      console.log(measuredAt, measurementTime, key)
       if (!hasMeasureData[formatMeasureDate]) {
         hasMeasureData[formatMeasureDate] = {
           [key]: true,
