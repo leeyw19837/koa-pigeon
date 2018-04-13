@@ -1,7 +1,12 @@
 import { sendMeasurePlan } from './sendTxt'
 import {
-  shouldCheckProps, periodTextMap, dinnerMap, sameMap,
-  SUNDAY_TEXT_NO_MEASURE_ID, SUNDAY_TEXT_NO_COMPLETED_ID, SUNDAY_TEXT_COMPLETED_ID
+  shouldCheckProps,
+  periodTextMap,
+  dinnerMap,
+  sameMap,
+  SUNDAY_TEXT_NO_MEASURE_ID,
+  SUNDAY_TEXT_NO_COMPLETED_ID,
+  SUNDAY_TEXT_COMPLETED_ID,
 } from './constants'
 
 const isEmpty = require('lodash/isEmpty')
@@ -20,7 +25,9 @@ export const getMeasureFeedback = ({
   if (!pBgDatas.length) {
     configOption.templateId = SUNDAY_TEXT_NO_MEASURE_ID
   } else {
-    const startAt = moment().subtract(6, 'days').startOf('day')
+    const startAt = moment()
+      .subtract(6, 'days')
+      .startOf('day')
     const endAt = moment()
     const actualMeasure = {
       morning: {
@@ -42,20 +49,20 @@ export const getMeasureFeedback = ({
     }
     const hasMeasureData = {}
     pBgDatas.forEach(bgItem => {
-      const { createdAt, dinnerSituation } = bgItem
-      const formatMeasureDate = moment(createdAt).format('YYYY-MM-DD')
-      const key = dinnerMap[sameMap[dinnerSituation] || dinnerSituation]
+      const { measuredAt, measurementTime } = bgItem
+      const formatMeasureDate = moment(measuredAt).format('YYYY-MM-DD')
+      const key = dinnerMap[measurementTime]
       if (!hasMeasureData[formatMeasureDate]) {
         hasMeasureData[formatMeasureDate] = {
           [key]: true,
         }
-      } else if(!hasMeasureData[formatMeasureDate][key]) {
+      } else if (!hasMeasureData[formatMeasureDate][key]) {
         hasMeasureData[formatMeasureDate][key] = true
       }
     })
 
     Object.keys(hasMeasureData).forEach(o => {
-      const item = hasMeasureData[o];
+      const item = hasMeasureData[o]
       if (item.beforeSleep) {
         actualMeasure.beforeSleep.count += 1
       } else {
@@ -79,7 +86,8 @@ export const getMeasureFeedback = ({
         const actualData = actualMeasure[prop]
         if (prop === 'noLimit' || !actualData) {
           const { morning, midday, evening, beforeSleep } = actualMeasure
-          const total = morning[unit] + midday[unit] + evening[unit] + beforeSleep[unit]
+          const total =
+            morning[unit] + midday[unit] + evening[unit] + beforeSleep[unit]
           if (total < quantity) {
             notCompletedMeasure[prop] = {
               quantity: quantity - total,
@@ -97,11 +105,13 @@ export const getMeasureFeedback = ({
     // Test
     acM = actualMeasure
     noC = notCompletedMeasure
-    configOption.templateId = isEmpty(notCompletedMeasure) ? SUNDAY_TEXT_COMPLETED_ID : SUNDAY_TEXT_NO_COMPLETED_ID
+    configOption.templateId = isEmpty(notCompletedMeasure)
+      ? SUNDAY_TEXT_COMPLETED_ID
+      : SUNDAY_TEXT_NO_COMPLETED_ID
   }
   return {
     configOption,
     notCompletedMeasure: noC,
-    actualMeasure: acM
+    actualMeasure: acM,
   }
 }
