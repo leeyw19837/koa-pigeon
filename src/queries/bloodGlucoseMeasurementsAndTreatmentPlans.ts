@@ -9,6 +9,7 @@ export const bloodGlucoseMeasurementsAndTreatmentPlans = async (_,
     if (args.from && args.to) {
         Object.assign(cursor, {
             measuredAt: {$gt: args.from, $lt: args.to},
+            dataStatus: {$ne: 'DELETED'},
         })
     }
 
