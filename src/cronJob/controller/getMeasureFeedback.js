@@ -22,7 +22,6 @@ export const getMeasureFeedback = ({
   let acM = {}
   let noC = {}
   const pBgDatas = bloodGlucoses.filter(o => o.patientId === patientId)
-  console.log('pBgDatas', pBgDatas.length, patientId)
   if (!pBgDatas.length) {
     configOption.templateId = SUNDAY_TEXT_NO_MEASURE_ID
   } else {
@@ -53,7 +52,6 @@ export const getMeasureFeedback = ({
       const { measuredAt, measurementTime } = bgItem
       const formatMeasureDate = moment(measuredAt).format('YYYY-MM-DD')
       const key = dinnerMap[measurementTime]
-      console.log(measuredAt, measurementTime, key)
       if (!hasMeasureData[formatMeasureDate]) {
         hasMeasureData[formatMeasureDate] = {
           [key]: true,
@@ -62,24 +60,19 @@ export const getMeasureFeedback = ({
         hasMeasureData[formatMeasureDate][key] = true
       }
     })
-
     Object.keys(hasMeasureData).forEach(o => {
       const item = hasMeasureData[o]
-      if (item.beforeSleep) {
-        actualMeasure.beforeSleep.count += 1
-      } else {
-        const keys = ['morning', 'midday', 'evening']
-        keys.forEach(key => {
-          const beforeKey = `${key}_b`
-          const afterKey = `${key}_a`
-          if (item[beforeKey]) {
-            actualMeasure[key].count += 1
-            if (item[afterKey]) {
-              actualMeasure[key].pairing += 1
-            }
+      ;['morning', 'midday', 'evening', 'beforeSleep'].forEach(key => {
+        const beforeKey = `${key}_b`
+        const afterKey = `${key}_a`
+        if (key === 'beforeSleep' && item[key]) actualMeasure[key].count += 1
+        if (item[beforeKey]) {
+          actualMeasure[key].count += 1
+          if (item[afterKey]) {
+            actualMeasure[key].pairing += 1
           }
-        })
-      }
+        }
+      })
     })
     const notCompletedMeasure = {}
     shouldCheckProps.forEach(prop => {
