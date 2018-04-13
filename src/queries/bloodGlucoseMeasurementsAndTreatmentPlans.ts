@@ -5,22 +5,21 @@ export const bloodGlucoseMeasurementsAndTreatmentPlans = async (_,
                                                                 args,
                                                                 {getDb}: IContext) => {
     const db = await getDb()
-    const cursor = {patientId: args.patientId}
-    if (args.from && args.to) {
-        Object.assign(cursor, {
-            measuredAt: {$gt: args.from, $lt: args.to},
-            dataStatus: {$ne: 'DELETED'},
-        })
-    }
-
     // const bloodGlucoseMeasurementsResult = await db
     //   .collection('bloodglucoses')
     //   .find(cursor)
     //   .sort({ createdAt: -1 })
     //   .toArray()
+
+    const query = {
+        patientId: args.patientId,
+        measuredAt: {$gt: args.from, $lt: args.to},
+        dataStatus: {$ne: 'DELETED'},
+    }
+
     const bloodGlucoseMeasurementsResult = await db
         .collection('bloodGlucoses')
-        .find(cursor)
+        .find(query)
         .sort({measuredAt: -1})
         .toArray()
 
