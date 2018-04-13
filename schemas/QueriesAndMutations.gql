@@ -138,6 +138,7 @@ type Mutation {
   ): Boolean!
   updateRemarkOfBloodglucoses(_id: ID!, remark: String): Boolean!
   deleteOfBloodglucoses(_id: ID!): Boolean!
+  logicalDeleteOfBloodglucoses(_id: ID!): Boolean!
   addSentence(
     category: SoapCategory!
     group: String!
