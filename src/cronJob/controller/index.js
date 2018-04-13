@@ -1,10 +1,18 @@
 import { sendMeasurePlan } from './sendTxt'
 import {
-  getBgMeasureModules, getHcts,
-  getPatients, getBloodGlucoses, getMeasureModules
+  getBgMeasureModules,
+  getHcts,
+  getPatients,
+  getBloodGlucoses,
+  getMeasureModules,
 } from './dataServices'
 import { getMeasureFeedback } from './getMeasureFeedback'
-import { MONDAY_TEXT_ID , WEDNESDAY_TEXT_ID, typeTextMap, generateCustomText } from './constants'
+import {
+  MONDAY_TEXT_ID,
+  WEDNESDAY_TEXT_ID,
+  typeTextMap,
+  generateCustomText,
+} from './constants'
 
 const moment = require('moment')
 
@@ -26,7 +34,9 @@ export const reminder = async (weekday, aPatientsId, isTest) => {
     7: 6,
   }
   const compareDate = moment().subtract(obj[currentDay], 'days')
-  const bloodGlucoses = currentDay !== 1 ? (await getBloodGlucoses(patientsId, compareDate)) : []
+  const bloodGlucoses =
+    currentDay !== 1 ? await getBloodGlucoses(patientsId, compareDate) : []
+  console.log('bloodGlucoses1111', bloodGlucoses)
   const measureModules = await getMeasureModules(patientsId, compareDate)
   const result = []
   for (let i = 0, pLength = patients.length; i < pLength; i++) {
@@ -37,42 +47,55 @@ export const reminder = async (weekday, aPatientsId, isTest) => {
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0]
     if (pMeasurePlan) {
       const { bgMeasureModuleId, type } = pMeasurePlan
-      const bgMeasureModule = bgMeasureModules.filter(o => o._id === bgMeasureModuleId)[0]
+      const bgMeasureModule = bgMeasureModules.filter(
+        o => o._id === bgMeasureModuleId,
+      )[0]
       const htcTeam = hcts.filter(o => o._id === healthCareTeamId[0])[0]
       const options = {
         mobile: username,
         params: {
           hospitalName: htcTeam.institutionName,
           userName: nickname,
-        }
+        },
       }
       let noSender = false
       if (currentDay === 1) {
-        options.params.measureModule = typeTextMap[type] || generateCustomText(bgMeasureModule)
+        options.params.measureModule =
+          typeTextMap[type] || generateCustomText(bgMeasureModule)
         options.templateId = MONDAY_TEXT_ID
         // TEST
         result.push({ options, bgMeasureModule })
       } else if (currentDay === 3) {
-        options.params.measureModule = typeTextMap[type] || generateCustomText(bgMeasureModule)
+        options.params.measureModule =
+          typeTextMap[type] || generateCustomText(bgMeasureModule)
         options.templateId = WEDNESDAY_TEXT_ID
-        noSender = !!bloodGlucoses.filter(o => o.author === patientId).length
+        noSender = !!bloodGlucoses.filter(o => o.patientId === patientId).length
         // TEST
-        if(noSender) {
+        if (noSender) {
           result.push({ noSender: '不应该发送' })
         } else {
           result.push({ options, bgMeasureModule })
         }
       } else if (currentDay === 7) {
-         const { notCompletedMeasure, actualMeasure, configOption} = getMeasureFeedback({
+        const {
+          notCompletedMeasure,
+          actualMeasure,
+          configOption,
+        } = getMeasureFeedback({
           bloodGlucoses,
           patientId,
           bgMeasureModule,
         })
         options.templateId = configOption.templateId
         // TEST
-        result.push({ notCompletedMeasure, actualMeasure, options, bgMeasureModule })
+        result.push({
+          notCompletedMeasure,
+          actualMeasure,
+          options,
+          bgMeasureModule,
+        })
       }
-      if(!noSender && !isTest) {
+      if (!noSender && !isTest) {
         try {
           await sendMeasurePlan(options)
         } catch (e) {
