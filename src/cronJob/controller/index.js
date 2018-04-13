@@ -36,7 +36,6 @@ export const reminder = async (weekday, aPatientsId, isTest) => {
   const compareDate = moment().subtract(obj[currentDay], 'days')
   const bloodGlucoses =
     currentDay !== 1 ? await getBloodGlucoses(patientsId, compareDate) : []
-  console.log('bloodGlucoses1111', bloodGlucoses)
   const measureModules = await getMeasureModules(patientsId, compareDate)
   const result = []
   for (let i = 0, pLength = patients.length; i < pLength; i++) {
