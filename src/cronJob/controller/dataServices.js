@@ -1,4 +1,3 @@
-
 import { ObjectID } from 'mongodb'
 
 export const getBgMeasureModules = async () => {
@@ -10,7 +9,7 @@ export const getBgMeasureModules = async () => {
 export const getHcts = async () => {
   return await db
     .collection('healthCareTeams')
-    .find({ disableTxt: {$ne: true} })
+    .find({ disableTxt: { $ne: true } })
     .toArray()
 }
 
@@ -22,37 +21,39 @@ export const getPatients = async (hctIds, aPatientsId) => {
       $ne: true,
     },
   }
-  if(aPatientsId.length) {
+  if (aPatientsId.length) {
     defaultCursor._id = {
-      $in: aPatientsId.map(o => ObjectID.createFromHexString(o))
+      $in: aPatientsId.map(o => ObjectID.createFromHexString(o)),
     }
   }
   return await db
     .collection('users')
-    .find(defaultCursor).toArray()
+    .find(defaultCursor)
+    .toArray()
 }
 
 export const getMeasureModules = async (patientsId, compareDate) => {
   return await db
     .collection('measureModules')
     .find({
-      patientId: {$in: patientsId},
+      patientId: { $in: patientsId },
       endAt: {
-        $gt: compareDate.format('YYYY-MM-DD')
-      }
+        $gt: compareDate.format('YYYY-MM-DD'),
+      },
     })
     .sort({ endAt: -1 })
     .toArray()
 }
 export const getBloodGlucoses = async (patientsId, compareDate) => {
   return await db
-    .collection('bloodglucoses')
+    .collection('bloodGlucoses')
     .find({
-      author: {$in: patientsId},
-      createdAt: {
+      patientId: { $in: patientsId },
+      dataStatus: 'ACTIVE',
+      measuredAt: {
         $gt: compareDate.startOf('day')._d,
-      }
+      },
     })
-    .sort({ createdAt: -1})
+    .sort({ measuredAt: -1 })
     .toArray()
 }

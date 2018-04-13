@@ -24,20 +24,13 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
     },
   }
   const dinnerMap = {
-    早餐前: 'morning_b',
-    早餐后: 'morning_a',
-    中餐前: 'midday_b',
-    中餐后: 'midday_a',
-    晚餐前: 'evening_b',
-    晚餐后: 'evening_a',
-    睡前: 'beforeSleep',
-  }
-
-  const sameMap = {
-    午餐前: '中餐前',
-    午餐后: '中餐后',
-    晚饭前: '晚餐前',
-    晚饭后: '晚餐后',
+    BEFORE_BREAKFAST: 'morning_b',
+    AFTER_BREAKFAST: 'morning_a',
+    BEFORE_LUNCH: 'midday_b',
+    AFTER_LUNCH: 'midday_a',
+    BEFORE_DINNER: 'evening_b',
+    AFTER_DINNER: 'evening_a',
+    BEFORE_SLEEPING: 'beforeSleep',
   }
 
   const shouldCheckProps = [
@@ -96,21 +89,22 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
       .findOne({ _id: activeModule.bgMeasureModuleId })
 
     const bloodGlucoses = await db
-      .collection('bloodglucoses')
+      .collection('bloodGlucoses')
       .find({
-        author: args.patientId,
-        createdAt: {
+        patientId: args.patientId,
+        dataStatus: 'ACTIVE',
+        measuredAt: {
           $lte: endofweek._d,
           $gt: dateofweek._d,
         },
       })
-      .sort({ createdAt: -1 })
+      .sort({ measuredAt: -1 })
       .toArray()
 
     bloodGlucoses.forEach(bgItem => {
-      const { createdAt, dinnerSituation } = bgItem
-      const formatMeasureDate = moment(createdAt).format('YYYY-MM-DD')
-      const key = dinnerMap[sameMap[dinnerSituation] || dinnerSituation]
+      const { measuredAt, measurementTime } = bgItem
+      const formatMeasureDate = moment(measuredAt).format('YYYY-MM-DD')
+      const key = dinnerMap[measurementTime]
       if (!hasMeasureData[formatMeasureDate]) {
         hasMeasureData[formatMeasureDate] = {
           [key]: true,
