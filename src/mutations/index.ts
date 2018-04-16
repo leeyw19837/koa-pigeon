@@ -1,6 +1,7 @@
 import * as addOrder from './addOrder'
 import * as assessmentTime from './assessmentTime'
 import * as bloodGlucoseMeasurement from './bloodGlucoseMeasurement'
+import * as bloodGlucoseMeasurementNew from './bloodGlucoseMeasurementNew'
 import * as changeUsername from './changeUsername'
 import * as chatMessages from './chatMessages'
 import * as communicationMutations from './communication'
@@ -17,6 +18,7 @@ import * as sendNeedleImageChatMessage from './sendNeedleImageChatMessage'
 import * as sendNeedleTextChatMessage from './sendNeedleTextChatMessage'
 import * as sentence from './sentence'
 import * as submitFeedback from './submitFeedback'
+import * as updateUserDevices from './updateUserDevices'
 import * as wechatLoginOrSignUp from './wechatLoginOrSignUp'
 
 import { logQueryOrMutation } from '../utils'
@@ -27,6 +29,7 @@ const mutations = {
   ...footAssessment,
   ...photos,
   ...bloodGlucoseMeasurement,
+  ...bloodGlucoseMeasurementNew,
   ...sendNeedleAudioChatMessage,
   ...sendNeedleImageChatMessage,
   ...sendNeedleTextChatMessage,
@@ -42,6 +45,7 @@ const mutations = {
   ...addOrder,
   ...changeUsername,
   ...reportDevice,
+  ...updateUserDevices,
 }
 
 const mutationsWithLogging = {}

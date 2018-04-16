@@ -49,13 +49,13 @@ export const bloodGlucoseMeasurementsAndTreatmentPlans = async (
       value: (+x.bgValue).toFixed(2),
       unit: 'mg/dL',
     },
-    manual: !!(x.measurementDeviceModel != 'BG1'),
+    manual: !!(x.measurementDeviceModel !== 'BG1'),
     medication: structureMedication(x.pillNote),
     measurementDeviceModel: !!x.iGlucoseDataId && 'BG1',
     carbohydratesConsumed: structureCarbohydrates(x.mealNote),
     hadTakenInsulin: ChineseBoolean[x.insulinInjection],
-    measureResultId:x._id,
-    remark:x.remark?x.remark:""
+    measureResultId: x._id,
+    remark: x.remark ? x.remark : '',
   }))
   return { bloodGlucoseMeasurements, treatmentPlans }
 }

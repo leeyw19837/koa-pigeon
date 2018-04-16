@@ -120,6 +120,15 @@ type Mutation {
     measuredAt: Date!
     deviceContext: DeviceContextInput!
   ): ID
+  saveBloodGlucoseMeasurementNew(
+    bloodGlucoseValue: Float
+    bloodGlucoseDataSource: String
+    inputType: String
+    patientId: String
+    measurementTime: String
+    deviceInformation: DeviceContextInput
+    measuredAt: Date
+  ): ID
   sendNeedleTextChatMessage(
     userId: String!
     chatRoomId: ID!
@@ -207,6 +216,8 @@ type Mutation {
     # 上报日期
     reportDate: Date
   ): Boolean
+  # 更新User的Device信息
+  updateUserDevices(patientId: ID!, deviceContext: DeviceContextInput): Boolean
 }
 
 type Subscription {

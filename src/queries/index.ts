@@ -1,6 +1,6 @@
-import * as bloodMeasurementPlans from './bloodMeasurementPlans'
 import * as bloodGlucoseMeasurements from './bloodGlucoseMeasurements'
 import * as bloodGlucoseMeasurementsAndTreatmentPlans from './bloodGlucoseMeasurementsAndTreatmentPlans'
+import * as bloodMeasurementPlans from './bloodMeasurementPlans'
 import * as chatMessages from './chatMessages'
 import * as diet from './diet'
 import * as fetchOrCreateNeedleChatRoom from './fetchOrCreateNeedleChatRoom'
@@ -25,9 +25,9 @@ import * as getClinicalLabResult from './getClinicalLabResult'
 import * as warningsOfHigh from './warningsOfHigh'
 import * as warningsOfLow from './warningsOfLow'
 
+import * as healthCareTeam from './healthCareTeam'
 import * as orders from './orders'
 import * as terribleMeasure from './terribleMeasure'
-import * as healthCareTeam from './healthCareTeam'
 
 const queries = {
   ...bloodGlucoseMeasurements,
