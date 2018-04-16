@@ -1,0 +1,85 @@
+
+enum BgDataSource {
+  # Needle手动录入
+  NEEDLE_MANUAL
+  # Needle BG1设备测量
+  NEEDLE_BG1
+  # 微信手动录入
+  WX_MANUAL
+  # 双平泰测量
+  SPT_SPT
+  # iGluco测量
+  IGLUCO_ICLUCO
+  # 照护师录入
+  CDE_MANUAL
+}
+
+enum InputTypeEnum {
+  # 手动
+  MANUAL
+  # 设备测量
+  DEVICE
+}
+
+enum MeasurementTimeEnum {
+  # 早餐前
+  BEFORE_BREAKFAST
+  # 早餐后
+  AFTER_BREAKFAST
+  # 午餐前
+  BEFORE_LUNCH
+  # 午餐后
+  AFTER_LUNCH
+  # 晚餐前
+  BEFORE_DINNER
+  # 晚餐后
+  AFTER_DINNER
+  # 睡前
+  BEFORE_SLEEPING
+  # 凌晨
+  MIDNIGHT
+  # 随机
+  RANDOM
+}
+
+enum DataStatusEnum {
+  # 可用
+  ACTIVE
+  # 不可用
+  DELETED
+}
+
+type BloodGlucoseRecord {
+
+  # 主键 String
+  # 导入的数据与旧的血糖表相同，新的数据只存在本表中
+  _id: String!
+
+  # 血糖值 Number
+  # 血糖值使用美标，展示值应除以18
+  bloodGlucoseValue: Float!
+
+  # 测量来源 enum
+  bloodGlucoseDataSource: BgDataSource!
+
+  # 数据产生方式 enum
+  inputType: InputTypeEnum
+
+  # 患者ID String
+  patientId: String
+
+  # 测量时段 enum
+  measurementTime: MeasurementTimeEnum!
+
+  # 备注 String
+  note: String
+
+  # 设备信息 Object
+  deviceInformation: DeviceContext
+
+  # 记录状态 enum
+  dataStatus: DataStatusEnum
+
+  # 测量时间/血糖产生时间 Datetime
+  measuredAt: Date
+}

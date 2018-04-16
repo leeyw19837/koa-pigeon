@@ -176,4 +176,20 @@ export const Patient = {
     }
     return null
   },
+  bloodGlucoses: async (patient, args, { getDb }: IContext) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const cursor = {
+      patientId,
+      dataStatus: 'ACTIVE',
+    }
+    if (args.startAt && args.endAt) {
+      Object.assign(cursor, {measuredAt: { $gt: args.startAt, $lt: args.endAt }})
+    }
+    return await db
+      .collection('bloodGlucoses')
+      .find(cursor)
+      .sort({ measuredAt: -1 })
+      .toArray()
+  }
 }
