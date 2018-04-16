@@ -1,7 +1,7 @@
 import * as addOrder from './addOrder'
 import * as assessmentTime from './assessmentTime'
+import * as updateRemarkOfBloodglucoses from './bloodGlucoseMeasurement'
 import * as bloodGlucoseMeasurement from './bloodGlucoseMeasurement'
-import * as bloodGlucoseMeasurementNew from './bloodGlucoseMeasurement'
 import * as changeUsername from './changeUsername'
 import * as chatMessages from './chatMessages'
 import * as communicationMutations from './communication'
@@ -29,7 +29,6 @@ const mutations = {
   ...footAssessment,
   ...photos,
   ...bloodGlucoseMeasurement,
-  ...bloodGlucoseMeasurementNew,
   ...sendNeedleAudioChatMessage,
   ...sendNeedleImageChatMessage,
   ...sendNeedleTextChatMessage,

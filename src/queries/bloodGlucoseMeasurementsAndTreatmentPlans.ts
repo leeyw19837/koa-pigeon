@@ -25,11 +25,6 @@ export const bloodGlucoseMeasurementsAndTreatmentPlans = async (
     .sort({ measuredAt: -1 })
     .toArray()
 
-  console.log(
-    'bloodGlucoseMeasurementsResult===',
-    bloodGlucoseMeasurementsResult,
-  )
-
   const treatmentPlansResult = await db
     .collection('bg_measure_module')
     .find({ patientId: args.patientId })

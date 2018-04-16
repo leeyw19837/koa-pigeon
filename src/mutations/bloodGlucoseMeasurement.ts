@@ -115,10 +115,10 @@ export const saveBloodGlucoseMeasurementNew = async (
     deviceInformation,
     measuredAt,
   }
-  const frId = freshId()
+  const frId = new ObjectID()
   const objSecond = {
-    _id: frId,
-    sourceId: frId,
+    _id: String(frId),
+    sourceId: String(frId),
     note: '',
     labels: [],
     dataStatus: 'ACTIVE',
@@ -180,6 +180,20 @@ export const updateRemarkOfBloodglucoses = async (
   const retVal = await db
     .collection('bloodglucoses')
     .update({ _id: maybeCreateFromHexString(_id) }, { $set: { remark } })
+  return !!retVal.result.ok
+}
+export const updateRemarkOfBloodglucosesNew = async (
+  _,
+  args,
+  { getDb }: IContext,
+) => {
+  const db = await getDb()
+
+  const { _id, remark } = args
+
+  const retVal = await db
+    .collection('bloodGlucoses')
+    .update({ _id: String(_id) }, { $set: { note: remark } })
   return !!retVal.result.ok
 }
 
