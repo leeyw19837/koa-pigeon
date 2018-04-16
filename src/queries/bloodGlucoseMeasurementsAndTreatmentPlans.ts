@@ -91,3 +91,4 @@ const convertCamelCaseToUpperCase = str =>
 
 const convertObjectToArray = obj =>
     Object.keys(obj).map(value => convertCamelCaseToUpperCase(value))
+
