@@ -189,11 +189,11 @@ export const updateRemarkOfBloodglucosesNew = async (
 ) => {
   const db = await getDb()
 
-  const { _id, remark } = args
+  const { _id, remark, updatedAt } = args
 
   const retVal = await db
     .collection('bloodGlucoses')
-    .update({ _id: String(_id) }, { $set: { note: remark } })
+    .update({ _id: String(_id) }, { $set: { note: remark, updatedAt } })
   return !!retVal.result.ok
 }
 
