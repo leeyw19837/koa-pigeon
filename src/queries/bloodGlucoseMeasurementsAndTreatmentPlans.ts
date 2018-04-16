@@ -91,37 +91,3 @@ const convertCamelCaseToUpperCase = str =>
 
 const convertObjectToArray = obj =>
     Object.keys(obj).map(value => convertCamelCaseToUpperCase(value))
-
-
-/*****************/
-
-export const bloodGlucoses = async (
-    _,
-    args,
-    { getDb }: IContext,
-) => {
-    const db = await getDb()
-
-    const query = {
-        patientId: args.patientId,
-        dataStatus: { $ne: 'DELETED' },
-    }
-
-    const bloodGlucoseMeasurementsResult = await db
-        .collection('bloodGlucoses')
-        .find(query)
-        .sort({ measuredAt: -1 })
-        .toArray()
-
-    const bloodGlucoseMeasurements = bloodGlucoseMeasurementsResult.map(x => ({
-        ...x,
-        _id: x._id,
-        bloodGlucoseValue: (+x.bloodGlucoseValue).toFixed(2),
-        bloodGlucoseDataSource: x.bloodGlucoseDataSource,
-        inputType: x.inputType,
-        measurementTime: x.measurementTime,
-        measuredAt: x.measuredAt,
-        note: x.note,
-    }))
-    return { bloodGlucoseMeasurements}
-}

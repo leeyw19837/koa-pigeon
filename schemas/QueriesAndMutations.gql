@@ -48,9 +48,6 @@ type Query {
     from: Date
     to: Date
   ): BloodGlucoseMeasurementsAndTreatmentPlans
-  bloodGlucoses(
-      patientId: ID
-  ):BloodGlucose
   # Sms
   smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
   fetchOrCreateNeedleChatRoom(userId: ID!): NeedleChatRoom!
