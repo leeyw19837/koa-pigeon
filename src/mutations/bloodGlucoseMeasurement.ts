@@ -118,16 +118,20 @@ export const deleteOfBloodglucoses = async (_, args, { getDb }: IContext) => {
   return !!retValue.result.ok
 }
 
-export const logicalDeleteOfBloodglucoses = async (_, args, { getDb }: IContext) => {
-    const db = await getDb()
+export const logicalDeleteOfBloodglucoses = async (
+  _,
+  args,
+  { getDb }: IContext,
+) => {
+  const db = await getDb()
 
-    const { _id } = args
-    const retValue = await db
-        .collection('bloodGlucoses')
-        .updateOne({ _id : _id} , {$set: {dataStatus : 'DELETED'}})
+  const { _id } = args
+  const retValue = await db
+    .collection('bloodGlucoses')
+    .updateOne({ _id }, { $set: { dataStatus: 'DELETED' } })
 
-    await db
-        .collection('warnings')
-        .deleteOne({ bloodglucoseId: maybeCreateFromHexString(_id) })
-    return !!retValue.result.ok
+  await db
+    .collection('warnings')
+    .deleteOne({ bloodglucoseId: maybeCreateFromHexString(_id) })
+  return !!retValue.result.ok
 }
