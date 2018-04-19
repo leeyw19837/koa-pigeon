@@ -1,10 +1,10 @@
 import freshId from 'fresh-id'
-import { ObjectID } from 'mongodb'
 import * as moment from 'moment'
+import { ObjectID } from 'mongodb'
+import { pubsub } from '../pubsub'
 import { IContext } from '../types'
 import { DigestiveStateLookup } from '../utils/i18n'
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
-import { pubsub } from '../pubsub'
 
 export const saveBloodGlucoseMeasurement = async (
   _,
@@ -141,7 +141,7 @@ export const saveBloodGlucoseMeasurementNew = async (
     const isTooDamnHigh = parseFloat(bloodGlucoseValue) >= 18 * 10
     const isTooDamnLow = parseFloat(bloodGlucoseValue) < 18 * 4
     if (isTooDamnHigh || isTooDamnLow) {
-      let warning = {
+      const warning = {
         bloodglucoseId: rz._id, // 关联的测量记录
         bloodGlucoseValue, // 本次记录的血糖值，转换后
         dinnerSituation: measurementTime,
