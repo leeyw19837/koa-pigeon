@@ -4,7 +4,6 @@ import { ObjectID } from 'mongodb'
 export const updateUserDevices = async (_, args, context) => {
   const db = await context.getDb()
   const { patientId, deviceContext = {} } = args
-
   if (!patientId) {
     throw new Error('You must be logged in to update devices')
   }
