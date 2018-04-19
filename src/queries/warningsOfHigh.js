@@ -37,8 +37,14 @@ export const warningsOfHigh = async (_, args, { getDb }) => {
     .find(query)
     .sort({ createdAt: -1 })
     .toArray()
-  return warninglists.filter(
-    item =>
-      gte(item.bgValue, 18 * rangeLow) && lte(item.bgValue, 18 * rangeHigh),
-  )
+
+  return warninglists
+    .filter(
+      item =>
+        gte(item.bgValue, 18 * rangeLow) && lte(item.bgValue, 18 * rangeHigh),
+    )
+    .map(x => ({
+      ...x,
+      bloodGlucoseValue: x.bloodGlucoseValue || +x.bgValue,
+    }))
 }
