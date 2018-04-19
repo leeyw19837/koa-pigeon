@@ -1,8 +1,10 @@
 import freshId from 'fresh-id'
 import { ObjectID } from 'mongodb'
+import * as moment from 'moment'
 import { IContext } from '../types'
 import { DigestiveStateLookup } from '../utils/i18n'
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
+import { pubsub } from '../pubsub'
 
 export const saveBloodGlucoseMeasurement = async (
   _,
@@ -103,7 +105,7 @@ export const saveBloodGlucoseMeasurementNew = async (
     patientId,
     measurementTime,
     deviceInformation,
-    measuredAt,
+    measuredAt = moment().toDate(),
   } = args
 
   const objFirst = {
@@ -136,11 +138,12 @@ export const saveBloodGlucoseMeasurementNew = async (
   const mobile = user.username.replace('@ijk.com', '')
   const nickname = user.nickname
   if (user.healthCareTeamId && user.healthCareTeamId.length > 0) {
-    if (parseFloat(bloodGlucoseValue) >= 18 * 10) {
-      await db.collection('warnings').insertOne({
+    const isTooDamnHigh = parseFloat(bloodGlucoseValue) >= 18 * 10
+    const isTooDamnLow = parseFloat(bloodGlucoseValue) < 18 * 4
+    if (isTooDamnHigh || isTooDamnLow) {
+      let warning = {
         bloodglucoseId: rz._id, // 关联的测量记录
         bloodGlucoseValue, // 本次记录的血糖值，转换后
-        warningType: 'HIGH_GLUCOSE', // 预备以后有别的警告记录种类
         dinnerSituation: measurementTime,
         patientId,
         nickname,
@@ -149,25 +152,22 @@ export const saveBloodGlucoseMeasurementNew = async (
         mobile,
         createdAt: new Date(),
         healthCareTeamId: user.healthCareTeamId[0],
-      })
-    } else if (parseFloat(bloodGlucoseValue) < 18 * 4) {
-      await db.collection('warnings').insertOne({
-        bloodglucoseId: rz._id, // 关联的测量记录
-        bloodGlucoseValue, // 本次记录的血糖值，转换后
-        warningType: 'LOW_GLUCOSE', // 预备以后有别的警告记录种类
-        dinnerSituation: measurementTime,
-        patientId,
-        nickname,
-        gender: user.gender, // 'male/female',
-        dateOfBirth: user.dateOfBirth,
-        mobile,
-        createdAt: new Date(),
-        healthCareTeamId: user.healthCareTeamId[0],
-      })
+        warningType: '',
+      }
+      if (isTooDamnHigh) {
+        console.log('high', bloodGlucoseValue)
+        warning.warningType = 'HIGH_GLUCOSE'
+      } else if (isTooDamnLow) {
+        console.log('low', bloodGlucoseValue)
+        warning.warningType = 'LOW_GLUCOSE'
+      }
+      await db.collection('warnings').insertOne(warning)
+      pubsub.publish('warningAdded', { warningAdded: warning })
     }
   }
   return !!retVal.result.ok ? retVal.insertedId : null
 }
+
 export const updateRemarkOfBloodglucoses = async (
   _,
   args,

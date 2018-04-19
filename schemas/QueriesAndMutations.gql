@@ -229,6 +229,7 @@ type Mutation {
 type Subscription {
   chatMessageAdded(chatRoomId: ID): NeedleChatMessage!
   chatRoomDynamics(userId: ID): NeedleChatRoom!
+  warningAdded: Warning
 }
 
 schema {
