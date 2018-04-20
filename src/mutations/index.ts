@@ -1,7 +1,7 @@
 import * as addOrder from './addOrder'
 import * as assessmentTime from './assessmentTime'
-import * as updateRemarkOfBloodglucoses from './bloodGlucoseMeasurement'
 import * as bloodGlucoseMeasurement from './bloodGlucoseMeasurement'
+import * as updateRemarkOfBloodglucoses from './bloodGlucoseMeasurement'
 import * as changeUsername from './changeUsername'
 import * as chatMessages from './chatMessages'
 import * as communicationMutations from './communication'
@@ -12,6 +12,7 @@ import * as outHospitalSoap from './outHospitalSoap'
 import * as photos from './photos'
 import * as reportDevice from './reportDevice'
 import * as saveMeals from './saveMeals'
+import * as saveUserBehaviors from './saveUserBehaviors'
 import * as sendMobileVerificationCode from './sendMobileVerificationCode'
 import * as sendNeedleAudioChatMessage from './sendNeedleAudioChatMessage'
 import * as sendNeedleImageChatMessage from './sendNeedleImageChatMessage'
@@ -45,6 +46,7 @@ const mutations = {
   ...changeUsername,
   ...reportDevice,
   ...updateUserDevices,
+  ...saveUserBehaviors,
 }
 
 const mutationsWithLogging = {}

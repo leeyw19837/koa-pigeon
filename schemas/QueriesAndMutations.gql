@@ -224,6 +224,13 @@ type Mutation {
   ): Boolean
   # 更新User的Device信息
   updateUserDevices(patientId: ID!, deviceContext: DeviceContextInput): Boolean
+  # 记录Needle用户行为
+  saveUserBehaviors(
+    patientId: ID!
+    eventName: String
+    eventNumber: String
+    occurredAt: Date
+  ): Boolean
 }
 
 type Subscription {
