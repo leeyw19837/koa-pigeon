@@ -56,7 +56,7 @@ const realSender = async ({type = 'CHAT', pushId, description, db, title = 'ๆค่
         notify_type: -1,
         notify_id: TYPE_MAP[type] || 1,
         extra: {
-            notify_foreground: notifyForeGround,
+            notify_foreground: 1,
         },
         title,
         description,
