@@ -16,7 +16,7 @@ export const sender = async ({type = 'CHAT', pushId, description, db, title = 'ๆ
 
     if (dataFromUserCollection && dataFromUserCollection.deviceContext.systemName) {
         const systemName = get(dataFromUserCollection, 'deviceContext.systemName', 'android').toLowerCase()
-        realSender({type, pushId, description, db, title, systemName})
+        await realSender({type, pushId, description, db, title, systemName})
     } else {
         const userDeviceContextFromBGCollection = await db.collection('bloodGlucoses')
             .find({patientId: pushId})
@@ -30,7 +30,7 @@ export const sender = async ({type = 'CHAT', pushId, description, db, title = 'ๆ
 
         if (dataFromBGCollection && dataFromBGCollection.deviceInformation.bundleId) {
             const bundleId = get(dataFromBGCollection, 'deviceInformation.bundleId', 'com.ihealth.HuTang')
-            realSender({
+            await realSender({
                 type,
                 pushId,
                 description,
@@ -56,7 +56,7 @@ const realSender = async ({type = 'CHAT', pushId, description, db, title = 'ๆค่
         notify_type: -1,
         notify_id: TYPE_MAP[type] || 1,
         extra: {
-            notify_foreground: 1,
+            notify_foreground: notifyForeGround,
         },
         title,
         description,
