@@ -19,6 +19,7 @@ import * as Subscription from './subscriptions'
 import { IContext } from './types'
 import { Date, formatError } from './utils'
 import cronJobRouter from './cronJob/router'
+import shortMessageRouter from './shortMessage/router'
 
 const { NODE_ENV, PORT, MONGO_URL, SECRET, JWT_SECRET } = process.env
 
@@ -76,6 +77,7 @@ router.post('/log', ctx => {
 })
 
 router.use('/cron-job', cronJobRouter.routes())
+router.use('/short-message', shortMessageRouter.routes())
 
 router.all(
   `/${SECRET}`,
