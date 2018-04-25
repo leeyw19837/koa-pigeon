@@ -107,7 +107,26 @@ export const saveBloodGlucoseMeasurementNew = async (
     deviceInformation,
     measuredAt = moment().toDate(),
   } = args
-
+  const measureTimeChinese = [
+    '早餐前',
+    '早餐后',
+    '午餐前',
+    '午餐后',
+    '晚餐前',
+    '晚餐后',
+    '睡前',
+    '凌晨',
+  ]
+  const measureTimeEng = [
+    'BEFORE_BREAKFAST',
+    'AFTER_BREAKFAST',
+    'BEFORE_LUNCH',
+    'AFTER_LUNCH',
+    'BEFORE_DINNER',
+    'AFTER_DINNER',
+    'BEFORE_SLEEPING',
+    'MIDNIGHT',
+  ]
   const objFirst = {
     bloodGlucoseValue,
     bloodGlucoseDataSource,
@@ -143,8 +162,9 @@ export const saveBloodGlucoseMeasurementNew = async (
     if (isTooDamnHigh || isTooDamnLow) {
       const warning = {
         bloodglucoseId: rz._id, // 关联的测量记录
-        bloodGlucoseValue, // 本次记录的血糖值，转换后
-        dinnerSituation: measurementTime,
+        bgValue: bloodGlucoseValue, // 本次记录的血糖值，转换后
+        dinnerSituation:
+          measureTimeChinese[measureTimeEng.indexOf(measurementTime)],
         patientId,
         nickname,
         gender: user.gender, // 'male/female',
