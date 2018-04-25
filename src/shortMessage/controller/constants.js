@@ -86,3 +86,4 @@ export const patientList = [
 ]
 
 export const ORDER_SUCCESS_TEMPLATE = 'SMS_133150323'
+export const STOP_OUTPATIENT_TEMPLATE = 'SMS_133180934'
