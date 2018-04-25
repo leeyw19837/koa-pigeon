@@ -45,8 +45,36 @@ export const sender = async ({type = 'CHAT', pushId, description, db, title = '�
     }
 }
 
+const getUnreadMessage = async(userId,db)=> {
+    const userObjectId = ObjectId.createFromHexString(userId)
+    const user = await db.collection('users').findOne({ _id: userObjectId })
+
+    if (user) {
+        const { needleChatRoomId } = user
+        const chatRoom = await db
+            .collection('needleChatRooms')
+            .findOne({ _id: needleChatRoomId })
+
+        if (chatRoom) {
+            const { participants } = chatRoom
+            const me = participants.find(item => item.userId === userId) || {}
+            const { lastSeenAt = new Date() } = me
+
+            const count = await db.collection('needleChatMessages').count({
+                chatRoomId: needleChatRoomId,
+                senderId: { $ne: userId },
+                createdAt: { $gt: lastSeenAt },
+            })
+            return count
+        }
+    }
+    return 0
+}
+
 const realSender = async ({type = 'CHAT', pushId, description, db, title = '护血糖', systemName}) => {
     const notifyForeGround = type === 'CHAT' ? '0' : '1'
+
+    const unReadMsg = await getUnreadMessage(pushId,db)
 
     const formData = {
         alias: pushId,
@@ -55,9 +83,12 @@ const realSender = async ({type = 'CHAT', pushId, description, db, title = '护�
         pass_through: 0,
         notify_type: -1,
         notify_id: TYPE_MAP[type] || 1,
-        extra: {
+        'extra.badge':unReadMsg,
+        'extra.notify_foreground':notifyForeGround,
+        /*extra: {
             notify_foreground: notifyForeGround,
-        },
+            badge: 3,
+        },*/
         title,
         description,
     }
