@@ -17,3 +17,8 @@ type Appointment {
   institutionId: ID
   healthCareTeamId: ID
 }
+
+type DailyAppointment {
+  date: String! # YYYY-MM-DD
+  count: Int!
+}

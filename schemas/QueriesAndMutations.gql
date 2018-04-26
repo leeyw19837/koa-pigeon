@@ -69,6 +69,11 @@ type Query {
   orders(patientId: ID!): [Order]
   # 新模板血糖测量作业
   bloodMeasurementPlans(patientId: ID!): BloodMeasurementPlans
+  # 月预约日历
+  monthlyAppointments(
+    monthStr: String
+    healthCareTeamId: ID
+  ): [DailyAppointment!]
 }
 
 type Mutation {
