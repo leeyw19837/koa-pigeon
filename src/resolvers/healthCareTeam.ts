@@ -18,7 +18,7 @@ export const HealthCareTeam = {
         roles: '医生',
         healthCareTeamId: careTeam._id,
       }).toArray()
-    console.log(doctors, '@doctors')
+    // console.log(doctors, '@doctors')
     return doctors
   }
 }

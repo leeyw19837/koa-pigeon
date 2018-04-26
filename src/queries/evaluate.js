@@ -185,7 +185,9 @@ export const getAllPatientsForCalc = async (_, args, context) => {
       },
     }
     tempFirstResult = await request(option)
-    firstResult = tempFirstResult.filter(item => item.patientState === 'ACTIVE')
+    firstResult = tempFirstResult
+      ? tempFirstResult.filter(item => item.patientState === 'ACTIVE')
+      : []
     // console.log(firstResult.length)
   }
   if (secondDay) {
@@ -200,9 +202,9 @@ export const getAllPatientsForCalc = async (_, args, context) => {
       },
     }
     tempSecondResult = await request(option)
-    secondResult = tempSecondResult.filter(
-      item => item.patientState === 'ACTIVE',
-    )
+    secondResult = tempSecondResult
+      ? tempSecondResult.filter(item => item.patientState === 'ACTIVE')
+      : []
     // console.log(secondResult.length)
   }
   const isNeedDiff = secondDay && firstDay
@@ -253,14 +255,20 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     children: [outOut, coming, flexable, waiting],
   }
   const pushData = (arr1, position1, position2, type, returnResult) => {
-    calData.children[arr1].count[returnResult] += 1
-    calData.children[arr1].children[position1].count[returnResult] += 1
-    calData.children[arr1].children[position1].children[position2].count[
-      returnResult
-    ] += 1
-    calData.children[arr1].children[position1].children[position2].children[
-      type
-    ].count[returnResult] += 1
+    if (arr1 && returnResult) {
+      calData.children[arr1].count[returnResult] += 1
+      if (position1 && position2) {
+        calData.children[arr1].children[position1].count[returnResult] += 1
+        calData.children[arr1].children[position1].children[position2].count[
+          returnResult
+        ] += 1
+        if (type) {
+          calData.children[arr1].children[position1].children[
+            position2
+          ].children[type].count[returnResult] += 1
+        }
+      }
+    }
   }
   const pushDiffData = (power, arr1, position1, position2, type, change) => {
     if (power >= 4) calData.children[arr1].diff.push(change)
@@ -300,7 +308,6 @@ export const getAllPatientsForCalc = async (_, args, context) => {
       const children1 = group[1] === 'in' ? 0 : 1
       const children2 = group[2] === 'L' || group[2] === 'F' ? 0 : 1
       const typeAtoE = getType(item.category)
-
       if (item.flag[0].desc === 'C_OO_NA') {
         calData.children[0].count[order] += 1
         calData.children[0].children[typeAtoE].count[order] += 1
@@ -399,7 +406,6 @@ export const getAllPatientsForCalc = async (_, args, context) => {
       }
     })
   } else if (firstResult.length > 0) {
-    // console.log('firstResult', firstResult.length, calData)
     setCount(firstResult, 0)
     calData.data = firstResult
   }
