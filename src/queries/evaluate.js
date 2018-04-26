@@ -255,14 +255,14 @@ export const getAllPatientsForCalc = async (_, args, context) => {
     children: [outOut, coming, flexable, waiting],
   }
   const pushData = (arr1, position1, position2, type, returnResult) => {
-    if (arr1 && returnResult) {
+    if (arr1 > -1 && returnResult > -1) {
       calData.children[arr1].count[returnResult] += 1
-      if (position1 && position2) {
+      if (position1 > -1 && position2 > -1) {
         calData.children[arr1].children[position1].count[returnResult] += 1
         calData.children[arr1].children[position1].children[position2].count[
           returnResult
         ] += 1
-        if (type) {
+        if (type > -1) {
           calData.children[arr1].children[position1].children[
             position2
           ].children[type].count[returnResult] += 1
