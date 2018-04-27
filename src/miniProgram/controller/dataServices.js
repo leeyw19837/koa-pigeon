@@ -1,5 +1,5 @@
 import { ObjectID } from 'mongodb'
-import moment from 'moment'
+const moment = require('moment')
 
 export const getPatient = async (unionid) => {
   return await db

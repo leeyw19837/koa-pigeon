@@ -10,12 +10,10 @@ const htcMap = {
   healthCareTeam5: '北京大学首钢医院',
 }
 
-export const getPatientByUnionId = async (wxInfo) => {
-  const { openid, unionid } = wxInfo
-  console.log(openid, unionid, wxInfo)
+export const getPatientByUnionId = async (unionid) => {
+  console.log(unionid)
   const result = {
     type: 'POTENTIAL',
-    openid,
     unionid,
   }
 
