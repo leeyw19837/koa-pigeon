@@ -1,6 +1,11 @@
 
 const isEmpty = require('lodash/isEmpty')
-import { getPatient, getTodayAppointment, getNextAppointment } from './dataServices'
+import {
+  getPatient,
+  getTodayAppointment,
+  getNextAppointment,
+  getReview
+} from './dataServices'
 
 const htcMap = {
   healthCareTeam1: '北大医院',
@@ -23,8 +28,9 @@ export const getPatientByUnionId = async (unionid) => {
 
   const { _id, nickname, healthCareTeamId } = patient
   const patientId = _id.toString()
+  const review = await getReview(patientId)
   const todayAppointment = await getTodayAppointment(patientId)
-  if (!isEmpty(todayAppointment)) {
+  if (!isEmpty(todayAppointment) && isEmpty(review)) {
     result.type = 'TODAY_HAS_APPOINTMENT'
     result.appointment = todayAppointment
   } else {

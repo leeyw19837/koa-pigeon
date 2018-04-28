@@ -1,10 +1,26 @@
-import { ObjectID } from 'mongodb'
+import freshId from 'fresh-id'
 const moment = require('moment')
+
+const getCompare = () => {
+  return {
+    $gte: moment().startOf('day').subtract(8, 'hours')._d,
+    $lt: moment().endOf('day').subtract(8, 'hours')._d,
+  }
+}
 
 export const getPatient = async (unionid) => {
   return await db
     .collection('users')
     .findOne({'wechatInfo.unionid': unionid})
+}
+
+export const getReview = async (patientId) => {
+  return await db
+    .collection('rewiews')
+    .findOne({
+      patientId,
+      treatmentTime: getCompare(),
+    })
 }
 
 export const getTodayAppointment = async (patientId) => {
@@ -13,10 +29,7 @@ export const getTodayAppointment = async (patientId) => {
     .findOne({
       patientId,
       isOutPatient: true,
-      appointmentTime: {
-        $gte: moment().startOf('day')._d,
-        $lt: moment().endOf('day')._d
-      }
+      appointmentTime: getCompare(),
     })
   return isCurrentTreatment
 }
@@ -31,4 +44,13 @@ export const getNextAppointment = async (patientId) => {
       appointments: -1,
     }).toArray()
   return appointments.length ? appointments[appointments.length - 1] : {}
+}
+
+export const createReview = async (rewiew) => {
+  const content = {
+    _id: freshId(),
+    ...rewiew,
+    createdAt: new Date()
+  }
+  return await db.collection('rewiews').insertOne(content)
 }
