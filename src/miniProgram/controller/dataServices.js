@@ -1,10 +1,22 @@
-import { ObjectID } from 'mongodb'
+import freshId from 'fresh-id'
 const moment = require('moment')
 
 export const getPatient = async (unionid) => {
   return await db
     .collection('users')
     .findOne({'wechatInfo.unionid': unionid})
+}
+
+export const getReview = async (patientId) => {
+  return await db
+    .collection('rewiews')
+    .findOne({
+      patientId,
+      treatmentTime: {
+        $gte: moment().startOf('day')._d,
+        $lt: moment().endOf('day')._d
+      }
+    })
 }
 
 export const getTodayAppointment = async (patientId) => {
@@ -31,4 +43,13 @@ export const getNextAppointment = async (patientId) => {
       appointments: -1,
     }).toArray()
   return appointments.length ? appointments[appointments.length - 1] : {}
+}
+
+export const createReview = async (rewiew) => {
+  const content = {
+    _id: freshId(),
+    ...rewiew,
+    createdAt: new Date()
+  }
+  return await db.collection('rewiews').insertOne(content)
 }

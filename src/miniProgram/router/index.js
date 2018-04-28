@@ -1,5 +1,13 @@
 
-import { getUserInfo, getUserInfoByUnionId } from '../controller'
+import {
+  getUserInfo,
+  getUserInfoByUnionId,
+  createReview,
+  getPatient,
+  getNextAppointment,
+} from '../controller'
+
+import isEmpty = require("lodash/isEmpty")
 
 const Router = require('koa-router')
 const miniProgram = new Router()
@@ -30,6 +38,30 @@ miniProgram.get('/userInfoByUnionId', async ctx => {
   }
   const result = await getUserInfoByUnionId(unionId)
   ctx.body = result
+})
+
+miniProgram.post('/createReview', async ctx => {
+  const {
+    unionid,
+    patientId,
+    stars,
+    starTags,
+    note,
+    treatmentTime,
+  } = ctx.request.body
+  const patient = await getPatient(unionid)
+  if (isEmpty(patient)) {
+    return ctx.throw(401, '非法操作')
+  }
+  const rewiew = {
+    patientId,
+    stars,
+    starTags,
+    note,
+    treatmentTime,
+  }
+  await createReview(rewiew)
+  ctx.body = 'OK'
 })
 
 export default miniProgram

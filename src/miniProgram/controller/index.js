@@ -3,6 +3,7 @@ export * from './wx'
 
 import { getDecodeUserInfo } from './wx'
 import { getPatientByUnionId } from './user'
+export * from './dataServices'
 
 export const getUserInfoByUnionId = getPatientByUnionId
 
