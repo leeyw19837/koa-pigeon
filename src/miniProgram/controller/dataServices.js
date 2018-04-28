@@ -1,6 +1,13 @@
 import freshId from 'fresh-id'
 const moment = require('moment')
 
+const getCompare = () => {
+  return {
+    $gte: moment().startOf('day').subtract(8, 'hours')._d,
+    $lt: moment().endOf('day').subtract(8, 'hours')._d,
+  }
+}
+
 export const getPatient = async (unionid) => {
   return await db
     .collection('users')
@@ -12,10 +19,7 @@ export const getReview = async (patientId) => {
     .collection('rewiews')
     .findOne({
       patientId,
-      treatmentTime: {
-        $gte: moment().startOf('day')._d,
-        $lt: moment().endOf('day')._d
-      }
+      treatmentTime: getCompare(),
     })
 }
 
@@ -25,10 +29,7 @@ export const getTodayAppointment = async (patientId) => {
     .findOne({
       patientId,
       isOutPatient: true,
-      appointmentTime: {
-        $gte: moment().startOf('day')._d,
-        $lt: moment().endOf('day')._d
-      }
+      appointmentTime: getCompare(),
     })
   return isCurrentTreatment
 }

@@ -7,7 +7,7 @@ import {
   getNextAppointment,
 } from '../controller'
 
-import isEmpty = require("lodash/isEmpty")
+const isEmpty = require("lodash/isEmpty")
 
 const Router = require('koa-router')
 const miniProgram = new Router()

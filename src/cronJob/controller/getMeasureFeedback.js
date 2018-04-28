@@ -50,7 +50,15 @@ export const getMeasureFeedback = ({
     const hasMeasureData = {}
     pBgDatas.forEach(bgItem => {
       const { measuredAt, measurementTime } = bgItem
-      const formatMeasureDate = moment(measuredAt).format('YYYY-MM-DD')
+
+      // TODO 调整时区，解决这个问题，并且删除代码
+      // TODO 调整时区，解决这个问题，并且删除代码
+      // TODO 调整时区，解决这个问题，并且删除代码
+
+      let formatMeasureDate =  moment(measuredAt).format('YYYY-MM-DD')
+      if (moment(measuredAt).format('HH') >= 16) {
+        formatMeasureDate = moment(measuredAt).add(1, 'days').format('YYYY-MM-DD')
+      }
       const key = dinnerMap[measurementTime]
       if (!hasMeasureData[formatMeasureDate]) {
         hasMeasureData[formatMeasureDate] = {
