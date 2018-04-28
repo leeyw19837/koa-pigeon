@@ -87,7 +87,6 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
     define = await db
       .collection('bgMeasureModule')
       .findOne({ _id: activeModule.bgMeasureModuleId })
-
     const bloodGlucoses = await db
       .collection('bloodGlucoses')
       .find({
@@ -95,7 +94,7 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
         dataStatus: 'ACTIVE',
         measuredAt: {
           $lte: endofweek._d,
-          $gt: dateofweek._d,
+          $gte: dateofweek._d,
         },
       })
       .sort({ measuredAt: -1 })
