@@ -43,7 +43,6 @@ miniProgram.get('/userInfoByUnionId', async ctx => {
 miniProgram.post('/createReview', async ctx => {
   const {
     unionid,
-    patientId,
     stars,
     starTags,
     note,
@@ -54,7 +53,7 @@ miniProgram.post('/createReview', async ctx => {
     return ctx.throw(401, '非法操作')
   }
   const rewiew = {
-    patientId,
+    patientId: patient._id.toString(),
     stars,
     starTags,
     note,
