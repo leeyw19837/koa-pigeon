@@ -57,7 +57,7 @@ miniProgram.post('/createReview', async ctx => {
     stars,
     starTags,
     note,
-    treatmentTime,
+    treatmentTime: new Date(treatmentTime),
   }
   await createReview(rewiew)
   ctx.body = 'OK'
