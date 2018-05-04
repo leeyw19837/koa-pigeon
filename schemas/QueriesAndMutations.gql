@@ -236,6 +236,7 @@ type Mutation {
     eventNumber: String
     occurredAt: Date
   ): Boolean
+  addAppointment: Boolean
 }
 
 type Subscription {

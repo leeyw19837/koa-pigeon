@@ -6,23 +6,26 @@ import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 const cors = require('koa-cors')
 const bodyParser = require('koa-bodyparser')
-import { execute, subscribe } from 'graphql'
-import { createServer } from 'http'
 import * as morgan from 'koa-morgan'
 import constructGetDb from 'mongodb-auto-reconnect'
+import { createServer } from 'http'
+import { execute, subscribe } from 'graphql'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
-import cronJobRouter from './cronJob/router'
-import { queryAnalyzer } from './middlewares'
+
 import Mutation from './mutations'
 import Query from './queries'
 import * as resolvers from './resolvers'
-import shortMessageRouter from './shortMessage/router'
 import * as Subscription from './subscriptions'
 import { IContext } from './types'
 import { Date, formatError } from './utils'
+import cronJobRouter from './cronJob/router'
+import shortMessageRouter from './shortMessage/router'
+import { queryAnalyzer } from './middlewares'
 
-const { NODE_ENV, PORT, MONGO_URL, SECRET, JWT_SECRET } = process.env
-
+let { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
+if (!PORT) PORT = '3080'
+if (!NODE_ENV) NODE_ENV = 'development'
+if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
 // This is necessary because graphql-tools
 // looks for __esModule in the schema otherwise
 delete (resolvers as any).__esModule
@@ -33,7 +36,7 @@ delete (resolvers as any).__esModule
     Query,
     Mutation,
     Date,
-  } as any // TODO(jan): Find a way to make this typed
+  } as any
 
   const schemasText = fs
     .readdirSync('./schemas/')
@@ -79,6 +82,7 @@ delete (resolvers as any).__esModule
 
   router.use(
     queryAnalyzer({
+      appendTo: 'BODY',
       ignores: ['ID', 'String', 'Date', 'Int', 'Boolean', 'Float'],
     }),
   ) // 需要打开graphql服务的tracing
@@ -97,7 +101,6 @@ delete (resolvers as any).__esModule
   const ws = createServer(app.callback())
   ws.listen(PORT, () => {
     console.log(`Apollo Server is now running on http://localhost:${PORT}`)
-    // Set up the WebSocket for handling GraphQL subscriptions
     new SubscriptionServer(
       {
         execute,
@@ -111,5 +114,4 @@ delete (resolvers as any).__esModule
     )
   })
   console.log(`Running at ${PORT}/${SECRET}; Node env: ${NODE_ENV}`)
-  // app.listen(PORT)
 })()
