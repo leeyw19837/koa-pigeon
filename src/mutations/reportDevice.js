@@ -1,5 +1,4 @@
 import freshId from 'fresh-id'
-const moment = require('moment')
 
 export const reportDevice = async (_, args, context) => {
   const db = await context.getDb()

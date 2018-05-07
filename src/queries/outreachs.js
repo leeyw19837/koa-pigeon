@@ -10,8 +10,8 @@ export const outreachs = async (_, args, { getDb }) => {
 
   switch (period) {
     case 'oneDay':
-      const startOfDay = moment(startDay).add(8, 'h').startOf('day')
-      const endOfDay = moment(startOfDay._d).add(1, 'd')
+      const startOfDay = moment(startDay).startOf('day')
+      const endOfDay = moment(startDay).endOf('day')
       query = {
         status: 'PENDING',
         source: 'communication',
@@ -23,7 +23,7 @@ export const outreachs = async (_, args, { getDb }) => {
       }
       break
     case 'oneWeek':
-      const startOfCurrentWeek = moment(startDay).add(8, 'h').startOf('isoWeek')
+      const startOfCurrentWeek = moment(startDay).startOf('isoWeek')
       const endOfCurrentWeek = moment(startOfCurrentWeek).add(7, 'd')
       query = {
         status: 'PENDING',

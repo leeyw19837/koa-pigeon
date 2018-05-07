@@ -1,5 +1,4 @@
 import { ObjectId } from 'mongodb'
-import moment from 'moment'
 
 export const fetchDiets = async (_, args, context) => {
   const db = await context.getDb()

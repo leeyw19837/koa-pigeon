@@ -1,4 +1,3 @@
-import moment = require('moment')
 
 import { IContext } from '../types'
 

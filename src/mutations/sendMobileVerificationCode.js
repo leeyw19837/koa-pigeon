@@ -1,4 +1,3 @@
-import moment from 'moment'
 import freshId from 'fresh-id'
 import { code } from 'righteous-raven'
 

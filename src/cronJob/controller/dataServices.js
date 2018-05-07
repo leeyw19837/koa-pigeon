@@ -1,5 +1,4 @@
 import { ObjectID } from 'mongodb'
-const moment = require('moment')
 
 export const getBgMeasureModules = async () => {
   return await db
@@ -39,23 +38,20 @@ export const getMeasureModules = async (patientsId, compareDate) => {
     .find({
       patientId: { $in: patientsId },
       endAt: {
-        $gt: moment(compareDate.startOf('day')).subtract(8, 'hours').format('YYYY-MM-DD'),
+        $gt: compareDate.format('YYYY-MM-DD'),
       },
     })
     .sort({ endAt: -1 })
     .toArray()
 }
 export const getBloodGlucoses = async (patientsId, compareDate) => {
-  // TODO 调整时区，解决这个问题，并且删除代码 moment(compareDate.startOf('day')).subtract(8, 'hours')._d
-  // TODO 调整时区，解决这个问题，并且删除代码
-  // TODO 调整时区，解决这个问题，并且删除代码
   return await db
     .collection('bloodGlucoses')
     .find({
       patientId: { $in: patientsId },
       dataStatus: 'ACTIVE',
       measuredAt: {
-        $gte: moment(compareDate.startOf('day')).subtract(8, 'hours')._d,
+        $gte: compareDate.startOf('day')._d,
       },
     })
     .sort({ measuredAt: -1 })
