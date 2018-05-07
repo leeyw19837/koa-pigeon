@@ -5,6 +5,7 @@ export const monthlyAppointments = async (_, args, context) => {
   const db = await context.getDb()
   const { monthStr, healthCareTeamId } = args
   const $match = {
+    healthCareTeamId: { $ne: null },
     appointmentTime: { $ne: null },
     patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
   }
@@ -30,14 +31,31 @@ export const monthlyAppointments = async (_, args, context) => {
       {
         $group: {
           _id: {
-            $dateToString: { format: '%Y-%m-%d', date: '$appointmentTime' },
+            date: {
+              $dateToString: { format: '%Y-%m-%d', date: '$appointmentTime' },
+            },
+            healthCareTeamId: '$healthCareTeamId',
           },
           count: { $sum: 1 },
         },
       },
       {
+        $group: {
+          _id: '$_id.date',
+          details: {
+            $push: {
+              healthCareTeamId: '$_id.healthCareTeamId',
+              count: '$count',
+            },
+          },
+          count: { $sum: '$count' },
+        },
+      },
+      {
         $project: {
+          _id: 0,
           date: '$_id',
+          details: 1,
           count: 1,
         },
       },
