@@ -13,7 +13,7 @@ export const treatmentStateApp = async (_, args, { getDb }) => {
   queryOne = {
     patientId: args.patientId,
     appointmentTime: { $gt: moment().toDate() },
-    checkIn: false,
+    isOutPatient: false,
   }
   queryTwo = {
     patientId: args.patientId,
