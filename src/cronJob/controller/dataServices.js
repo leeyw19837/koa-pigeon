@@ -1,4 +1,5 @@
 import { ObjectID } from 'mongodb'
+const moment = require('moment')
 
 export const getBgMeasureModules = async () => {
   return await db
@@ -55,5 +56,41 @@ export const getBloodGlucoses = async (patientsId, compareDate) => {
       },
     })
     .sort({ measuredAt: -1 })
+    .toArray()
+}
+
+export const getPatientById = async (patientId) => {
+  return await db
+    .collection('users')
+    .findOne({ _id: ObjectID.createFromHexString(patientId) })
+}
+
+export const getAppointments = async () => {
+  const startAt = moment().startOf('day')
+  const endAt = moment().endOf('day')
+  return await db
+    .collection('appointments')
+    .find({
+      appointmentTime: {
+        $gte: startAt._d,
+        $lt: endAt._d,
+      },
+      isOutPatient: true,
+    })
+    .toArray()
+}
+
+export const getCaseRecords = async (patientIds) => {
+  const startAt = moment().startOf('day')
+  const endAt = moment().endOf('day')
+  return await db
+    .collection('caseRecord')
+    .find({
+      patientId: {$in: patientIds},
+      caseRecordAt: {
+        $gte: startAt._d,
+        $lt: endAt._d,
+      },
+    })
     .toArray()
 }
