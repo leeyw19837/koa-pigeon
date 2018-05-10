@@ -16,7 +16,7 @@ export const addOrder = async (_, args, context) => {
     freightPrice,
     totalPrice,
   } = args
-  let result = await db.collection('Orders').insert({
+  let result = await db.collection('orders').insert({
     _id: freshId(),
     patientId,
     orderId,
