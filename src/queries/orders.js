@@ -3,7 +3,7 @@ export const orders = async (_, args, { getDb }) => {
   const db = await getDb()
 
   return db
-    .collection('Orders')
+    .collection('orders')
     .find({ patientId: args.patientId })
     .toArray()
 }
