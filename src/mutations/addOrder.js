@@ -15,7 +15,6 @@ export const addOrder = async (_, args, context) => {
     purchaseQuantity,
     freightPrice,
     totalPrice,
-    source,
   } = args
   let result = await db.collection('orders').insert({
     _id: freshId(),
@@ -32,7 +31,7 @@ export const addOrder = async (_, args, context) => {
     purchaseQuantity,
     freightPrice,
     totalPrice,
-    source,
+    source: 'NEEDLE',
   })
   if (!!result.result.ok) {
     return true
