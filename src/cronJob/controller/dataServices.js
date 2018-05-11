@@ -59,10 +59,12 @@ export const getBloodGlucoses = async (patientsId, compareDate) => {
     .toArray()
 }
 
-export const getPatientById = async (patientId) => {
+export const getPatientsByIds = async (patientIds) => {
   return await db
     .collection('users')
-    .findOne({ _id: ObjectID.createFromHexString(patientId) })
+    .find({
+      _id: {$in: patientIds.map(o => ObjectID.createFromHexString(o))}
+    }).toArray()
 }
 
 export const getAppointments = async () => {

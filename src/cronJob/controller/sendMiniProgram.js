@@ -1,6 +1,6 @@
 
 import { healthCareTeamMap } from './constants'
-import { getAppointments, getCaseRecords } from './dataServices'
+import { getAppointments, getCaseRecords, getPatientsByIds } from './dataServices'
 
 const moment = require('moment')
 const request = require('request-promise')
@@ -33,7 +33,10 @@ export const sendMiniProgram = async (period, patientId) => {
       })
 
       const patientIds = availableAppointments.map(o => o.patientId)
-      const caseRecords = await getCaseRecords(patientIds)
+      const patients = await getPatientsByIds(patientIds)
+      const hasWechatInfo = patients.filter(o => o.wechatInfo && !!o.wechatInfo.openid)
+      const hasWechatPids = hasWechatInfo.map(o => o._id.toString())
+      const caseRecords = await getCaseRecords(hasWechatPids)
       const availablePids = caseRecords.map(o => o.patientId)
       if (availablePids.length) {
         for (let i = 0; i < availablePids.length; i++) {
