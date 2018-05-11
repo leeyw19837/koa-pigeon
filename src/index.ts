@@ -22,83 +22,82 @@ import cronJobRouter from './cronJob/router'
 import shortMessageRouter from './shortMessage/router'
 import miniProgramRouter from './miniProgram/router'
 
-const { NODE_ENV, PORT, MONGO_URL, SECRET, JWT_SECRET } = process.env
-
+let { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
+if (!PORT) PORT = '3080'
+if (!NODE_ENV) NODE_ENV = 'development'
+if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
 // This is necessary because graphql-tools
 // looks for __esModule in the schema otherwise
 delete (resolvers as any).__esModule
-
 ;(async () => {
-const resolverMap = {
-  ...resolvers,
-  Subscription,
-  Query,
-  Mutation,
-  Date,
-} as any // TODO(jan): Find a way to make this typed
+  const resolverMap = {
+    ...resolvers,
+    Subscription,
+    Query,
+    Mutation,
+    Date,
+  } as any
 
-const schemasText = fs
-  .readdirSync('./schemas/')
-  .map(fileName => fs.readFileSync(`./schemas/${fileName}`, 'utf-8'))
+  const schemasText = fs
+    .readdirSync('./schemas/')
+    .map(fileName => fs.readFileSync(`./schemas/${fileName}`, 'utf-8'))
 
-const schema = makeExecutableSchema({
-  resolvers: resolverMap,
-  typeDefs: schemasText,
-})
+  const schema = makeExecutableSchema({
+    resolvers: resolverMap,
+    typeDefs: schemasText,
+  })
 
-const app = new Koa()
-// if (NODE_ENV === 'production') {
-//   app.use(morgan('combined'))
-// } else {
-//   app.use(morgan('dev'))
-// }
-app.use(convert(cors()))
-app.use(bodyParser())
+  const app = new Koa()
+  // if (NODE_ENV === 'production') {
+  //   app.use(morgan('combined'))
+  // } else {
+  //   app.use(morgan('dev'))
+  // }
+  app.use(convert(cors()))
+  app.use(bodyParser())
 
-if (MONGO_URL === undefined) {
-  console.error('Run with `yarn docker:dev`!')
-  process.exit(-1)
-}
+  if (MONGO_URL === undefined) {
+    console.error('Run with `yarn docker:dev`!')
+    process.exit(-1)
+  }
 
-const getDb = constructGetDb(MONGO_URL || '')
-const context: IContext = {
-  getDb,
-}
+  const getDb = constructGetDb(MONGO_URL || '')
+  const context: IContext = {
+    getDb,
+  }
+  ;(global as any).db = await getDb()
 
-;(global as any).db = await getDb()
+  const router = new Router()
 
-const router = new Router()
+  router.get('/healthcheck', ctx => {
+    ctx.body = 'OK'
+  })
 
-router.get('/healthcheck', ctx => {
-  ctx.body = 'OK'
-})
+  router.post('/log', ctx => {
+    console.log(ctx.request.body)
+  })
 
-router.post('/log', ctx => {
-  console.log(ctx.request.body)
-})
+  router.use('/cron-job', cronJobRouter.routes())
+  router.use('/short-message', shortMessageRouter.routes())
+  router.use('/wx-mini', miniProgramRouter.routes())
 
-router.use('/cron-job', cronJobRouter.routes())
-router.use('/short-message', shortMessageRouter.routes())
-router.use('/wx-mini', miniProgramRouter.routes())
+  router.all(
+    `/${SECRET}`,
+    convert(
+      graphqlHTTP({
+        context,
+        schema,
+        graphiql: true,
+        formatError,
+      }),
+    ),
+  )
 
-router.all(
-  `/${SECRET}`,
-  convert(
-    graphqlHTTP({
-      context,
-      schema,
-      graphiql: true,
-      formatError,
-    }),
-  ),
-)
+  app.use(router.routes()).use(router.allowedMethods())
 
-app.use(router.routes()).use(router.allowedMethods())
-
-const ws = createServer(app.callback())
+  const ws = createServer(app.callback())
   ws.listen(PORT, () => {
     console.log(`Apollo Server is now running on http://localhost:${PORT}`)
-    // Set up the WebSocket for handling GraphQL subscriptions
     new SubscriptionServer(
       {
         execute,
@@ -111,6 +110,5 @@ const ws = createServer(app.callback())
       },
     )
   })
-console.log(`Running at ${PORT}/${SECRET}; Node env: ${NODE_ENV}`)
-// app.listen(PORT)
+  console.log(`Running at ${PORT}/${SECRET}; Node env: ${NODE_ENV}`)
 })()

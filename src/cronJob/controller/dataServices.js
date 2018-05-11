@@ -39,25 +39,58 @@ export const getMeasureModules = async (patientsId, compareDate) => {
     .find({
       patientId: { $in: patientsId },
       endAt: {
-        $gt: moment(compareDate.startOf('day')).subtract(8, 'hours').format('YYYY-MM-DD'),
+        $gt: compareDate.format('YYYY-MM-DD'),
       },
     })
     .sort({ endAt: -1 })
     .toArray()
 }
 export const getBloodGlucoses = async (patientsId, compareDate) => {
-  // TODO 调整时区，解决这个问题，并且删除代码 moment(compareDate.startOf('day')).subtract(8, 'hours')._d
-  // TODO 调整时区，解决这个问题，并且删除代码
-  // TODO 调整时区，解决这个问题，并且删除代码
   return await db
     .collection('bloodGlucoses')
     .find({
       patientId: { $in: patientsId },
       dataStatus: 'ACTIVE',
       measuredAt: {
-        $gte: moment(compareDate.startOf('day')).subtract(8, 'hours')._d,
+        $gte: compareDate.startOf('day')._d,
       },
     })
     .sort({ measuredAt: -1 })
+    .toArray()
+}
+
+export const getPatientById = async (patientId) => {
+  return await db
+    .collection('users')
+    .findOne({ _id: ObjectID.createFromHexString(patientId) })
+}
+
+export const getAppointments = async () => {
+  const startAt = moment().startOf('day')
+  const endAt = moment().endOf('day')
+  return await db
+    .collection('appointments')
+    .find({
+      appointmentTime: {
+        $gte: startAt._d,
+        $lt: endAt._d,
+      },
+      isOutPatient: true,
+    })
+    .toArray()
+}
+
+export const getCaseRecords = async (patientIds) => {
+  const startAt = moment().startOf('day')
+  const endAt = moment().endOf('day')
+  return await db
+    .collection('caseRecord')
+    .find({
+      patientId: {$in: patientIds},
+      caseRecordAt: {
+        $gte: startAt._d,
+        $lt: endAt._d,
+      },
+    })
     .toArray()
 }

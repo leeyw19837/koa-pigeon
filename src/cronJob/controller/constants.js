@@ -92,3 +92,21 @@ export const WEDNESDAY_TEXT_ID = 'SMS_129756066'
 export const SUNDAY_TEXT_NO_MEASURE_ID = 'SMS_129741134'
 export const SUNDAY_TEXT_NO_COMPLETED_ID = 'SMS_129746684'
 export const SUNDAY_TEXT_COMPLETED_ID = 'SMS_129741133'
+
+export const healthCareTeamMap = {
+  healthCareTeam1: {
+    1: 'morning',
+    2: 'afternoon',
+    5: 'morning',
+  },
+  healthCareTeam2: {
+    3: 'morning',
+    5: 'morning',
+  },
+  healthCareTeam3: {
+    3: 'afternoon',
+  },
+  healthCareTeam5: {
+    2: 'afternoon',
+  }
+}

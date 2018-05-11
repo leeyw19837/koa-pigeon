@@ -1,4 +1,3 @@
-import moment = require('moment')
 import filter = require("lodash/filter")
 import get = require("lodash/get")
 
@@ -33,7 +32,7 @@ export const laboratoryExaminationResults = async (_, args, { getDb }: IContext)
       return status!="stop"
     })
     value.caseContent.prescription.medicines = newMedicines
-  }) 
+  })
 
 
   return {clinicalLabResults,bodyCheckResults}

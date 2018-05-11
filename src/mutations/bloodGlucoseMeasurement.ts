@@ -1,5 +1,4 @@
 import freshId from 'fresh-id'
-import * as moment from 'moment'
 import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
 import { IContext } from '../types'
@@ -105,7 +104,7 @@ export const saveBloodGlucoseMeasurementNew = async (
     patientId,
     measurementTime,
     deviceInformation,
-    measuredAt = moment().toDate(),
+    measuredAt = new Date(),
   } = args
   const measureTimeChinese = [
     '早餐前',

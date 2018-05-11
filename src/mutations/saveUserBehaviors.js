@@ -15,6 +15,18 @@ export const saveUserBehaviors = async (_, args, context) => {
   }
 
   const frId = new ObjectID()
+  if (eventName === 'OPEN_APP') {
+    const { deviceContext } = args
+    await db.collection('userBehaviors').insert({
+      _id: String(frId),
+      patientId,
+      eventName,
+      eventNumber,
+      deviceContext,
+      occurredAt,
+    })
+    return true
+  }
   await db.collection('userBehaviors').insert({
     _id: String(frId),
     patientId,

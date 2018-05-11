@@ -3,8 +3,8 @@ const moment = require('moment')
 
 const getCompare = () => {
   return {
-    $gte: moment().startOf('day').subtract(8, 'hours')._d,
-    $lt: moment().endOf('day').subtract(8, 'hours')._d,
+    $gte: moment().startOf('day')._d,
+    $lt: moment().endOf('day')._d,
   }
 }
 

@@ -1,5 +1,4 @@
 import freshId from 'fresh-id'
-const moment = require('moment')
 
 export const addOrder = async (_, args, context) => {
   const db = await context.getDb()
@@ -32,6 +31,7 @@ export const addOrder = async (_, args, context) => {
     purchaseQuantity,
     freightPrice,
     totalPrice,
+    source: 'NEEDLE',
   })
   if (!!result.result.ok) {
     return true
