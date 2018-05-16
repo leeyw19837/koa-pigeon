@@ -27,7 +27,7 @@ export const sendMiniProgram = async (period, patientId) => {
   if(patientId) {
     await sendApi([patientId])
   }
-  if (NODE_ENV === 'production') {
+  if (NODE_ENV === 'production' && !patientId) {
     const currentDay = moment().isoWeekday()
     const appointments = await getAppointments()
     const availableAppointments = appointments.filter(o => {
