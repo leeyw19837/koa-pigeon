@@ -69,6 +69,8 @@ type Query {
   orders(patientId: ID!): [Order]
   # 新模板血糖测量作业
   bloodMeasurementPlans(patientId: ID!): BloodMeasurementPlans
+    getDiagnoseType(bloodGlucoseValue: String, patientId: ID, measurementTime: String, measuredAt: Date): DiagnoseType
+    getPatientInstitution(patientId: ID): InstitutionType
 }
 
 type Mutation {

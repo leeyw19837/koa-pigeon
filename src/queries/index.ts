@@ -29,6 +29,9 @@ import * as healthCareTeam from './healthCareTeam'
 import * as orders from './orders'
 import * as terribleMeasure from './terribleMeasure'
 
+import * as getDiagnoseType from './getDiagnoseType'
+import * as getPatientInstitution from './getPatientInstitution'
+
 const queries = {
   ...bloodGlucoseMeasurements,
   ...chatMessages,
@@ -57,6 +60,8 @@ const queries = {
   ...orders,
   ...healthCareTeam,
   ...bloodMeasurementPlans,
+    ...getDiagnoseType,
+    ...getPatientInstitution,
 }
 
 const queriesWithLogging = {}
