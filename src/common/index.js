@@ -1,6 +1,8 @@
 
 import { send } from 'righteous-raven'
 
+export * from './formatBgValue'
+
 const {
   RIGHTEOUS_RAVEN_URL, RIGHTEOUS_RAVEN_ID, RIGHTEOUS_RAVEN_KEY
 } = process.env
