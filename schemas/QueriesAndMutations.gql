@@ -211,6 +211,7 @@ type Mutation {
     freightPrice: Int
     #  总价
     totalPrice: Int
+    source: String
   ): Boolean
   reportDevice(
     # 病人编号
@@ -231,6 +232,7 @@ type Mutation {
     patientId: ID!
     eventName: String
     eventNumber: String
+    sessionId: String
     deviceContext: DeviceContextInput
     occurredAt: Date
   ): Boolean
