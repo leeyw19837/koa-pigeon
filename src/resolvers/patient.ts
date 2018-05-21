@@ -125,32 +125,29 @@ export const Patient = {
   useIGluco: async (patient, _, { getDb }: IContext) => {
     const db = await getDb()
     const result = await db
-      .collection('users')
-      .find({
-        _id: maybeCreateFromHexString(patient._id),
+      .collection('bloodGlucoses')
+      .distinct('bloodGlucoseDataSource', {
+        patientId: patient._id.toString(),
       })
-      .toArray()
-    return !!get(result[0], 'iGlucoseUserId')
+    return result.includes('IGLUCO_ICLUCO')
   },
   useNeedle: async (patient, _, { getDb }: IContext) => {
     const db = await getDb()
     const result = await db
-      .collection('users')
-      .find({
-        _id: maybeCreateFromHexString(patient._id),
+      .collection('bloodGlucoses')
+      .distinct('bloodGlucoseDataSource', {
+        patientId: patient._id.toString(),
       })
-      .toArray()
-    return !!get(result[0], 'isUseNeedle')
+    return result.includes('NEEDLE_BG1')
   },
   useSPT: async (patient, _, { getDb }: IContext) => {
     const db = await getDb()
     const result = await db
-      .collection('users')
-      .find({
-        _id: maybeCreateFromHexString(patient._id),
+      .collection('bloodGlucoses')
+      .distinct('bloodGlucoseDataSource', {
+        patientId: patient._id.toString(),
       })
-      .toArray()
-    return !!get(result[0], 'deviceSPT')
+    return result.includes('SPT_SPT')
   },
   usePublicNumber: async (patient, _, { getDb }: IContext) => {
     const db = await getDb()
@@ -184,12 +181,14 @@ export const Patient = {
       dataStatus: 'ACTIVE',
     }
     if (args.startAt && args.endAt) {
-      Object.assign(cursor, {measuredAt: { $gt: args.startAt, $lt: args.endAt }})
+      Object.assign(cursor, {
+        measuredAt: { $gt: args.startAt, $lt: args.endAt },
+      })
     }
     return await db
       .collection('bloodGlucoses')
       .find(cursor)
       .sort({ measuredAt: -1 })
       .toArray()
-  }
+  },
 }
