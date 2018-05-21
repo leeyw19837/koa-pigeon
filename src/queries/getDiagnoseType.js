@@ -95,8 +95,8 @@ export const getDiagnoseType = async (_, args, { getDb }) => {
                     if (isAboveTen(bgValue)){
                        getPairingBgRecord(patientId, measurementTime, measuredAt).then((result)=>{
                            if (result){
-                               bgValueBeforeMeal = bgValue - result
-                               if (bgValueBeforeMeal>3.5){
+                               bgValueBeforeMeal = result
+                               if (bgValue - result>3.5){
                                    replyType = 'd'
                                }else {
                                    replyType = 'e'
@@ -120,7 +120,7 @@ export const getDiagnoseType = async (_, args, { getDb }) => {
 
     console.log('diagnoseType',replyType,'bloodGlucoseValueBeforeMeal',`${bgValueBeforeMeal}`)
     return {
-        diagnoseType: 'b',
+        diagnoseType: replyType,
         bloodGlucoseValueBeforeMeal: `${bgValueBeforeMeal}`
     }
 }
