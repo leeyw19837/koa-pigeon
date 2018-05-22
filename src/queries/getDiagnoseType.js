@@ -45,20 +45,20 @@ const getPairingBgRecord = async ({ patientId, measurementTime, measuredAt}) => 
     return bgRecords.length ? formatBgValue(bgRecords[0]) : null
 }
 
-const isLessFour = value => value < 3.9
+const isLessFour = bgValue => bgValue < 3.9
 
-const isAboveSeven = bgRecord => bgRecord.bloodGlucoseValue > 7
+const isAboveSeven = bgValue => bgValue > 7
 
-const isFasting = (value) => measurementTime === 'BEFORE_BREAKFAST'
+const isFasting = (measurementTime) => measurementTime === 'BEFORE_BREAKFAST'
 
-const isAfterMeal = value => /AFTER/g.test(value)
+const isAfterMeal = measurementTime => /AFTER/g.test(measurementTime)
 
-const isAboveTen = value => value > 10
+const isAboveTen = bgValue => bgValue > 10
 
-const isUseInsulin = async (patientId) => {
-    const medicineType = await getMedicineType(patientId)
-    return medicineType === 'insulin'
-}
+// const isUseInsulin = async (patientId) => {
+//     const medicineType = await getMedicineType(patientId)
+//     return medicineType === 'insulin'
+// }
 
 export const getDiagnoseType = async (_, args, { getDb }) => {
     let replyType = 'g'
@@ -76,44 +76,47 @@ export const getDiagnoseType = async (_, args, { getDb }) => {
     if (bgValue) {
         if(isLessFour(bgValue)) {
             replyType = 'a'
-        } else if(isAboveSeven(bgValue)) {
-            // TODO
-            if (isFasting(measurementTime)){
-                getMedicineType(patientId).then((result)=>{
-                    if (result === 'insulin'){
-                        replyType = 'c'
-                    }else {
-                        if (result === 'oral'){
-                            replyType = 'b'
+        } else{
+            if(isAboveSeven(bgValue)) {
+                // TODO
+                if (isFasting(measurementTime)){
+                    getMedicineType(patientId).then((result)=>{
+                        if (result === 'insulin'){
+                            replyType = 'c'
+                        }else {
+                            if (result === 'oral'){
+                                replyType = 'b'
+                            }else {
+                                replyType = 'g'
+                            }
+                        }
+                    })
+                }else {
+                    if (isAfterMeal(measurementTime)){
+                        if (isAboveTen(bgValue)){
+                            getPairingBgRecord({patientId, measurementTime, measuredAt}).then((result)=>{
+                                if (result){
+                                    bgValueBeforeMeal = result
+                                    if (bgValue - result>3.5){
+                                        replyType = 'd'
+                                    }else {
+                                        replyType = 'e'
+                                    }
+                                }else {
+                                    replyType = 'f'
+                                }
+                            })
                         }else {
                             replyType = 'g'
                         }
-                    }
-                })
-            }else {
-                if (isAfterMeal(measurementTime)){
-                    if (isAboveTen(bgValue)){
-                       getPairingBgRecord(patientId, measurementTime, measuredAt).then((result)=>{
-                           if (result){
-                               bgValueBeforeMeal = result
-                               if (bgValue - result>3.5){
-                                   replyType = 'd'
-                               }else {
-                                   replyType = 'e'
-                               }
-                           }else {
-                               replyType = 'f'
-                           }
-                       })
                     }else {
                         replyType = 'g'
                     }
-                }else {
-                    replyType = 'g'
                 }
+            }else {
+                replyType = 'g'
             }
         }
-
     } else {
         console.log('BG value should be a number or could convert to number !!!')
     }
