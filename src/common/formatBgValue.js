@@ -4,5 +4,5 @@ export const formatBgValue = (value) => {
   if (isNaN(value)) {
     return null
   }
-  return (value / 18).toFixed(2)
+  return (value / 18).toFixed(1)
 }

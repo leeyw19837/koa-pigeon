@@ -1,6 +1,7 @@
 import { ObjectID } from 'mongodb'
 import { IContext } from '../types'
 import { formatBgValue } from '../common'
+var moment = require('moment');
 
 const periodTextMap = {
     'AFTER_BREAKFAST': 'BEFORE_BREAKFAST',
@@ -37,14 +38,15 @@ const getPairingBgRecord = async ({ patientId, measurementTime, measuredAt}) => 
             measuredAt: {
                 $gt: moment(measuredAt).startOf('day')._d,
                 $lt: moment(measuredAt).endOf('day')._d,
-            }
+            },
+            dataStatus: 'ACTIVE'
         })
         .sort({
             measuredAt: -1,
         })
         .limit(1)
         .toArray()
-    return bgRecords.length ? formatBgValue(bgRecords[0]) : null
+    return bgRecords.length ? formatBgValue(bgRecords[0].bloodGlucoseValue) : null
 }
 
 const isLessFour = bgValue => bgValue <= 3.9
@@ -71,59 +73,78 @@ export const getDiagnoseType = async (_, args, { getDb }) => {
     let patientId = args.patientId
     let bloodGlucoseValue = args.bloodGlucoseValue
 
-    console.log(args)
+    //console.log(args)
 
     //const bgValue = formatBgValue(bloodGlucoseValue)
     const bgValue = bloodGlucoseValue
     if (bgValue) {
         if(isLessFour(bgValue)) {
             replyType = 'a'
+            //console.log('isLessFour diagnoseType',replyType)
         } else{
             if(isAboveSeven(bgValue)) {
-                // TODO
+                //console.log('isAboveSeven diagnoseType',replyType)
                 if (isFasting(measurementTime)){
-                    getMedicineType(patientId).then((result)=>{
+                    //console.log('isFasting diagnoseType',replyType)
+                    let result = await getMedicineType(patientId)
+                    //console.log('result========',result)
                         if (result === 'insulin'){
                             replyType = 'c'
+                            //console.log('result === insulin diagnoseType',replyType)
                         }else {
                             if (result === 'oral'){
                                 replyType = 'b'
+                                //console.log('result === oral diagnoseType',replyType)
                             }else {
                                 replyType = 'g'
+                                //console.log('else1 diagnoseType',replyType)
                             }
                         }
-                    })
+
                 }else {
                     if (isAfterMeal(measurementTime)){
+                        //console.log('isAfterMeal(measurementTime) diagnoseType',replyType)
                         if (isAboveTen(bgValue)){
-                            getPairingBgRecord({patientId, measurementTime, measuredAt}).then((result)=>{
+                            //console.log('isAboveTen(bgValue) diagnoseType',replyType)
+                            let result = await getPairingBgRecord({patientId, measurementTime, measuredAt})
                                 if (result){
+                                    //console.log('result getPairingBgRecord diagnoseType',replyType,'result',result)
                                     bgValueBeforeMeal = result
-                                    if (bgValue - result>3.5){
+                                    if (bgValue - result > 3.5){
                                         replyType = 'd'
+                                        //console.log('bgValue - result>3.5 diagnoseType',replyType)
                                     }else {
                                         replyType = 'e'
+                                        //console.log('else2 diagnoseType',replyType)
                                     }
                                 }else {
                                     replyType = 'f'
+                                    //console.log('else3 diagnoseType',replyType)
                                 }
-                            })
+
                         }else {
                             replyType = 'g'
+                            //console.log('else4 diagnoseType',replyType)
                         }
                     }else {
                         replyType = 'g'
+                        //console.log('else5 diagnoseType',replyType)
                     }
                 }
             }else {
                 replyType = 'g'
+                //console.log('else6 diagnoseType',replyType)
+                return {
+                    diagnoseType: replyType,
+                    bloodGlucoseValueBeforeMeal: `${bgValueBeforeMeal}`
+                }
             }
         }
     } else {
+        //console.log('else7 diagnoseType',replyType)
         console.log('BG value should be a number or could convert to number !!!')
     }
 
-    console.log('diagnoseType',replyType,'bloodGlucoseValueBeforeMeal',`${bgValueBeforeMeal}`)
     return {
         diagnoseType: replyType,
         bloodGlucoseValueBeforeMeal: `${bgValueBeforeMeal}`
