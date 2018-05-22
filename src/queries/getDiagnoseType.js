@@ -9,7 +9,7 @@ const periodTextMap = {
 }
 
 const getMedicineType = async (patientId) => {
-    let medicineType = 'oral'
+    let medicineType = ''
     const latestCaseRecord = await db
         .collection('caseRecord')
         .find({
@@ -21,7 +21,9 @@ const getMedicineType = async (patientId) => {
     if(latestCaseRecord.length) {
         const isUseInsulin = latestCaseRecord[0].caseContent.prescription.medicines.filter(o =>
             o.medicineType === 'insulin' && o.status !== 'stop')
-        medicineType = isUseInsulin.length ? 'insulin' : 'oral'
+        const isUseOral = latestCaseRecord[0].caseContent.prescription.medicines.filter(o =>
+            o.medicineType === 'oral' && o.status !== 'stop')
+        medicineType = isUseInsulin.length ? 'insulin' : (isUseOral.length?'oral':'')
     }
     return medicineType
 }
