@@ -1,0 +1,4 @@
+type DiagnoseType {
+  diagnoseType: String
+  bloodGlucoseValueBeforeMeal: String
+}

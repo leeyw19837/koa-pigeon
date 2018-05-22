@@ -3,7 +3,7 @@ import { ObjectID } from 'mongodb'
 
 export const saveUserBehaviors = async (_, args, context) => {
   const db = await context.getDb()
-  const { patientId, eventName, eventNumber, occurredAt } = args
+  const { patientId, eventName, eventNumber, sessionId, occurredAt } = args
   if (!patientId) {
     throw new Error('You must be logged in to update devices')
   }
@@ -22,6 +22,7 @@ export const saveUserBehaviors = async (_, args, context) => {
       patientId,
       eventName,
       eventNumber,
+      sessionId,
       deviceContext,
       occurredAt,
     })
@@ -32,6 +33,7 @@ export const saveUserBehaviors = async (_, args, context) => {
     patientId,
     eventName,
     eventNumber,
+    sessionId,
     occurredAt,
   })
   return true
