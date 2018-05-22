@@ -47,7 +47,7 @@ const getPairingBgRecord = async ({ patientId, measurementTime, measuredAt}) => 
     return bgRecords.length ? formatBgValue(bgRecords[0]) : null
 }
 
-const isLessFour = bgValue => bgValue < 3.9
+const isLessFour = bgValue => bgValue <= 3.9
 
 const isAboveSeven = bgValue => bgValue > 7
 
