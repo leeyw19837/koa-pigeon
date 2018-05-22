@@ -74,6 +74,7 @@ type Query {
     monthStr: String
     healthCareTeamId: ID
   ): [DailyAppointment!]
+  dailyOutpatients(healthCareTeamId: ID): [DailyOutpatients!]
 }
 
 type Mutation {

@@ -14,7 +14,6 @@ export const queryAnalyzer = (
       'extensions.tracing.execution.resolvers',
       [],
     )
-
     if (
       !isEmpty(tracingResolvers) &&
       tracingResolvers[0].parentType === 'Query'
@@ -37,6 +36,7 @@ export const queryAnalyzer = (
 
     if (
       options.appendTo === 'BODY' &&
+      !isEmpty(tracingResolvers) &&
       tracingResolvers[0].parentType === 'Mutation' &&
       !isEmpty(effectTypes)
     ) {

@@ -21,10 +21,10 @@ type Appointment {
 type DailyAppointment {
   date: String! # YYYY-MM-DD
   count: Int!
-  details: [TeamAppointments!]!
+  details: [TeamAppointments!]
 }
 
 type TeamAppointments {
-  healthCareTeam: HealthCareTeam!
+  healthCareTeam: HealthCareTeam
   count: Int!
 }
