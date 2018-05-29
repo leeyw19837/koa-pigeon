@@ -21,7 +21,7 @@ const getMedicineType = async (patientId) => {
         .toArray()
     if(latestCaseRecord.length) {
         const isUseInsulin = latestCaseRecord[0].caseContent.prescription.medicines.filter(o =>
-            o.medicineType === 'insulin' && o.status !== 'stop')
+            o.medicineType === 'insulin' && o.status !== 'stop' && o.function === 'BASAL')
         const isUseOral = latestCaseRecord[0].caseContent.prescription.medicines.filter(o =>
             o.medicineType === 'oral' && o.status !== 'stop')
         medicineType = isUseInsulin.length ? 'insulin' : (isUseOral.length?'oral':'')
@@ -73,7 +73,7 @@ export const getDiagnoseType = async (_, args, { getDb }) => {
     let patientId = args.patientId
     let bloodGlucoseValue = args.bloodGlucoseValue
 
-    //console.log(args)
+    console.log(args)
 
     //const bgValue = formatBgValue(bloodGlucoseValue)
     const bgValue = bloodGlucoseValue
@@ -134,16 +134,14 @@ export const getDiagnoseType = async (_, args, { getDb }) => {
             }else {
                 replyType = 'g'
                 //console.log('else6 diagnoseType',replyType)
-                return {
-                    diagnoseType: replyType,
-                    bloodGlucoseValueBeforeMeal: `${bgValueBeforeMeal}`
-                }
             }
         }
     } else {
         //console.log('else7 diagnoseType',replyType)
         console.log('BG value should be a number or could convert to number !!!')
     }
+
+    console.log('diagnoseType',replyType,'bloodGlucoseValueBeforeMeal',`${bgValueBeforeMeal}`)
 
     return {
         diagnoseType: replyType,

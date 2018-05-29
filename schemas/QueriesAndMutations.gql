@@ -71,6 +71,7 @@ type Query {
   bloodMeasurementPlans(patientId: ID!): BloodMeasurementPlans
     getDiagnoseType(bloodGlucoseValue: String, patientId: ID, measurementTime: String, measuredAt: Date): DiagnoseType
     getPatientInstitution(patientId: ID): InstitutionType
+   getOrderReceiverInfo(patientId: ID!): Order
 }
 
 type Mutation {
@@ -135,6 +136,7 @@ type Mutation {
     userId: String!
     chatRoomId: ID!
     text: String!
+    sourceType: String
   ): NeedleTextMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
