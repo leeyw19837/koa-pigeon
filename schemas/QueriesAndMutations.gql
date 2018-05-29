@@ -71,6 +71,7 @@ type Query {
   bloodMeasurementPlans(patientId: ID!): BloodMeasurementPlans
     getDiagnoseType(bloodGlucoseValue: String, patientId: ID, measurementTime: String, measuredAt: Date): DiagnoseType
     getPatientInstitution(patientId: ID): InstitutionType
+   getOrderReceiverInfo(patientId: ID!): Order
 }
 
 type Mutation {
