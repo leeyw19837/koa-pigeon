@@ -136,6 +136,7 @@ type Mutation {
     userId: String!
     chatRoomId: ID!
     text: String!
+    sourceType: String
   ): NeedleTextMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!

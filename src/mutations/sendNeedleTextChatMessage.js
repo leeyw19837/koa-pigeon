@@ -7,7 +7,7 @@ import { ObjectID } from 'mongodb'
 export const sendNeedleTextChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
-  const { userId, chatRoomId, text } = args
+  const { userId, chatRoomId, text, sourceType } = args
 
   const userObjectId = ObjectId.createFromHexString(userId)
 
@@ -32,6 +32,7 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
     senderId: userId,
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
+      sourceType: sourceType || 'FROM_CDE'
   }
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
