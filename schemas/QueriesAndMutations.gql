@@ -75,6 +75,7 @@ type Query {
     healthCareTeamId: ID
   ): [DailyAppointment!]
   dailyOutpatients(healthCareTeamId: ID): [DailyOutpatients!]
+  outpatient(id: ID): Outpatient
 }
 
 type Mutation {

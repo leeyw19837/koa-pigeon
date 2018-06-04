@@ -5,7 +5,7 @@ export const dailyOutpatients = async (_, args, context) => {
   const db = await context.getDb()
   const { healthCareTeamId } = args
   const $match = {
-    hospitalId: { $ne: null },
+    // hospitalId: { $ne: null },
   }
   if (healthCareTeamId) {
     $match.hospitalId = healthCareTeamId
@@ -15,6 +15,9 @@ export const dailyOutpatients = async (_, args, context) => {
     .aggregate([
       {
         $match,
+      },
+      {
+        $sort: { outpatientDate: 1, outpatientStartTime: 1 },
       },
       {
         $group: {
@@ -33,11 +36,14 @@ export const dailyOutpatients = async (_, args, context) => {
           outpatients: 1,
         },
       },
-      {
-        $sort: { date: 1 },
-      },
     ])
     .toArray()
 
   return result
 }
+
+export const outpatient=async (_, { id }, context) => {
+    const db = await context.getDb()
+    return await db.collection('outpatients').findOne({_id:ObjectId(id)})
+  },
+
