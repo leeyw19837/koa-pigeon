@@ -7,7 +7,7 @@ type Order {
   #  订单时间
   orderTime: Date
   #  订单状态 1：已经下单 2：其他
-  orderStatus: Int
+  orderStatus: String
   #  收货人
   receiver: String
   #  联系电话
@@ -15,7 +15,7 @@ type Order {
   #  收货地址
   receiveAddress: String
   #  商品类型： 1：iHealth血糖试纸 2：其他
-  goodsType: Int
+  goodsType: String
   #  商品单价
   goodsUnitPrice: Int
   #  商品规格
