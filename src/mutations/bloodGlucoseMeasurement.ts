@@ -153,6 +153,18 @@ export const saveBloodGlucoseMeasurementNew = async (
     _id: ObjectID.createFromHexString(patientId),
     patientState: { $exists: 1 },
   })
+  if ('NEEDLE_BG1' === bloodGlucoseDataSource && user && !user.isUseBg1) {
+    await db.collection('users').update(
+      {
+        _id: user._id,
+      },
+      {
+        $set: {
+          isUseBg1: true,
+        },
+      },
+    )
+  }
   const mobile = user.username.replace('@ijk.com', '')
   const nickname = user.nickname
   if (user.healthCareTeamId && user.healthCareTeamId.length > 0) {
