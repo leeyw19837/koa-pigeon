@@ -55,32 +55,32 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
     .collection('measureModules')
     .find({
       patientId: args.patientId,
-      startAt: {
-        $lte: dateofweek.format('YYYY-MM-DD'),
-      },
-      endAt: {
-        $gte: dateofweek.format('YYYY-MM-DD'),
-      },
+      // startAt: {
+      //   $lte: dateofweek.format('YYYY-MM-DD'),
+      // },
+      // endAt: {
+      //   $gte: dateofweek.format('YYYY-MM-DD'),
+      // },
     })
     .toArray()
-  if (measureModules.length <= 0) {
-    measureModules = await db
-      .collection('measureModules')
-      .find({
-        patientId: args.patientId,
-        startAt: {
-          $lte: moment().format('YYYY-MM-DD'),
-        },
-        endAt: {
-          $gte: moment().format('YYYY-MM-DD'),
-        },
-      })
-      .toArray()
-  }
+  // if (measureModules.length <= 0) {
+  //   measureModules = await db
+  //     .collection('measureModules')
+  //     .find({
+  //       patientId: args.patientId,
+  //       startAt: {
+  //         $lte: moment().format('YYYY-MM-DD'),
+  //       },
+  //       endAt: {
+  //         $gte: moment().format('YYYY-MM-DD'),
+  //       },
+  //     })
+  //     .toArray()
+  // }
 
   if (measureModules.length > 0) {
     const activeModule = sortBy(measureModules, [
-      'endAt',
+      // 'endAt',
       'createdAt',
     ]).reverse()[0]
 
