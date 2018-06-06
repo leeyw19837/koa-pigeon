@@ -72,6 +72,7 @@ type Query {
     getDiagnoseType(bloodGlucoseValue: String, patientId: ID, measurementTime: String, measuredAt: Date): DiagnoseType
     getPatientInstitution(patientId: ID): InstitutionType
    getOrderReceiverInfo(patientId: ID!): Order
+   getDiagnosticWords(diagnoseType:String, bloodGlucoseValue:String, bgValueBeforeMeal:String): DiagnosticWords
 }
 
 type Mutation {
