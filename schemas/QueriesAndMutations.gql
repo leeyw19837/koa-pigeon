@@ -69,10 +69,26 @@ type Query {
   orders(patientId: ID!): [Order]
   # 新模板血糖测量作业
   bloodMeasurementPlans(patientId: ID!): BloodMeasurementPlans
-    getDiagnoseType(bloodGlucoseValue: String, patientId: ID, measurementTime: String, measuredAt: Date): DiagnoseType
-    getPatientInstitution(patientId: ID): InstitutionType
-   getOrderReceiverInfo(patientId: ID!): Order
-   getDiagnosticWords(diagnoseType:String, bloodGlucoseValue:String, bgValueBeforeMeal:String): DiagnosticWords
+  getDiagnoseType(
+    bloodGlucoseValue: String
+    patientId: ID
+    measurementTime: String
+    measuredAt: Date
+  ): DiagnoseType
+  getPatientInstitution(patientId: ID): InstitutionType
+  getOrderReceiverInfo(patientId: ID!): Order
+  getDiagnosticWords(
+    diagnoseType: String
+    bloodGlucoseValue: String
+    bgValueBeforeMeal: String
+  ): DiagnosticWords
+  # 月预约日历
+  monthlyAppointments(
+    monthStr: String
+    healthCareTeamId: ID
+  ): [DailyAppointment!]
+  dailyOutpatients(healthCareTeamId: ID): [DailyOutpatients!]
+  outpatient(id: ID): Outpatient
 }
 
 type Mutation {
@@ -239,6 +255,7 @@ type Mutation {
     deviceContext: DeviceContextInput
     occurredAt: Date
   ): Boolean
+  addAppointment: Boolean
 }
 
 type Subscription {

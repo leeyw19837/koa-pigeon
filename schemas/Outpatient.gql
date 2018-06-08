@@ -1,0 +1,45 @@
+type DailyOutpatients {
+  date: String!
+  outpatients: [Outpatient!]!
+}
+
+enum OutpatientState {
+  WAITING
+  PROCESSING
+  COMPLETED
+  CANCELED
+}
+
+type OutpatientReport {
+  patients: Int
+  firstVisits: Int
+  returnVisits: Int
+  yearVisits: Int
+  additionalVisits: Int
+}
+
+type OutpatientDutyEmployee {
+  name: String!
+  phone: String
+}
+
+type Outpatient {
+  _id: ID
+  outpatientDate: String!
+  dayOfWeek: String!
+  outpatientStartTime: String!
+  outpatientEndTime: String!
+  doctorName: String!
+  hospitalName: String!
+  location: String!
+  registerPlace: String!
+  registerDepartment: String!
+  state: OutpatientState!
+  note: String
+  report: OutpatientReport
+  patientIds: [ID!]
+  dutyEmployees: [OutpatientDutyEmployee!]
+  createdAt: Date
+  updatedAt: Date
+  patientsCount: Int!
+}

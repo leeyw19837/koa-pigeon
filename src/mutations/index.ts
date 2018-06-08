@@ -1,4 +1,5 @@
 import * as addOrder from './addOrder'
+import * as appointment from './appointment'
 import * as assessmentTime from './assessmentTime'
 import * as bloodGlucoseMeasurement from './bloodGlucoseMeasurement'
 import * as updateRemarkOfBloodglucoses from './bloodGlucoseMeasurement'
@@ -47,6 +48,7 @@ const mutations = {
   ...reportDevice,
   ...updateUserDevices,
   ...saveUserBehaviors,
+  ...appointment,
 }
 
 const mutationsWithLogging = {}

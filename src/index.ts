@@ -1,12 +1,11 @@
 import * as Koa from 'koa'
 import * as Router from 'koa-router'
 const convert = require('koa-convert')
-const graphqlHTTP = require('koa-graphql')
+import { graphqlKoa } from 'apollo-server-koa'
 import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 const cors = require('koa-cors')
 const bodyParser = require('koa-bodyparser')
-import * as morgan from 'koa-morgan'
 import constructGetDb from 'mongodb-auto-reconnect'
 import { createServer } from 'http'
 import { execute, subscribe } from 'graphql'
@@ -21,6 +20,7 @@ import { Date, formatError } from './utils'
 import cronJobRouter from './cronJob/router'
 import shortMessageRouter from './shortMessage/router'
 import miniProgramRouter from './miniProgram/router'
+// import { queryAnalyzer } from './middlewares'
 
 let { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 if (!PORT) PORT = '3080'
@@ -81,15 +81,22 @@ delete (resolvers as any).__esModule
   router.use('/short-message', shortMessageRouter.routes())
   router.use('/wx-mini', miniProgramRouter.routes())
 
+  // router.use(
+  //   queryAnalyzer({
+  //     appendTo: 'BODY',
+  //     ignores: ['ID', 'String', 'Date', 'Int', 'Boolean', 'Float'],
+  //   }),
+  // ) // 需要打开graphql服务的tracing
+
   router.all(
     `/${SECRET}`,
     convert(
-      graphqlHTTP({
-        context,
+      graphqlKoa(ctx => ({
+        context: { ...ctx, ...context },
         schema,
-        graphiql: true,
         formatError,
-      }),
+        tracing: true, // 中间件QueryAnalyzer需要依赖tracing的内容
+      })),
     ),
   )
 
