@@ -7,7 +7,7 @@ export const dailyOutpatients = async (_, args, context) => {
   const $match = {
     // hospitalId: { $ne: null },
   }
-  if (healthCareTeamId) {
+  if (healthCareTeamId && healthCareTeamId!=='null') {
     $match.hospitalId = healthCareTeamId
   }
   const result = await db
