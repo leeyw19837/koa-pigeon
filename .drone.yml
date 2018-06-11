@@ -5,11 +5,11 @@ clone:
 pipeline:
   build_step:
     image: plugins/docker
-    username: ihealth
+    username: ijiankang@ihealthlabs.com.cn
     password: iHealthStrategy2018
-    registry: harbor.ihealthcn.com
-    repo: harbor.ihealthcn.com/pigeon/pigeon
-    mirror: 'http://f95ba185.m.daocloud.io'
+    registry: registry.cn-beijing.aliyuncs.com
+    repo: registry.cn-beijing.aliyuncs.com/ihealthlabs/pigeon
+    mirror: 'https://t8ngg3ge.mirror.aliyuncs.com'
     tag:
       - '${DRONE_BUILD_NUMBER}'
       - latest
@@ -19,11 +19,11 @@ pipeline:
       event: push
   build_step:
     image: plugins/docker
-    username: ihealth
+    username: ijiankang@ihealthlabs.com.cn
     password: iHealthStrategy2018
-    registry: harbor.ihealthcn.com
-    repo: harbor.ihealthcn.com/pigeon/pigeon
-    mirror: 'http://f95ba185.m.daocloud.io'
+    registry: registry.cn-beijing.aliyuncs.com
+    repo: registry.cn-beijing.aliyuncs.com/ihealthlabs/pigeon
+    mirror: 'https://t8ngg3ge.mirror.aliyuncs.com'
     tag:
       - '${DRONE_BUILD_NUMBER}-master'
       - master
@@ -51,7 +51,7 @@ pipeline:
     access_key: FC6450BBAC9464CD0069
     secret_key: 2mbbTGC2rHFV4kghdYfZwDfjmbsR94KwKDhcaWZ5
     service: gtzh-stg/pigeon
-    docker_image: 'harbor.ihealthcn.com/pigeon/pigeon:latest'
+    docker_image: 'registry.cn-beijing.aliyuncs.com/ihealthlabs/pigeon:latest'
     batch_size: 1
     timeout: 600
     confirm: true
