@@ -37,7 +37,7 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
     senderId: userId,
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
-      sourceType: sourceType || 'FROM_CDE'
+    sourceType: sourceType || 'FROM_CDE',
   }
   await db.collection('needleChatMessages').insertOne(newChatMessage)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
@@ -74,7 +74,7 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
       $set: {
         participants,
       },
-    }
+    },
   )
   chatRoom = await db.collection('needleChatRooms').findOne({ _id: chatRoomId })
 

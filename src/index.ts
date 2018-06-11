@@ -6,21 +6,21 @@ import * as fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
 const cors = require('koa-cors')
 const bodyParser = require('koa-bodyparser')
-import constructGetDb from 'mongodb-auto-reconnect'
-import { createServer } from 'http'
 import { execute, subscribe } from 'graphql'
+import { createServer } from 'http'
+import * as morgan from 'koa-morgan'
+import constructGetDb from 'mongodb-auto-reconnect'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 
+import cronJobRouter from './cronJob/router'
+import miniProgramRouter from './miniProgram/router'
 import Mutation from './mutations'
 import Query from './queries'
 import * as resolvers from './resolvers'
+import shortMessageRouter from './shortMessage/router'
 import * as Subscription from './subscriptions'
 import { IContext } from './types'
 import { Date, formatError } from './utils'
-import cronJobRouter from './cronJob/router'
-import shortMessageRouter from './shortMessage/router'
-import miniProgramRouter from './miniProgram/router'
-// import { queryAnalyzer } from './middlewares'
 
 let { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 if (!PORT) PORT = '3080'
