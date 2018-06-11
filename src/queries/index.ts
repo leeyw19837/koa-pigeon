@@ -26,6 +26,7 @@ import * as warningsOfHigh from './warningsOfHigh'
 import * as warningsOfLow from './warningsOfLow'
 
 import * as appointments from './appointments'
+import * as certifiedDiabetesEducator from './certifiedDiabetesEducator'
 import * as healthCareTeam from './healthCareTeam'
 import * as orders from './orders'
 import * as outpatients from './outpatients'
@@ -70,6 +71,7 @@ const queries = {
   ...getOrderReceiverInfo,
   ...appointments,
   ...outpatients,
+  ...certifiedDiabetesEducator,
 }
 
 const queriesWithLogging = {}

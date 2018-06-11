@@ -1,0 +1,6 @@
+type CertifiedDiabetesEducator {
+  _id: ID!
+  assistant: HealthcareProfessional!
+  nickname: String!
+  patients: [Patient!]
+}

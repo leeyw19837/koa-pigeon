@@ -8,11 +8,12 @@ const cors = require('koa-cors')
 const bodyParser = require('koa-bodyparser')
 import { execute, subscribe } from 'graphql'
 import { createServer } from 'http'
-import * as morgan from 'koa-morgan'
+
 import constructGetDb from 'mongodb-auto-reconnect'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 
 import cronJobRouter from './cronJob/router'
+import { queryAnalyzer } from './middlewares'
 import miniProgramRouter from './miniProgram/router'
 import Mutation from './mutations'
 import Query from './queries'
@@ -29,7 +30,7 @@ if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
 // This is necessary because graphql-tools
 // looks for __esModule in the schema otherwise
 delete (resolvers as any).__esModule
-;(async () => {
+; (async () => {
   const resolverMap = {
     ...resolvers,
     Subscription,
@@ -65,7 +66,7 @@ delete (resolvers as any).__esModule
   const context: IContext = {
     getDb,
   }
-  ;(global as any).db = await getDb()
+  ; (global as any).db = await getDb()
 
   const router = new Router()
 
@@ -81,12 +82,12 @@ delete (resolvers as any).__esModule
   router.use('/short-message', shortMessageRouter.routes())
   router.use('/wx-mini', miniProgramRouter.routes())
 
-  // router.use(
-  //   queryAnalyzer({
-  //     appendTo: 'BODY',
-  //     ignores: ['ID', 'String', 'Date', 'Int', 'Boolean', 'Float'],
-  //   }),
-  // ) // 需要打开graphql服务的tracing
+  router.use(
+    queryAnalyzer({
+      appendTo: 'BODY',
+      ignores: ['ID', 'String', 'Date', 'Int', 'Boolean', 'Float'],
+    }),
+  ) // 需要打开graphql服务的tracing
 
   router.all(
     `/${SECRET}`,

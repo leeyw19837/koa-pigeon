@@ -89,6 +89,10 @@ type Query {
   ): [DailyAppointment!]
   dailyOutpatients(healthCareTeamId: ID): [DailyOutpatients!]
   outpatient(id: ID): Outpatient
+  certifiedDiabetesEducator(
+    cdeId: ID
+    assistantId: ID
+  ): CertifiedDiabetesEducator
 }
 
 type Mutation {
