@@ -25,13 +25,17 @@ import * as getClinicalLabResult from './getClinicalLabResult'
 import * as warningsOfHigh from './warningsOfHigh'
 import * as warningsOfLow from './warningsOfLow'
 
+import * as appointments from './appointments'
+import * as certifiedDiabetesEducator from './certifiedDiabetesEducator'
 import * as healthCareTeam from './healthCareTeam'
 import * as orders from './orders'
+import * as outpatients from './outpatients'
 import * as terribleMeasure from './terribleMeasure'
 
 import * as getDiagnoseType from './getDiagnoseType'
-import * as getPatientInstitution from './getPatientInstitution'
+import * as getDiagnosticWords from './getDiagnosticWords'
 import * as getOrderReceiverInfo from './getOrderReceiverInfo'
+import * as getPatientInstitution from './getPatientInstitution'
 
 const queries = {
   ...bloodGlucoseMeasurements,
@@ -61,9 +65,13 @@ const queries = {
   ...orders,
   ...healthCareTeam,
   ...bloodMeasurementPlans,
-    ...getDiagnoseType,
-    ...getPatientInstitution,
-    ...getOrderReceiverInfo,
+  ...getDiagnoseType,
+  ...getDiagnosticWords,
+  ...getPatientInstitution,
+  ...getOrderReceiverInfo,
+  ...appointments,
+  ...outpatients,
+  ...certifiedDiabetesEducator,
 }
 
 const queriesWithLogging = {}

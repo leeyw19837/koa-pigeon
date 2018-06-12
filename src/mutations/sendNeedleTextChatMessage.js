@@ -25,6 +25,11 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
     throw new Error('You can not post to chat rooms you are not a member of')
   }
 
+  let chatMessageCount = (userId === '66728d10dc75bc6a43052036')
+      ? -1
+      : await db.collection('needleChatMessages').find({senderId:userId}).count()
+  console.log('chatMessageCount',chatMessageCount)
+
   const newChatMessage = {
     _id: freshId(),
     messageType: 'TEXT',
@@ -32,12 +37,30 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
     senderId: userId,
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
-      sourceType: sourceType || 'FROM_CDE'
+    sourceType: sourceType || 'FROM_CDE',
   }
-
   await db.collection('needleChatMessages').insertOne(newChatMessage)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
-  const participants = chatRoom.participants.map(p => {
+
+  if (chatMessageCount === 0){
+      if(text === '你好' || text === '您好'){
+          const newChatMessageAutoReplied = {
+              _id: freshId(),
+              messageType: 'TEXT',
+              text: '欢迎您加入共同照护门诊，请问有什么能帮您的吗？',
+              senderId: '66728d10dc75bc6a43052036',
+              createdAt: new Date(),
+              chatRoomId: chatRoom._id,
+              sourceType: 'greeting'
+          }
+          await db.collection('needleChatMessages').insertOne(
+              newChatMessageAutoReplied
+          )
+          pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessageAutoReplied })
+      }
+  }
+
+    const participants = chatRoom.participants.map(p => {
     if (p.userId === userId) {
       return { ...p, lastSeenAt: new Date() }
     }
@@ -51,7 +74,7 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
       $set: {
         participants,
       },
-    }
+    },
   )
   chatRoom = await db.collection('needleChatRooms').findOne({ _id: chatRoomId })
 

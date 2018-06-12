@@ -52,8 +52,9 @@ export const NeedleChatRoom = {
   },
   async unreadMessageCount(needleChatRoom, args, { getDb }) {
     const db = getDb === undefined ? global.db : await getDb()
+    const userId = args.userId || '66728d10dc75bc6a43052036'
     const me = needleChatRoom.participants.find(user => {
-      return user.userId === args.userId
+      return user.userId === userId
     })
     return await db.collection('needleChatMessages').count({
       chatRoomId: needleChatRoom._id,
@@ -62,8 +63,9 @@ export const NeedleChatRoom = {
     })
   },
   async lastSeenAt(needleChatRoom, args, context) {
+    const userId = args.userId || '66728d10dc75bc6a43052036'
     const me = needleChatRoom.participants.find(user => {
-      return user.userId === args.userId
+      return user.userId === userId
     })
     return me && me.lastSeenAt
   },
