@@ -206,6 +206,7 @@ type Mutation {
     nextCommunicationDate: Date
   ): Boolean
   changeUsername(patientId: ID!, newUsername: String!): Boolean!
+  updateBG1Reason(patientId: ID!, reason: String!): Boolean
   removeOutHospitalSoap(_id: ID!): Boolean
   addOrder(
     # 病人编号
