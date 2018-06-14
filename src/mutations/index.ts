@@ -4,6 +4,7 @@ import * as assessmentTime from './assessmentTime'
 import * as bloodGlucoseMeasurement from './bloodGlucoseMeasurement'
 import * as updateRemarkOfBloodglucoses from './bloodGlucoseMeasurement'
 import * as changeUsername from './changeUsername'
+import * as updateBG1Reason from './updateBG1Reason'
 import * as chatMessages from './chatMessages'
 import * as communicationMutations from './communication'
 import * as footAssessment from './footAssessment'
@@ -45,6 +46,7 @@ const mutations = {
   ...outHospitalSoap,
   ...addOrder,
   ...changeUsername,
+  ...updateBG1Reason,
   ...reportDevice,
   ...updateUserDevices,
   ...saveUserBehaviors,

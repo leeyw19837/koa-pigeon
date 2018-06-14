@@ -31,13 +31,12 @@ type Patient {
   lastCheckAppointment: Appointment
   useIGluco: Boolean
   useNeedle: Boolean
+  isUseBg1: Boolean
+  notUseBg1Reason: String
   useSPT: Boolean
   usePublicNumber: Boolean
   isLiDocter: Boolean
   tempFilter: Boolean
   lastHbAlc: String
-  bloodGlucoses(
-    startAt: Date
-    endAt: Date
-  ): [BloodGlucoseRecord]
+  bloodGlucoses(startAt: Date, endAt: Date): [BloodGlucoseRecord]
 }
