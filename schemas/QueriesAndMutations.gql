@@ -74,13 +74,16 @@ type Query {
     patientId: ID
     measurementTime: String
     measuredAt: Date
+    manualInputType: String
   ): DiagnoseType
   getPatientInstitution(patientId: ID): InstitutionType
+  getUserUseBg1Situation(patientId: ID): UserUseBG1Schema
   getOrderReceiverInfo(patientId: ID!): Order
   getDiagnosticWords(
     diagnoseType: String
     bloodGlucoseValue: String
     bgValueBeforeMeal: String
+    manualInputType: String
   ): DiagnosticWords
   # 月预约日历
   monthlyAppointments(
