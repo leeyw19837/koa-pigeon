@@ -1,7 +1,9 @@
 export const getDiagnosticWords = async (_, args, { getDb }) => {
+    // console.log('args::::',args)
     const diagnoseType = args.diagnoseType
     const bloodGlucoseValue = args.bloodGlucoseValue
     const bgValueBeforeMeal = args.bgValueBeforeMeal
+    const manualInputType = args.manualInputType
 
     const diagnosticWordsResult = await db
         .collection('diagnosticWords')
@@ -45,6 +47,14 @@ export const getDiagnosticWords = async (_, args, { getDb }) => {
         case 'f':
             randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
             _diagnoseWords = `${randomResult.diagnoseWords}`
+            _diagnoseSourceType = randomResult.sourceType
+            break
+
+        case 'manual':
+            randomResult = diagnosticWordsResult.filter(o=>
+                manualInputType === o.sourceType
+            )[0]
+            _diagnoseWords = randomResult.diagnoseWords
             _diagnoseSourceType = randomResult.sourceType
             break
 
