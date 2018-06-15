@@ -1,5 +1,6 @@
 import { reminder } from '../controller'
 import { sendMiniProgram } from '../controller/sendMiniProgram'
+import { sendChatCardMessages } from '../controller/treatment-card'
 
 const Router = require('koa-router')
 const cronJob = new Router()
@@ -20,6 +21,14 @@ cronJob.get('/mini-program-send', async ctx => {
   }
   const { period, patientId } = ctx.query
   const result = await sendMiniProgram(period, patientId)
+  ctx.body = 'OK'
+})
+
+cronJob.get('/send-treatment-card', async ctx => {
+  if (ctx.query.pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
+    return ctx.throw(401, '密码错误')
+  }
+  const result = await sendChatCardMessages()
   ctx.body = 'OK'
 })
 

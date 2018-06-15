@@ -13,6 +13,8 @@ enum CardContentStatus {
   UNCERTAIN
   # 已过期
   OVERDUE
+  # 无状态
+  NONE
 }
 enum CardContentType {
   # 预约类型

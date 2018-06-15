@@ -1,10 +1,9 @@
-
 const isEmpty = require('lodash/isEmpty')
 import {
   getPatient,
   getTodayAppointment,
   getNextAppointment,
-  getReview
+  getReview,
 } from './dataServices'
 
 const htcMap = {
@@ -13,9 +12,10 @@ const htcMap = {
   healthCareTeam3: '朝阳医院',
   ihealthCareTeam: 'iHealthLabs',
   healthCareTeam5: '北京大学首钢医院',
+  healthCareTeam6: '东方医院',
 }
 
-export const getPatientByUnionId = async (unionid) => {
+export const getPatientByUnionId = async unionid => {
   console.log(unionid)
   const result = {
     type: 'POTENTIAL',

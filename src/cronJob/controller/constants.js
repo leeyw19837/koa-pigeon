@@ -59,19 +59,20 @@ export const generateCustomText = measurePlan => {
   if (!isEmpty(measurePlan.noLimit) && measurePlan.noLimit.quantity) {
     const { quantity, unit } = measurePlan.noLimit
     const tempObj = unitTextMap[unit] || {}
-    text = `可以任意选择${quantity}${tempObj.unit}${tempObj.meal}${tempObj.text}`
+    text = `可以任意选择${quantity}${tempObj.unit}${tempObj.meal}${
+      tempObj.text
+    }`
   } else {
     let mealPeriod = ''
     let sleepText = ''
-
     ;['morning', 'midday', 'evening'].forEach(o => {
       const { quantity, unit } = measurePlan[o] || {}
       if (!isEmpty(measurePlan[o]) && quantity) {
         text = '可以选择'
         const tempObj = unitTextMap[unit] || {}
-        mealPeriod += `${quantity}${tempObj.unit}${periodTextMap[
-          o
-        ]}${tempObj.meal} `
+        mealPeriod += `${quantity}${tempObj.unit}${periodTextMap[o]}${
+          tempObj.meal
+        } `
       }
     })
     if (!isEmpty(measurePlan.beforeSleep) && measurePlan.beforeSleep.quantity) {
@@ -108,5 +109,9 @@ export const healthCareTeamMap = {
   },
   healthCareTeam5: {
     2: 'afternoon',
-  }
+  },
+  healthCareTeam6: {
+    1: 'morning',
+    4: 'morning',
+  },
 }
