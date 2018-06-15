@@ -3,6 +3,6 @@ type NeedleTextMessage implements NeedleChatMessage {
   text: String!
   sender: User!
   createdAt: Date!
+  messageType: String
   needleChatRoom: NeedleChatRoom!
-  sourceType: String
 }

@@ -3,5 +3,6 @@ type NeedleImageMessage implements NeedleChatMessage {
   imageUrl: String!
   sender: User!
   createdAt: Date!
+  messageType: String
   needleChatRoom: NeedleChatRoom!
 }

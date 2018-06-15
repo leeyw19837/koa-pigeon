@@ -14,6 +14,7 @@ enum CardContentStatus {
   # 已过期
   OVERDUE
 }
+
 enum CardContentType {
   # 预约类型
   APPOINTMENT
@@ -49,5 +50,6 @@ type NeedleCardMessage implements NeedleChatMessage {
   content: CardContent!
   sender: User!
   createdAt: Date!
+  messageType: String
   needleChatRoom: NeedleChatRoom!
 }

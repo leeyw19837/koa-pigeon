@@ -3,5 +3,6 @@ type NeedleAudioMessage implements NeedleChatMessage {
   audioUrl: String!
   sender: User!
   createdAt: Date!
+  messageType: String
   needleChatRoom: NeedleChatRoom!
 }

@@ -2,5 +2,6 @@ interface NeedleChatMessage {
   _id: ID!
   sender: User!
   createdAt: Date!
+  messageType: String
   needleChatRoom: NeedleChatRoom!
 }
