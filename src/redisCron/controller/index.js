@@ -36,7 +36,3 @@ sub.on('pmessage', (pattern, channel, message) => {
 })
 // 订阅频道
 sub.psubscribe('__key*__:expired')
-
-addDelayEvent('message5', 5)
-
-addDelayEvent('message10', 10)
