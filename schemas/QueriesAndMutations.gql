@@ -264,6 +264,14 @@ type Mutation {
     occurredAt: Date
   ): Boolean
   addAppointment: Boolean
+  changeChatCardStatus(
+    messageId: ID!
+    patientId: ID!
+    chatRoomId: ID!
+    dateType: String!
+    operationType: String!
+    outpatientTime:String
+    ): String
 }
 
 type Subscription {
