@@ -77,7 +77,7 @@ export const getDiagnoseType = async (_, args, { getDb }) => {
 
     console.log(args)
 
-    if (manualInputType !== 'OTHERS' && manualInputType !== 'MANUAL_NOT_USE_BG_1') {
+    if (manualInputType !== 'OTHERS' && manualInputType !== 'MANUAL_NOT_USE_BG_1' && manualInputType !== 'MANUAL_USE_BG_2') {
         return {
             diagnoseType: 'manual',
             bloodGlucoseValueBeforeMeal: `${bgValueBeforeMeal}`

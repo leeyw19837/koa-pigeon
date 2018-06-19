@@ -53,9 +53,14 @@ export const getDiagnosticWords = async (_, args, { getDb }) => {
         case 'manual':
             randomResult = diagnosticWordsResult.filter(o=>
                 manualInputType === o.sourceType
-            )[0]
-            _diagnoseWords = randomResult.diagnoseWords
-            _diagnoseSourceType = randomResult.sourceType
+            )
+            if (randomResult && randomResult.length>0){
+                _diagnoseWords = randomResult[0].diagnoseWords
+                _diagnoseSourceType = randomResult[0].sourceType
+            } else {
+                _diagnoseWords = ''
+                _diagnoseSourceType = ''
+            }
             break
 
         default:
