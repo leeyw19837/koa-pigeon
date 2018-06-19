@@ -1,6 +1,6 @@
 const VERSION = 3
 
-const MI_PUSH_URL = 'https://api.xmpush.xiaomi.com'
+export const MI_PUSH_URL = 'https://api.xmpush.xiaomi.com'
 
 export const PACKAGE_NAME = {
   ios: 'com.ihealthlabs.HuTang',
