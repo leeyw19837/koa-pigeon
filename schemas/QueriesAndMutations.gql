@@ -269,7 +269,8 @@ type Mutation {
     patientId: ID!
     dateType: String!
     operationType: String!
-    outpatientTime:String
+    outpatientTime:Date!
+    recordId:String!
     ): Boolean
 }
 

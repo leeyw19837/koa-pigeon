@@ -21,6 +21,7 @@ export const changeChatCardStatus = async (_, args, context) => {
         dateType,
         operationType,
         outpatientTime,
+        recordId,
     } = args;
 
     const status = ''
@@ -50,6 +51,11 @@ export const changeChatCardStatus = async (_, args, context) => {
         }
     }
 
+    const chatRoom = await db
+        .collection('needleChatRooms')
+        .findOne({ 'participants.userId': patientId })
+    const chatRoomId = get(chatRoom, '_id')
+
     if (status) {
         const result = await db
             .collection('needleChatMessages')
@@ -59,10 +65,9 @@ export const changeChatCardStatus = async (_, args, context) => {
             )
     }
 
-    const chatRoom = await db
-        .collection('needleChatRooms')
-        .findOne({ 'participants.userId': patientId })
-    const chatRoomId = get(chatRoom, '_id')
+    const retVal = await db
+        .collection('appointments')
+        .update({ _id: recordId }, { $set: { confirmStatus: 'APPConfirm' } })
 
     const sendArgs = {
         userId: userId,
@@ -72,7 +77,7 @@ export const changeChatCardStatus = async (_, args, context) => {
     }
     const updateResult = await sendNeedleTextChatMessage(_, sendArgs, context)
 
-    if (!!result.result.ok) {
+    if ((!!result.result.ok) && (!!retVal.result.ok)) {
         return true
     }
     return false
