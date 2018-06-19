@@ -35,7 +35,7 @@ export const changeChatCardStatus = async (_, args, context) => {
     if (dateType == 'BEFORE_SEVEN_DAYS') {
         if (operationType == 'CONFIRM') {
             status = 'SELF_CONFIRMED'
-            const retVal = await db
+            await db
                 .collection('appointments')
                 .update({ _id: recordId }, { $set: { confirmStatus: 'APP7Confirm' } })
         } else if (operationType == 'CHANGE_DATE') {
@@ -47,11 +47,12 @@ export const changeChatCardStatus = async (_, args, context) => {
     } else {
         if (operationType == 'CONFIRM') {
             status = 'SELF_CONFIRMED'
-            const retVal = await db
+            await db
                 .collection('appointments')
                 .update({ _id: recordId }, { $set: { confirmStatus: 'APP3Confirm' } })
+        } else if (operationType == 'KNOWN') {
             status = 'SELF_CONFIRMED'
-            const retVal = await db
+            await db
                 .collection('appointments')
                 .update({ _id: recordId }, { $set: { confirmStatus: 'APPDoubleConfirm' } })
         } else if (operationType == 'CHANGE_DATE') {
