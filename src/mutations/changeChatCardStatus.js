@@ -113,19 +113,19 @@ const getTextContent = (measurePercent, operationType, dateType, outpatientTime)
             //3天卡片    
         } else {
             if (measurePercent == 0) {
-                sourceType = '6'
+                sourceType = '12'
                 textContent = `还有${diffTime}天您就要来复诊了，但我们还没有收到您最近的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会按照血糖监测方案进行测量`
             } else if (measurePercent < 0.5) {
-                sourceType = '5'
+                sourceType = '11'
                 textContent = `还有${diffTime}天您就要来复诊了，您最近还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会继续完善`
             } else {
-                sourceType = '4'
+                sourceType = '10'
                 textContent = `还有${diffTime}天您要来复诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
             }
         }
         //改期    
     } else if (operationType == 'CHANGE_DATE') {
-        sourceType = '10'
+        sourceType = '13'
         textContent = `照护师您好，我要改期`
         //知道了
     } else if (operationType == 'KNOWN') {
