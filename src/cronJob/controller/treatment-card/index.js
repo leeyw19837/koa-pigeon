@@ -1,6 +1,7 @@
 import { uniqBy, find, get } from 'lodash'
 import freshId from 'fresh-id'
 import { healthCareTeamMap } from '../constants'
+import { multiSendMiPush } from '../../../mipush/multiMiPush'
 const moment = require('moment')
 
 const getHealthCareTeams = async () =>
@@ -35,10 +36,15 @@ const getChatRooms = async ({ patientIds = [], chatRoomIds = [] }) => {
  * 或者3天要来的预约
  * @param {*} beforeDays
  */
-const getAppointments = async (beforeDays = 6) => {
+const getAppointments = async (beforeDays = 6, isTest) => {
   const sevenDay = moment().add(beforeDays, 'days')
   const startAt = moment(sevenDay).startOf('day')._d
   const endAt = moment(sevenDay).endOf('day')._d
+  const hctObj = isTest
+    ? 'ihealthCareTeam'
+    : {
+        $exists: true,
+      }
   const appointments = await db
     .collection('appointments')
     .find({
@@ -47,6 +53,7 @@ const getAppointments = async (beforeDays = 6) => {
         $gte: startAt,
         $lt: endAt,
       },
+      healthCareTeamId: hctObj,
       // patientId: '581b055c5032f41013d49414',
     })
     .sort({ createdAt: -1 })
@@ -60,8 +67,8 @@ const getHosiptalName = async (cacheData, healthCareTeamId) => {
   return healthCareTeam ? healthCareTeam.institutionName : ' '
 }
 
-const checkSevenDays = async () => {
-  const appointments = await getAppointments()
+const checkSevenDays = async isTest => {
+  const appointments = await getAppointments(6, isTest)
   const healthCareTeams = await getHealthCareTeams()
 
   const patientIds = uniqBy(appointments, 'patientId').map(o => o.patientId)
@@ -136,8 +143,8 @@ const getSentAppointmentCard = async patientIds => {
   return chatCards
 }
 
-const checkThreeDays = async () => {
-  const appointments = await getAppointments(3)
+const checkThreeDays = async isTest => {
+  const appointments = await getAppointments(3, isTest)
   const healthCareTeams = await getHealthCareTeams()
   const patientIds = uniqBy(appointments, 'patientId').map(o => o.patientId)
   const hasSentCards = await getSentAppointmentCard(patientIds)
@@ -233,7 +240,6 @@ const checkSevenDaysOverdueCard = async () => {
         multi: true,
       },
     )
-    console.log(result, '@checkSevenDaysOverdueCard')
   } catch (error) {
     console.log(error)
   }
@@ -290,23 +296,48 @@ export const checkThreeDaysOverdueCard = async period => {
   }
 }
 
-const createChatCardMessage = async cardMessages => {
+const createChatCardMessage = async (cardMessages, isTest) => {
+  console.log(
+    `test model ${isTest}, need to send chat card length ${
+      cardMessages.length
+    }!!!`,
+  )
   if (cardMessages.length) {
     const insertResult = await db
       .collection('needleChatMessages')
       .insert(cardMessages)
     if (insertResult.result.ok === 1) {
-      // multiMiPush(cardMessages)
+      if (isTest) {
+        await multiSendMiPush(cardMessages)
+      }
     }
   }
 }
 
-export const sendChatCardMessages = async () => {
+export const sendChatCardMessages = async isTest => {
   // 先检查7天的卡片是否有过期的
-  // await checkSevenDaysOverdueCard()
-  // await checkThreeDaysOverdueCard('morning')
-  // const sevenDayCards = await checkSevenDays()
-  // const threeDayCards = await checkThreeDays()
-  // await createChatCardMessage(sevenDayCards)
-  // await createChatCardMessage(threeDayCards)
+  await checkSevenDaysOverdueCard()
+
+  // 先检查3天卡片上午诊的是否有过期的
+  await checkThreeDaysOverdueCard('morning')
+
+  // 检查七天后要来门诊的人需要发送7天卡片
+  try {
+    const sevenDayCards = await checkSevenDays(isTest)
+    await createChatCardMessage(sevenDayCards, isTest)
+  } catch (error) {
+    console.log(error, '@seven days error')
+  }
+
+  // 检查三天后要来门诊的人需要发送3天卡片
+  try {
+    const threeDayCards = await checkThreeDays(isTest)
+    await createChatCardMessage(threeDayCards, isTest)
+  } catch (threeError) {
+    console.log(threeError, '@threeError')
+  }
+}
+
+export const checkOverdueForAfterTreatment = async () => {
+  await checkThreeDaysOverdueCard('afternoon')
 }

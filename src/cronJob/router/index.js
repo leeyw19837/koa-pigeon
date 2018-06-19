@@ -25,10 +25,11 @@ cronJob.get('/mini-program-send', async ctx => {
 })
 
 cronJob.get('/send-treatment-card', async ctx => {
-  if (ctx.query.pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
+  const { pwd, isTest } = ctx.query
+  if (pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
     return ctx.throw(401, '密码错误')
   }
-  const result = await sendChatCardMessages()
+  const result = await sendChatCardMessages(isTest)
   ctx.body = 'OK'
 })
 

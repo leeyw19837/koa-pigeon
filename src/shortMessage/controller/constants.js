@@ -87,3 +87,6 @@ export const patientList = [
 
 export const ORDER_SUCCESS_TEMPLATE = 'SMS_133150323'
 export const STOP_OUTPATIENT_TEMPLATE = 'SMS_133180934'
+
+// 端午节停诊通知
+export const STOP_OUTPATIENT_TEMPLATE_DW = 'SMS_137670049'
