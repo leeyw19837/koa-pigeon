@@ -13,7 +13,7 @@ export const changeChatCardStatus = async (_, args, context) => {
      * 确定：CONFIRM
      * 改期：CHANGE_DATE
      * 不确定:UNSURE
-     * 知道了:CONFIRM
+     * 知道了:KNOWN
      */
     const {
         messageId,
@@ -25,7 +25,7 @@ export const changeChatCardStatus = async (_, args, context) => {
     } = args;
 
     const status = ''
-    const userId = patientId
+    const userId = '66728d10dc75bc6a43052036'
     const db = await context.getDb();
 
     const measurement = await bloodMeasurementPlans(_, args, context)
@@ -35,19 +35,28 @@ export const changeChatCardStatus = async (_, args, context) => {
     if (dateType == 'BEFORE_SEVEN_DAYS') {
         if (operationType == 'CONFIRM') {
             status = 'SELF_CONFIRMED'
+            const retVal = await db
+                .collection('appointments')
+                .update({ _id: recordId }, { $set: { confirmStatus: 'APP7Confirm' } })
         } else if (operationType == 'CHANGE_DATE') {
             status = 'POSTPONING'
+            userId = patientId
         } else if (operationType == 'UNSURE') {
             status = 'UNCERTAIN'
-            userId = '66728d10dc75bc6a43052036'
         }
     } else {
         if (operationType == 'CONFIRM') {
             status = 'SELF_CONFIRMED'
+            const retVal = await db
+                .collection('appointments')
+                .update({ _id: recordId }, { $set: { confirmStatus: 'APP3Confirm' } })
+            status = 'SELF_CONFIRMED'
+            const retVal = await db
+                .collection('appointments')
+                .update({ _id: recordId }, { $set: { confirmStatus: 'APPDoubleConfirm' } })
         } else if (operationType == 'CHANGE_DATE') {
             status = 'POSTPONING'
-        } else if (operationType == 'KNOWN') {
-            status = 'SELF_CONFIRMED'
+            userId = patientId
         }
     }
 
@@ -65,10 +74,6 @@ export const changeChatCardStatus = async (_, args, context) => {
             )
     }
 
-    const retVal = await db
-        .collection('appointments')
-        .update({ _id: recordId }, { $set: { confirmStatus: 'APPConfirm' } })
-
     const sendArgs = {
         userId: userId,
         chatRoomId: chatRoomId,
@@ -77,7 +82,7 @@ export const changeChatCardStatus = async (_, args, context) => {
     }
     const updateResult = await sendNeedleTextChatMessage(_, sendArgs, context)
 
-    if ((!!result.result.ok) && (!!retVal.result.ok)) {
+    if (!!result.result.ok) {
         return true
     }
     return false
