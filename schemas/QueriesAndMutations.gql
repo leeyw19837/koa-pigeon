@@ -267,11 +267,10 @@ type Mutation {
   changeChatCardStatus(
     messageId: ID!
     patientId: ID!
-    chatRoomId: ID!
     dateType: String!
     operationType: String!
     outpatientTime:String
-    ): String
+    ): Boolean
 }
 
 type Subscription {

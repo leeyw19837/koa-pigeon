@@ -18,7 +18,6 @@ export const changeChatCardStatus = async (_, args, context) => {
     const {
         messageId,
         patientId,
-        chatRoomId,
         dateType,
         operationType,
         outpatientTime,
@@ -59,6 +58,11 @@ export const changeChatCardStatus = async (_, args, context) => {
                 { $set: { "content.status": status } }
             )
     }
+
+    const chatRoom = await db
+        .collection('needleChatRooms')
+        .findOne({ 'participants.userId': patientId })
+    const chatRoomId = get(chatRoom, '_id')
 
     const sendArgs = {
         userId: userId,
@@ -152,19 +156,13 @@ const getContent = bloodData => {
         case 'A':
             {
                 let aCount = 0
-                // let morningInfo = '早餐前后一对 未完成'
-                // let middayInfo = '午餐前后一对 未完成'
-                // let eveningInfo = '晚餐前后一对 未完成'
                 if (morningPairing > 0) {
-                    // morningInfo = '早餐前后一对 已完成'
                     aCount = aCount + 1
                 }
                 if (middayPairing > 0) {
-                    // middayInfo = '午餐前后一对 已完成'
                     aCount = aCount + 1
                 }
                 if (eveningPairing > 0) {
-                    // eveningInfo = '晚餐前后一对 已完成'
                     aCount = aCount + 1
                 }
                 measurePercent = aCount / 3
@@ -174,17 +172,14 @@ const getContent = bloodData => {
         case 'B':
             {
                 let bCount = 0
-                // let measureDetails = '任意餐前后两对 未测量'
                 if (
                     [morningPairing, middayPairing, eveningPairing, beforeSleepPairing].reduce((a, b) => a + b) >= 2
                 ) {
-                    // measureDetails = '任意餐前后两对 已完成两对'
                     bCount = 2
                 }
                 if (
                     [morningPairing, middayPairing, eveningPairing, beforeSleepPairing].reduce((a, b) => a + b) === 1
                 ) {
-                    // measureDetails = '任意餐前后两对 已完成一对'
                     bCount = 1
                 }
                 measurePercent = bCount / 2
@@ -193,34 +188,23 @@ const getContent = bloodData => {
             break
         case 'C':
             {
-                // let morningInfo = '早餐前后2对 未测量'
-                // let middayInfo = '午餐前后2对 未测量'
-                // let eveningInfo = '晚餐前后2对 未测量'
-
                 let cCount = 0
-
                 if (morningPairing >= 2) {
-                    // morningInfo = '早餐前后2对 已完成'
                     cCount = cCount + 2
                 }
                 if (middayPairing >= 2) {
-                    // middayInfo = '午餐前后2对 已完成'
                     cCount = cCount + 2
                 }
                 if (eveningPairing >= 2) {
-                    // eveningInfo = '晚餐前后2对 已完成'
                     cCount = cCount + 2
                 }
                 if (morningPairing === 1) {
-                    // morningInfo = '早餐前后2对 已完成1对'
                     cCount = cCount + 1
                 }
                 if (middayPairing === 1) {
-                    // middayInfo = '午餐前后2对 已完成1对'
                     cCount = cCount + 1
                 }
                 if (eveningPairing === 1) {
-                    // eveningInfo = '晚餐前后2对 已完成1对'
                     cCount = cCount + 1
                 }
                 measurePercent = bCount / 6
@@ -229,27 +213,17 @@ const getContent = bloodData => {
             break
         case 'D':
             {
-                // let morningInfo = '早餐前后一对 未完成'
-                // let middayInfo = '午餐前后一对 未完成'
-                // let eveningInfo = '晚餐前后一对 未完成'
-                // let beforeSleepInfo = '睡觉前一次 未测量'
-
                 let dCount = 0
-
                 if (morningPairing > 0) {
-                    // morningInfo = '早餐前后一对 已完成'
                     dCount = dCount + 1
                 }
                 if (middayPairing > 0) {
-                    // middayInfo = '午餐前后一对 已完成'
                     dCount = dCount + 1
                 }
                 if (eveningPairing > 0) {
-                    // eveningInfo = '晚餐前后一对 已完成'
                     dCount = dCount + 1
                 }
                 if (beforeSleepCount >= 1) {
-                    // beforeSleepInfo = '睡觉前一次 已完成'
                     dCount = dCount + 1
                 }
                 measurePercent = dCount / 4
@@ -258,25 +232,17 @@ const getContent = bloodData => {
             break
         case 'E':
             {
-                // let morningInfo = '早餐前7次 未测量'
-                // let eveningInfo = '晚餐前7次 未测量'
-
                 let eCount = 0
-
                 if (morningCount >= 7) {
-                    // morningInfo = '早餐前7次 已完成'
                     eCount = eCount + 7
                 }
                 if (eveningCount >= 7) {
-                    // eveningInfo = '晚餐前7次 已完成'
                     eCount = eCount + 7
                 }
                 if (morningCount > 0 && morningCount < 7) {
-                    // morningInfo = `早餐前7次 已完成${morningCount}次`
                     eCount = eCount + morningCount
                 }
                 if (eveningCount > 0 && eveningCount < 7) {
-                    // eveningInfo = `晚餐前7次 已完成${eveningCount}次`
                     eCount = eCount + morningCount
                 }
                 measurePercent = eCount / 14
@@ -285,34 +251,23 @@ const getContent = bloodData => {
             break
         case 'F':
             {
-                // let morningInfo = '早餐前3次 未测量'
-                // let middayInfo = '午餐前3次 未测量'
-                // let eveningInfo = '晚餐前3次 未测量'
-
                 let fCount = 0
-
                 if (morningCount >= 3) {
-                    // morningInfo = '早餐前3次 已完成'
                     fCount = fCount + 3
                 }
                 if (middayCount >= 3) {
-                    // middayInfo = '午餐前3次 已完成'
                     fCount = fCount + 3
                 }
                 if (eveningCount >= 3) {
-                    // eveningInfo = '晚餐前3次 已完成'
                     fCount = fCount + 3
                 }
                 if (morningCount > 0 && morningCount < 3) {
-                    // morningInfo = `早餐前3次 已完成${morningCount}次`
                     fCount = fCount + morningCount
                 }
                 if (middayCount > 0 && middayCount < 3) {
-                    // middayInfo = `午餐前3次 已完成${middayCount}次`
                     fCount = fCount + morningCount
                 }
                 if (eveningCount > 0 && eveningCount < 3) {
-                    // eveningInfo = `晚餐前3次 已完成${eveningCount}次`
                     fCount = fCount + morningCount
                 }
                 measurePercent = fCount / 9
@@ -327,7 +282,6 @@ const getContent = bloodData => {
                 if (quantity) {
                     // 不限餐
                     const unitInfo = unit === 'pairing' ? '对' : '次'
-                    // this.contentDetails = `一周${quantity}${unitInfo} `
                     allCount = allCount + quantity
 
                     if (unit === 'pairing') {
@@ -338,24 +292,18 @@ const getContent = bloodData => {
                             beforeSleepPairing,
                         ].reduce((a, b) => a + b)
                         if (num >= quantity) {
-                            // this.contentOne = '已完成'
                             noCount = noCount + num
                         }
                         if (num === 0) {
-                            // this.contentOne = '未测量'
                         }
-                        // this.contentOne = `已完成${num}${unitInfo}`
                     }
                     if (unit === 'count') {
                         const num = [morningCount, middayCount, eveningCount, beforeSleepCount].reduce((a, b) => a + b)
                         if (num >= quantity) {
-                            // this.contentOne = '已完成'
                             noCount = noCount + num
                         }
                         if (num === 0) {
-                            // this.contentOne = '未测量'
                         }
-                        // this.contentOne = `已完成${num}${unitInfo}`
                     }
                 }
                 const morning_unit = modules.morning.unit
@@ -380,33 +328,23 @@ const getContent = bloodData => {
                     const evening_actual = evening.pairing
                     if (morning_quantity > 0) {
                         quantityTotal += morning_quantity
-                        // details += `早上${morning_quantity}对`
-                        // actualDetails += `早上已完成${morning_actual}对`
                         noCount = noCount + morning_actual
                     }
                     if (midday_quantity > 0) {
                         quantityTotal += midday_quantity
-                        // details += ` 中午${midday_quantity}对`
                         if (midday_actual >= midday_quantity) {
-                            // actualDetails += ' 中午已完成'
                             noCount = noCount + midday_quantity
                         }
-                        // actualDetails += ` 中午已完成${midday_actual}对`
                         noCount = noCount + midday_actual
                     }
                     if (evening_quantity > 0) {
                         quantityTotal += evening_quantity
-                        // details += ` 晚上${evening_quantity}对`
                         if (evening_actual >= evening_quantity) {
-                            // actualDetails += ' 晚上已完成'
                             noCount = noCount + evening_quantity
                         }
-                        // actualDetails += ` 晚上已完成${evening_actual}对`
                         noCount = noCount + evening_actual
 
                     }
-                    // this.contentDetails = `一周${quantityTotal}对 ${details}`
-                    // this.contentOne = actualDetails
                     allCount = allCount + quantityTotal
                 }
                 if (
@@ -424,46 +362,32 @@ const getContent = bloodData => {
                     const beforeSleep_actual = beforeSleep.count
                     if (morning_quantity > 0) {
                         quantityTotal += morning_quantity
-                        // details += `早上${morning_quantity}次`
                         if (morning_actual >= morning_quantity) {
-                            // actualDetails += '早上已完成'
                             noCount = noCount + morning_quantity
                         }
-                        // actualDetails += `早上已完成${morning_actual}次`
                         noCount = noCount + morning_actual
                     }
                     if (midday_quantity > 0) {
                         quantityTotal += midday_quantity
-                        // details += ` 中午${midday_quantity}次`
                         if (midday_actual >= midday_quantity) {
-                            // actualDetails += ' 中午已完成'
                             noCount = noCount + midday_quantity
                         }
-                        // actualDetails += ` 中午已完成${midday_actual}次`
                         noCount = noCount + midday_actual
                     }
                     if (evening_quantity > 0) {
                         quantityTotal += evening_quantity
-                        // details += ` 晚上${evening_quantity}次`
                         if (midday_actual >= evening_quantity) {
-                            // actualDetails += ' 晚上已完成'
                             noCount = noCount + evening_quantity
                         }
-                        // actualDetails += ` 晚上已完成${evening_actual}次`
                         noCount = noCount + evening_actual
                     }
                     if (beforeSleep_quantity > 0) {
                         quantityTotal += beforeSleep_quantity
-                        // details += ` 睡前${beforeSleep_quantity}次`
                         if (beforeSleep_actual >= beforeSleep_quantity) {
-                            // actualDetails += ' 睡前已完成'
                             noCount = noCount + beforeSleep_quantity
                         }
-                        // actualDetails += ` 睡前已完成${beforeSleep_actual}次`
                         noCount = noCount + beforeSleep_actual
                     }
-                    // this.contentDetails = `一周${quantityTotal}次 ${details}`
-                    // this.contentOne = actualDetails
                     allCount += quantityTotal
                 }
                 measurePercent = noCount / allCount
