@@ -94,7 +94,10 @@ const getTextContent = (measurePercent, operationType, dateType, outpatientTime)
     let textContent = ''
     let sourceType = '1'
     const endTime = moment(outpatientTime).format("YYYY-MM-DD")
-    const diffTime = moment(endTime).diff(moment(), 'days')
+    const diffTime = moment(endTime).diff(moment(), 'days') + 1
+    if (dateType == 'BEFORE_SEVEN_DAYS') {
+        diffTime = moment(endTime).diff(moment(), 'days') + 2
+    }
 
     //确定
     if (operationType == 'CONFIRM') {
@@ -102,25 +105,25 @@ const getTextContent = (measurePercent, operationType, dateType, outpatientTime)
         if (dateType == 'BEFORE_SEVEN_DAYS') {
             if (measurePercent == 0) {
                 sourceType = '3'
-                textContent = `还有${diffTime}天您就要来复诊了，但我们还没有收到您近七天的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您抓紧测量`
+                textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您近七天的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您抓紧测量`
             } else if (measurePercent < 0.5) {
                 sourceType = '2'
-                textContent = `还有${diffTime}天您就要来复诊了，您近7天还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您继续完善`
+                textContent = `还有${diffTime}天您就要来就诊了，您近7天还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您继续完善`
             } else {
                 sourceType = '1'
-                textContent = `还有${diffTime}天您就要来复诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
+                textContent = `还有${diffTime}天您就要来就诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
             }
             //3天卡片    
         } else {
             if (measurePercent == 0) {
                 sourceType = '12'
-                textContent = `还有${diffTime}天您就要来复诊了，但我们还没有收到您最近的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会按照血糖监测方案进行测量`
+                textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您最近的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会按照血糖监测方案进行测量`
             } else if (measurePercent < 0.5) {
                 sourceType = '11'
-                textContent = `还有${diffTime}天您就要来复诊了，您最近还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会继续完善`
+                textContent = `还有${diffTime}天您就要来就诊了，您最近还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会继续完善`
             } else {
                 sourceType = '10'
-                textContent = `还有${diffTime}天您要来复诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
+                textContent = `还有${diffTime}天您要来就诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
             }
         }
         //改期    
@@ -131,13 +134,13 @@ const getTextContent = (measurePercent, operationType, dateType, outpatientTime)
     } else if (operationType == 'KNOWN') {
         if (measurePercent == 0) {
             sourceType = '6'
-            textContent = `还有${diffTime}天您就要来复诊了，但我们还没有收到您最近的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会按照血糖监测方案进行测量`
+            textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您最近的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会按照血糖监测方案进行测量`
         } else if (measurePercent < 0.5) {
             sourceType = '5'
-            textContent = `还有${diffTime}天您就要来复诊了，您最近还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会继续完善`
+            textContent = `还有${diffTime}天您就要来就诊了，您最近还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会继续完善`
         } else {
             sourceType = '4'
-            textContent = `还有${diffTime}天您要来复诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
+            textContent = `还有${diffTime}天您要来就诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
         }
         //不确定    
     } else {
