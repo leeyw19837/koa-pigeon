@@ -2,6 +2,7 @@ import { uniqBy, find, get } from 'lodash'
 import freshId from 'fresh-id'
 import { healthCareTeamMap } from '../constants'
 import { multiSendMiPush } from '../../../mipush/multiMiPush'
+import { pubsub } from '../../../pubsub'
 const moment = require('moment')
 
 const getHealthCareTeams = async () =>
@@ -296,6 +297,12 @@ export const checkThreeDaysOverdueCard = async period => {
   }
 }
 
+const pubChatMessages = cardMessages => {
+  cardMessages.forEach(cardMsg => {
+    pubsub.publish('chatMessageAdded', { chatMessageAdded: cardMsg })
+  })
+}
+
 const createChatCardMessage = async (cardMessages, isTest) => {
   console.log(
     `test model ${isTest}, need to send chat card length ${
@@ -309,6 +316,7 @@ const createChatCardMessage = async (cardMessages, isTest) => {
     if (insertResult.result.ok === 1) {
       if (isTest) {
         await multiSendMiPush(cardMessages)
+        pubChatMessages(cardMessages)
       }
     }
   }
