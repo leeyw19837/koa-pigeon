@@ -305,9 +305,7 @@ const pubChatMessages = cardMessages => {
 
 const createChatCardMessage = async (cardMessages, isTest) => {
   console.log(
-    `test model ${isTest}, need to send chat card length ${
-      cardMessages.length
-    }!!!`,
+    `test model ${isTest}, need to send chat card length ${cardMessages.length}!!!`,
   )
   if (cardMessages.length) {
     const insertResult = await db
@@ -316,7 +314,7 @@ const createChatCardMessage = async (cardMessages, isTest) => {
     if (insertResult.result.ok === 1) {
       if (isTest) {
         await multiSendMiPush(cardMessages)
-        // pubChatMessages(cardMessages)
+        pubChatMessages(cardMessages)
       }
     }
   }
