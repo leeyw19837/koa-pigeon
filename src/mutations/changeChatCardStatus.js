@@ -105,7 +105,7 @@ const getTextContent = (measurePercent, operationType, dateType, outpatientTime)
         if (dateType == 'BEFORE_SEVEN_DAYS') {
             if (measurePercent == 0) {
                 sourceType = '3'
-                textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您近七天的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您抓紧测量`
+                textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您近7天的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您抓紧测量`
             } else if (measurePercent < 0.5) {
                 sourceType = '2'
                 textContent = `还有${diffTime}天您就要来就诊了，您近7天还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您继续完善`
@@ -148,13 +148,13 @@ const getTextContent = (measurePercent, operationType, dateType, outpatientTime)
         if (dateType == 'BEFORE_SEVEN_DAYS') {
             if (measurePercent == 0) {
                 sourceType = '9'
-                textContent = `我们将会在开诊前三天再与您确认参加情况。我们还没有收到您近7天的血糖监测数据，医生无法对您的情况作更全面的判断和针对性的指导，请您抓紧测量`
+                textContent = `我们将会在开诊前3天再与您确认参加情况。我们还没有收到您近7天的血糖监测数据，医生无法对您的情况作更全面的判断和针对性的指导，请您抓紧测量`
             } else if (measurePercent < 0.5) {
                 sourceType = '8'
-                textContent = `我们将会在开诊前三天再与您确认参加情况。由于您近7天还没有按照医生给您的血糖监测方案进行监测，医生无法对您的情况作更全面的判断和针对性的指导，请您继续完善`
+                textContent = `我们将会在开诊前3天再与您确认参加情况。由于您近7天还没有按照医生给您的血糖监测方案进行监测，医生无法对您的情况作更全面的判断和针对性的指导，请您继续完善`
             } else {
                 sourceType = '7'
-                textContent = `我们将会在开诊前三天再与您确认参加情况。您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
+                textContent = `我们将会在开诊前3天再与您确认参加情况。您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
             }
             //3天卡片无不确定按钮
         } else {
