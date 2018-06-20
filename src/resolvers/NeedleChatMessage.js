@@ -11,6 +11,9 @@ export const NeedleChatMessage = {
     if (obj.messageType === 'IMAGE') {
       return 'NeedleImageMessage'
     }
+    if (obj.messageType === 'CARD') {
+      return 'NeedleCardMessage'
+    }
     throw new Error(`Unrecognized chat message type: ${obj.type}`)
   },
 }
@@ -25,14 +28,22 @@ export const sharedNeedleChatMessageResolvers = {
         ? needleChatMessage.senderId
         : maybeCreateFromHexString(needleChatMessage.senderId)
     const user = await db.collection('users').findOne({ _id: userId })
+    if (user) {
+      return {
+        ...user,
+        avatar: user.avatar
+          ? user.avatar
+          : needleChatMessage.senderId === '66728d10dc75bc6a43052036'
+            ? 'https://prod.gtzh.51ijk.com/imgs/app/avatars/doctor.png'
+            : user.gender === 'male'
+              ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+              : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
+      }
+    }
     return {
-      ...user,
-      avatar: user.avatar ? user.avatar :
-        needleChatMessage.senderId === '66728d10dc75bc6a43052036'
-        ? 'https://prod.gtzh.51ijk.com/imgs/app/avatars/doctor.png'
-        : (user.gender === 'male'
-            ?'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-            :'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'),
+      _id: '',
+      nickname: '',
+      avatar: '',
     }
   },
   async needleChatRoom(needleChatMessage, _, { getDb }) {

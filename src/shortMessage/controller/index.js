@@ -2,6 +2,7 @@ import {
   patientList,
   ORDER_SUCCESS_TEMPLATE,
   STOP_OUTPATIENT_TEMPLATE,
+  STOP_OUTPATIENT_TEMPLATE_DW,
 } from './constants'
 import { sendTxt } from '../../common'
 
@@ -40,7 +41,7 @@ export const stopOutpatientService = async isSender => {
       try {
         // await sendTxt({
         //   mobile: username.split('@')[0],
-        //   templateId: STOP_OUTPATIENT_TEMPLATE,
+        //   templateId: STOP_OUTPATIENT_TEMPLATE_DW,
         //   params: {
         //     userName: nickname,
         //   },

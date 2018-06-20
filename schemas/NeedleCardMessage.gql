@@ -1,0 +1,57 @@
+enum CardContentStatus {
+  # 初始状态
+  INIT
+  # 确认
+  SELF_CONFIRMED
+  # 照护师打电话确认
+  CDE_CONFIRMED
+  # 改期中
+  POSTPONING
+  # 已改期
+  POSTPONED
+  # 不确定
+  UNCERTAIN
+  # 已过期
+  OVERDUE
+  # 无状态
+  NONE
+}
+
+enum CardContentType {
+  # 预约类型
+  APPOINTMENT
+}
+
+enum CardContentSourceType {
+  # 提前七天
+  BEFORE_SEVEN_DAYS
+  # 提前三天
+  BEFORE_THREE_DAYS
+}
+
+type CardContentBody {
+  key: String
+  value: String
+}
+
+type CardContent {
+  title: String
+  type: CardContentType
+  status: CardContentStatus
+  sourceType: CardContentSourceType
+  body: [CardContentBody]
+  recordId: String
+  postponedDate: Date
+  toUserId: String
+  # 三天门诊需要此字段
+  beforeCardStatus: CardContentStatus
+}
+
+type NeedleCardMessage implements NeedleChatMessage {
+  _id: ID!
+  content: CardContent!
+  sender: User!
+  createdAt: Date!
+  messageType: String
+  needleChatRoom: NeedleChatRoom!
+}
