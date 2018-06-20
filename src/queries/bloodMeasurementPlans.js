@@ -50,11 +50,11 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
 
   const db = await getDb()
 
-  const endofweek = ''
-  const dateofweek = ''
+  let endofweek = ''
+  let dateofweek = ''
   if (dateType == 'BEFORE_SEVEN_DAYS' || dateType == 'BEFORE_THREE_DAYS') {
-    dateofweek = moment().subtract(7, "days").format("YYYY-MM-DD")
-    endofweek = moment().format("YYYY-MM-DD")
+    dateofweek = moment().subtract(7, "days").startOf('day')
+    endofweek = moment().subtract(1, "days").endOf('day')
   } else {
     dateofweek = moment().startOf('isoWeek')
     endofweek = moment().endOf('isoWeek')
