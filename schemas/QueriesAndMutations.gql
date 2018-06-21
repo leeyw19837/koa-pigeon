@@ -31,7 +31,7 @@ type Query {
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
   # Users
   patient(patientId: ID, telephone: String): Patient
-  patients: [Patient]
+  patients(cdeId: ID): [Patient]
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
