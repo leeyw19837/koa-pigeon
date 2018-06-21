@@ -13,6 +13,7 @@ import constructGetDb from 'mongodb-auto-reconnect'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 
 import cronJobRouter from './cronJob/router'
+import redisCron from './redisCron/router'
 import { queryAnalyzer } from './middlewares'
 import miniProgramRouter from './miniProgram/router'
 import Mutation from './mutations'
@@ -30,7 +31,7 @@ if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
 // This is necessary because graphql-tools
 // looks for __esModule in the schema otherwise
 delete (resolvers as any).__esModule
-; (async () => {
+;(async () => {
   const resolverMap = {
     ...resolvers,
     Subscription,
@@ -66,7 +67,7 @@ delete (resolvers as any).__esModule
   const context: IContext = {
     getDb,
   }
-  ; (global as any).db = await getDb()
+  ;(global as any).db = await getDb()
 
   const router = new Router()
 
@@ -81,6 +82,7 @@ delete (resolvers as any).__esModule
   router.use('/cron-job', cronJobRouter.routes())
   router.use('/short-message', shortMessageRouter.routes())
   router.use('/wx-mini', miniProgramRouter.routes())
+  router.use('/redis-cron', redisCron.routes())
 
   router.use(
     queryAnalyzer({
