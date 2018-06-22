@@ -56,11 +56,22 @@ export const NeedleChatRoom = {
     const me = needleChatRoom.participants.find(user => {
       return user.userId === userId
     })
-    return await db.collection('needleChatMessages').count({
+    const cursor = {
       chatRoomId: needleChatRoom._id,
       senderId: { $ne: me.userId },
       createdAt: { $gt: me.lastSeenAt },
-    })
+    }
+    if (userId === '66728d10dc75bc6a43052036') {
+      cursor.sourceType = {
+        $or: [
+          { $exists: false },
+          {
+            $in: ['FROM_CDE', 'FROM_PATIENT'],
+          },
+        ],
+      }
+    }
+    return await db.collection('needleChatMessages').count(cursor)
   },
   async lastSeenAt(needleChatRoom, args, context) {
     const userId = args.userId || '66728d10dc75bc6a43052036'
