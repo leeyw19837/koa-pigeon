@@ -5,8 +5,8 @@ import { get } from 'lodash'
 import { sendNeedleTextChatMessage } from '../../mutations/sendNeedleTextChatMessage'
 // redis 连接配置
 const redis_config = {
-  host: 'redis',
-  port: 6379,
+  host: 'redis-pigeon',
+  port: 6378,
 }
 // 建立两个客户端 一个负责发布一个负责订阅
 const client = redis.createClient(redis_config)
