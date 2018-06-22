@@ -15,14 +15,16 @@ export const patient = async (_, args, { getDb }: IContext) => {
   })
 }
 
-export const patients = async (_, args, { getDb }: IContext) => {
+export const patients = async (_, { cdeId }, { getDb }: IContext) => {
   const db = await getDb()
+  const condition: { [key: string]: any } = {
+    patientState: { $nin: ['REMOVED', 'ARCHIVE'] },
+    roles: { $exists: 0 },
+  }
+  if (cdeId) condition.cdeId = cdeId
   return db
     .collection('users')
-    .find({
-      patientState: { $nin: ['REMOVED', 'ARCHIVE'] },
-      roles: { $exists: 0 },
-    })
+    .find(condition)
     .toArray()
 }
 

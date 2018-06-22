@@ -36,6 +36,7 @@ import * as getDiagnoseType from './getDiagnoseType'
 import * as getDiagnosticWords from './getDiagnosticWords'
 import * as getOrderReceiverInfo from './getOrderReceiverInfo'
 import * as getPatientInstitution from './getPatientInstitution'
+import * as getUserUseBg1Situation from './getUserUseBg1Situation'
 
 const queries = {
   ...bloodGlucoseMeasurements,
@@ -68,6 +69,7 @@ const queries = {
   ...getDiagnoseType,
   ...getDiagnosticWords,
   ...getPatientInstitution,
+  ...getUserUseBg1Situation,
   ...getOrderReceiverInfo,
   ...appointments,
   ...outpatients,

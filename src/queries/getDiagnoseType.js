@@ -68,6 +68,8 @@ export const getDiagnoseType = async (_, args, { getDb }) => {
     let replyType = 'g'
     let bgValueBeforeMeal = 0
 
+    let manualInputType = args.manualInputType
+
     let measuredAt = args.measuredAt
     let measurementTime = args.measurementTime
     let patientId = args.patientId
@@ -75,6 +77,12 @@ export const getDiagnoseType = async (_, args, { getDb }) => {
 
     console.log(args)
 
+    if (manualInputType !== 'OTHERS' && manualInputType !== 'MANUAL_NOT_USE_BG_1' && manualInputType !== 'MANUAL_USE_BG_2') {
+        return {
+            diagnoseType: 'manual',
+            bloodGlucoseValueBeforeMeal: `${bgValueBeforeMeal}`
+        }
+    }
     //const bgValue = formatBgValue(bloodGlucoseValue)
     const bgValue = bloodGlucoseValue
     if (bgValue) {

@@ -5,6 +5,10 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
   let acM = {}
   let noC = {}
 
+  const {
+    dateType,
+  } = args;
+
   const actualMeasure = {
     morning: {
       pairing: 0,
@@ -46,8 +50,15 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
 
   const db = await getDb()
 
-  const dateofweek = moment().startOf('isoWeek')
-  const endofweek = moment().endOf('isoWeek')
+  let endofweek = ''
+  let dateofweek = ''
+  if (dateType == 'BEFORE_SEVEN_DAYS' || dateType == 'BEFORE_THREE_DAYS') {
+    dateofweek = moment().subtract(7, "days").startOf('day')
+    endofweek = moment().subtract(1, "days").endOf('day')
+  } else {
+    dateofweek = moment().startOf('isoWeek')
+    endofweek = moment().endOf('isoWeek')
+  }
 
   let measureModules = []
 
@@ -115,17 +126,17 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
 
     Object.keys(hasMeasureData).forEach(o => {
       const item = hasMeasureData[o]
-      ;['morning', 'midday', 'evening', 'beforeSleep'].forEach(key => {
-        const beforeKey = `${key}_b`
-        const afterKey = `${key}_a`
-        if (key === 'beforeSleep' && item[key]) actualMeasure[key].count += 1
-        if (item[beforeKey]) {
-          actualMeasure[key].count += 1
-          if (item[afterKey]) {
-            actualMeasure[key].pairing += 1
+        ;['morning', 'midday', 'evening', 'beforeSleep'].forEach(key => {
+          const beforeKey = `${key}_b`
+          const afterKey = `${key}_a`
+          if (key === 'beforeSleep' && item[key]) actualMeasure[key].count += 1
+          if (item[beforeKey]) {
+            actualMeasure[key].count += 1
+            if (item[afterKey]) {
+              actualMeasure[key].pairing += 1
+            }
           }
-        }
-      })
+        })
     })
     let notCompletedMeasure = {}
     shouldCheckProps.forEach(prop => {

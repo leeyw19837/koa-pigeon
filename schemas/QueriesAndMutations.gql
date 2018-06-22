@@ -31,7 +31,7 @@ type Query {
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
   # Users
   patient(patientId: ID, telephone: String): Patient
-  patients: [Patient]
+  patients(cdeId: ID): [Patient]
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
@@ -74,13 +74,16 @@ type Query {
     patientId: ID
     measurementTime: String
     measuredAt: Date
+    manualInputType: String
   ): DiagnoseType
   getPatientInstitution(patientId: ID): InstitutionType
+  getUserUseBg1Situation(patientId: ID): UserUseBG1Schema
   getOrderReceiverInfo(patientId: ID!): Order
   getDiagnosticWords(
     diagnoseType: String
     bloodGlucoseValue: String
     bgValueBeforeMeal: String
+    manualInputType: String
   ): DiagnosticWords
   # 月预约日历
   monthlyAppointments(
@@ -207,6 +210,7 @@ type Mutation {
     nextCommunicationDate: Date
   ): Boolean
   changeUsername(patientId: ID!, newUsername: String!): Boolean!
+  updateBG1Reason(patientId: ID!, reason: String!): Boolean
   removeOutHospitalSoap(_id: ID!): Boolean
   addOrder(
     # 病人编号
@@ -261,6 +265,14 @@ type Mutation {
     occurredAt: Date
   ): Boolean
   addAppointment: Boolean
+  changeChatCardStatus(
+    messageId: ID!
+    patientId: ID!
+    dateType: String!
+    operationType: String!
+    outpatientTime:Date!
+    recordId:String!
+    ): Boolean
 }
 
 type Subscription {

@@ -7,11 +7,13 @@ const healthCareTeams = {
     healthCareTeam2:'LUHEYIYUAN',
     healthCareTeam3:'CHAOYANGYIYUAN',
     healthCareTeam5:'SHOUGANGYIYUAN',
+    healthCareTeam6:'DONGFANGYIYUAN',
     healthCareTeam4:'OTHERS',
-    healthCareTeam:'OTHERS',
+    ihealthCareTeam:'OTHERS',
 }
 
 export const getPatientInstitution = async (_, args, { getDb }) => {
+    console.log('getPatientInstitution called!')
     const db = await getDb()
     let result = {institutionName:'EMPTY'}
     let healthcareTeamId = []
@@ -29,5 +31,6 @@ export const getPatientInstitution = async (_, args, { getDb }) => {
     }else {
         result.institutionName = 'OTHERS'
     }
+    console.log('getPatientInstitution called! result',result)
     return result
 }
