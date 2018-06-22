@@ -56,18 +56,18 @@ export const NeedleChatRoom = {
     const me = needleChatRoom.participants.find(user => {
       return user.userId === userId
     })
-    const cursor = {
+    const defaultCursor = {
       chatRoomId: needleChatRoom._id,
       senderId: { $ne: me.userId },
       createdAt: { $gt: me.lastSeenAt },
     }
+    let cursor = defaultCursor
     if (userId === '66728d10dc75bc6a43052036') {
-      cursor.sourceType = {
+      cursor = {
+        ...defaultCursor,
         $or: [
-          { $exists: false },
-          {
-            $in: ['FROM_CDE', 'FROM_PATIENT'],
-          },
+          { sourceType: { $exists: false } },
+          { sourceType: { $in: ['FROM_CDE', 'FROM_PATIENT'] } },
         ],
       }
     }
