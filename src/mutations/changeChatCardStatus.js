@@ -92,7 +92,7 @@ export const changeChatCardStatus = async (_, args, context) => {
 //根据测量完成比率返回不同的话术
 const getTextContent = (measurePercent, operationType, dateType, outpatientTime) => {
     let textContent = ''
-    let sourceType = '1'
+    let sourceType = 'BOP_1'
     const endTime = moment(outpatientTime).format("YYYY-MM-DD")
     const diffTime = moment(endTime).diff(moment(), 'days') + 1
     if (dateType == 'BEFORE_SEVEN_DAYS') {
@@ -104,42 +104,42 @@ const getTextContent = (measurePercent, operationType, dateType, outpatientTime)
         //7天卡片
         if (dateType == 'BEFORE_SEVEN_DAYS') {
             if (measurePercent == 0) {
-                sourceType = '3'
+                sourceType = 'BOP_3'
                 textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您近7天的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您抓紧测量`
             } else if (measurePercent < 0.5) {
-                sourceType = '2'
+                sourceType = 'BOP_2'
                 textContent = `还有${diffTime}天您就要来就诊了，您近7天还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您继续完善`
             } else {
-                sourceType = '1'
+                sourceType = 'BOP_1'
                 textContent = `还有${diffTime}天您就要来就诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
             }
             //3天卡片    
         } else {
             if (measurePercent == 0) {
-                sourceType = '12'
+                sourceType = 'BOP_12'
                 textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您最近的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会按照血糖监测方案进行测量`
             } else if (measurePercent < 0.5) {
-                sourceType = '11'
+                sourceType = 'BOP_11'
                 textContent = `还有${diffTime}天您就要来就诊了，您最近还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会继续完善`
             } else {
-                sourceType = '10'
+                sourceType = 'BOP_10'
                 textContent = `还有${diffTime}天您要来就诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
             }
         }
         //改期    
     } else if (operationType == 'CHANGE_DATE') {
-        sourceType = '13'
+        sourceType = 'BOP_13'
         textContent = `照护师您好，我要改期`
         //知道了
     } else if (operationType == 'KNOWN') {
         if (measurePercent == 0) {
-            sourceType = '6'
+            sourceType = 'BOP_6'
             textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您最近的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会按照血糖监测方案进行测量`
         } else if (measurePercent < 0.5) {
-            sourceType = '5'
+            sourceType = 'BOP_5'
             textContent = `还有${diffTime}天您就要来就诊了，您最近还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会继续完善`
         } else {
-            sourceType = '4'
+            sourceType = 'BOP_4'
             textContent = `还有${diffTime}天您要来就诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
         }
         //不确定    
@@ -147,13 +147,13 @@ const getTextContent = (measurePercent, operationType, dateType, outpatientTime)
         //7天卡片
         if (dateType == 'BEFORE_SEVEN_DAYS') {
             if (measurePercent == 0) {
-                sourceType = '9'
+                sourceType = 'BOP_9'
                 textContent = `我们将会在开诊前3天再与您确认参加情况。我们还没有收到您近7天的血糖监测数据，医生无法对您的情况作更全面的判断和针对性的指导，请您抓紧测量`
             } else if (measurePercent < 0.5) {
-                sourceType = '8'
+                sourceType = 'BOP_8'
                 textContent = `我们将会在开诊前3天再与您确认参加情况。由于您近7天还没有按照医生给您的血糖监测方案进行监测，医生无法对您的情况作更全面的判断和针对性的指导，请您继续完善`
             } else {
-                sourceType = '7'
+                sourceType = 'BOP_7'
                 textContent = `我们将会在开诊前3天再与您确认参加情况。您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
             }
             //3天卡片无不确定按钮
