@@ -4,8 +4,8 @@ import { pubsub } from '../pubsub'
 import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
 
-export const sendNeedleTextChatMessage = async (_, args, context) => {
-  const db = await context.getDb()
+export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
+  const db = getDb === undefined ? global.db : await getDb()
 
   const { userId, chatRoomId, text, sourceType } = args
 

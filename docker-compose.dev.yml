@@ -3,7 +3,9 @@
 version: '3'
 services:
   api:
-    image: node:8.9.4-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - yarn:/root/.cache/yarn
       - ./:/usr/src/app
