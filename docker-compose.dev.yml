@@ -25,13 +25,10 @@ services:
       - RIGHTEOUS_RAVEN_KEY=af3da1c0-5cd9-11e7-8401-fb7c0283f83d
       - APP_ID=wx915efa8b538a4df4
       - APP_SECRET=d7be675b1fa83094a446087a90cf4f76
-  redis-pigeon:
+  redis:
     build:
       context: .
       dockerfile: Dockerfile-redis
-    ports:
-      - "6378:6379"
-
 
 volumes:
   yarn:
