@@ -11,7 +11,9 @@ export const wechatLoginOrSignUp = async (_, args, context) => {
   const accessToken = get(token, 'data.access_token')
   const openid = get(token, 'data.openid')
 
-  const existingPatient = await db.collection('users').findOne({ wechatOpenId: openid })
+  const existingPatient = await db
+    .collection('users')
+    .findOne({ wechatOpenId: openid })
   console.log('existingPatient', existingPatient, openid)
   if (existingPatient) {
     console.log('existingPatient---->>>', existingPatient)
@@ -33,7 +35,13 @@ export const wechatLoginOrSignUp = async (_, args, context) => {
   }
   console.log('not-exist--->', openid)
   const wechatInfo = await client.getUser(openid)
-  await db.collection('wechats').update({ openid }, { ...wechatInfo, updatedAt: new Date() }, { upsert: true })
+  await db
+    .collection('wechats')
+    .update(
+      { openid },
+      { ...wechatInfo, updatedAt: new Date() },
+      { upsert: true },
+    )
 
   return { wechatOpenId: openid, didCreateNewPatient: true }
 }

@@ -1,6 +1,17 @@
 type HealthcareProfessional {
   _id: ID
+  username: String
   nickname: String
+  avatar: String
   roles: String
   healthCareTeams: [HealthCareTeam]
+  certifiedDiabetesEducator: CertifiedDiabetesEducator
+}
+
+extend type Query {
+  professionalLoginForWechat(wechatCode: String!): HealthcareProfessional
+  professionalLoginForMobile(
+    mobile: String!
+    verificationCode: String!
+  ): HealthcareProfessional
 }

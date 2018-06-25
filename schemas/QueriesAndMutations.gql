@@ -164,6 +164,7 @@ type Mutation {
   ): NeedleTextMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
+  sendMobileVerificationCodeForWeb(mobile: String!): Int!
   saveCommunication(
     _id: ID
     patientId: ID!

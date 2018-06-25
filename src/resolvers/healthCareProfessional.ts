@@ -11,4 +11,9 @@ export const HealthcareProfessional = {
       })
       .toArray()
   },
+  certifiedDiabetesEducator: async (professional, _, { getDb }: IContext) => {
+    const db = await getDb()
+
+    return await db.collection('certifiedDiabetesEducators').findOne({userId: professional._id})
+  },
 }
