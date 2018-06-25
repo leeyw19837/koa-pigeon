@@ -172,7 +172,7 @@ export const saveBloodGlucoseMeasurementNew = async (
           await deleteDelayEvent(element)
         })
       }
-      await addDelayEvent(key, 60 * 10 * 2)
+      await addDelayEvent(key, 60 * 60 * 2)
     }
   }
 
