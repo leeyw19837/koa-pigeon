@@ -2,9 +2,14 @@ import freshId from 'fresh-id'
 import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
 import { IContext } from '../types'
+import * as moment from 'moment'
 import { DigestiveStateLookup } from '../utils/i18n'
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
-
+import {
+  addDelayEvent,
+  deleteDelayEvent,
+  queryDelayEvent,
+} from '../redisCron/controller'
 export const saveBloodGlucoseMeasurement = async (
   _,
   args,
@@ -148,6 +153,29 @@ export const saveBloodGlucoseMeasurementNew = async (
 
   const objectToWrite = { ...objFirst, ...objSecond }
   const retVal = await db.collection('bloodGlucoses').insertOne(objectToWrite)
+  console.log('-----------for redis cron test----------------')
+  // 餐前血糖测量后添加定时事件
+  // 只有自动测量和餐前才添加定时事件
+  // 添加事件前清除这个患者之前的事件
+  // 事件key：pigeon_bg_<patientId>_BEFORE_BREAKFAST_午餐前_hh:mm
+
+  if (inputType === 'DEVICE') {
+    if (measurementTime.indexOf('BEFORE') > -1) {
+      const key = `bg_${patientId}_${measurementTime}_${
+        measureTimeChinese[measureTimeEng.indexOf(measurementTime)]
+      }_${moment().format('HH:mm')}`
+      const querykey = `bg_${patientId}`
+      const existKeys = await queryDelayEvent(querykey)
+      console.log('*****', existKeys)
+      if (existKeys && existKeys.length > 0) {
+        existKeys.forEach(async element => {
+          await deleteDelayEvent(element)
+        })
+      }
+      await addDelayEvent(key, 60 * 60 * 2)
+    }
+  }
+
   const rz = retVal.ops[0]
   const user = await db.collection('users').findOne({
     _id: ObjectID.createFromHexString(patientId),

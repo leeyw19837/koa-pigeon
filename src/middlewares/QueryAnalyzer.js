@@ -1,9 +1,6 @@
 import { get, isEmpty, map, uniq, difference } from 'lodash'
 
-export const queryAnalyzer = ({ ignores = [], appendTo = 'HEADER' }) => (
-  ctx,
-  next,
-) => {
+export const queryAnalyzer = ({ ignores, appendTo }) => (ctx, next) => {
   return next().then(() => {
     if (ctx.status !== 200 || ctx.header['content-type'] !== 'application/json')
       return
@@ -25,7 +22,7 @@ export const queryAnalyzer = ({ ignores = [], appendTo = 'HEADER' }) => (
             type.replace(/[\[\]\!]/g, ''),
           ),
         ),
-        ignores,
+        ignores || [],
       )
       delete body.extensions
       appendTo === 'HEADER'

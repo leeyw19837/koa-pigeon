@@ -4,8 +4,21 @@ import { pubsub } from '../pubsub'
 import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
 
-export const sendNeedleTextChatMessage = async (_, args, context) => {
-  const db = await context.getDb()
+const sourceTypeGroup = [
+  'LG',
+  'G7FOral',
+  'G7FBasal',
+  'G10P1',
+  'G10P2',
+  'G10S',
+  'MANUAL_USE_BG_1',
+  'MANUAL_NOT_USE_BG_2',
+  'AM2H_1',
+  'BOP',
+]
+
+export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
+  const db = getDb === undefined ? global.db : await getDb()
 
   const { userId, chatRoomId, text, sourceType } = args
 
@@ -34,6 +47,9 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
           .count()
   console.log('chatMessageCount', chatMessageCount)
 
+  const sourceTypeMap =
+    userId === '66728d10dc75bc6a43052036' ? 'FROM_CDE' : 'FROM_PATIENT'
+
   const newChatMessage = {
     _id: freshId(),
     messageType: 'TEXT',
@@ -41,7 +57,7 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
     senderId: userId,
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
-    sourceType: sourceType || 'FROM_CDE',
+    sourceType: sourceType || sourceTypeMap,
   }
   await db.collection('needleChatMessages').insertOne(newChatMessage)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
@@ -65,9 +81,16 @@ export const sendNeedleTextChatMessage = async (_, args, context) => {
       })
     }
   }
-
+  const sourceTypeRegex = new RegExp(sourceTypeGroup.join('|'), 'i')
   const participants = chatRoom.participants.map(p => {
     if (p.userId === userId) {
+      // 如果是系统自动回复的话，照护师的未读数不应该消失
+      if (
+        p.userId === '66728d10dc75bc6a43052036' &&
+        sourceTypeRegex.test(sourceType)
+      ) {
+        return p
+      }
       return { ...p, lastSeenAt: new Date() }
     }
     return p

@@ -31,7 +31,7 @@ type Query {
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
   # Users
   patient(patientId: ID, telephone: String): Patient
-  patients: [Patient]
+  patients(cdeId: ID): [Patient]
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
@@ -164,6 +164,7 @@ type Mutation {
   ): NeedleTextMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
+  sendMobileVerificationCodeForWeb(mobile: String!): Int!
   saveCommunication(
     _id: ID
     patientId: ID!

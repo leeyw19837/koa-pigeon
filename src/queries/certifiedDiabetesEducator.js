@@ -8,5 +8,5 @@ export const certifiedDiabetesEducator = async (
 
   const db = await getDb()
 
-  return await db.collection('certifiedDiabetesEducators').findOne(condition)
+  return db.collection('certifiedDiabetesEducators').findOne(condition)
 }
