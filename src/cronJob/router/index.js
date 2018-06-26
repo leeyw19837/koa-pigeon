@@ -49,12 +49,14 @@ cronJob.get('/check-three-card-overdue', async ctx => {
 })
 
 cronJob.get('/send-outpatient-push-msgs', async ctx => {
-  // const { pwd, isTest } = ctx.query
+   const { pwd, day,hour } = ctx.query
   // if (pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
   //   return ctx.throw(401, '密码错误')
   // }
-  const result = await sendOutpatientPushMessages()
-  ctx.body = 'OK'
+  const result = await sendOutpatientPushMessages(day,hour)
+  if (result) {
+    ctx.body = 'OK! '+result
+  }
 })
 
 export default cronJob

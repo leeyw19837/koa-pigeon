@@ -15,21 +15,26 @@ const periodTextMap = {
   'BEFORE_DINNER': 'AFTER_DINNER',
 }
 
-const getFilteredPatients = (appointedPatients) => {
-  // console.log('------getFilteredPatients-----')
+const getFilteredPatients = (appointedPatients,day,hour) => {
+  console.log('------getFilteredPatients-----')
+
+  let dayInt = parseInt(day)
+  let hourInt = parseInt(hour)
 
   let filteredPatients = []
-  let currentDay = moment().isoWeekday()
-  let currentHourOfDay = moment().hour()
+  let currentDay = moment(moment().subtract(dayInt, 'days')).isoWeekday()
+  let currentHourOfDay = hourInt!==0 ? hourInt : moment(moment().subtract(dayInt, 'days')).hour()
   let amOrPm = currentHourOfDay < 12 ? 'morning' : 'afternoon'
+
+  console.log('------getFilteredPatients-----currentDay,',currentDay,'currentHourOfDay',currentHourOfDay)
 
   // 当前是周一，时段为早上，检查是否是门诊后：过滤条件：
   // [1] 周五诊(当前天减去3天的日期与appointTime的日期一致)
   // [2] 周四诊(当前天减去4天的日期与appointTime的日期一致)
   if (currentDay === 1 && amOrPm === 'morning') {
     filteredPatients = appointedPatients.filter(o => {
-      return moment(o.appointmentTime).isSame(moment().subtract(3, 'days'), 'day')
-        || moment(o.appointmentTime).isSame(moment().subtract(4, 'days'), 'day')
+      return moment(o.appointmentTime).isSame(moment().subtract(3+dayInt, 'days'), 'day')
+        || moment(o.appointmentTime).isSame(moment().subtract(4+dayInt, 'days'), 'day')
 
     })
   }
@@ -38,7 +43,7 @@ const getFilteredPatients = (appointedPatients) => {
   // 周一诊(当前天减去3天的日期与appointTime的日期一致)
   if (currentDay === 4 && amOrPm === 'morning') {
     filteredPatients = appointedPatients.filter(o => {
-      return moment(o.appointmentTime).isSame(moment().subtract(3, 'days'), 'day')
+      return moment(o.appointmentTime).isSame(moment().subtract(3+dayInt, 'days'), 'day')
     })
   }
 
@@ -47,8 +52,8 @@ const getFilteredPatients = (appointedPatients) => {
   // [2] 周三上午诊(当前天减去2天的日期与appointTime的日期一致)
   if (currentDay === 5 && amOrPm === 'morning') {
     filteredPatients = appointedPatients.filter(o => {
-      return moment(o.appointmentTime).isSame(moment().subtract(3, 'days'), 'day')
-        || moment(o.appointmentTime).isSame(moment().subtract(2, 'days'), 'day')
+      return moment(o.appointmentTime).isSame(moment().subtract(3+dayInt, 'days'), 'day')
+        || moment(o.appointmentTime).isSame(moment().subtract(2+dayInt, 'days'), 'day')
     })
   }
 
@@ -56,7 +61,7 @@ const getFilteredPatients = (appointedPatients) => {
   // 周三下午诊(当前天减去2天的日期与appointTime的日期一致)
   if (currentDay === 5 && amOrPm === 'afternoon') {
     filteredPatients = appointedPatients.filter(o => {
-      return moment(o.appointmentTime).isSame(moment().subtract(2, 'days'), 'day')
+      return moment(o.appointmentTime).isSame(moment().subtract(2+dayInt, 'days'), 'day')
     })
   }
 
@@ -66,98 +71,40 @@ const getFilteredPatients = (appointedPatients) => {
 }
 
 const getOutPatientAmOrPm = (healthCareTeamId, appointmentTime) => {
-  console.log('------getOutPatientAmOrPm-----')
-
-
-  // let healthCareTime = 'morning'
-
-  // // 当前是周一，时段为早上，计算上午还是下午诊：
-  // // [1] 如果是周五诊(当前天减去3天的日期与appointTime的日期一致)，那么在map中找该照护组对应的周五的看诊时间
-  // // [2] 如果是周四诊(当前天减去4天的日期与appointTime的日期一致)，那么在map中找该照护组对应的周四的看诊时间
-  // if (currentDay === 1 && amOrPm === 'morning') {
-  //   if (moment(appointmentTime).isSame(moment().subtract(3, 'days'), 'day')){
-  //     if(healthCareTeamMap[healthCareTeamId]){
-  //       if(healthCareTeamMap[healthCareTeamId][5]){
-  //         healthCareTime = healthCareTeamMap[healthCareTeamId][5]
-  //       }
-  //     }
-  //   }
-  //
-  //   if (moment(appointmentTime).isSame(moment().subtract(4, 'days'), 'day')){
-  //     if(healthCareTeamMap[healthCareTeamId]){
-  //       if(healthCareTeamMap[healthCareTeamId][4]){
-  //         healthCareTime = healthCareTeamMap[healthCareTeamId][4]
-  //       }
-  //     }
-  //   }
-  // }
-  //
-  // // 当前是周四，时段为早上，检查是否是门诊后：过滤检查：
-  // // 如果是周一诊(当前天减去3天的日期与appointTime的日期一致)，那么在map中找该照护组对应的周一的看诊时间
-  // if (currentDay === 4 && amOrPm === 'morning') {
-  //   if (moment(appointmentTime).isSame(moment().subtract(3, 'days'), 'day')){
-  //     if(healthCareTeamMap[healthCareTeamId]){
-  //       if(healthCareTeamMap[healthCareTeamId][1]){
-  //         healthCareTime = healthCareTeamMap[healthCareTeamId][1]
-  //       }
-  //     }
-  //   }
-  // }
-  //
-  // // 当前是周五，时段为早上，检查是否是门诊后：过滤检查：
-  // // [1] 如果是周二诊(当前天减去3天的日期与appointTime的日期一致)，那么在map中找该照护组对应的周二的看诊时间
-  // // [2] 如果是周三诊(当前天减去2天的日期与appointTime的日期一致)，那么在map中找该照护组对应的周三的看诊时间
-  // if (currentDay === 5 && amOrPm === 'morning') {
-  //   if (moment(appointmentTime).isSame(moment().subtract(3, 'days'), 'day')){
-  //     if(healthCareTeamMap[healthCareTeamId]){
-  //       if(healthCareTeamMap[healthCareTeamId][2]){
-  //         healthCareTime = healthCareTeamMap[healthCareTeamId][2]
-  //       }
-  //     }
-  //   }
-  //
-  //   if (moment(appointmentTime).isSame(moment().subtract(2, 'days'), 'day')){
-  //     if(healthCareTeamMap[healthCareTeamId]){
-  //       if(healthCareTeamMap[healthCareTeamId][3]){
-  //         healthCareTime = healthCareTeamMap[healthCareTeamId][3]
-  //       }
-  //     }
-  //   }
-  // }
-  //
-  // // 当前是周五，时段为下午，检查是否是门诊后：过滤检查：
-  // // 如果是周三诊(当前天减去2天的日期与appointTime的日期一致)，那么在map中找该照护组对应的周三的看诊时间
-  // if (currentDay === 5 && amOrPm === 'afternoon') {
-  //   if (moment(appointmentTime).isSame(moment().subtract(2, 'days'), 'day')){
-  //     if(healthCareTeamMap[healthCareTeamId]){
-  //       if(healthCareTeamMap[healthCareTeamId][3]){
-  //         healthCareTime = healthCareTeamMap[healthCareTeamId][3]
-  //       }
-  //     }
-  //   }
-  // }
-  // return healthCareTime
+  console.log('------getOutPatientAmOrPm-----,healthCareTeamId, appointmentTime',healthCareTeamId, appointmentTime)
 
   return healthCareTeamMap[healthCareTeamId][moment(appointmentTime).isoWeekday()]
-
 }
 
 /**
  * 检查是否门诊后
  * @returns {Promise<boolean>}
  */
-const getAfterOutpatientPatients = async () => {
-
-  // console.log('------getAfterOutpatientPatients-----')
+const getAfterOutpatientPatients = async (day,hour) => {
+  console.log('------getAfterOutpatientPatients-----')
 
   //为了减少数据运算，只从数据库中筛选最近6天的预约记录
-  const startAt = moment(moment().subtract(6, 'days')).startOf('day')._d
-  const endAt = moment().endOf('day')._d
+  // let startAt = moment(moment().subtract(6, 'days')).startOf('day')._d
+  // let endAt = moment().endOf('day')._d
+
+  // test
+  let startAt = moment(moment().subtract(parseInt(day)+6, 'days')).startOf('day')._d
+  let endAt = moment(moment().subtract(parseInt(day), 'days')).endOf('day')._d
+
+  console.log('------getAfterOutpatientPatients-----startAt',startAt,'endAt',endAt)
+
   let appointedPatients = await db
     .collection('appointments')
     .find({
       isOutPatient: true,
-      healthCareTeamId: {$exists: true},
+      $and:[
+        {
+          healthCareTeamId: {$exists: true}
+          },
+        {
+          healthCareTeamId: {$ne: 'ihealthCareTeam'},
+        }
+      ],
       appointmentTime: {
         $gte: startAt,
         $lt: endAt,
@@ -165,11 +112,11 @@ const getAfterOutpatientPatients = async () => {
     })
     .toArray()
 
-  // console.log('appointedPatients.length',appointedPatients.length)
+  console.log('appointedPatients.length',appointedPatients.length)
 
   // appointedPatients.forEach(item=>console.log(item))
 
-  return getFilteredPatients(appointedPatients)
+  return getFilteredPatients(appointedPatients,day,hour)
 }
 
 /**
@@ -179,8 +126,8 @@ const getAfterOutpatientPatients = async () => {
  * @param appointmentTime
  * @returns {Promise<TSchema[]>}
  */
-const checkWhetherExistsBGRecords = async (patientId, outPatientAmOrPm, appointmentTime) => {
-  // console.log('------checkWhetherExistsBGRecords-----')
+const checkWhetherExistsBGRecords = async (patientId, outPatientAmOrPm, appointmentTime,day) => {
+  console.log('------checkWhetherExistsBGRecords-----')
 
   let timeBoundary = (outPatientAmOrPm === 'morning')
     ? moment(appointmentTime).set('hour',13).set('minute',0).set('second',0).set('millisecond',0).toDate()
@@ -189,7 +136,7 @@ const checkWhetherExistsBGRecords = async (patientId, outPatientAmOrPm, appointm
     patientId: patientId,
     measuredAt: {
       $gte:timeBoundary,
-      $lt:new Date()
+      $lt:moment(moment().subtract(parseInt(day), 'days')).toDate()
     },
     dataStatus: 'ACTIVE',
     bloodGlucoseDataSource:/NEEDLE/
@@ -199,7 +146,7 @@ const checkWhetherExistsBGRecords = async (patientId, outPatientAmOrPm, appointm
     .find(query)
     .toArray()
 
-  // console.log('bgRecords.length',bgRecords.length)
+  console.log('bgRecords.length',bgRecords.length)
 
   return bgRecords
 }
@@ -208,10 +155,10 @@ const checkWhetherExistsBGRecords = async (patientId, outPatientAmOrPm, appointm
  * 组合消息并发出
  * @returns {Promise<boolean>}
  */
-const assembleMsgsAndPubsub = async (filteredOutpatientPatients) => {
-  // console.log('------assembleMsgsAndPubsub-----')
+const assembleMsgsAndPubsub = async (filteredOutpatientPatients,day) => {
+  console.log('------assembleMsgsAndPubsub-----')
 
-  // console.log('filteredOutpatientPatients.length',filteredOutpatientPatients.length)
+  console.log('filteredOutpatientPatients.length',filteredOutpatientPatients.length)
 
   let messageArray = []
 
@@ -221,7 +168,7 @@ const assembleMsgsAndPubsub = async (filteredOutpatientPatients) => {
     let messageWordsAndSourceType = {}
 
     let outPatientAmOrPm = getOutPatientAmOrPm(healthCareTeamId,appointmentTime)
-    let bgRecords = await checkWhetherExistsBGRecords(patientId, outPatientAmOrPm, appointmentTime)
+    let bgRecords = await checkWhetherExistsBGRecords(patientId, outPatientAmOrPm, appointmentTime,day)
     if (bgRecords && bgRecords.length>0){
       let whetherPairingRecords = await checkWhetherExistsParingMeasurements(bgRecords)
       let triggerResultPageWords = checkWhetherExistsResultEvents(bgRecords)
@@ -239,17 +186,19 @@ const assembleMsgsAndPubsub = async (filteredOutpatientPatients) => {
 
     let messageObject = await assembleMessageObject(patientId,messageWordsAndSourceType)
 
-    // console.log('messageObject',messageObject)
+    console.log('messageObject',messageObject)
     messageArray.push(messageObject)
   }
 
-  // console.log('messageArray.length',messageArray.length)
+  console.log('messageArray.length',messageArray.length)
 
   // 发送Muti推送消息
   if (messageArray.length>0){
     const insertResult = await db
       .collection('needleChatMessages')
       .insert(messageArray)
+
+      return '插入needleChatMessage表中 '+insertResult.insertedCount+' 条数据！'
      // await multiSendMiPush(messageArray, 'TEXT')
      // pubChatMessages(messageArray)
   }
@@ -260,7 +209,7 @@ const assembleMsgsAndPubsub = async (filteredOutpatientPatients) => {
  * @returns {Promise<boolean>}
  */
 const checkWhetherUseBg1 = async (patientId) => {
-  // console.log('------checkWhetherUseBg1-----')
+  console.log('------checkWhetherUseBg1-----')
 
   let userCount = await db
     .collection('users')
@@ -287,7 +236,7 @@ const checkWhetherUseBg1 = async (patientId) => {
  * @returns {Promise<boolean>}
  */
 const checkWhetherModifiedMedicines = async (patientId) => {
-  // console.log('------checkWhetherModifiedMedicines-----')
+  console.log('------checkWhetherModifiedMedicines-----')
 
   let medicineCaseRecords = await db
     .collection('caseRecord')
@@ -314,7 +263,7 @@ const checkWhetherModifiedMedicines = async (patientId) => {
  * @returns {Promise<boolean>}
  */
 const checkWhetherExistsParingMeasurements = async (bgRecords) => {
-  // console.log('------checkWhetherExistsParingMeasurements-----')
+  console.log('------checkWhetherExistsParingMeasurements-----')
 
   let result = false
   for (let i=0; i<bgRecords.length;i++){
@@ -334,7 +283,7 @@ const checkWhetherExistsParingMeasurements = async (bgRecords) => {
  * @return boolean
  */
 const checkWhetherExistsResultEvents = bgRecords => {
-  // console.log('------checkWhetherExistsResultEvents-----')
+  console.log('------checkWhetherExistsResultEvents-----')
   let filteredBgRecords = bgRecords.filter(bgRecord =>
     bgRecord.diagnoseType
     && (bgRecord.diagnoseType === 'a'
@@ -351,7 +300,7 @@ const checkWhetherExistsResultEvents = bgRecords => {
  * @returns {Object}
  */
 const getMessageTextWithBgRecords = (whetherPairingRecords,medicineCaseModifySituation) => {
-  // console.log('------getMessageTextWithBgRecords-----')
+  console.log('------getMessageTextWithBgRecords-----')
 
   let text =''
   let sourceType =''
@@ -383,7 +332,7 @@ const getMessageTextWithBgRecords = (whetherPairingRecords,medicineCaseModifySit
  * @returns {Object}
  */
 const getMessageTextNoBgRecords = (whetherUseBg1, medicineCaseModifySituation) => {
-  // console.log('------getMessageTextNoBgRecords-----')
+  console.log('------getMessageTextNoBgRecords-----')
 
   let text =''
   let sourceType =''
@@ -415,7 +364,7 @@ const getMessageTextNoBgRecords = (whetherUseBg1, medicineCaseModifySituation) =
  * @returns {Object}
  */
 const assembleMessageObject = async (patientId, messageObject) => {
-  // console.log('------assembleMessageObject-----')
+  console.log('------assembleMessageObject-----')
   return {
     _id:freshId(),
     messageType: 'TEXT',
@@ -433,7 +382,7 @@ const assembleMessageObject = async (patientId, messageObject) => {
  * @returns {Promise<*>}
  */
 const getChatRoomId = async (patientId) => {
-  // console.log('------getChatRoomId-----')
+  console.log('------getChatRoomId-----')
 
   let user = await db
     .collection('users')
@@ -454,19 +403,19 @@ const getChatRoomId = async (patientId) => {
  * @param chatMessages
  */
 const pubChatMessages = chatMessages => {
-  // console.log('------pubChatMessages-----')
+  console.log('------pubChatMessages-----')
 
   chatMessages.forEach(chatMsg => {
     pubsub.publish('chatMessageAdded', { chatMessageAdded: chatMsg })
   })
 }
 
-export const sendOutpatientPushMessages = async () => {
-  // console.log('------sendOutpatientPushMessages-----')
+export const sendOutpatientPushMessages = async (day,hour) => {
+  console.log('------sendOutpatientPushMessages-----')
 
   // 第一步：过滤已经就诊的患者
-  let filteredOutpatientPatients = await getAfterOutpatientPatients()
+  let filteredOutpatientPatients = await getAfterOutpatientPatients(day,hour)
 
   // 第二步：针对已经就诊的患者，组合聊天消息并发送
-   assembleMsgsAndPubsub(filteredOutpatientPatients)
+  return await assembleMsgsAndPubsub(filteredOutpatientPatients,day)
 }
