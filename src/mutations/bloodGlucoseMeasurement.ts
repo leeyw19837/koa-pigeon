@@ -153,14 +153,18 @@ export const saveBloodGlucoseMeasurementNew = async (
 
   const objectToWrite = { ...objFirst, ...objSecond }
   const retVal = await db.collection('bloodGlucoses').insertOne(objectToWrite)
-  console.log('-----------for redis cron test----------------')
+
   // 餐前血糖测量后添加定时事件
   // 只有自动测量和餐前才添加定时事件
   // 添加事件前清除这个患者之前的事件
   // 事件key：pigeon_bg_<patientId>_BEFORE_BREAKFAST_午餐前_hh:mm
 
   if (inputType === 'DEVICE') {
-    if (measurementTime.indexOf('BEFORE') > -1) {
+    if (
+      measurementTime.indexOf('BEFORE') > -1 &&
+      measurementTime != 'BEFORE_SLEEPING'
+    ) {
+      console.log('-----------add reids cron job----------------')
       const key = `bg_${patientId}_${measurementTime}_${
         measureTimeChinese[measureTimeEng.indexOf(measurementTime)]
       }_${moment().format('HH:mm')}`

@@ -315,7 +315,7 @@ const createChatCardMessage = async (cardMessages, isTest) => {
       .insert(cardMessages)
     if (insertResult.result.ok === 1) {
       // if (isTest) {
-      await multiSendMiPush(cardMessages)
+      await multiSendMiPush(cardMessages, 'CARD')
       pubChatMessages(cardMessages)
       // }
     }

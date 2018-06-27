@@ -53,7 +53,7 @@ const getUnReadCount = (allChatMessages, chatRoom, patientId) => {
   ).length
 }
 
-const generateSendMessages = async ({ type, chatCardMessages = [] }) => {
+const generateSendMessages = async ({ type, chatCardMessages = [], messageType }) => {
   const patientIds = chatCardMessages.map(o => o.content.toUserId)
   const hasDeviceContextInUser = await db
     .collection('users')
@@ -108,7 +108,7 @@ const generateSendMessages = async ({ type, chatCardMessages = [] }) => {
       notify_foreground: type === 'CHAT' ? '0' : '1',
     },
     title: '护血糖',
-    description: '[新消息] 收到一张就诊提醒卡片',
+    description: messageType === 'CARD' ? '[新消息] 收到一张就诊提醒卡片':'[新消息] 收到一条新消息',
   }
 
   const sendMessages = []
@@ -164,10 +164,11 @@ const pushChatNotification = async (deviceType, chatMessages) => {
     }
   }
 }
-export const multiSendMiPush = async chatCardMessages => {
+export const multiSendMiPush = async (chatCardMessages, messageType) => {
   const chatMessages = await generateSendMessages({
     type: 'CHAT',
     chatCardMessages,
+    messageType,
   })
   await pushChatNotification('ios', chatMessages)
   await pushChatNotification('android', chatMessages)
