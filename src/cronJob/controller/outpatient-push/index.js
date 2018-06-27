@@ -16,7 +16,7 @@ const periodTextMap = {
 }
 
 const getFilteredPatients = (appointedPatients,day,hour) => {
-  console.log('------getFilteredPatients-----')
+  // console.log('------getFilteredPatients-----')
 
   let dayInt = parseInt(day)
   let hourInt = parseInt(hour)
@@ -26,7 +26,7 @@ const getFilteredPatients = (appointedPatients,day,hour) => {
   let currentHourOfDay = hourInt!==0 ? hourInt : moment(moment().subtract(dayInt, 'days')).hour()
   let amOrPm = currentHourOfDay < 12 ? 'morning' : 'afternoon'
 
-  console.log('------getFilteredPatients-----currentDay,',currentDay,'currentHourOfDay',currentHourOfDay)
+  // console.log('------getFilteredPatients-----currentDay,',currentDay,'currentHourOfDay',currentHourOfDay)
 
   // 当前是周一，时段为早上，检查是否是门诊后：过滤条件：
   // [1] 周五诊(当前天减去3天的日期与appointTime的日期一致)
@@ -65,13 +65,13 @@ const getFilteredPatients = (appointedPatients,day,hour) => {
     })
   }
 
-  console.log('filteredPatients.length',filteredPatients.length)
+  // console.log('filteredPatients.length',filteredPatients.length)
 
   return filteredPatients
 }
 
 const getOutPatientAmOrPm = (healthCareTeamId, appointmentTime) => {
-  console.log('------getOutPatientAmOrPm-----,healthCareTeamId, appointmentTime',healthCareTeamId, appointmentTime)
+  // console.log('------getOutPatientAmOrPm-----,healthCareTeamId=',healthCareTeamId,'appointmentTime=',appointmentTime,'moment(appointmentTime).isoWeekday()=',moment(appointmentTime).isoWeekday())
 
   return healthCareTeamMap[healthCareTeamId][moment(appointmentTime).isoWeekday()]
 }
@@ -81,17 +81,13 @@ const getOutPatientAmOrPm = (healthCareTeamId, appointmentTime) => {
  * @returns {Promise<boolean>}
  */
 const getAfterOutpatientPatients = async (day,hour) => {
-  console.log('------getAfterOutpatientPatients-----')
+  // console.log('------getAfterOutpatientPatients-----')
 
-  //为了减少数据运算，只从数据库中筛选最近6天的预约记录
-  // let startAt = moment(moment().subtract(6, 'days')).startOf('day')._d
-  // let endAt = moment().endOf('day')._d
-
-  // test
+  // 为了减少数据运算，只从数据库中筛选最近6天的预约记录
   let startAt = moment(moment().subtract(parseInt(day)+6, 'days')).startOf('day')._d
   let endAt = moment(moment().subtract(parseInt(day), 'days')).endOf('day')._d
 
-  console.log('------getAfterOutpatientPatients-----startAt',startAt,'endAt',endAt)
+  // console.log('------getAfterOutpatientPatients-----startAt',startAt,'endAt',endAt)
 
   let appointedPatients = await db
     .collection('appointments')
@@ -112,9 +108,9 @@ const getAfterOutpatientPatients = async (day,hour) => {
     })
     .toArray()
 
-  console.log('appointedPatients.length',appointedPatients.length)
+  // console.log('appointedPatients.length',appointedPatients.length)
 
-  // appointedPatients.forEach(item=>console.log(item))
+  // appointedPatients.forEach(item=>// console.log(item))
 
   return getFilteredPatients(appointedPatients,day,hour)
 }
@@ -127,11 +123,14 @@ const getAfterOutpatientPatients = async (day,hour) => {
  * @returns {Promise<TSchema[]>}
  */
 const checkWhetherExistsBGRecords = async (patientId, outPatientAmOrPm, appointmentTime,day) => {
-  console.log('------checkWhetherExistsBGRecords-----')
+  // console.log('------checkWhetherExistsBGRecords-----')
 
   let timeBoundary = (outPatientAmOrPm === 'morning')
     ? moment(appointmentTime).set('hour',13).set('minute',0).set('second',0).set('millisecond',0).toDate()
     : moment(appointmentTime).set('hour',18).set('minute',0).set('second',0).set('millisecond',0).toDate()
+
+  // console.log('timeBoundary--',timeBoundary,'moment(moment().subtract(parseInt(day))).toDate()',moment(moment().subtract(parseInt(day), 'days')).toDate())
+
   let query = {
     patientId: patientId,
     measuredAt: {
@@ -146,7 +145,7 @@ const checkWhetherExistsBGRecords = async (patientId, outPatientAmOrPm, appointm
     .find(query)
     .toArray()
 
-  console.log('bgRecords.length',bgRecords.length)
+  // console.log('bgRecords.length',bgRecords.length)
 
   return bgRecords
 }
@@ -156,9 +155,9 @@ const checkWhetherExistsBGRecords = async (patientId, outPatientAmOrPm, appointm
  * @returns {Promise<boolean>}
  */
 const assembleMsgsAndPubsub = async (filteredOutpatientPatients,day) => {
-  console.log('------assembleMsgsAndPubsub-----')
+  // console.log('------assembleMsgsAndPubsub-----')
 
-  console.log('filteredOutpatientPatients.length',filteredOutpatientPatients.length)
+  // console.log('filteredOutpatientPatients.length',filteredOutpatientPatients.length)
 
   let messageArray = []
 
@@ -186,21 +185,22 @@ const assembleMsgsAndPubsub = async (filteredOutpatientPatients,day) => {
 
     let messageObject = await assembleMessageObject(patientId,messageWordsAndSourceType)
 
-    console.log('messageObject',messageObject)
+    // console.log('messageObject',messageObject)
     messageArray.push(messageObject)
   }
 
-  console.log('messageArray.length',messageArray.length)
+  // console.log('messageArray.length',messageArray.length)
 
   // 发送Muti推送消息
   if (messageArray.length>0){
     const insertResult = await db
       .collection('needleChatMessages')
       .insert(messageArray)
+    
+      await multiSendMiPush(messageArray, 'TEXT')
+      pubChatMessages(messageArray)
 
       return '插入needleChatMessage表中 '+insertResult.insertedCount+' 条数据！'
-     // await multiSendMiPush(messageArray, 'TEXT')
-     // pubChatMessages(messageArray)
   }
 }
 
@@ -209,7 +209,7 @@ const assembleMsgsAndPubsub = async (filteredOutpatientPatients,day) => {
  * @returns {Promise<boolean>}
  */
 const checkWhetherUseBg1 = async (patientId) => {
-  console.log('------checkWhetherUseBg1-----')
+  // console.log('------checkWhetherUseBg1-----')
 
   let userCount = await db
     .collection('users')
@@ -236,7 +236,7 @@ const checkWhetherUseBg1 = async (patientId) => {
  * @returns {Promise<boolean>}
  */
 const checkWhetherModifiedMedicines = async (patientId) => {
-  console.log('------checkWhetherModifiedMedicines-----')
+  // console.log('------checkWhetherModifiedMedicines-----')
 
   let medicineCaseRecords = await db
     .collection('caseRecord')
@@ -263,7 +263,7 @@ const checkWhetherModifiedMedicines = async (patientId) => {
  * @returns {Promise<boolean>}
  */
 const checkWhetherExistsParingMeasurements = async (bgRecords) => {
-  console.log('------checkWhetherExistsParingMeasurements-----')
+  // console.log('------checkWhetherExistsParingMeasurements-----')
 
   let result = false
   for (let i=0; i<bgRecords.length;i++){
@@ -283,7 +283,7 @@ const checkWhetherExistsParingMeasurements = async (bgRecords) => {
  * @return boolean
  */
 const checkWhetherExistsResultEvents = bgRecords => {
-  console.log('------checkWhetherExistsResultEvents-----')
+  // console.log('------checkWhetherExistsResultEvents-----')
   let filteredBgRecords = bgRecords.filter(bgRecord =>
     bgRecord.diagnoseType
     && (bgRecord.diagnoseType === 'a'
@@ -300,7 +300,7 @@ const checkWhetherExistsResultEvents = bgRecords => {
  * @returns {Object}
  */
 const getMessageTextWithBgRecords = (whetherPairingRecords,medicineCaseModifySituation) => {
-  console.log('------getMessageTextWithBgRecords-----')
+  // console.log('------getMessageTextWithBgRecords-----')
 
   let text =''
   let sourceType =''
@@ -332,7 +332,7 @@ const getMessageTextWithBgRecords = (whetherPairingRecords,medicineCaseModifySit
  * @returns {Object}
  */
 const getMessageTextNoBgRecords = (whetherUseBg1, medicineCaseModifySituation) => {
-  console.log('------getMessageTextNoBgRecords-----')
+  // console.log('------getMessageTextNoBgRecords-----')
 
   let text =''
   let sourceType =''
@@ -364,7 +364,7 @@ const getMessageTextNoBgRecords = (whetherUseBg1, medicineCaseModifySituation) =
  * @returns {Object}
  */
 const assembleMessageObject = async (patientId, messageObject) => {
-  console.log('------assembleMessageObject-----')
+  // console.log('------assembleMessageObject-----')
   return {
     _id:freshId(),
     messageType: 'TEXT',
@@ -382,7 +382,7 @@ const assembleMessageObject = async (patientId, messageObject) => {
  * @returns {Promise<*>}
  */
 const getChatRoomId = async (patientId) => {
-  console.log('------getChatRoomId-----')
+  // console.log('------getChatRoomId-----')
 
   let user = await db
     .collection('users')
@@ -403,7 +403,7 @@ const getChatRoomId = async (patientId) => {
  * @param chatMessages
  */
 const pubChatMessages = chatMessages => {
-  console.log('------pubChatMessages-----')
+  // console.log('------pubChatMessages-----')
 
   chatMessages.forEach(chatMsg => {
     pubsub.publish('chatMessageAdded', { chatMessageAdded: chatMsg })
@@ -411,7 +411,7 @@ const pubChatMessages = chatMessages => {
 }
 
 export const sendOutpatientPushMessages = async (day,hour) => {
-  console.log('------sendOutpatientPushMessages-----')
+  // console.log('------sendOutpatientPushMessages-----')
 
   // 第一步：过滤已经就诊的患者
   let filteredOutpatientPatients = await getAfterOutpatientPatients(day,hour)
