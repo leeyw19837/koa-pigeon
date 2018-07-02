@@ -77,8 +77,8 @@ export const appointmentsInformation = async (_, args, { getDb }: IContext) => {
     patientId: patientId,
     preAppointmentsCount: 0, //历史门诊次数
     nextAppointmentCount: 1, //下次门诊次数
-    nextAppointmentDate: '无下次门诊信息', //下次门诊日期
-    nextAppointmentDays: '-', //下次门诊还剩几天
+    nextAppointmentDate: '', //下次门诊日期
+    nextAppointmentDays: '', //下次门诊还剩几天
   }
   // 当前患者的所有预约信息, 时间倒叙
   const appointments = await db
