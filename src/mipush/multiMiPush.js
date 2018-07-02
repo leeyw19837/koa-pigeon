@@ -54,7 +54,30 @@ const getUnReadCount = (allChatMessages, chatRoom, patientId) => {
 }
 
 const generateSendMessages = async ({ type, chatCardMessages = [], messageType }) => {
-  const patientIds = chatCardMessages.map(o => o.content.toUserId)
+
+  let patientIds = []
+
+  if (messageType === 'CARD'){
+    patientIds = chatCardMessages.map(o => o.content.toUserId)
+  } else {
+    let chatRoomIds = chatCardMessages.map(o => o.chatRoomId)
+
+    let chatRoomInfos = await db
+      .collection('needleChatRooms')
+      .find({
+        _id: { $in: chatRoomIds},
+      })
+      .toArray()
+
+    chatRoomInfos.forEach(o=>{
+      if (o.participants[0].userId !== '66728d10dc75bc6a43052036'){
+        patientIds.push(o.participants[0].userId)
+      }else {
+        patientIds.push(o.participants[1].userId)
+      }
+    })
+  }
+
   const hasDeviceContextInUser = await db
     .collection('users')
     .find({

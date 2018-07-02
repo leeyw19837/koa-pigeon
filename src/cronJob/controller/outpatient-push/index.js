@@ -384,15 +384,30 @@ const assembleMessageObject = async (patientId, messageObject) => {
 const getChatRoomId = async (patientId) => {
   // console.log('------getChatRoomId-----')
 
-  let user = await db
-    .collection('users')
-    .find({
-      _id:ObjectID.createFromHexString(patientId),
-      needleChatRoomId:{$exists:true}
-    })
+  // let user = await db
+  //   .collection('users')
+  //   .find({
+  //     _id:ObjectID.createFromHexString(patientId),
+  //     needleChatRoomId:{$exists:true}
+  //   })
+  //   .toArray()
+  // if(user && user.length>0){
+  //   return user[0].needleChatRoomId
+  // }else {
+  //   return ''
+  // }
+
+  let chatRoomInfos = await db
+    .collection('needleChatRooms')
+    .find({})
     .toArray()
-  if(user && user.length>0){
-    return user[0].needleChatRoomId
+
+  let chatRoomIdInfo = chatRoomInfos.filter(o=>{
+    return o.participants[0].userId === patientId || o.participants[1].userId === patientId
+  })
+
+  if (chatRoomIdInfo && chatRoomIdInfo.length>0){
+    return chatRoomIdInfo[0]._id
   }else {
     return ''
   }
