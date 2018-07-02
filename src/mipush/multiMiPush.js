@@ -53,8 +53,31 @@ const getUnReadCount = (allChatMessages, chatRoom, patientId) => {
   ).length
 }
 
-const generateSendMessages = async ({ type, chatCardMessages = [] }) => {
-  const patientIds = chatCardMessages.map(o => o.content.toUserId)
+const generateSendMessages = async ({ type, chatCardMessages = [], messageType }) => {
+
+  let patientIds = []
+
+  if (messageType === 'CARD'){
+    patientIds = chatCardMessages.map(o => o.content.toUserId)
+  } else {
+    let chatRoomIds = chatCardMessages.map(o => o.chatRoomId)
+
+    let chatRoomInfos = await db
+      .collection('needleChatRooms')
+      .find({
+        _id: { $in: chatRoomIds},
+      })
+      .toArray()
+
+    chatRoomInfos.forEach(o=>{
+      if (o.participants[0].userId !== '66728d10dc75bc6a43052036'){
+        patientIds.push(o.participants[0].userId)
+      }else {
+        patientIds.push(o.participants[1].userId)
+      }
+    })
+  }
+
   const hasDeviceContextInUser = await db
     .collection('users')
     .find({
@@ -108,7 +131,7 @@ const generateSendMessages = async ({ type, chatCardMessages = [] }) => {
       notify_foreground: type === 'CHAT' ? '0' : '1',
     },
     title: '护血糖',
-    description: '[新消息] 收到一张就诊提醒卡片',
+    description: messageType === 'CARD' ? '[新消息] 收到一张就诊提醒卡片':'[新消息] 收到一条新消息',
   }
 
   const sendMessages = []
@@ -164,10 +187,11 @@ const pushChatNotification = async (deviceType, chatMessages) => {
     }
   }
 }
-export const multiSendMiPush = async chatCardMessages => {
+export const multiSendMiPush = async (chatCardMessages, messageType) => {
   const chatMessages = await generateSendMessages({
     type: 'CHAT',
     chatCardMessages,
+    messageType,
   })
   await pushChatNotification('ios', chatMessages)
   await pushChatNotification('android', chatMessages)

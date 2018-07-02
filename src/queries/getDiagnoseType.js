@@ -64,6 +64,35 @@ const isAboveTen = bgValue => bgValue > 10
 //     return medicineType === 'insulin'
 // }
 
+const updateBgRecords = async (patientId,measurementTime,measuredAt,diagnoseType) => {
+  // console.log('updateBgRecords',patientId,measurementTime,measuredAt,diagnoseType)
+
+  // 由于needle没有传血糖记录的id，因此这里暂时使用测量时间来筛选血糖值(+-3秒内)
+  let start = moment(measuredAt).subtract(3,'seconds').toDate()
+  let end = moment(measuredAt).add(3,'seconds').toDate()
+  // console.log('start:',start,'end:',end)
+
+  try {
+    await db.collection('bloodGlucoses').update(
+      {
+        patientId:patientId,
+        measurementTime:measurementTime,
+        measuredAt:{
+            $gte: start,
+            $lte: end
+        },
+      },
+      {
+        $set: {
+          diagnoseType:diagnoseType,
+        },
+      }
+    )
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export const getDiagnoseType = async (_, args, { getDb }) => {
     let replyType = 'g'
     let bgValueBeforeMeal = 0
@@ -150,6 +179,9 @@ export const getDiagnoseType = async (_, args, { getDb }) => {
     }
 
     console.log('diagnoseType',replyType,'bloodGlucoseValueBeforeMeal',`${bgValueBeforeMeal}`)
+
+    // 2018-06-25 对血糖记录表增加一个sourceType字段
+    updateBgRecords(patientId,measurementTime,measuredAt,replyType)
 
     return {
         diagnoseType: replyType,

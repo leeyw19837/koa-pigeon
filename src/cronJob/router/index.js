@@ -4,6 +4,9 @@ import {
   sendChatCardMessages,
   checkOverdueForAfterTreatment,
 } from '../controller/treatment-card'
+import {
+  sendOutpatientPushMessages
+} from '../controller/outpatient-push'
 
 const Router = require('koa-router')
 const cronJob = new Router()
@@ -43,6 +46,17 @@ cronJob.get('/check-three-card-overdue', async ctx => {
   }
   await checkOverdueForAfterTreatment()
   ctx.body = 'OK'
+})
+
+cronJob.get('/send-outpatient-push-msgs', async ctx => {
+  const { pwd, day,hour } = ctx.query
+  if (pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
+    return ctx.throw(401, '密码错误')
+  }
+  const result = await sendOutpatientPushMessages(day,hour)
+  if (result) {
+    ctx.body = 'OK! '+result
+  }
 })
 
 export default cronJob

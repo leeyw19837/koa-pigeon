@@ -1,5 +1,7 @@
 import { ObjectID } from 'mongodb'
 import { IContext } from '../types'
+import { orderBy } from 'lodash'
+import * as moment from 'moment'
 
 export const patient = async (_, args, { getDb }: IContext) => {
   const db = await getDb()
@@ -66,4 +68,53 @@ export const latestCaseRecordBeforeDate = async (
     .toArray()
   if (!!cr.length) return cr[0]
   return null
+}
+
+export const appointmentsInformation = async (_, args, { getDb }: IContext) => {
+  const db = await getDb()
+  const { patientId } = args
+  const result = {
+    patientId: patientId,
+    preAppointmentsCount: 0, //历史门诊次数
+    nextAppointmentCount: 1, //下次门诊次数
+    nextAppointmentDate: '', //下次门诊日期
+    nextAppointmentDays: '', //下次门诊还剩几天
+  }
+  // 当前患者的所有预约信息, 时间倒叙
+  const appointments = await db
+    .collection('appointments')
+    .find({
+      patientId: patientId,
+    })
+    .sort({ appointmentTime: -1 })
+    .toArray()
+
+  // 下次门诊时间/下次门诊次数/下次门诊还剩几天
+  const preAppointments = appointments.filter(a => {
+    // 所有签了到的门诊, 用来计算历史门诊次数
+    return a.isOutPatient === true
+  })
+  result.preAppointmentsCount = preAppointments.length
+  result.nextAppointmentCount = result.preAppointmentsCount + 1
+
+  let nextAppointment = orderBy(
+    // 未签到的, 今天或今天之后的第一次门诊
+    appointments.filter(a => {
+      return (
+        a.isOutPatient === false &&
+        moment(a.appointmentTime) >= moment().startOf('day')
+      )
+    }),
+    ['appointmentTime'],
+    ['asc'],
+  )
+  if (nextAppointment && nextAppointment.length > 0) {
+    result.nextAppointmentDate = moment(
+      nextAppointment[0].appointmentTime,
+    ).format('YYYY-MM-DD')
+    result.nextAppointmentDays = moment(nextAppointment[0].appointmentTime)
+      .diff(new Date(), 'days')
+      .toString()
+  }
+  return result
 }

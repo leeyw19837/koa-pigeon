@@ -191,4 +191,32 @@ export const Patient = {
       .sort({ measuredAt: -1 })
       .toArray()
   },
+  cdeInfo: async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    if (patient.cdeId) {
+      const result = await db
+        .collection('certifiedDiabetesEducators')
+        .find({
+          _id: patient.cdeId.toString(),
+        })
+        .toArray()
+      return result[0] || null
+    } else {
+      return null
+    }
+  },
+  doctorInfo: async (patient, _, { getDb }: IContext) => {
+    const db = await getDb()
+    if (patient.doctorId) {
+      const result = await db
+        .collection('users')
+        .find({
+          _id: patient.doctorId,
+        })
+        .toArray()
+      return result[0] || null
+    } else {
+      return null
+    }
+  },
 }

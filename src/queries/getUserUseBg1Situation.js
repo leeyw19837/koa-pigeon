@@ -6,9 +6,7 @@ export const getUserUseBg1Situation = async (_, args, { getDb }) => {
     console.log('getUserUseBg1Situation called!')
     const db = await getDb()
     let result = {useBg1Situation:false}
-
-    let healthcareTeamId = []
-    const user = await db
+    const userCount = await db
         .collection('users')
         .find({
             _id:ObjectID.createFromHexString(args.patientId),
@@ -23,13 +21,16 @@ export const getUserUseBg1Situation = async (_, args, { getDb }) => {
                 }
             ]
         })
-        .toArray()
+        .count()
 
-    if (user && user.length>0){
-        result.useBg1Situation = true
-    }else {
-        result.useBg1Situation = false
-    }
+    // if (user && user.length>0){
+    //     result.useBg1Situation = true
+    // }else {
+    //     result.useBg1Situation = false
+    // }
+
+    result.useBg1Situation = (userCount !== 0)
+
     console.log('getUserUseBg1Situation called! result',result)
     return result
 }
