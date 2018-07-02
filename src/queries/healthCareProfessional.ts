@@ -29,7 +29,7 @@ export const professionalLogin = async (_, args, { getDb }: IContext) => {
 export const professionalLoginForWechat = async (
   _,
   args,
-  { getDb }: IContext,
+  { getDb, jwtsign }: IContext,
 ) => {
   const db = await getDb()
   const { wechatCode } = args
@@ -44,13 +44,14 @@ export const professionalLoginForWechat = async (
     return {
       ...existingUser,
       username: existingUser.username.replace('@ijk.com', ''),
+      jwt: jwtsign({ _id: existingUser._id }),
     }
   }
 }
 export const professionalLoginForMobile = async (
   _,
   args,
-  { getDb }: IContext,
+  { getDb, jwtsign }: IContext,
 ) => {
   const db = await getDb()
   const { mobile, verificationCode } = args
@@ -70,13 +71,12 @@ export const professionalLoginForMobile = async (
       throw new Error('验证码不正确')
     }
   }
-  const existingUser = await db
-    .collection('users')
-    .findOne({ username: { $regex: mobile } })
+  const existingUser = await db.collection('users').findOne({ mobile })
   if (existingUser) {
     return {
       ...existingUser,
       username: existingUser.username.replace('@ijk.com', ''),
+      jwt: jwtsign({ _id: existingUser._id }),
     }
   }
 }
