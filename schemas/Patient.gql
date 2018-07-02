@@ -39,4 +39,6 @@ type Patient {
   tempFilter: Boolean
   lastHbAlc: String
   bloodGlucoses(startAt: Date, endAt: Date): [BloodGlucoseRecord]
+  cdeInfo: CertifiedDiabetesEducator
+  doctorInfo: User
 }
