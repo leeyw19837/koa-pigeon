@@ -1,8 +1,10 @@
 import { verify } from 'jsonwebtoken'
 import Koa = require('koa')
-
+interface IContext extends Koa.Context {
+  userInfo: any
+}
 export const Auth = (jwtSecret: string) => {
-  return async (ctx: Koa.Context, next: () => Promise<any>) => {
+  return async (ctx: IContext, next: () => Promise<any>) => {
     const { authorization, referer, origin } = ctx.request.headers
 
     const route = referer.substr(origin.length)
