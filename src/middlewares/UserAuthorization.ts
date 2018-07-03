@@ -7,7 +7,7 @@ export const Auth = (jwtSecret: string) => {
   return async (ctx: IContext, next: () => Promise<any>) => {
     const { authorization, referer, origin } = ctx.request.headers
 
-    const route = referer && referer.substr(origin.length)
+    const route = referer && origin && referer.substr(origin.length)
 
     if (!authorization || route === '/login' || !route) {
       return await next()
