@@ -3,4 +3,5 @@ type CertifiedDiabetesEducator {
   assistant: HealthcareProfessional!
   nickname: String!
   patients: [Patient!]
+  avatar: String
 }
