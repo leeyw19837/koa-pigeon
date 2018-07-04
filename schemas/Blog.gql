@@ -38,6 +38,11 @@ type Blog {
   publishedAt: Date
 }
 
+input BlogBatchDataInput {
+  text: String
+  status: String
+}
+
 extend type Query {
   blogs(blogId: ID): [Blog]
 }
