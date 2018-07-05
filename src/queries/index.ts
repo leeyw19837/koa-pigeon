@@ -37,6 +37,7 @@ import * as getDiagnosticWords from './getDiagnosticWords'
 import * as getOrderReceiverInfo from './getOrderReceiverInfo'
 import * as getPatientInstitution from './getPatientInstitution'
 import * as getUserUseBg1Situation from './getUserUseBg1Situation'
+import { blogs } from './blogs'
 
 const queries = {
   ...bloodGlucoseMeasurements,
@@ -74,6 +75,7 @@ const queries = {
   ...appointments,
   ...outpatients,
   ...certifiedDiabetesEducator,
+  blogs,
 }
 
 const queriesWithLogging = {}

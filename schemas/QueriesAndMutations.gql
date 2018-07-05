@@ -275,6 +275,12 @@ type Mutation {
     outpatientTime: Date!
     recordId: String!
   ): Boolean
+  updateBlogByType(
+    blogId: ID!
+    batchData: BlogBatchDataInput!
+    type: String!
+    patientId: ID!
+  ): Boolean
 }
 
 type Subscription {
