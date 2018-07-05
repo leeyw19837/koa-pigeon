@@ -8,12 +8,14 @@ type BlogComment {
   # 时间
   createdAt: Date
 }
+
 enum BlogType {
   VIDEO
   ARTICLE
 }
+
 type Blog {
-  _id: ID!
+  _id: String!
   # 文章类型
   type: BlogType
   # 文章配图
@@ -39,9 +41,8 @@ type Blog {
 }
 
 input BlogBatchDataInput {
-  value: String 
+  value: String
   status: String # add 添加 不传 取消
-
 }
 
 extend type Query {

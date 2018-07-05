@@ -276,7 +276,7 @@ type Mutation {
     recordId: String!
   ): Boolean
   updateBlogByType(
-    blogId: ID!
+    blogId: String!
     batchData: BlogBatchDataInput!
     type: String!
     patientId: ID!
