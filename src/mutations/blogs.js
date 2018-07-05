@@ -31,7 +31,7 @@ export const updateBlogByType = async (_, {
     '$pull' :
     '$push'
 
-  console.log('cursorKey', cursorKey, setObj)
+  console.log('cursorKey', cursorKey, setObj, blogId)
   const rst = await db
     .collection('blogs')
     .update({
