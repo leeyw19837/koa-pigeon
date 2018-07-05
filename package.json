@@ -5,13 +5,13 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "npm run docker:dev",
-    "build": "tsc",
-    "watch": "concurrently 'tsc --watch' 'nodemon --watch \"dist\" --watch \"schemas\" --ext js,ts,gql dist/index.js'",
-    "lint": "tslint 'src/**/*.ts'",
-    "dev": "export $npm_package_config_mongo_url && npm run watch",
+    "babel:build": "babel src --out-dir dist --copy-files",
+    "babel:watch": "babel --watch src --out-dir dist --copy-files",
+    "watchAndRun": "rm -rf ./dist && npm run babel:build && concurrently 'npm run babel:watch' 'nodemon --watch \"dist\" --watch \"schemas\" --ext js,graphql dist/index.js'",
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
     "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
-    "archive": "tar czf pigeon.tar.gz dist/ node_modules/ schemas/"
+    "archive": "tar czf pigeon.tar.gz dist/ node_modules/ schemas/",
+    "test": "jest"
   },
   "config": {
     "mongo_url": "MONGO_URL=mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@mongodev.ihealthcn.com:27017,mongodev.ihealthcn.com:27018,mongodev.ihealthcn.com:27019,mongodev1.ihealthcn.com:27017,mongodev2.ihealthcn.com:27018,mongodev3.ihealthcn.com:27019/paper-king-developing?replicaSet=rs"
@@ -28,7 +28,6 @@
     "node": ">=8.1.4"
   },
   "dependencies": {
-    "@types/jsonwebtoken": "^7.2.7",
     "apollo-server-koa": "1.3.6",
     "co-wechat-oauth": "^2.0.1",
     "fresh-id": "^1.1.0",
@@ -56,17 +55,28 @@
     "subscriptions-transport-ws": "^0.9.0"
   },
   "devDependencies": {
-    "@types/graphql": "^0.11.7",
-    "@types/koa": "^2.0.43",
-    "@types/koa-bodyparser": "^3.0.24",
-    "@types/koa-router": "^7.0.21",
-    "@types/lodash": "^4.14.55",
-    "@types/mongodb": "^2.1.41",
-    "@types/node": "8.5.7",
+    "babel-cli": "^6.26.0",
+    "babel-jest": "^23.2.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "concurrently": "^3.4.0",
     "husky": "^0.13.2",
-    "nodemon": "^1.11.0",
-    "tslint": "^5.5.0",
-    "typescript": "^2.6.2"
+    "jest": "^23.2.0",
+    "nodemon": "^1.11.0"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      "transform-object-rest-spread"
+    ]
   }
 }
