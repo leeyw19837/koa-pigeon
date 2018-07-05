@@ -28,12 +28,7 @@ import { Date, formatError } from './utils'
 let { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 if (!PORT) PORT = '3080'
 if (!NODE_ENV) NODE_ENV = 'development'
-if (!SECRET)
-  SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
-  // This is necessary because graphql-tools
-  // looks for __esModule in the schema otherwise
-
-  // const { __esModule, ...reresolvers } = resolvers
+if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
 ;(async () => {
   const resolverMap = {
     ...resolvers,
