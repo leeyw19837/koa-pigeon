@@ -39,8 +39,9 @@ type Blog {
 }
 
 input BlogBatchDataInput {
-  text: String
-  status: String
+  value: String 
+  status: String # add 添加 不传 取消
+
 }
 
 extend type Query {

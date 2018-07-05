@@ -1,38 +1,46 @@
 import freshId from 'fresh-id'
 const moment = require('moment')
 
-export const updateBlogByType = async ({
+export const updateBlogByType = async (_, {
   blogId,
   batchData,
   type,
-  patientId,
-}) => {
-  const { text, status } = batchData
+  patientId
+}, context) => {
+  const db = await context.getDb()
+  const {
+    value,
+    status
+  } = batchData
   let setObj = {}
   if (type === 'comments') {
     setObj = {
       _id: freshId(),
-      text,
+      text: value,
       userId: patientId,
       votes: [],
-      createdAt: new Date(),
+      createdAt: new Date()
     }
   } else if (/votes|views/g.test(type)) {
     setObj[type] = patientId
   } else if (type === 'voteComment') {
-    const key = `comments.${data}.votes`
+    const key = `comments.${ + value}.votes`
     setObj[key] = patientId
   }
-  const cursorKey = status !== 'add' ? '$pull' : '$push'
-  await db.collection('blogs').update(
-    {
-      _id: blogId,
-    },
-    {
+  const cursorKey = status !== 'add' ?
+    '$pull' :
+    '$push'
+
+  console.log('cursorKey', cursorKey, setObj)
+  const rst = await db
+    .collection('blogs')
+    .update({
+      _id: blogId
+    }, {
       [cursorKey]: setObj,
       $set: {
-        updatedAt: new Date(),
-      },
-    },
-  )
+        updatedAt: new Date()
+      }
+    }, )
+  return !!rst.ok
 }
