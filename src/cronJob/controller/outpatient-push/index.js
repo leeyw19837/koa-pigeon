@@ -65,7 +65,7 @@ const getFilteredPatients = (appointedPatients,day,hour) => {
     })
   }
 
-  // console.log('filteredPatients.length',filteredPatients.length)
+  // console.log('filteredPatients',filteredPatients)
 
   return filteredPatients
 }
@@ -186,7 +186,10 @@ const assembleMsgsAndPubsub = async (filteredOutpatientPatients,day) => {
     let messageObject = await assembleMessageObject(patientId,messageWordsAndSourceType)
 
     // console.log('messageObject',messageObject)
-    messageArray.push(messageObject)
+    
+    if (messageObject!==null){
+      messageArray.push(messageObject)
+    }
   }
 
   // console.log('messageArray.length',messageArray.length)
@@ -365,15 +368,20 @@ const getMessageTextNoBgRecords = (whetherUseBg1, medicineCaseModifySituation) =
  */
 const assembleMessageObject = async (patientId, messageObject) => {
   // console.log('------assembleMessageObject-----')
-  return {
-    _id:freshId(),
-    messageType: 'TEXT',
-    text: messageObject.text,
-    senderId: '66728d10dc75bc6a43052036',
-    createdAt: new Date(),
-    chatRoomId: await getChatRoomId(patientId),
-    sourceType: messageObject.sourceType,
+
+  let chatRoomId = await getChatRoomId(patientId)
+  if (chatRoomId!==''){
+    return {
+      _id:freshId(),
+      messageType: 'TEXT',
+      text: messageObject.text,
+      senderId: '66728d10dc75bc6a43052036',
+      createdAt: new Date(),
+      chatRoomId: chatRoomId,
+      sourceType: messageObject.sourceType,
+    }
   }
+  return null
 }
 
 /**
