@@ -1,5 +1,5 @@
 import freshId from 'fresh-id'
-import * as moment from 'moment'
+import moment from 'moment'
 import { ObjectID } from 'mongodb'
 import { taskGen } from '../modules/bloodGlucose'
 import { pubsub } from '../pubsub'

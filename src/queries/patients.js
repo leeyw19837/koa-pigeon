@@ -1,7 +1,7 @@
 import { ObjectID } from 'mongodb'
 
 import { orderBy } from 'lodash'
-import * as moment from 'moment'
+import moment from 'moment'
 
 export const patient = async (_, args, { getDb }) => {
   const db = await getDb()
