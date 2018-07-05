@@ -38,6 +38,8 @@ import * as getOrderReceiverInfo from './getOrderReceiverInfo'
 import * as getPatientInstitution from './getPatientInstitution'
 import * as getUserUseBg1Situation from './getUserUseBg1Situation'
 
+import * as getInterventionTasks from './getInterventionTasks'
+
 const queries = {
   ...bloodGlucoseMeasurements,
   ...chatMessages,
@@ -74,6 +76,7 @@ const queries = {
   ...appointments,
   ...outpatients,
   ...certifiedDiabetesEducator,
+  ...getInterventionTasks,
 }
 
 const queriesWithLogging = {}

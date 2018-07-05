@@ -98,6 +98,7 @@ type Query {
     cdeId: ID
     assistantId: ID
   ): CertifiedDiabetesEducator
+  getInterventionTasks(cdeId: ID): [InterventionTask!]
 }
 
 type Mutation {
