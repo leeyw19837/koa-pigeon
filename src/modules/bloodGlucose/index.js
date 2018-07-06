@@ -34,7 +34,8 @@ export const taskGen = (measurement, getPairingMethod) => {
   if (pairedRecord && isBigFluctuation(pairedRecord, measurement)) {
     // 大波动
     newTask.type = 'FLUCTUATION'
-    newTask.measurementRecords = [measurement]
+    newTask.measurementRecords = [measurement, pairedRecord]
+    if (isAfterMeal(measurementTime)) newTask.measurementRecords.reverse()
     return newTask
   }
 

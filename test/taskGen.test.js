@@ -72,6 +72,30 @@ describe('触发院外干预任务', () => {
       )
       expect(r).toBeTruthy()
     })
+    test('导致触发大波动的两条数据的副本按顺序保存在任务里', () => {
+      const r = taskGen(
+        newMesurement,
+        returnArgs({
+          bloodGlucoseValue: 143,
+          measurementTime: 'AFTER_LUNCH',
+        }),
+      )
+      expect(r.measurementRecords.length).toBe(2)
+      expect(r.measurementRecords[0].measurementTime).toEqual('BEFORE_LUNCH')
+      expect(r.measurementRecords[1].measurementTime).toEqual('AFTER_LUNCH')
+
+      const r2 = taskGen(
+        {
+          bloodGlucoseValue: 143,
+          measurementTime: 'AFTER_LUNCH',
+          measuredAt: moment('2018-07-04')._d,
+        },
+        returnArgs(newMesurement),
+      )
+      expect(r2.measurementRecords.length).toBe(2)
+      expect(r2.measurementRecords[0].measurementTime).toEqual('BEFORE_LUNCH')
+      expect(r2.measurementRecords[1].measurementTime).toEqual('AFTER_LUNCH')
+    })
     test('非当天的测量数据不触发', () => {
       newMesurement.measuredAt = moment('2018-07-01')._d
       const r = taskGen(newMesurement, returnArgs())
