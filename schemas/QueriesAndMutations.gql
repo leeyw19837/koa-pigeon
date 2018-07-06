@@ -65,6 +65,8 @@ type Query {
   getClinicalLabResult: [[ClinicalLabResult]]
   terribleMeasure: [Warning]
   latestCaseRecordBeforeDate(patientId: ID!, now: Date!): CaseRecord
+  # 获取历史和下次预约信息
+  appointmentsInformation(patientId: ID!): AppointmentInformation
   # 订单信息
   orders(patientId: ID!): [Order]
   # 新模板血糖测量作业
@@ -270,9 +272,15 @@ type Mutation {
     patientId: ID!
     dateType: String!
     operationType: String!
-    outpatientTime:Date!
-    recordId:String!
-    ): Boolean
+    outpatientTime: Date!
+    recordId: String!
+  ): Boolean
+  updateBlogByType(
+    blogId: String!
+    batchData: BlogBatchDataInput!
+    type: String!
+    patientId: ID!
+  ): Boolean
 }
 
 type Subscription {

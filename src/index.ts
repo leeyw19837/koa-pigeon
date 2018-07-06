@@ -8,16 +8,17 @@ const cors = require('koa-cors')
 const bodyParser = require('koa-bodyparser')
 import { execute, subscribe } from 'graphql'
 import { createServer } from 'http'
+import { sign } from 'jsonwebtoken'
 
 import constructGetDb from 'mongodb-auto-reconnect'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 
 import cronJobRouter from './cronJob/router'
-import redisCron from './redisCron/router'
-import { queryAnalyzer } from './middlewares'
+import { Auth, queryAnalyzer } from './middlewares'
 import miniProgramRouter from './miniProgram/router'
 import Mutation from './mutations'
 import Query from './queries'
+import redisCron from './redisCron/router'
 import * as resolvers from './resolvers'
 import shortMessageRouter from './shortMessage/router'
 import * as Subscription from './subscriptions'
@@ -66,6 +67,10 @@ delete (resolvers as any).__esModule
   const getDb = constructGetDb(MONGO_URL || '')
   const context: IContext = {
     getDb,
+    jwtsign: (payload: any) => {
+      console.log(payload, 'payload')
+      return sign(payload, SECRET!, { expiresIn: '7 day' })
+    },
   }
   ;(global as any).db = await getDb()
 
@@ -90,6 +95,8 @@ delete (resolvers as any).__esModule
       ignores: ['ID', 'String', 'Date', 'Int', 'Boolean', 'Float'],
     }),
   ) // 需要打开graphql服务的tracing
+
+  router.use(Auth(SECRET))
 
   router.all(
     `/${SECRET}`,

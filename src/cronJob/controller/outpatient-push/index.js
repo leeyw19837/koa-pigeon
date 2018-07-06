@@ -65,7 +65,7 @@ const getFilteredPatients = (appointedPatients,day,hour) => {
     })
   }
 
-  // console.log('filteredPatients.length',filteredPatients.length)
+  // console.log('filteredPatients',filteredPatients)
 
   return filteredPatients
 }
@@ -186,7 +186,10 @@ const assembleMsgsAndPubsub = async (filteredOutpatientPatients,day) => {
     let messageObject = await assembleMessageObject(patientId,messageWordsAndSourceType)
 
     // console.log('messageObject',messageObject)
-    messageArray.push(messageObject)
+    
+    if (messageObject!==null){
+      messageArray.push(messageObject)
+    }
   }
 
   // console.log('messageArray.length',messageArray.length)
@@ -365,15 +368,20 @@ const getMessageTextNoBgRecords = (whetherUseBg1, medicineCaseModifySituation) =
  */
 const assembleMessageObject = async (patientId, messageObject) => {
   // console.log('------assembleMessageObject-----')
-  return {
-    _id:freshId(),
-    messageType: 'TEXT',
-    text: messageObject.text,
-    senderId: '66728d10dc75bc6a43052036',
-    createdAt: new Date(),
-    chatRoomId: await getChatRoomId(patientId),
-    sourceType: messageObject.sourceType,
+
+  let chatRoomId = await getChatRoomId(patientId)
+  if (chatRoomId!==''){
+    return {
+      _id:freshId(),
+      messageType: 'TEXT',
+      text: messageObject.text,
+      senderId: '66728d10dc75bc6a43052036',
+      createdAt: new Date(),
+      chatRoomId: chatRoomId,
+      sourceType: messageObject.sourceType,
+    }
   }
+  return null
 }
 
 /**
@@ -384,15 +392,30 @@ const assembleMessageObject = async (patientId, messageObject) => {
 const getChatRoomId = async (patientId) => {
   // console.log('------getChatRoomId-----')
 
-  let user = await db
-    .collection('users')
-    .find({
-      _id:ObjectID.createFromHexString(patientId),
-      needleChatRoomId:{$exists:true}
-    })
+  // let user = await db
+  //   .collection('users')
+  //   .find({
+  //     _id:ObjectID.createFromHexString(patientId),
+  //     needleChatRoomId:{$exists:true}
+  //   })
+  //   .toArray()
+  // if(user && user.length>0){
+  //   return user[0].needleChatRoomId
+  // }else {
+  //   return ''
+  // }
+
+  let chatRoomInfos = await db
+    .collection('needleChatRooms')
+    .find({})
     .toArray()
-  if(user && user.length>0){
-    return user[0].needleChatRoomId
+
+  let chatRoomIdInfo = chatRoomInfos.filter(o=>{
+    return o.participants[0].userId === patientId || o.participants[1].userId === patientId
+  })
+
+  if (chatRoomIdInfo && chatRoomIdInfo.length>0){
+    return chatRoomIdInfo[0]._id
   }else {
     return ''
   }

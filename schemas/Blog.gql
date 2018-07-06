@@ -1,0 +1,86 @@
+type BlogComment {
+  # 评论
+  text: String
+  # 用户
+  user: Patient
+  # 评论点赞
+  votes: [String]
+  # 时间
+  createdAt: Date
+}
+
+enum BlogType {
+  VIDEO
+  ARTICLE
+}
+
+type Blog {
+  _id: String!
+  # 文章类型
+  type: BlogType
+  # 文章配图
+  avatar: String
+  # 标题
+  title: String
+  # 内容
+  content: [String]
+  # 视频
+  videoSources: [String]
+  # 作者
+  author: String
+  # 评论
+  comments: [BlogComment]
+  # 点赞
+  votes: [String]
+  # 访问人数
+  views: [String]
+  # 文章创建时间
+  createdAt: Date
+  # 文章发布时间
+  publishedAt: Date
+}
+
+input BlogBatchDataInput {
+  value: String
+  status: String # add 添加 不传 取消
+}
+
+# input BlogInput{
+#   # 文章类型
+#   type: BlogType
+#   # 文章配图
+#   avatar: String
+#   # 标题
+#   title: String
+#   # 内容
+#   content: [String]
+#   # 视频
+#   videoSources: [String]
+#   # 作者
+#   author: String
+#   # 评论
+#   comments: [BlogComment]
+#   # 点赞
+#   votes: [String]
+#   # 访问人数
+#   views: [String]
+#   # 文章创建时间
+#   createdAt: Date
+#   # 文章发布时间
+#   publishedAt: Date
+# }
+
+type BlogCommentInput {
+  # 评论
+  text: String
+  # 用户
+  user: Patient
+  # 评论点赞
+  votes: [String]
+  # 时间
+  createdAt: Date
+}
+
+extend type Query {
+  blogs(blogId: ID): [Blog]
+}

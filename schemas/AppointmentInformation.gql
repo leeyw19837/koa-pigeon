@@ -1,0 +1,7 @@
+type AppointmentInformation {
+  patientId: String
+  preAppointmentsCount: Int
+  nextAppointmentCount: Int
+  nextAppointmentDate: String
+  nextAppointmentDays: String
+}
