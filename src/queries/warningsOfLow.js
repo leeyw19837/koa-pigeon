@@ -1,4 +1,4 @@
-const moment = require('moment')
+import moment from 'moment'
 
 export const warningsOfLow = async (_, args, { getDb }) => {
   const db = await getDb()

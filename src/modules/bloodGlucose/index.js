@@ -1,79 +1,57 @@
-import { formatBgValue } from '../../common'
+import freshId from 'fresh-id'
+import moment from 'moment'
+import {
+  isLessFour,
+  isMealRecord,
+  isBigFluctuation,
+  isAfterMeal,
+  isAboveSeven,
+  isAboveTen,
+} from './utils'
+import { getPairingBgRecord } from './pairedMeasurement'
 
-const periodTextMap = {
-  'AFTER_BREAKFAST': 'BEFORE_BREAKFAST',
-  'AFTER_LUNCH': 'BEFORE_LUNCH',
-  'AFTER_DINNER': 'BEFORE_DINNER',
-}
+export const taskGen = (measurement, getPairingMethod) => {
+  const { bloodGlucoseValue, measurementTime, measuredAt } = measurement
+  const now = new Date(Date.now()) // 这样取当前时间虽然看起来比较怪，但是不要改
 
-const getMedicineType = async (patientId) => {
-  let medicineType = 'oral'
-  const latestCaseRecord = await db
-    .collection('caseRecord')
-    .find({
-      patientId,
-    })
-    .sort({caseRecordAt: -1})
-    .limit(1)
-    .toArray()
-  if(latestCaseRecord.length) {
-    const isUseInsulin = latestCaseRecord[0].caseContent.prescription.medicines.filter(o =>
-      o.medicineType === 'insulin' && o.status !== 'stop')
-    medicineType = isUseInsulin.length ? 'insulin' : 'oral'
+  if (!moment(now).isSame(moment(measuredAt), 'day')) return null
+  const newTask = {
+    _id: freshId(),
+    state: 'PENDING',
+    createdAt: now,
+    updatedAt: now,
+    patientId: measurement.patientId,
   }
-  return medicineType
-}
+  if (isLessFour(bloodGlucoseValue)) {
+    // 低血糖
+    newTask.type = 'LOW_BLOOD_GLUCOSE'
+    newTask.measurementRecords = [measurement]
+    return newTask
+  }
+  if (!isMealRecord(measurementTime)) return null
+  const getPairing = getPairingMethod || getPairingBgRecord
+  const pairedRecord = getPairing(measurement)
+  if (pairedRecord && isBigFluctuation(pairedRecord, measurement)) {
+    // 大波动
+    newTask.type = 'FLUCTUATION'
+    newTask.measurementRecords = [measurement, pairedRecord]
+    if (isAfterMeal(measurementTime)) newTask.measurementRecords.reverse()
+    return newTask
+  }
 
-const getPairingBgRecord = async ({ patientId, measurementTime, measuredAt}) => {
-  const bgRecords = await db
-    .collection('bloodGlucoses')
-    .find({
-      patientId,
-      measurementTime: periodTextMap[measurementTime],
-      measuredAt: {
-        $gt: moment(measuredAt).startOf('day')._d,
-        $lt: moment(measuredAt).endOf('day')._d,
-      }
-    })
-    .sort({
-      measuredAt: -1,
-    })
-    .limit(1)
-    .toArray()
-  return bgRecords.length ? bgRecords[0] : null
-}
-
-const isLessFour = value => value < 3.9
-
-const isAboveSeven = bgRecord => bgRecord.bloodGlucoseValue > 7
-
-const isFasting = (value) => measurementTime === 'BEFORE_BREAKFAST'
-
-const isAfterMeal = value => /AFTER/g.test(value)
-
-const isAboveTen = value => value > 10
-
-const isUseInsulin = async (patientId) => {
-  const medicineType = await getMedicineType(patientId)
-  return medicineType === 'insulin'
-}
-
-export const getCDEReplyByBloodGlucose = async ({
-  measuredAt,
-  measurementTime,
-  patientId,
-  bloodGlucoseValue
-}) => {
-  let replyType = 'g'
-  const bgValue = formatBgValue(bloodGlucoseValue)
-  if (bgValue) {
-    if(isLessFour(bgValue)) {
-      replyType = 'a'
-    } else if(isAboveSeven(bgValue)) {
-      // TODO
-    }
-
-  } else {
-    console.log('BG value should be a number or could convert to number !!!')
+  if (isAfterMeal(measurementTime) && isAboveTen(bloodGlucoseValue)) {
+    // 餐后高血糖
+    newTask.type = 'AFTER_MEALS_HIGH'
+    newTask.measurementRecords = [measurement]
+    return newTask
+  }
+  if (
+    measurementTime === 'BEFORE_BREAKFAST' &&
+    isAboveSeven(bloodGlucoseValue)
+  ) {
+    // 空腹高血糖
+    newTask.type = 'EMPTY_STOMACH_HIGH'
+    newTask.measurementRecords = [measurement]
+    return newTask
   }
 }
