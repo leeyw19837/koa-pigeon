@@ -1,76 +1,164 @@
-export const getDiagnosticWords = async (_, args, { getDb }) => {
-    // console.log('args::::',args)
-    const diagnoseType = args.diagnoseType
-    const bloodGlucoseValue = args.bloodGlucoseValue
-    const bgValueBeforeMeal = args.bgValueBeforeMeal
-    const manualInputType = args.manualInputType
+const moment = require('moment')
 
-    const diagnosticWordsResult = await db
-        .collection('diagnosticWords')
-        .find({diagnoseType:diagnoseType})
-        .toArray()
+const periodTextMap = {
+  'BEFORE_BREAKFAST': '早',
+  'BEFORE_LUNCH': '午',
+  'BEFORE_DINNER': '晚',
+}
 
-    let randomResult
-    let _diagnoseWords = ''
-    let _diagnoseSourceType = ''
-    switch (diagnoseType) {
-        case 'a':
-            randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
-            _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/,bloodGlucoseValue)}`
-            _diagnoseSourceType = randomResult.sourceType
-            break
+// const updateBgRecords = async (bgRecordId, _diagnoseSourceType) => {
+//   console.log('updateBgRecords',bgRecordId, _diagnoseSourceType)
+//
+//   try {
+//     await db.collection('bloodGlucoses').update(
+//       {
+//         _id: bgRecordId,
+//       },
+//       {
+//         $set: {
+//           diagnoseType: _diagnoseSourceType,
+//         },
+//       }
+//     )
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 
-        case 'b':
-            randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
-            _diagnoseWords = `${randomResult.diagnoseWords}`
-            _diagnoseSourceType = randomResult.sourceType
-            break
+const updateBgRecords = async (patientId,measurementTime,measuredAt,diagnoseType) => {
+   console.log('updateBgRecords',patientId,measurementTime,measuredAt,diagnoseType)
 
-        case 'c':
-            randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
-            _diagnoseWords = `${randomResult.diagnoseWords}`
-            _diagnoseSourceType = randomResult.sourceType
-            break
+  // 由于needle没有传血糖记录的id，因此这里暂时使用测量时间来筛选血糖值(+-3秒内)
+  let start = moment(measuredAt).subtract(3,'seconds').toDate()
+  let end = moment(measuredAt).add(3,'seconds').toDate()
+   console.log('start:',start,'end:',end)
 
-        case 'd':
-            randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
-            _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/,bloodGlucoseValue).replace(/Y/,bgValueBeforeMeal)}`
-            _diagnoseSourceType = randomResult.sourceType
-            break
+  try {
+    await db.collection('bloodGlucoses').update(
+      {
+        patientId:patientId,
+        measurementTime:measurementTime,
+        measuredAt:{
+          $gte: start,
+          $lte: end
+        },
+      },
+      {
+        $set: {
+          diagnoseType:diagnoseType,
+        },
+      }
+    )
+  } catch (error) {
+    console.log(error)
+  }
+}
 
-        case 'e':
-            randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
-            _diagnoseWords = `${randomResult.diagnoseWords}`
-            _diagnoseSourceType = randomResult.sourceType
-            break
+export const getDiagnosticWords = async (_, args, {getDb}) => {
+  // console.log('args::::',args)
+  const diagnoseType = args.diagnoseType
+  const bloodGlucoseValue = args.bloodGlucoseValue
+  const bgValueBeforeMeal = args.bgValueBeforeMeal
+  const manualInputType = args.manualInputType
 
-        case 'f':
-            randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
-            _diagnoseWords = `${randomResult.diagnoseWords}`
-            _diagnoseSourceType = randomResult.sourceType
-            break
+  // const bgRecordId = args.bgRecordId
+  const patientId = args.patientId
+  const measuredAt = args.measuredAt
+  const measurementTime = args.measurementTime
 
-        case 'manual':
-            randomResult = diagnosticWordsResult.filter(o=>
-                manualInputType === o.sourceType
-            )
-            if (randomResult && randomResult.length>0){
-                _diagnoseWords = randomResult[0].diagnoseWords
-                _diagnoseSourceType = randomResult[0].sourceType
-            } else {
-                _diagnoseWords = ''
-                _diagnoseSourceType = ''
-            }
-            break
+  const diagnosticWordsResult = await db
+    .collection('diagnosticWords')
+    .find({diagnoseType: diagnoseType})
+    .toArray()
 
-        default:
-            _diagnoseWords = ''
-            _diagnoseSourceType = ''
-    }
+  let randomResult
+  let _diagnoseWords = ''
+  let _diagnoseSourceType = ''
+  switch (diagnoseType) {
+    case 'a':
+      randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
+      _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/g, bloodGlucoseValue)}`
+      _diagnoseSourceType = randomResult.sourceType
+      break
 
-    return {
-        diagnoseWords: _diagnoseWords,
-        sourceType:_diagnoseSourceType,
-    }
+    case 'b':
+      randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
+      _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/g, bloodGlucoseValue)}`
+      _diagnoseSourceType = randomResult.sourceType
+      break
+
+    case 'c':
+      randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
+      _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/g, bloodGlucoseValue)}`
+      _diagnoseSourceType = randomResult.sourceType
+      break
+
+    case 'd':
+      randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
+      _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/g, bloodGlucoseValue).replace(/Y/g, bgValueBeforeMeal)}`
+      _diagnoseSourceType = randomResult.sourceType
+      break
+
+    case 'e':
+      randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
+      _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/g, bloodGlucoseValue)}`
+      _diagnoseSourceType = randomResult.sourceType
+      break
+
+    case 'f':
+      randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
+      _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/g, bloodGlucoseValue)}`
+      _diagnoseSourceType = randomResult.sourceType
+      break
+
+    case 'h':
+      randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
+      _diagnoseWords = `${randomResult.diagnoseWords.replace(/Z/g, periodTextMap[measurementTime]).replace(/X/g, bloodGlucoseValue)}`
+      _diagnoseSourceType = randomResult.sourceType
+      break
+
+    case 'i':
+      randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
+      _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/g, bloodGlucoseValue)}`
+      _diagnoseSourceType = randomResult.sourceType
+      break
+
+    case 'j':
+      randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
+      _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/g, bloodGlucoseValue).replace(/Y/g, bgValueBeforeMeal)}`
+      _diagnoseSourceType = randomResult.sourceType
+      break
+
+    case 'k':
+      randomResult = diagnosticWordsResult[Math.floor(Math.random() * diagnosticWordsResult.length)]
+      _diagnoseWords = `${randomResult.diagnoseWords.replace(/X/g, bloodGlucoseValue).replace(/Y/g, bgValueBeforeMeal)}`
+      _diagnoseSourceType = randomResult.sourceType
+      break
+
+    case 'manual':
+      randomResult = diagnosticWordsResult.filter(o =>
+        manualInputType === o.sourceType
+      )
+      if (randomResult && randomResult.length > 0) {
+        _diagnoseWords = randomResult[0].diagnoseWords
+        _diagnoseSourceType = randomResult[0].sourceType
+      } else {
+        _diagnoseWords = ''
+        _diagnoseSourceType = ''
+      }
+      break
+
+    default:
+      _diagnoseWords = ''
+      _diagnoseSourceType = ''
+  }
+
+  // 2018-07-09 修改需求：对血糖记录表增加sourceType字段
+  updateBgRecords(patientId, measurementTime,measuredAt,_diagnoseSourceType)
+
+  return {
+    diagnoseWords: _diagnoseWords,
+    sourceType: _diagnoseSourceType,
+  }
 
 }
