@@ -1,6 +1,6 @@
 import { pubsub } from '../pubsub'
 import { withFilter } from 'graphql-subscriptions'
-const get = require('lodash/get')
+import get from 'lodash/get'
 
 export const chatMessageAdded = {
   subscribe: withFilter(
