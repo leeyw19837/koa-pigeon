@@ -19,4 +19,5 @@ type InterventionTask {
   createdAt: Date!
   updatedAt: Date!
   patient: Patient!
+  _operation: Operation
 }

@@ -288,6 +288,7 @@ type Subscription {
   chatMessageAdded(chatRoomId: ID): NeedleChatMessage!
   chatRoomDynamics(userId: ID): NeedleChatRoom!
   warningAdded: Warning
+  interventionTaskDynamics(cdeId: ID): InterventionTask
 }
 
 schema {

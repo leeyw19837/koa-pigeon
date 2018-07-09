@@ -148,7 +148,13 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
   const retVal = await db.collection('bloodGlucoses').insertOne(objectToWrite)
   // 生成干预任务
   const task = taskGen(objectToWrite)
-  if (task) await db.collection('interventionTask').insert(task)
+  if (task) {
+    await db.collection('interventionTask').insert(task)
+    pubsub.publish('interventionTaskDynamics', {
+      ...task,
+      _operation: 'ADDED',
+    })
+  }
   // 餐前血糖测量后添加定时事件
   // 只有自动测量和餐前才添加定时事件
   // 添加事件前清除这个患者之前的事件
