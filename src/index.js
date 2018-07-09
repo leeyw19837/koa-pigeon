@@ -24,6 +24,7 @@ import shortMessageRouter from './shortMessage/router'
 import * as Subscription from './subscriptions'
 
 import { Date, formatError } from './utils'
+import restfulApi from './restful/router'
 
 let { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 if (!PORT) PORT = '3080'
@@ -54,7 +55,7 @@ if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
   //   app.use(morgan('dev'))
   // }
   app.use(convert(cors()))
-  app.use(bodyParser())
+  app.use(bodyParser({ jsonLimit: '30mb' }))
 
   if (MONGO_URL === undefined) {
     console.error('Run with `yarn docker:dev`!')
@@ -85,6 +86,7 @@ if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
   router.use('/short-message', shortMessageRouter.routes())
   router.use('/wx-mini', miniProgramRouter.routes())
   router.use('/redis-cron', redisCron.routes())
+  router.use('/api', restfulApi.routes())
 
   router.use(
     queryAnalyzer({
