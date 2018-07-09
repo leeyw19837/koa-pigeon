@@ -86,6 +86,9 @@ type Query {
     bloodGlucoseValue: String
     bgValueBeforeMeal: String
     manualInputType: String
+    patientId: String
+    measuredAt: Date
+    measurementTime: String
   ): DiagnosticWords
   # 月预约日历
   monthlyAppointments(
