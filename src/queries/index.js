@@ -39,6 +39,8 @@ import * as getPatientInstitution from './getPatientInstitution'
 import * as getUserUseBg1Situation from './getUserUseBg1Situation'
 import { blogs } from './blogs'
 
+import * as getInterventionTasks from './getInterventionTasks'
+
 const queries = {
   ...bloodGlucoseMeasurements,
   ...chatMessages,
@@ -76,11 +78,12 @@ const queries = {
   ...outpatients,
   ...certifiedDiabetesEducator,
   blogs,
+  ...getInterventionTasks,
 }
 
 const queriesWithLogging = {}
 Object.keys(queries).map(
-  (queryName: string) =>
+  queryName =>
     (queriesWithLogging[queryName] = logQueryOrMutation(
       'QUERY',
       queryName,

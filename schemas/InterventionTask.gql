@@ -1,0 +1,22 @@
+enum InterventionTaskType {
+  AFTER_MEALS_HIGH
+  EMPTY_STOMACH_HIGH
+  FLUCTUATION
+  LOW_BLOOD_GLUCOSE
+}
+
+enum InterventionTaskState {
+  PENDING
+  PROCESSING
+  DONE
+}
+
+type InterventionTask {
+  _id: ID!
+  type: InterventionTaskType!
+  measurementRecords: [BloodGlucoseRecord]!
+  state: InterventionTaskState!
+  createdAt: Date!
+  updatedAt: Date!
+  patient: Patient!
+}

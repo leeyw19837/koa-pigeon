@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import { IContext } from '../types'
+
 const OAuth = require('co-wechat-oauth')
 import { verify } from 'righteous-raven'
 
@@ -10,7 +10,7 @@ const {
   RIGHTEOUS_RAVEN_ID,
   RIGHTEOUS_RAVEN_KEY,
 } = process.env
-export const professionalLogin = async (_, args, { getDb }: IContext) => {
+export const professionalLogin = async (_, args, { getDb }) => {
   const db = await getDb()
 
   // const clientCodename = context.state.clientCodename
@@ -29,7 +29,7 @@ export const professionalLogin = async (_, args, { getDb }: IContext) => {
 export const professionalLoginForWechat = async (
   _,
   args,
-  { getDb, jwtsign }: IContext,
+  { getDb, jwtsign },
 ) => {
   const db = await getDb()
   const { wechatCode } = args
@@ -51,7 +51,7 @@ export const professionalLoginForWechat = async (
 export const professionalLoginForMobile = async (
   _,
   args,
-  { getDb, jwtsign }: IContext,
+  { getDb, jwtsign },
 ) => {
   const db = await getDb()
   const { mobile, verificationCode } = args

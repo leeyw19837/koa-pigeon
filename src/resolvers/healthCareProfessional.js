@@ -1,7 +1,7 @@
-import { IContext } from '../types'
+
 
 export const HealthcareProfessional = {
-  healthCareTeams: async (professional, _, { getDb }: IContext) => {
+  healthCareTeams: async (professional, _, { getDb }) => {
     const db = await getDb()
 
     return db
@@ -11,7 +11,7 @@ export const HealthcareProfessional = {
       })
       .toArray()
   },
-  certifiedDiabetesEducator: async (professional, _, { getDb }: IContext) => {
+  certifiedDiabetesEducator: async (professional, _, { getDb }) => {
     const db = await getDb()
 
     return await db.collection('certifiedDiabetesEducators').findOne({userId: professional._id})

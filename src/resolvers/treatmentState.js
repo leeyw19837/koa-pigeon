@@ -1,9 +1,7 @@
 import { ObjectID } from 'mongodb'
 
-import { IContext } from '../types'
-
 export const TreatmentState = {
-  patient: async (ts, _, { getDb }: IContext) => {
+  patient: async (ts, _, { getDb }) => {
     const db = await getDb()
 
     const user = await db

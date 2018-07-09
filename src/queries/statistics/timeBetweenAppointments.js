@@ -1,11 +1,8 @@
 import { flatten, mean, range, zip } from 'lodash'
-import moment = require('moment')
 import { std } from 'mathjs'
+import moment from 'moment'
 
-import { IContext } from '../../types'
-
-
-const getTimeRange = (from: Date, intervalInDays: number, count: number) => {
+const getTimeRange = (from, intervalInDays, count) => {
   const dates = [from]
   const momentDate = moment(from)
 
@@ -18,28 +15,30 @@ const getTimeRange = (from: Date, intervalInDays: number, count: number) => {
   return dates
 }
 
-export const timeBetweenAppointments = async (_, args, { getDb }: IContext) => {
+export const timeBetweenAppointments = async (_, args, { getDb }) => {
   const db = await getDb()
 
   const dates = getTimeRange(new Date(), 7, 16)
 
   const appointmentsByDate = await Promise.all(
-    dates.map(async date =>
-      await db
-        .collection('appointments')
-        .aggregate([
-          { $match: { isOutPatient: true, type: { $ne: 'addition' }}},
-          { $sort: { appointmentTime: 1 } },
-          { $match: { appointmentTime: { $lte: date } } },
-          {
-            $group: {
-              _id: '$patientId',
-              appointmentTimes: { $push: '$appointmentTime' },
+    dates.map(
+      async date =>
+        await db
+          .collection('appointments')
+          .aggregate([
+            { $match: { isOutPatient: true, type: { $ne: 'addition' } } },
+            { $sort: { appointmentTime: 1 } },
+            { $match: { appointmentTime: { $lte: date } } },
+            {
+              $group: {
+                _id: '$patientId',
+                appointmentTimes: { $push: '$appointmentTime' },
+              },
             },
-          },
-          { $match: { 'appointmentTimes.1': { $exists: 1 } } },
-          { $project: { _id: 0, appointmentTimes: 1 }},
-        ]).toArray(),
+            { $match: { 'appointmentTimes.1': { $exists: 1 } } },
+            { $project: { _id: 0, appointmentTimes: 1 } },
+          ])
+          .toArray(),
     ),
   )
 
@@ -49,7 +48,7 @@ export const timeBetweenAppointments = async (_, args, { getDb }: IContext) => {
         appointmentTimes.slice(0, appointmentTimes.length - 1),
         appointmentTimes.slice(1),
       )
-      return zipped.map(([ d1, d2 ]) => moment(d2).diff(moment(d1), 'days'))
+      return zipped.map(([d1, d2]) => moment(d2).diff(moment(d1), 'days'))
     })
 
     const waitingTimes = flatten(waitingTimesForUser)

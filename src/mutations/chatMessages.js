@@ -1,15 +1,7 @@
-import { IContext } from '../types'
-
-
-export const saveChatMessage = async (_, args, { getDb }: IContext) => {
+export const saveChatMessage = async (_, args, { getDb }) => {
   const db = await getDb()
 
-  const {
-    content,
-    sentAtString,
-    appointmentId,
-    senderNickname,
-  } = args
+  const { content, sentAtString, appointmentId, senderNickname } = args
 
   const chatMessage = {
     content,

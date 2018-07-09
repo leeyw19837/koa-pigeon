@@ -1,14 +1,14 @@
-import moment = require('moment')
+import moment from 'moment'
 import { groupBy, range } from 'lodash'
 import { std } from 'mathjs'
 
-import { IContext } from '../../types'
-
-
-export const glucoseMeasurementTimeOfDay = async (_, args, { getDb }: IContext) => {
+export const glucoseMeasurementTimeOfDay = async (_, args, { getDb }) => {
   const db = await getDb()
 
-  const bloodglucoses = await db.collection('bloodglucoses').find().toArray()
+  const bloodglucoses = await db
+    .collection('bloodglucoses')
+    .find()
+    .toArray()
   const measurementTimes = bloodglucoses
     .map(b => b.createdAt)
     .map(d => moment(d).add(8, 'hours'))

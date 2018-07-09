@@ -1,6 +1,6 @@
 import { lte, gte } from 'lodash'
 
-const moment = require('moment')
+import moment from 'moment'
 
 export const warningsOfHigh = async (_, args, { getDb }) => {
   const db = await getDb()

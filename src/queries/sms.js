@@ -1,7 +1,7 @@
-const moment = require('moment')
-const lodash = require('lodash') // could not use '_' here
-import { IContext } from '../types'
-export const smses = async (_, args, { getDb }: IContext) => {
+import lodash from 'lodash' // could not use '_' here
+import moment from 'moment'
+
+export const smses = async (_, args, { getDb }) => {
   console.log('sms query executed...')
   // tslint:disable-next-line:radix
   const currPage = parseInt(args.currPage) // current page, start at 0.
@@ -15,7 +15,7 @@ export const smses = async (_, args, { getDb }: IContext) => {
     mobileFilter = new RegExp(lodash.trim(args.mobile))
   }
 
-  const sms: any[] = await db
+  const sms = await db
     .collection('sms')
     .find({
       mobile: mobileFilter,
@@ -34,7 +34,7 @@ export const smses = async (_, args, { getDb }: IContext) => {
     mobile: mobileFilter,
   })
 
-  const result: any = {}
+  const result = {}
   result.sms = sms
   result.currPage = currPage
   result.totalPage = lodash.ceil(smsCount / size)

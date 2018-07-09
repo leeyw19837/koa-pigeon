@@ -1,9 +1,7 @@
-import { IContext } from '../types'
-import moment = require('moment')
+import moment from 'moment'
 import freshId from 'fresh-id'
 
-
-export const footAssessment = async (_, args, { getDb }: IContext) => {
+export const footAssessment = async (_, args, { getDb }) => {
   const db = await getDb()
 
   let query = {}
@@ -79,7 +77,9 @@ export const footAssessment = async (_, args, { getDb }: IContext) => {
       healthCareTeamId: args.healthCareTeamId,
       createdAt: new Date(args.nowString),
     })
-  } catch (e) { console.log(e.message) }
+  } catch (e) {
+    console.log(e.message)
+  }
 
   return {
     _id: newFootAssessment._id,

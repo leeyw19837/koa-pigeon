@@ -1,7 +1,7 @@
-import { IContext } from '../types'
+
 import { pubsub } from '../pubsub'
 
-export const updateLastSeenAt = async (_, args, { getDb }: IContext) => {
+export const updateLastSeenAt = async (_, args, { getDb }) => {
   const db = await getDb()
 
   const { chatRoomId, userId } = args

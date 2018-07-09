@@ -1,9 +1,6 @@
-import moment = require('moment')
+import moment from 'moment'
 
-import { IContext } from '../types'
-
-
-export const treatmentStates = async (_, args, { getDb }: IContext) => {
+export const treatmentStates = async (_, args, { getDb }) => {
   const db = await getDb()
 
   let query = {}
@@ -20,7 +17,8 @@ export const treatmentStates = async (_, args, { getDb }: IContext) => {
       .endOf('day')
       .toDate()
 
-    query = { ...query,
+    query = {
+      ...query,
       appointmentTime: {
         $gte: startOfDay,
         $lt: endOfDay,

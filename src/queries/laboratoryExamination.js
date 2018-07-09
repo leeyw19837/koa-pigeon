@@ -1,16 +1,14 @@
-import filter = require("lodash/filter")
-import get = require("lodash/get")
-
-import { IContext } from '../types'
+import filter from 'lodash/filter'
+import get from 'lodash/get'
 
 // 化验结果
-export const laboratoryExaminationResults = async (_, args, { getDb }: IContext) => {
+export const laboratoryExaminationResults = async (_, args, { getDb }) => {
   const db = await getDb()
 
-  let query = {patientId:args.patientId}
+  let query = { patientId: args.patientId }
 
-  let sort_clinicalLabResults = {testDate:-1}
-  let sort_bodyCheckResults = {caseRecordAt:-1}
+  let sort_clinicalLabResults = { testDate: -1 }
+  let sort_bodyCheckResults = { caseRecordAt: -1 }
 
   const clinicalLabResults = await db
     .collection('clinicalLabResults')
@@ -19,21 +17,19 @@ export const laboratoryExaminationResults = async (_, args, { getDb }: IContext)
     .toArray()
 
   const bodyCheckResults = await db
-  .collection('caseRecord')
-  .find(query)
-  .sort(sort_bodyCheckResults)
-  .toArray()
+    .collection('caseRecord')
+    .find(query)
+    .sort(sort_bodyCheckResults)
+    .toArray()
 
-
-  bodyCheckResults.map(value=>{
+  bodyCheckResults.map(value => {
     const medicines = value.caseContent.prescription.medicines
-    const newMedicines = filter(medicines,item=>{
-      const status = get(item,"status")
-      return status!="stop"
+    const newMedicines = filter(medicines, item => {
+      const status = get(item, 'status')
+      return status != 'stop'
     })
     value.caseContent.prescription.medicines = newMedicines
   })
 
-
-  return {clinicalLabResults,bodyCheckResults}
+  return { clinicalLabResults, bodyCheckResults }
 }

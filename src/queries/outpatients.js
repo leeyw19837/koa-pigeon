@@ -7,7 +7,7 @@ export const dailyOutpatients = async (_, args, context) => {
   const $match = {
     // hospitalId: { $ne: null },
   }
-  if (healthCareTeamId && healthCareTeamId!=='null') {
+  if (healthCareTeamId && healthCareTeamId !== 'null') {
     $match.hospitalId = healthCareTeamId
   }
   const result = await db
@@ -42,8 +42,7 @@ export const dailyOutpatients = async (_, args, context) => {
   return result
 }
 
-export const outpatient=async (_, { id }, context) => {
-    const db = await context.getDb()
-    return await db.collection('outpatients').findOne({_id:ObjectId(id)})
-  },
-
+export const outpatient = async (_, { id }, context) => {
+  const db = await context.getDb()
+  return await db.collection('outpatients').findOne({ _id: ObjectId(id) })
+}

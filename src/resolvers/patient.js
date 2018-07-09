@@ -1,11 +1,11 @@
-import get = require('lodash/get')
-import { IContext } from '../types'
+import get from 'lodash/get'
+
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
 
-const moment = require('moment')
+import moment from 'moment'
 
 export const Patient = {
-  footAssessmentPhotos: async (patient, _, { getDb }: IContext) => {
+  footAssessmentPhotos: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('photos')
@@ -15,13 +15,13 @@ export const Patient = {
       })
       .toArray()
   },
-  needleChatRoom: async (patient, _, { getDb }: IContext) => {
+  needleChatRoom: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db.collection('needleChatRooms').findOne({
       _id: patient.needleChatRoomId,
     })
   },
-  closestAppointment: async (patient, _, { getDb }: IContext) => {
+  closestAppointment: async (patient, _, { getDb }) => {
     const db = await getDb()
     const endOfToday = moment().endOf('day')._d
     const result = await db
@@ -36,7 +36,7 @@ export const Patient = {
       .toArray()
     return result[0] || null
   },
-  communications: async (patient, _, { getDb }: IContext) => {
+  communications: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('communication')
@@ -46,7 +46,7 @@ export const Patient = {
       .sort({ createdAt: -1 })
       .toArray()
   },
-  caseRecords: async (patient, _, { getDb }: IContext) => {
+  caseRecords: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('caseRecord')
@@ -56,7 +56,7 @@ export const Patient = {
       .sort({ createdAt: -1 })
       .toArray()
   },
-  soaps: async (patient, _, { getDb }: IContext) => {
+  soaps: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('soap')
@@ -66,7 +66,7 @@ export const Patient = {
       .sort({ createdAt: -1 })
       .toArray()
   },
-  outHospitalSoaps: async (patient, _, { getDb }: IContext) => {
+  outHospitalSoaps: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('outHospitalSoap')
@@ -76,7 +76,7 @@ export const Patient = {
       .sort({ createdAt: -1 })
       .toArray()
   },
-  healthCareTeam: async (patient, _, { getDb }: IContext) => {
+  healthCareTeam: async (patient, _, { getDb }) => {
     const db = await getDb()
     if (patient.healthCareTeamId && patient.healthCareTeamId.length > 0) {
       return db
@@ -88,7 +88,7 @@ export const Patient = {
     }
     return []
   },
-  appointments: async (patient, _, { getDb }: IContext) => {
+  appointments: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('appointments')
@@ -98,7 +98,7 @@ export const Patient = {
       .sort({ appointmentTime: 1 })
       .toArray()
   },
-  lastAppointment: async (patient, _, { getDb }: IContext) => {
+  lastAppointment: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('appointments')
@@ -109,7 +109,7 @@ export const Patient = {
       .toArray()
     return result[0] || null
   },
-  lastCheckAppointment: async (patient, _, { getDb }: IContext) => {
+  lastCheckAppointment: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('appointments')
@@ -122,7 +122,7 @@ export const Patient = {
       .toArray()
     return result[0] || null
   },
-  useIGluco: async (patient, _, { getDb }: IContext) => {
+  useIGluco: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('bloodGlucoses')
@@ -131,7 +131,7 @@ export const Patient = {
       })
     return result.includes('IGLUCO_ICLUCO')
   },
-  useNeedle: async (patient, _, { getDb }: IContext) => {
+  useNeedle: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('bloodGlucoses')
@@ -140,7 +140,7 @@ export const Patient = {
       })
     return result.includes('NEEDLE_BG1')
   },
-  useSPT: async (patient, _, { getDb }: IContext) => {
+  useSPT: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('bloodGlucoses')
@@ -149,7 +149,7 @@ export const Patient = {
       })
     return result.includes('SPT_SPT')
   },
-  usePublicNumber: async (patient, _, { getDb }: IContext) => {
+  usePublicNumber: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('users')
@@ -159,7 +159,7 @@ export const Patient = {
       .toArray()
     return !!get(result[0], 'wechatTag')
   },
-  lastHbAlc: async (patient, _, { getDb }: IContext) => {
+  lastHbAlc: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('clinicalLabResults')
@@ -173,7 +173,7 @@ export const Patient = {
     }
     return null
   },
-  bloodGlucoses: async (patient, args, { getDb }: IContext) => {
+  bloodGlucoses: async (patient, args, { getDb }) => {
     const db = await getDb()
     const patientId = patient._id.toString()
     const cursor = {
@@ -191,7 +191,7 @@ export const Patient = {
       .sort({ measuredAt: -1 })
       .toArray()
   },
-  cdeInfo: async (patient, _, { getDb }: IContext) => {
+  cdeInfo: async (patient, _, { getDb }) => {
     const db = await getDb()
     if (patient.cdeId) {
       const result = await db
@@ -205,7 +205,7 @@ export const Patient = {
       return null
     }
   },
-  doctorInfo: async (patient, _, { getDb }: IContext) => {
+  doctorInfo: async (patient, _, { getDb }) => {
     const db = await getDb()
     if (patient.doctorId) {
       const result = await db

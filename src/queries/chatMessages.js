@@ -1,7 +1,4 @@
-import { IContext } from '../types'
-
-
-export const chatMessages = async (_, args, { getDb }: IContext) => {
+export const chatMessages = async (_, args, { getDb }) => {
   const db = await getDb()
 
   const messages = await db

@@ -1,20 +1,17 @@
 import freshId from 'fresh-id'
+import moment from 'moment'
 import { ObjectID } from 'mongodb'
+import { taskGen } from '../modules/bloodGlucose'
 import { pubsub } from '../pubsub'
-import { IContext } from '../types'
-import * as moment from 'moment'
-import { DigestiveStateLookup } from '../utils/i18n'
-import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
 import {
   addDelayEvent,
   deleteDelayEvent,
   queryDelayEvent,
 } from '../redisCron/controller'
-export const saveBloodGlucoseMeasurement = async (
-  _,
-  args,
-  { getDb }: IContext,
-) => {
+import { DigestiveStateLookup } from '../utils/i18n'
+import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
+
+export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
   const db = await getDb()
 
   const {
@@ -36,7 +33,7 @@ export const saveBloodGlucoseMeasurement = async (
   }
   const dinnerSituation = Object.entries(DigestiveStateLookup).find(
     ([key, value]) => value === digestiveState,
-  )![0]
+  )[0]
   const convertGlucoseTypeToUSString = value => {
     if (!value) return ''
     return `${Math.round(value * 18)}`
@@ -96,11 +93,7 @@ export const saveBloodGlucoseMeasurement = async (
   }
   return !!retVal.result.ok ? retVal.insertedId : null
 }
-export const saveBloodGlucoseMeasurementNew = async (
-  _,
-  args,
-  { getDb }: IContext,
-) => {
+export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
   const db = await getDb()
   const {
     bloodGlucoseValue,
@@ -153,7 +146,9 @@ export const saveBloodGlucoseMeasurementNew = async (
 
   const objectToWrite = { ...objFirst, ...objSecond }
   const retVal = await db.collection('bloodGlucoses').insertOne(objectToWrite)
-
+  // 生成干预任务
+  const task = taskGen(objectToWrite)
+  if (task) await db.collection('interventionTask').insert(task)
   // 餐前血糖测量后添加定时事件
   // 只有自动测量和餐前才添加定时事件
   // 添加事件前清除这个患者之前的事件
@@ -231,11 +226,7 @@ export const saveBloodGlucoseMeasurementNew = async (
   return !!retVal.result.ok ? retVal.insertedId : null
 }
 
-export const updateRemarkOfBloodglucoses = async (
-  _,
-  args,
-  { getDb }: IContext,
-) => {
+export const updateRemarkOfBloodglucoses = async (_, args, { getDb }) => {
   const db = await getDb()
 
   const { _id, remark } = args
@@ -245,11 +236,7 @@ export const updateRemarkOfBloodglucoses = async (
     .update({ _id: maybeCreateFromHexString(_id) }, { $set: { remark } })
   return !!retVal.result.ok
 }
-export const updateRemarkOfBloodglucosesNew = async (
-  _,
-  args,
-  { getDb }: IContext,
-) => {
+export const updateRemarkOfBloodglucosesNew = async (_, args, { getDb }) => {
   const db = await getDb()
 
   const { _id, remark, updatedAt } = args
@@ -260,7 +247,7 @@ export const updateRemarkOfBloodglucosesNew = async (
   return !!retVal.result.ok
 }
 
-export const deleteOfBloodglucoses = async (_, args, { getDb }: IContext) => {
+export const deleteOfBloodglucoses = async (_, args, { getDb }) => {
   const db = await getDb()
 
   const { _id } = args
@@ -273,11 +260,7 @@ export const deleteOfBloodglucoses = async (_, args, { getDb }: IContext) => {
   return !!retValue.result.ok
 }
 
-export const logicalDeleteOfBloodglucoses = async (
-  _,
-  args,
-  { getDb }: IContext,
-) => {
+export const logicalDeleteOfBloodglucoses = async (_, args, { getDb }) => {
   const db = await getDb()
 
   const { _id } = args

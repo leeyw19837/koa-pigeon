@@ -1,9 +1,9 @@
-import { IContext } from '../types'
+
 import { DigestiveStateLookup } from '../utils/i18n'
 export const bloodGlucoseMeasurements = async (
   _,
   args,
-  { getDb }: IContext,
+  { getDb },
 ) => {
   const db = await getDb()
   const cursor = { author: args.patientId }

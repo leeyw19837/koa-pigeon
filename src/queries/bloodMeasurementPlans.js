@@ -1,13 +1,11 @@
 import * as get from 'lodash/get'
 import * as sortBy from 'lodash/sortBy'
-import * as moment from 'moment'
+import moment from 'moment'
 export const bloodMeasurementPlans = async (_, args, { getDb }) => {
   let acM = {}
   let noC = {}
 
-  const {
-    dateType,
-  } = args;
+  const { dateType } = args
 
   const actualMeasure = {
     morning: {
@@ -53,8 +51,12 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
   let endofweek = ''
   let dateofweek = ''
   if (dateType == 'BEFORE_SEVEN_DAYS' || dateType == 'BEFORE_THREE_DAYS') {
-    dateofweek = moment().subtract(7, "days").startOf('day')
-    endofweek = moment().subtract(1, "days").endOf('day')
+    dateofweek = moment()
+      .subtract(7, 'days')
+      .startOf('day')
+    endofweek = moment()
+      .subtract(1, 'days')
+      .endOf('day')
   } else {
     dateofweek = moment().startOf('isoWeek')
     endofweek = moment().endOf('isoWeek')
@@ -126,17 +128,17 @@ export const bloodMeasurementPlans = async (_, args, { getDb }) => {
 
     Object.keys(hasMeasureData).forEach(o => {
       const item = hasMeasureData[o]
-        ;['morning', 'midday', 'evening', 'beforeSleep'].forEach(key => {
-          const beforeKey = `${key}_b`
-          const afterKey = `${key}_a`
-          if (key === 'beforeSleep' && item[key]) actualMeasure[key].count += 1
-          if (item[beforeKey]) {
-            actualMeasure[key].count += 1
-            if (item[afterKey]) {
-              actualMeasure[key].pairing += 1
-            }
+      ;['morning', 'midday', 'evening', 'beforeSleep'].forEach(key => {
+        const beforeKey = `${key}_b`
+        const afterKey = `${key}_a`
+        if (key === 'beforeSleep' && item[key]) actualMeasure[key].count += 1
+        if (item[beforeKey]) {
+          actualMeasure[key].count += 1
+          if (item[afterKey]) {
+            actualMeasure[key].pairing += 1
           }
-        })
+        }
+      })
     })
     let notCompletedMeasure = {}
     shouldCheckProps.forEach(prop => {

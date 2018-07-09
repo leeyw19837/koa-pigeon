@@ -59,7 +59,7 @@ const mutations = {
 
 const mutationsWithLogging = {}
 Object.keys(mutations).map(
-  (mutationName: string) =>
+  mutationName =>
     (mutationsWithLogging[mutationName] = logQueryOrMutation(
       'MUTATION',
       mutationName,

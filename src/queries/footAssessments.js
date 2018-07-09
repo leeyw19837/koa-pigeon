@@ -1,7 +1,7 @@
-import { IContext } from '../types'
 
 
-export const footAssessments = async (_, args, { getDb }: IContext) => {
+
+export const footAssessments = async (_, args, { getDb }) => {
   const db = await getDb()
 
   const footAssessmentObjects = await db

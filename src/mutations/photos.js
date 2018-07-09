@@ -1,8 +1,8 @@
-import { IContext } from '../types'
+
 import { uploadBase64Img } from '../utils'
 
 
-export const savePhoto = async (_, args, { getDb }: IContext) => {
+export const savePhoto = async (_, args, { getDb }) => {
   const db = await getDb()
 
   const { patientId, data, owner, note } = args

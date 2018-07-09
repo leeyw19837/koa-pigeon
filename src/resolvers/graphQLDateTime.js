@@ -1,14 +1,11 @@
-
 import { GraphQLScalarType } from 'graphql'
 import { GraphQLError } from 'graphql/error'
 import { Kind } from 'graphql/language'
-const moment = require('moment')
-
+import moment from 'moment'
 
 // not finished yet.
 function parseDate(value) {
-  if (!value)
-    throw new TypeError('Invalid date: ' + value)
+  if (!value) throw new TypeError('Invalid date: ' + value)
   try {
     const result = new moment(new Date(value))
     return result.toDate()
@@ -28,7 +25,10 @@ export const GraphQLDateTime = new GraphQLScalarType({
   },
   parseLiteral(ast) {
     if (ast.kind !== Kind.STRING) {
-      throw new GraphQLError('Query error: Can only parse strings to dates but got a: ' + ast.kind, [ast])
+      throw new GraphQLError(
+        'Query error: Can only parse strings to dates but got a: ' + ast.kind,
+        [ast],
+      )
     }
     try {
       return parseDate(ast.value)

@@ -1,11 +1,11 @@
-import * as Koa from 'koa'
-import * as Router from 'koa-router'
-const convert = require('koa-convert')
+import Koa from 'koa'
+import Router from 'koa-router'
+import convert from 'koa-convert'
 import { graphqlKoa } from 'apollo-server-koa'
-import * as fs from 'fs'
+import fs from 'fs'
 import { makeExecutableSchema } from 'graphql-tools'
-const cors = require('koa-cors')
-const bodyParser = require('koa-bodyparser')
+import cors from 'koa-cors'
+import bodyParser from 'koa-bodyparser'
 import { execute, subscribe } from 'graphql'
 import { createServer } from 'http'
 import { sign } from 'jsonwebtoken'
@@ -22,16 +22,13 @@ import redisCron from './redisCron/router'
 import * as resolvers from './resolvers'
 import shortMessageRouter from './shortMessage/router'
 import * as Subscription from './subscriptions'
-import { IContext } from './types'
+
 import { Date, formatError } from './utils'
 
 let { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 if (!PORT) PORT = '3080'
 if (!NODE_ENV) NODE_ENV = 'development'
 if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
-// This is necessary because graphql-tools
-// looks for __esModule in the schema otherwise
-delete (resolvers as any).__esModule
 ;(async () => {
   const resolverMap = {
     ...resolvers,
@@ -39,7 +36,7 @@ delete (resolvers as any).__esModule
     Query,
     Mutation,
     Date,
-  } as any
+  }
 
   const schemasText = fs
     .readdirSync('./schemas/')
@@ -65,14 +62,14 @@ delete (resolvers as any).__esModule
   }
 
   const getDb = constructGetDb(MONGO_URL || '')
-  const context: IContext = {
+  const context = {
     getDb,
-    jwtsign: (payload: any) => {
+    jwtsign: payload => {
       console.log(payload, 'payload')
-      return sign(payload, SECRET!, { expiresIn: '7 day' })
+      return sign(payload, SECRET, { expiresIn: '7 day' })
     },
   }
-  ;(global as any).db = await getDb()
+  global.db = await getDb()
 
   const router = new Router()
 
@@ -119,7 +116,7 @@ delete (resolvers as any).__esModule
       {
         execute,
         subscribe,
-        schema: schema as any,
+        schema: schema,
       },
       {
         server: ws,

@@ -1,9 +1,6 @@
-import moment = require('moment')
+import moment from 'moment'
 
-import { IContext } from '../types'
-
-
-export const treatmentState = async (_, args, { getDb }: IContext) => {
+export const treatmentState = async (_, args, { getDb }) => {
   const db = await getDb()
 
   let query = {}
@@ -26,7 +23,5 @@ export const treatmentState = async (_, args, { getDb }: IContext) => {
       },
     }
   }
-  return await db
-    .collection('treatmentState')
-    .findOne(query)
+  return await db.collection('treatmentState').findOne(query)
 }

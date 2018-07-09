@@ -1,7 +1,7 @@
-import { IContext } from '../types'
+
 
 export const HealthCareTeam = {
-  institution: async (careTeam, _, { getDb }: IContext) => {
+  institution: async (careTeam, _, { getDb }) => {
     const db = await getDb()
 
     return db
@@ -10,7 +10,7 @@ export const HealthCareTeam = {
         _id: careTeam.institutionId,
       })
   },
-  healthCareProfessionals: async (careTeam, _, { getDb }: IContext ) => {
+  healthCareProfessionals: async (careTeam, _, { getDb } ) => {
     const db = await getDb()
 
     const doctors = await db

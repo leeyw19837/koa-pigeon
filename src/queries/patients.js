@@ -1,9 +1,9 @@
 import { ObjectID } from 'mongodb'
-import { IContext } from '../types'
-import { orderBy } from 'lodash'
-import * as moment from 'moment'
 
-export const patient = async (_, args, { getDb }: IContext) => {
+import { orderBy } from 'lodash'
+import moment from 'moment'
+
+export const patient = async (_, args, { getDb }) => {
   const db = await getDb()
   if (args.patientId) {
     return db.collection('users').findOne({
@@ -17,9 +17,9 @@ export const patient = async (_, args, { getDb }: IContext) => {
   })
 }
 
-export const patients = async (_, { cdeId }, { getDb }: IContext) => {
+export const patients = async (_, { cdeId }, { getDb }) => {
   const db = await getDb()
-  const condition: { [key: string]: any } = {
+  const condition = {
     patientState: { $nin: ['REMOVED', 'ARCHIVE'] },
     roles: { $exists: 0 },
   }
@@ -30,7 +30,7 @@ export const patients = async (_, { cdeId }, { getDb }: IContext) => {
     .toArray()
 }
 
-export const patientsByStatus = async (_, args, { getDb }: IContext) => {
+export const patientsByStatus = async (_, args, { getDb }) => {
   const db = await getDb()
   return db
     .collection('users')
@@ -38,14 +38,14 @@ export const patientsByStatus = async (_, args, { getDb }: IContext) => {
     .toArray()
 }
 
-export const healthCareProfessional = async (_, args, { getDb }: IContext) => {
+export const healthCareProfessional = async (_, args, { getDb }) => {
   const db = await getDb()
   return db
     .collection('users')
     .findOne({ _id: args.id, patientState: { $exists: 0 } })
 }
 
-export const healthCareProfessionals = async (_, args, { getDb }: IContext) => {
+export const healthCareProfessionals = async (_, args, { getDb }) => {
   const db = await getDb()
   return db
     .collection('users')
@@ -53,11 +53,7 @@ export const healthCareProfessionals = async (_, args, { getDb }: IContext) => {
     .toArray()
 }
 
-export const latestCaseRecordBeforeDate = async (
-  _,
-  args,
-  { getDb }: IContext,
-) => {
+export const latestCaseRecordBeforeDate = async (_, args, { getDb }) => {
   const db = await getDb()
   const { patientId, now } = args
   const cr = await db
@@ -70,21 +66,21 @@ export const latestCaseRecordBeforeDate = async (
   return null
 }
 
-export const appointmentsInformation = async (_, args, { getDb }: IContext) => {
+export const appointmentsInformation = async (_, args, { getDb }) => {
   const db = await getDb()
   const { patientId } = args
   const result = {
-    patientId: patientId,
-    preAppointmentsCount: 0, //历史门诊次数
-    nextAppointmentCount: 1, //下次门诊次数
-    nextAppointmentDate: '', //下次门诊日期
-    nextAppointmentDays: '', //下次门诊还剩几天
+    patientId,
+    preAppointmentsCount: 0, // 历史门诊次数
+    nextAppointmentCount: 1, // 下次门诊次数
+    nextAppointmentDate: '', // 下次门诊日期
+    nextAppointmentDays: '', // 下次门诊还剩几天
   }
   // 当前患者的所有预约信息, 时间倒叙
   const appointments = await db
     .collection('appointments')
     .find({
-      patientId: patientId,
+      patientId,
     })
     .sort({ appointmentTime: -1 })
     .toArray()
@@ -97,7 +93,7 @@ export const appointmentsInformation = async (_, args, { getDb }: IContext) => {
   result.preAppointmentsCount = preAppointments.length
   result.nextAppointmentCount = result.preAppointmentsCount + 1
 
-  let nextAppointment = orderBy(
+  const nextAppointment = orderBy(
     // 未签到的, 今天或今天之后的第一次门诊
     appointments.filter(a => {
       return (

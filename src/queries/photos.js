@@ -1,7 +1,7 @@
-import { IContext } from '../types'
 
 
-export const photos = async (_, args, { getDb }: IContext) => {
+
+export const photos = async (_, args, { getDb }) => {
   const db = await getDb()
 
   return db
