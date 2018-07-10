@@ -147,7 +147,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
   const objectToWrite = { ...objFirst, ...objSecond }
   const retVal = await db.collection('bloodGlucoses').insertOne(objectToWrite)
   // 生成干预任务
-  const task = taskGen(objectToWrite)
+  const task = await taskGen(objectToWrite)
   if (task) {
     await db.collection('interventionTask').insert(task)
     pubsub.publish('interventionTaskDynamics', {

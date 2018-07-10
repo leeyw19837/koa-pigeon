@@ -1,6 +1,5 @@
 import { pubsub } from '../pubsub'
 import { withFilter } from 'graphql-subscriptions'
-import get from 'lodash/get'
 import { ObjectID } from 'mongodb'
 
 export const interventionTaskDynamics = {
