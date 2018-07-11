@@ -20,10 +20,15 @@ export const Auth = jwtSecret => {
     }
 
     const token = parts[1]
-    const payload = verify(token, jwtSecret)
+    try {
+      const payload = verify(token, jwtSecret)
 
-    ctx.userInfo = payload
+      ctx.userInfo = payload
 
-    await next()
+      await next()
+    } catch (e) {
+      ctx.response.status = 500
+      ctx.response.body = 'jwt expired'
+    }
   }
 }
