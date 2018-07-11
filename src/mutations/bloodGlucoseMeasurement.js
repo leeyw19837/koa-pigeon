@@ -1,17 +1,29 @@
 import freshId from 'fresh-id'
 import moment from 'moment'
-import { ObjectID } from 'mongodb'
-import { taskGen } from '../modules/bloodGlucose'
-import { pubsub } from '../pubsub'
+import {
+  ObjectID
+} from 'mongodb'
+import {
+  taskGen
+} from '../modules/bloodGlucose'
+import {
+  pubsub
+} from '../pubsub'
 import {
   addDelayEvent,
   deleteDelayEvent,
   queryDelayEvent,
 } from '../redisCron/controller'
-import { DigestiveStateLookup } from '../utils/i18n'
-import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
+import {
+  DigestiveStateLookup
+} from '../utils/i18n'
+import {
+  maybeCreateFromHexString
+} from '../utils/maybeCreateFromHexString'
 
-export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
+export const saveBloodGlucoseMeasurement = async (_, args, {
+  getDb
+}) => {
   const db = await getDb()
 
   const {
@@ -51,12 +63,16 @@ export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
     createdAt: measuredAt,
     iGlucoseDataId: freshId(17), // this is forced to unique so this is a hack
   }
-  const objectToWrite = { ...oldFormat, ...newFormat }
+  const objectToWrite = { ...oldFormat,
+    ...newFormat
+  }
   const retVal = await db.collection('bloodglucoses').insertOne(objectToWrite)
   const rz = retVal.ops[0]
   const user = await db.collection('users').findOne({
     _id: ObjectID.createFromHexString(patientId),
-    patientState: { $exists: 1 },
+    patientState: {
+      $exists: 1
+    },
   })
   const mobile = user.username.replace('@ijk.com', '')
   const nickname = user.nickname
@@ -93,7 +109,9 @@ export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
   }
   return !!retVal.result.ok ? retVal.insertedId : null
 }
-export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
+export const saveBloodGlucoseMeasurementNew = async (_, args, {
+  getDb
+}) => {
   const db = await getDb()
   const {
     bloodGlucoseValue,
@@ -144,7 +162,9 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
     updatedAt: measuredAt,
   }
 
-  const objectToWrite = { ...objFirst, ...objSecond }
+  const objectToWrite = { ...objFirst,
+    ...objSecond
+  }
   const retVal = await db.collection('bloodGlucoses').insertOne(objectToWrite)
   // 生成干预任务
   const task = await taskGen(objectToWrite)
@@ -160,43 +180,43 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
   // 添加事件前清除这个患者之前的事件
   // 事件key：pigeon_bg_<patientId>_BEFORE_BREAKFAST_午餐前_hh:mm
 
-  if (inputType === 'DEVICE') {
-    if (
-      measurementTime.indexOf('BEFORE') > -1 &&
-      measurementTime != 'BEFORE_SLEEPING'
-    ) {
-      console.log('-----------add reids cron job----------------')
-      const key = `bg_${patientId}_${measurementTime}_${
-        measureTimeChinese[measureTimeEng.indexOf(measurementTime)]
-      }_${moment().format('HH:mm')}`
-      const querykey = `bg_${patientId}`
-      const existKeys = await queryDelayEvent(querykey)
-      console.log('*****', existKeys)
-      if (existKeys && existKeys.length > 0) {
-        existKeys.forEach(async element => {
-          await deleteDelayEvent(element)
-        })
-      }
-      await addDelayEvent(key, 60 * 60 * 2)
-    }
-  }
+  // 2018年07月11日18:12:41根据需求暂停餐前测量两小时提醒
+  // if (inputType === 'DEVICE') {
+  //   if (
+  //     measurementTime.indexOf('BEFORE') > -1 &&
+  //     measurementTime != 'BEFORE_SLEEPING'
+  //   ) {
+  //     console.log('-----------add reids cron job----------------')
+  //     const key = `bg_${patientId}_${measurementTime}_${
+  //       measureTimeChinese[measureTimeEng.indexOf(measurementTime)]
+  //     }_${moment().format('HH:mm')}`
+  //     const querykey = `bg_${patientId}`
+  //     const existKeys = await queryDelayEvent(querykey)
+  //     console.log('*****', existKeys)
+  //     if (existKeys && existKeys.length > 0) {
+  //       existKeys.forEach(async element => {
+  //         await deleteDelayEvent(element)
+  //       })
+  //     }
+  //     await addDelayEvent(key, 60 * 60 * 2)
+  //   }
+  // }
 
   const rz = retVal.ops[0]
   const user = await db.collection('users').findOne({
     _id: ObjectID.createFromHexString(patientId),
-    patientState: { $exists: 1 },
+    patientState: {
+      $exists: 1
+    },
   })
   if ('NEEDLE_BG1' === bloodGlucoseDataSource && user && !user.isUseBg1) {
-    await db.collection('users').update(
-      {
-        _id: user._id,
+    await db.collection('users').update({
+      _id: user._id,
+    }, {
+      $set: {
+        isUseBg1: true,
       },
-      {
-        $set: {
-          isUseBg1: true,
-        },
-      },
-    )
+    }, )
   }
   const mobile = user.username.replace('@ijk.com', '')
   const nickname = user.nickname
@@ -207,8 +227,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
       const warning = {
         bloodglucoseId: rz._id, // 关联的测量记录
         bgValue: bloodGlucoseValue, // 本次记录的血糖值，转换后
-        dinnerSituation:
-          measureTimeChinese[measureTimeEng.indexOf(measurementTime)],
+        dinnerSituation: measureTimeChinese[measureTimeEng.indexOf(measurementTime)],
         patientId,
         nickname,
         gender: user.gender, // 'male/female',
@@ -226,56 +245,102 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
         warning.warningType = 'LOW_GLUCOSE'
       }
       await db.collection('warnings').insertOne(warning)
-      pubsub.publish('warningAdded', { warningAdded: warning })
+      pubsub.publish('warningAdded', {
+        warningAdded: warning
+      })
     }
   }
   return !!retVal.result.ok ? retVal.insertedId : null
 }
 
-export const updateRemarkOfBloodglucoses = async (_, args, { getDb }) => {
+export const updateRemarkOfBloodglucoses = async (_, args, {
+  getDb
+}) => {
   const db = await getDb()
 
-  const { _id, remark } = args
+  const {
+    _id,
+    remark
+  } = args
 
   const retVal = await db
     .collection('bloodglucoses')
-    .update({ _id: maybeCreateFromHexString(_id) }, { $set: { remark } })
+    .update({
+      _id: maybeCreateFromHexString(_id)
+    }, {
+      $set: {
+        remark
+      }
+    })
   return !!retVal.result.ok
 }
-export const updateRemarkOfBloodglucosesNew = async (_, args, { getDb }) => {
+export const updateRemarkOfBloodglucosesNew = async (_, args, {
+  getDb
+}) => {
   const db = await getDb()
 
-  const { _id, remark, updatedAt } = args
+  const {
+    _id,
+    remark,
+    updatedAt
+  } = args
 
   const retVal = await db
     .collection('bloodGlucoses')
-    .update({ _id: String(_id) }, { $set: { note: remark, updatedAt } })
+    .update({
+      _id: String(_id)
+    }, {
+      $set: {
+        note: remark,
+        updatedAt
+      }
+    })
   return !!retVal.result.ok
 }
 
-export const deleteOfBloodglucoses = async (_, args, { getDb }) => {
+export const deleteOfBloodglucoses = async (_, args, {
+  getDb
+}) => {
   const db = await getDb()
 
-  const { _id } = args
+  const {
+    _id
+  } = args
   const retValue = await db
     .collection('bloodglucoses')
-    .deleteOne({ _id: maybeCreateFromHexString(_id) })
+    .deleteOne({
+      _id: maybeCreateFromHexString(_id)
+    })
   await db
     .collection('warnings')
-    .deleteOne({ bloodglucoseId: maybeCreateFromHexString(_id) })
+    .deleteOne({
+      bloodglucoseId: maybeCreateFromHexString(_id)
+    })
   return !!retValue.result.ok
 }
 
-export const logicalDeleteOfBloodglucoses = async (_, args, { getDb }) => {
+export const logicalDeleteOfBloodglucoses = async (_, args, {
+  getDb
+}) => {
   const db = await getDb()
 
-  const { _id } = args
+  const {
+    _id
+  } = args
   const retValue = await db
     .collection('bloodGlucoses')
-    .updateOne({ _id }, { $set: { dataStatus: 'DELETED' } })
+    .updateOne({
+      _id
+    }, {
+      $set: {
+        dataStatus: 'DELETED'
+      }
+    })
 
   await db
     .collection('warnings')
-    .deleteOne({ bloodglucoseId: maybeCreateFromHexString(_id) })
+    .deleteOne({
+      bloodglucoseId: maybeCreateFromHexString(_id)
+    })
   return !!retValue.result.ok
 }
