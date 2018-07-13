@@ -16,7 +16,6 @@ import {
 } from '../redisCron/controller'
 import { DigestiveStateLookup } from '../utils/i18n'
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
-import {Date} from "../utils";
 
 export const saveBloodGlucoseMeasurement = async (_, args, {
   getDb
