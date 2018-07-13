@@ -10,6 +10,7 @@ import {
 } from '../redisCron/controller'
 import { DigestiveStateLookup } from '../utils/i18n'
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
+import {Date} from "../utils";
 
 export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
   const db = await getDb()
@@ -140,8 +141,8 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
     note: '',
     labels: [],
     dataStatus: 'ACTIVE',
-    createdAt: measuredAt,
-    updatedAt: measuredAt,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   }
 
   const objectToWrite = { ...objFirst, ...objSecond }
@@ -239,7 +240,7 @@ export const updateRemarkOfBloodglucoses = async (_, args, { getDb }) => {
 
   const retVal = await db
     .collection('bloodglucoses')
-    .update({ _id: maybeCreateFromHexString(_id) }, { $set: { remark } })
+    .update({ _id: maybeCreateFromHexString(_id) }, { $set: { remark,updatedAt:new Date() } })
   return !!retVal.result.ok
 }
 export const updateRemarkOfBloodglucosesNew = async (_, args, { getDb }) => {
@@ -249,7 +250,7 @@ export const updateRemarkOfBloodglucosesNew = async (_, args, { getDb }) => {
 
   const retVal = await db
     .collection('bloodGlucoses')
-    .update({ _id: String(_id) }, { $set: { note: remark, updatedAt } })
+    .update({ _id: String(_id) }, { $set: { note: remark, updatedAt:new Date() } })
   return !!retVal.result.ok
 }
 
@@ -272,7 +273,7 @@ export const logicalDeleteOfBloodglucoses = async (_, args, { getDb }) => {
   const { _id } = args
   const retValue = await db
     .collection('bloodGlucoses')
-    .updateOne({ _id }, { $set: { dataStatus: 'DELETED' } })
+    .updateOne({ _id }, { $set: { dataStatus: 'DELETED',updatedAt:new Date() } })
 
   await db
     .collection('warnings')
