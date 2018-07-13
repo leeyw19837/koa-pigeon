@@ -101,13 +101,12 @@ type Query {
     cdeId: ID
     assistantId: ID
   ): CertifiedDiabetesEducator
-<<<<<<< Updated upstream
   getInterventionTasks(cdeId: ID, patientId: ID): [InterventionTask!]
   getTaskSoapCorpus: [TaskSoapCorpus!]
-=======
+
   getInterventionTasks(cdeId: ID): [InterventionTask!]
   getFoodRecords(patientId: ID!): [Foods]
->>>>>>> Stashed changes
+  getTaskSoap(taskId: ID): TaskSoap
 }
 
 type Mutation {
@@ -291,6 +290,7 @@ type Mutation {
     type: String!
     patientId: ID!
   ): Boolean
+  saveTaskSoap(soap: TaskSoapInput!, _id: ID): Boolean
 }
 
 type Subscription {

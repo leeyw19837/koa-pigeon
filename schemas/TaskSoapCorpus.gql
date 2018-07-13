@@ -1,4 +1,4 @@
-enum InterventionSoapCorpusState {
+enum TaskSoapCorpusState {
   IN_USE
   REMOVED
 }
@@ -11,5 +11,5 @@ type TaskSoapCorpus {
   dep: ID
   code: String!
   value: String!
-  state: InterventionSoapCorpusState!
+  state: TaskSoapCorpusState!
 }

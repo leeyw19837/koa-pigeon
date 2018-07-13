@@ -25,6 +25,7 @@ import * as updateUserDevices from './updateUserDevices'
 import * as wechatLoginOrSignUp from './wechatLoginOrSignUp'
 import * as changeChatCardStatus from './changeChatCardStatus'
 import * as blogs from './blogs'
+import * as saveTaskSoap from './saveTaskSoap'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -55,6 +56,7 @@ const mutations = {
   ...appointment,
   ...changeChatCardStatus,
   ...blogs,
+  ...saveTaskSoap,
 }
 
 const mutationsWithLogging = {}

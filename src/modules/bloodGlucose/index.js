@@ -13,7 +13,6 @@ import { getPairingBgRecord } from './pairedMeasurement'
 export const taskGen = async (measurement, getPairingMethod) => {
   const { bloodGlucoseValue, measurementTime, measuredAt } = measurement
   const now = new Date(Date.now()) // 这样取当前时间虽然看起来比较怪，但是不要改
-
   if (!moment(now).isSame(moment(measuredAt), 'day')) return null
   const newTask = {
     _id: freshId(),
