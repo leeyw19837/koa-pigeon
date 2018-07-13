@@ -81,11 +81,7 @@ const queries = {
   ...certifiedDiabetesEducator,
   blogs,
   ...getInterventionTasks,
-<<<<<<< Updated upstream
-  ...getTaskSoapCorpus,
-=======
   ...getFoodRecords,
->>>>>>> Stashed changes
 }
 
 const queriesWithLogging = {}
