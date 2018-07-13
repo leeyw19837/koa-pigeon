@@ -24,6 +24,7 @@ export const getInterventionTasks = async (
   const result = await db
     .collection('interventionTask')
     .find(condition)
+    .sort({ createdAt: -1 })
     .toArray()
   return result
 }

@@ -42,6 +42,7 @@ import * as getFoodRecords from './getFoodRecords'
 
 import * as getInterventionTasks from './getInterventionTasks'
 import * as getTaskSoapCorpus from './getTaskSoapCorpus'
+import * as getTaskSoap from './getTaskSoap'
 
 const queries = {
   ...bloodGlucoseMeasurements,
@@ -81,7 +82,9 @@ const queries = {
   ...certifiedDiabetesEducator,
   blogs,
   ...getInterventionTasks,
+  ...getTaskSoapCorpus,
   ...getFoodRecords,
+  ...getTaskSoap,
 }
 
 const queriesWithLogging = {}
