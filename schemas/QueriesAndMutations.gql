@@ -101,7 +101,8 @@ type Query {
     cdeId: ID
     assistantId: ID
   ): CertifiedDiabetesEducator
-  getInterventionTasks(cdeId: ID): [InterventionTask!]
+  getInterventionTasks(cdeId: ID, patientId: ID): [InterventionTask!]
+  getTaskSoapCorpus: [TaskSoapCorpus!]
 }
 
 type Mutation {

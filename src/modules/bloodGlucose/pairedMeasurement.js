@@ -8,14 +8,14 @@ export const getPairingBgRecord = async ({
 }) => {
   const pairedMealsPeriod = mealsPeriodTextMap[measurementTime]
   if (!pairedMealsPeriod) return null
-  const sortBgValue = isAfterMeal(measurementTime) === 0 ? 1 : -1
+  const sortBgValue = isAfterMeal(measurementTime) ? 1 : -1
   const bgRecords = await db
     .collection('bloodGlucoses')
     .find({
       patientId,
       measurementTime: pairedMealsPeriod,
       measuredAt: {
-        $gt: moment(measuredAt).startOf('day')._d,
+        $gte: moment(measuredAt).startOf('day')._d,
         $lt: moment(measuredAt).endOf('day')._d,
       },
     })

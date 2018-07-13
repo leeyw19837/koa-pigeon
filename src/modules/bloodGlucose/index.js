@@ -10,7 +10,7 @@ import {
 } from './utils'
 import { getPairingBgRecord } from './pairedMeasurement'
 
-export const taskGen = (measurement, getPairingMethod) => {
+export const taskGen = async (measurement, getPairingMethod) => {
   const { bloodGlucoseValue, measurementTime, measuredAt } = measurement
   const now = new Date(Date.now()) // 这样取当前时间虽然看起来比较怪，但是不要改
 
@@ -30,7 +30,7 @@ export const taskGen = (measurement, getPairingMethod) => {
   }
   if (!isMealRecord(measurementTime)) return null
   const getPairing = getPairingMethod || getPairingBgRecord
-  const pairedRecord = getPairing(measurement)
+  const pairedRecord = await getPairing(measurement)
   if (pairedRecord && isBigFluctuation(pairedRecord, measurement)) {
     // 大波动
     newTask.type = 'FLUCTUATION'

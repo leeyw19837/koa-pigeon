@@ -118,7 +118,8 @@ if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
       {
         execute,
         subscribe,
-        schema: schema,
+        schema,
+        onConnect: () => context,
       },
       {
         server: ws,

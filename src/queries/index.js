@@ -40,6 +40,7 @@ import * as getUserUseBg1Situation from './getUserUseBg1Situation'
 import { blogs } from './blogs'
 
 import * as getInterventionTasks from './getInterventionTasks'
+import * as getTaskSoapCorpus from './getTaskSoapCorpus'
 
 const queries = {
   ...bloodGlucoseMeasurements,
@@ -79,6 +80,7 @@ const queries = {
   ...certifiedDiabetesEducator,
   blogs,
   ...getInterventionTasks,
+  ...getTaskSoapCorpus,
 }
 
 const queriesWithLogging = {}
