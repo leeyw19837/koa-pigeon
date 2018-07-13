@@ -38,6 +38,7 @@ import * as getOrderReceiverInfo from './getOrderReceiverInfo'
 import * as getPatientInstitution from './getPatientInstitution'
 import * as getUserUseBg1Situation from './getUserUseBg1Situation'
 import { blogs } from './blogs'
+import * as getFoodRecords from './getFoodRecords'
 
 import * as getInterventionTasks from './getInterventionTasks'
 import * as getTaskSoapCorpus from './getTaskSoapCorpus'
@@ -80,7 +81,11 @@ const queries = {
   ...certifiedDiabetesEducator,
   blogs,
   ...getInterventionTasks,
+<<<<<<< Updated upstream
   ...getTaskSoapCorpus,
+=======
+  ...getFoodRecords,
+>>>>>>> Stashed changes
 }
 
 const queriesWithLogging = {}

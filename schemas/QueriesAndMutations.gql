@@ -101,8 +101,13 @@ type Query {
     cdeId: ID
     assistantId: ID
   ): CertifiedDiabetesEducator
+<<<<<<< Updated upstream
   getInterventionTasks(cdeId: ID, patientId: ID): [InterventionTask!]
   getTaskSoapCorpus: [TaskSoapCorpus!]
+=======
+  getInterventionTasks(cdeId: ID): [InterventionTask!]
+  getFoodRecords(patientId: ID!): [Foods]
+>>>>>>> Stashed changes
 }
 
 type Mutation {
