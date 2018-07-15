@@ -73,8 +73,6 @@ if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
       },
     }),
   )
-  app.use()
-
   if (MONGO_URL === undefined) {
     console.error('Run with `yarn docker:dev`!')
     process.exit(-1)
