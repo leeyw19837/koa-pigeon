@@ -36,6 +36,6 @@ export const saveTaskSoap = async (_, args, context) => {
       _operation: 'UPDATED',
     })
   }
-
+  context.response.set('effect-types', 'TaskSoap')
   return true
 }
