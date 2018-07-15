@@ -1,3 +1,22 @@
+type OrderCBResult {
+  # 下单返回码
+  returnCode: String!
+  # 应用ID
+  appid: String
+  # 微信支付分配的商户号
+  partnerid: String
+  # 微信返回的支付交易会话ID
+  prepayid: String
+  # 暂填写固定值Sign=WXPay
+  package: String
+  # 随机字符串
+  noncestr: String
+  # 时间戳
+  timestamp: String
+  # 签名
+  sign: String
+}
+
 type Order {
   _id: ID!
   # 病人编号

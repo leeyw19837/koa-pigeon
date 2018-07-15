@@ -1,4 +1,5 @@
 import freshId from 'fresh-id'
+import { wechatPayServices } from '../wechatPay'
 
 export const addOrder = async (_, args, context) => {
   const db = await context.getDb()
@@ -37,4 +38,18 @@ export const addOrder = async (_, args, context) => {
     return true
   }
   return false
+}
+
+export const createPayOrder = async (_, args, context) => {
+  const { patientId, totalPrice } = args
+  const getDb = context.getDb
+  const result = await wechatPayServices.createUnifiedOrder({
+    data: {
+      patientId,
+      totalPrice,
+    },
+    getDb,
+  })
+  console.log(result, '@@@@@result')
+  return result
 }

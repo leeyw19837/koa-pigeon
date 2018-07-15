@@ -25,6 +25,7 @@ import * as Subscription from './subscriptions'
 
 import { Date, formatError } from './utils'
 import restfulApi from './restful/router'
+import { wechatPayApi, payNotify } from './wechatPay/index'
 
 let { NODE_ENV, PORT, MONGO_URL, SECRET } = process.env
 if (!PORT) PORT = '3080'
@@ -54,8 +55,25 @@ if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
   // } else {
   //   app.use(morgan('dev'))
   // }
+  app.use(async (ctx, next) => {
+    try {
+      await next()
+    } catch (err) {
+      console.log('Error handler:', err.message)
+    }
+  })
+
   app.use(convert(cors()))
-  app.use(bodyParser({ jsonLimit: '30mb' }))
+  app.use(
+    bodyParser({
+      jsonLimit: '30mb',
+      enableTypes: ['json', 'form', 'text'],
+      extendTypes: {
+        text: ['text/xml', 'application/xml'],
+      },
+    }),
+  )
+  app.use()
 
   if (MONGO_URL === undefined) {
     console.error('Run with `yarn docker:dev`!')
@@ -87,6 +105,7 @@ if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
   router.use('/wx-mini', miniProgramRouter.routes())
   router.use('/redis-cron', redisCron.routes())
   router.use('/api', restfulApi.routes())
+  router.post('/wechat-pay', wechatPayApi.middleware('pay'), payNotify)
 
   router.use(
     queryAnalyzer({

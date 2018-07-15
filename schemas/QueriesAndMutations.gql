@@ -247,6 +247,7 @@ type Mutation {
     totalPrice: Int
     source: String
   ): Boolean
+  createPayOrder(patientId: ID!, totalPrice: Int): OrderCBResult
   reportDevice(
     # 病人编号
     patientId: ID!
