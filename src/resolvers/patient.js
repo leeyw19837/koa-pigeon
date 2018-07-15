@@ -1,8 +1,10 @@
 import get from 'lodash/get'
-
+import isEmpty from 'lodash/isEmpty'
+import reduce from 'lodash/reduce'
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
 
 import moment from 'moment'
+import { getMeasureFeedback } from '../cronJob/controller/getMeasureFeedback'
 
 export const Patient = {
   footAssessmentPhotos: async (patient, _, { getDb }) => {
@@ -218,5 +220,41 @@ export const Patient = {
     } else {
       return null
     }
+  },
+  MCR: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const bloodGlucoses = await db
+      .collection('bloodGlucoses')
+      .find({ patientId })
+      .toArray()
+    const module = await db
+      .collection('measureModules')
+      .find({ patientId })
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .toArray()
+
+    if (isEmpty(bloodGlucoses) || isEmpty(module)) return 0
+    const bgMeasureModule = await db
+      .collection('bgMeasureModule')
+      .findOne({ type: module[0].type })
+
+    const { actualMeasure, notCompletedMeasure } = getMeasureFeedback({
+      bloodGlucoses,
+      patientId,
+      bgMeasureModule,
+    })
+    const { pairing, count } = reduce(
+      actualMeasure,
+      (sum, m) => {
+        return {
+          pairing: sum.pairing + m.pairing,
+          count: sum.count + m.count,
+        }
+      },
+      { pairing: 0, count: 0 },
+    )
+    return Math.round((pairing * 100) / (pairing + count))
   },
 }

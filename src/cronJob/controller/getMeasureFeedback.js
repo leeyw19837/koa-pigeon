@@ -9,8 +9,8 @@ import {
   SUNDAY_TEXT_COMPLETED_ID,
 } from './constants'
 
-const isEmpty = require('lodash/isEmpty')
-const moment = require('moment')
+import isEmpty from 'lodash/isEmpty'
+import moment from 'moment'
 
 export const getMeasureFeedback = ({
   bloodGlucoses,

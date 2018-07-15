@@ -41,4 +41,6 @@ type Patient {
   bloodGlucoses(startAt: Date, endAt: Date): [BloodGlucoseRecord]
   cdeInfo: CertifiedDiabetesEducator
   doctorInfo: User
+  # 模组完成度
+  MCR: Int
 }
