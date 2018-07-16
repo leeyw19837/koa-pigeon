@@ -1,5 +1,12 @@
 import { ObjectID } from 'mongodb'
 
+export const findOrderById = async ({ orderId }) => {
+  const result = await db.collection('orders').findOne({
+    _id: orderId,
+  })
+  return result
+}
+
 /**
  * 当用户发起一个微信或者支付宝支付的时候，先在我们数据库插入一条订单记录
  * 后面再对试纸购买扩展
@@ -38,14 +45,16 @@ export const createOrder = async ({ orderInfo, getDb }) => {
 }
 
 export const updateOrder = async ({ getDb, orderId, data }) => {
-  const db = await getDb()
-  const { returnCode, prepayid } = data
+  const db = getDb === undefined ? global.db : await getDb()
+  const { returnCode, prepayid, transactionId } = data
   const setObj = {
     updatedAt: new Date(),
-    orderStatus: returnCode,
   }
-  if (/success/g.test(returnCode)) {
+
+  if (/PREPAY_SUCCESS/g.test(returnCode)) {
     setObj.prepayid = prepayid
+  } else if (/PAY_NOTIFICTION_SUCCESS/g.test(returnCode)) {
+    setObj.transactionId = transactionId
   }
   await db.collection('orders').update(
     {

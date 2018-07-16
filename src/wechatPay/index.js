@@ -45,11 +45,11 @@ class WeChatPay {
     const result = await this.wechatPayApi.unifiedOrder(params)
     const { return_code, prepay_id, result_code } = result
     let returnObj = {
-      returnCode: 'prepay_error',
+      returnCode: 'PREPAY_ERROR',
     }
     if (return_code === 'SUCCESS' && result_code === 'SUCCESS') {
       returnObj = {
-        returnCode: 'prepay_success',
+        returnCode: 'PREPAY_SUCCESS',
         appid: WX_APP_ID,
         partnerid: WX_MCH_ID,
         prepayid: prepay_id,
