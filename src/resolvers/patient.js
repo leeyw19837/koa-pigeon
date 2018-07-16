@@ -257,4 +257,15 @@ export const Patient = {
     )
     return Math.round((pairing * 100) / (pairing + count))
   },
+  clinicalLabResults: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const results = await db
+      .collection('clinicalLabResults')
+      .find({ patientId })
+      .sort({ testDate: -1 })
+      .limit(3)
+      .toArray()
+    return results
+  },
 }
