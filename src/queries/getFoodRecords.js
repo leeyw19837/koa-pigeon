@@ -23,10 +23,10 @@ export const getFoodRecords = async (_, args, context) => {
     }
     let beforeTime
     let afterTime
-    if (measurementTime === 'BREAKFAST') {
+    if (measurementTime === 'BREAKFAST' || measurementTime === 'BREAKFAST_SNACK') {
       beforeTime = 'BEFORE_BREAKFAST'
       afterTime = 'AFTER_BREAKFAST'
-    } else if (measurementTime === 'LUNCH') {
+    } else if (measurementTime === 'LUNCH' || measurementTime === 'LUNCH_SNACK') {
       beforeTime = 'BEFORE_LUNCH'
       afterTime = 'AFTER_LUNCH'
     } else {

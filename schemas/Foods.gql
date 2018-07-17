@@ -1,7 +1,10 @@
 enum MeasureTimeType {
   BREAKFAST
+  BREAKFAST_SNACK
   LUNCH
+  LUNCH_SNACK
   DINNER
+  DINNER_SNACK
 }
 
 type Foods {
