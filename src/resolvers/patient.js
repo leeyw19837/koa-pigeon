@@ -48,7 +48,7 @@ export const Patient = {
       .sort({ createdAt: -1 })
       .toArray()
   },
-  caseRecords: async (patient, _, { getDb }) => {
+  caseRecords: async (patient, { limit = 0 }, { getDb }) => {
     const db = await getDb()
     return db
       .collection('caseRecord')
@@ -56,6 +56,7 @@ export const Patient = {
         patientId: patient._id.toString(),
       })
       .sort({ createdAt: -1 })
+      .limit(limit)
       .toArray()
   },
   soaps: async (patient, _, { getDb }) => {
@@ -256,5 +257,16 @@ export const Patient = {
       { pairing: 0, count: 0 },
     )
     return Math.round((pairing * 100) / (pairing + count))
+  },
+  clinicalLabResults: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const results = await db
+      .collection('clinicalLabResults')
+      .find({ patientId })
+      .sort({ testDate: -1 })
+      .limit(3)
+      .toArray()
+    return results
   },
 }

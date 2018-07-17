@@ -302,6 +302,14 @@ type Mutation {
     commentIds:[ID]
   ): Boolean!
   deleteFoodComments(_id: ID!): Boolean!
+  saveFoodContents(
+    patientId: String!,
+    circleContent: String!,
+    circleImageBase64:[String],
+    measurementTime: String!,
+    measuredAt: Date!
+  ): Boolean
+
 }
 
 type Subscription {
