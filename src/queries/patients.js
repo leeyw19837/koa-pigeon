@@ -10,11 +10,13 @@ export const patient = async (_, args, { getDb }) => {
       _id: ObjectID.createFromHexString(args.patientId),
       patientState: { $exists: 1 },
     })
+  } else if (args.telephone) {
+    return db.collection('users').findOne({
+      username: { $regex: args.telephone },
+      patientState: { $exists: 1 },
+    })
   }
-  return db.collection('users').findOne({
-    username: { $regex: args.telephone },
-    patientState: { $exists: 1 },
-  })
+  return null
 }
 
 export const patients = async (_, { cdeId }, { getDb }) => {

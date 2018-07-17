@@ -19,7 +19,7 @@ type Patient {
   preYearApTime: Date
   patientState: String
   district: String
-  caseRecords: [CaseRecord]
+  caseRecords(limit: Int): [CaseRecord]
   remarks: String
   soaps: [SOAP]
   outHospitalSoaps: [SOAP]

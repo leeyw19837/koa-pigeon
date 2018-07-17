@@ -26,6 +26,7 @@ import * as wechatLoginOrSignUp from './wechatLoginOrSignUp'
 import * as changeChatCardStatus from './changeChatCardStatus'
 import * as blogs from './blogs'
 import * as saveTaskSoap from './saveTaskSoap'
+import * as foodComments from './foodComments'
 import * as saveFoodContents from './saveFoodContents'
 
 import { logQueryOrMutation } from '../utils'
@@ -58,6 +59,7 @@ const mutations = {
   ...changeChatCardStatus,
   ...blogs,
   ...saveTaskSoap,
+  ...foodComments,
   ...saveFoodContents,
 }
 

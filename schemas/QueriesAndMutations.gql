@@ -291,6 +291,17 @@ type Mutation {
     patientId: ID!
   ): Boolean
   saveTaskSoap(soap: TaskSoapInput!, _id: ID): Boolean
+   addFoodComments(
+    foodCircleId: ID
+    commentContent: String
+    authorId: ID
+    authorName: String
+    replyId: ID
+    replyName: String
+    type: String
+    commentIds:[ID]
+  ): Boolean!
+  deleteFoodComments(_id: ID!): Boolean!
   saveFoodContents(
     patientId: String!,
     circleContent: String!,
