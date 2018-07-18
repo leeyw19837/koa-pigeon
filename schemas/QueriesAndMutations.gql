@@ -89,6 +89,7 @@ type Query {
   getUserUseBg1Situation(patientId: ID): UserUseBG1Schema
   getOrderReceiverInfo(patientId: ID!): Order
   getDiagnosticWordsNew(
+    bgRecordId: String
     diagnoseType: String
     bloodGlucoseValue: String
     bgValueBeforeMeal: String

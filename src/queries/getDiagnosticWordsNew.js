@@ -6,46 +6,17 @@ const periodTextMap = {
   'BEFORE_DINNER': '晚',
 }
 
-// const updateBgRecords = async (bgRecordId, _diagnoseSourceType) => {
-//   console.log('updateBgRecords',bgRecordId, _diagnoseSourceType)
-//
-//   try {
-//     await db.collection('bloodGlucoses').update(
-//       {
-//         _id: bgRecordId,
-//       },
-//       {
-//         $set: {
-//           diagnoseType: _diagnoseSourceType,
-//         },
-//       }
-//     )
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
-
-const updateBgRecords = async (patientId,measurementTime,measuredAt,diagnoseType) => {
-   console.log('updateBgRecords',patientId,measurementTime,measuredAt,diagnoseType)
-
-  // 由于needle没有传血糖记录的id，因此这里暂时使用测量时间来筛选血糖值(+-3秒内)
-  let start = moment(measuredAt).subtract(3,'seconds').toDate()
-  let end = moment(measuredAt).add(3,'seconds').toDate()
-   console.log('start:',start,'end:',end)
+const updateBgRecords = async (bgRecordId, _diagnoseSourceType) => {
+  console.log('updateBgRecords',bgRecordId, _diagnoseSourceType)
 
   try {
     await db.collection('bloodGlucoses').update(
       {
-        patientId:patientId,
-        measurementTime:measurementTime,
-        measuredAt:{
-          $gte: start,
-          $lte: end
-        },
+        _id: bgRecordId,
       },
       {
         $set: {
-          diagnoseType:diagnoseType,
+          diagnoseType: _diagnoseSourceType,
         },
       }
     )
@@ -61,7 +32,7 @@ export const getDiagnosticWordsNew = async (_, args, {getDb}) => {
   const bgValueBeforeMeal = args.bgValueBeforeMeal
   const manualInputType = args.manualInputType
 
-  // const bgRecordId = args.bgRecordId
+  const bgRecordId = args.bgRecordId
   const patientId = args.patientId
   const measuredAt = args.measuredAt
   const measurementTime = args.measurementTime
@@ -154,7 +125,7 @@ export const getDiagnosticWordsNew = async (_, args, {getDb}) => {
   }
 
   // 2018-07-09 修改需求：对血糖记录表增加sourceType字段
-  updateBgRecords(patientId, measurementTime,measuredAt,_diagnoseSourceType)
+  await updateBgRecords(bgRecordId,_diagnoseSourceType)
 
   return {
     diagnoseWords: _diagnoseWords,

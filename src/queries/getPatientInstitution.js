@@ -13,7 +13,6 @@ const healthCareTeams = {
 }
 
 export const getPatientInstitution = async (_, args, { getDb }) => {
-    console.log('getPatientInstitution called!')
     const db = await getDb()
     let result = {institutionName:'EMPTY'}
     let healthcareTeamId = []
