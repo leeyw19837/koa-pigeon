@@ -7,11 +7,9 @@ export const createPayHistory = async ({
   orderId,
   result,
   status,
-  getDb,
   type = 'unifiedorder',
   payWay = 'WECHAT',
 }) => {
-  const db = getDb === undefined ? global.db : await getDb()
   await db.collection('payHistories').insertOne({
     _id: new ObjectID().toString(),
     orderId,

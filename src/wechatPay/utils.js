@@ -47,3 +47,10 @@ export const generate = (length = 32) => {
  * 标准北京时间，时区为东八区，自1970年1月1日 0点0分0秒以来的秒数。注意：部分系统取到的值为毫秒级，需要转换成秒(10位数字)
  */
 export const getTimeStamp = () => Math.round(new Date().getTime() / 1000)
+/**
+ * 由于 JS 浮点数的精度问题：https://github.com/camsong/blog/issues/9
+ * @param {*} num
+ * @param {*} precision
+ */
+export const strip = (num, precision = 12) =>
+  +parseFloat(num.toPrecision(precision))

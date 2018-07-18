@@ -12,8 +12,7 @@ export const findOrderById = async ({ orderId }) => {
  * 后面再对试纸购买扩展
  * @param {*} ctx
  */
-export const createOrder = async ({ orderInfo, getDb }) => {
-  const db = await getDb()
+export const createOrder = async ({ orderInfo }) => {
   const { patientId, totalPrice } = orderInfo
   const id = new ObjectID().toString()
   const content = {
@@ -22,6 +21,7 @@ export const createOrder = async ({ orderInfo, getDb }) => {
     orderId: `tr_${id}`,
     orderTime: new Date(),
     orderStatus: 'INIT',
+    payStatus: 'INIT',
     payWay: 'WECHAT',
     receiver: '',
     phoneNumber: '',
@@ -31,7 +31,7 @@ export const createOrder = async ({ orderInfo, getDb }) => {
     goodsSpecification: '299元/年',
     purchaseQuantity: 1,
     freightPrice: 0,
-    totalPrice: 299,
+    totalPrice,
     createdAt: new Date(),
   }
 
@@ -44,18 +44,23 @@ export const createOrder = async ({ orderInfo, getDb }) => {
   }
 }
 
-export const updateOrder = async ({ getDb, orderId, data }) => {
-  const db = getDb === undefined ? global.db : await getDb()
-  const { returnCode, prepayid, transactionId } = data
-  const setObj = {
+export const updateOrder = async ({ orderId, data }) => {
+  const { returnCode, transactionId, prepayId, errCode } = data
+  let setObj = {
     updatedAt: new Date(),
   }
-
-  if (/PREPAY_SUCCESS/g.test(returnCode)) {
-    setObj.prepayid = prepayid
-  } else if (/PAY_NOTIFICTION_SUCCESS/g.test(returnCode)) {
-    setObj.transactionId = transactionId
+  if (errCode) {
+    setObj.orderStatus = 'FAIL'
+    setObj.errCode = errCode
+  } else {
+    setObj.orderStatus = returnCode
+    if (/PREPAY_SUCCESS/g.test(returnCode)) {
+      setObj.prepayId = prepayId
+    } else if (/PAY_NOTIFICTION_SUCCESS/g.test(returnCode)) {
+      setObj.transactionId = transactionId
+    }
   }
+
   await db.collection('orders').update(
     {
       orderId: orderId,

@@ -1,7 +1,7 @@
 const tenpay = require('tenpay')
-import { createOrder } from './orders'
-import { sign, generate, getTimeStamp } from './utils'
+import { sign, generate, getTimeStamp, strip } from './utils'
 import { createPayHistory } from './payHistories'
+import { findOrderById, updateOrder, createOrder } from './orders'
 
 export * from './notify'
 
@@ -19,14 +19,22 @@ const config = {
   spbill_create_ip: '192.168.1.1',
 }
 
-export const wechatPayApi = new tenpay(config)
+export const wechatPayment = new tenpay(config)
 
 class WeChatPay {
-  constructor() {
+  constructor(isSandbox) {
     this.package = 'Sign=WXPay'
-    this.wechatPayApi = wechatPayApi
+    this.isSandbox = isSandbox
+  }
+  async getWechatServices() {
+    if (this.isSandbox) {
+      this.wechatPayApi = await tenpay.sandbox(config)
+    } else {
+      this.wechatPayApi = wechatPayment
+    }
   }
   async createUnifiedOrder({ data, getDb }) {
+    await this.getWechatServices()
     const orderData = await createOrder({
       orderInfo: data,
       getDb,
@@ -35,43 +43,65 @@ class WeChatPay {
       throw new Error('订单插入失败')
       return
     }
-    const { orderId, totalPrice } = orderData
+    const { orderId, totalPrice, patientId } = orderData
     const params = {
       body: '护血糖-年费',
       out_trade_no: orderId,
-      total_fee: 1,
+      total_fee: strip(totalPrice * 100),
       trade_type: 'APP',
     }
-    const result = await this.wechatPayApi.unifiedOrder(params)
-    const { return_code, prepay_id, result_code } = result
-    let returnObj = {
-      returnCode: 'PREPAY_ERROR',
-    }
-    if (return_code === 'SUCCESS' && result_code === 'SUCCESS') {
+    let returnObj = {}
+    let setOrderObj = {}
+    let result = {}
+    try {
+      result = await this.wechatPayApi.unifiedOrder(params)
+      console.log(result)
+      const { prepay_id } = result
       returnObj = {
         returnCode: 'PREPAY_SUCCESS',
         appid: WX_APP_ID,
         partnerid: WX_MCH_ID,
-        prepayid: prepay_id,
+        prepayId: prepay_id,
         package: this.package,
         noncestr: generate(),
         timestamp: getTimeStamp(),
         sign: sign(params, WX_API_KEY),
       }
+    } catch (error) {
+      console.log(error, '~~~~')
+      returnObj = {
+        errCode: error,
+      }
     }
+
     await updateOrder({
       orderId,
-      getDb,
       data: returnObj,
     })
     await createPayHistory({
       patientId,
       orderId,
-      result,
-      getDb,
+      result: returnObj.errCode ? returnObj : result,
       type: 'unifiedorder',
     })
     return returnObj
+  }
+  async queryUnifiedOrder({ orderId, type = 'transaction' }) {
+    await this.getWechatServices()
+    const params =
+      type === 'transaction'
+        ? { transaction_id: orderId }
+        : { out_trade_no: orderId }
+
+    try {
+      const result = await api.orderQuery(params)
+      const { result_code, return_code, out_trade_no, trade_state } = result
+      const order = await findOrderById({ orderId: out_trade_no })
+      const { orderStatus, totalPrice } = order
+      console.log(orderStatus, trade_state)
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 
