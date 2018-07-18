@@ -9,13 +9,14 @@ const {
   WX_APP_ID = 'wx915efa8b538a4df4',
   WX_MCH_ID = '1509472271',
   WX_API_KEY = '36151ce128b3f61bb7edde68da5ad935',
-  WX_NOTIFY_URL = 'https://pigeon.gtzh-stg.ihealthcn.com/wechat-pay',
+  WX_NOTIFY_URL = 'https://pigeon-wechat.gtzh-stg.ihealthcn.com/api/wechat-pay',
 } = process.env
 
 const config = {
   appid: WX_APP_ID,
   mchid: WX_MCH_ID,
   partnerKey: WX_API_KEY,
+  notify_url: WX_NOTIFY_URL,
   spbill_create_ip: '192.168.1.1',
 }
 
