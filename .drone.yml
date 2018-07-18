@@ -25,6 +25,19 @@ pipeline:
     repo: registry.cn-beijing.aliyuncs.com/ihealthlabs/pigeon
     mirror: 'https://t8ngg3ge.mirror.aliyuncs.com'
     tag:
+      - wechatpay
+    dockerfile: Dockerfile
+    when:
+      branch: wechat_pay
+      event: push
+  build_step:
+    image: plugins/docker
+    username: ijiankang@ihealthlabs.com.cn
+    password: iHealthStrategy2018
+    registry: registry.cn-beijing.aliyuncs.com
+    repo: registry.cn-beijing.aliyuncs.com/ihealthlabs/pigeon
+    mirror: 'https://t8ngg3ge.mirror.aliyuncs.com'
+    tag:
       - '${DRONE_BUILD_NUMBER}-master'
       - master
     dockerfile: Dockerfile
