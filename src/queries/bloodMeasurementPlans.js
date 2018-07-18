@@ -1,6 +1,9 @@
 import * as get from 'lodash/get'
-import * as sortBy from 'lodash/sortBy'
+// import * from 'lodash/sortBy'
 import moment from 'moment'
+
+const sortBy = require('lodash/sortBy')
+
 export const bloodMeasurementPlans = async (_, args, { getDb }) => {
   let acM = {}
   let noC = {}

@@ -71,17 +71,24 @@ type Query {
   orders(patientId: ID!): [Order]
   # 新模板血糖测量作业
   bloodMeasurementPlans(patientId: ID!): BloodMeasurementPlans
-  getDiagnoseType(
+  getDiagnoseTypeNew(
     bloodGlucoseValue: String
     patientId: ID
     measurementTime: String
     measuredAt: Date
     manualInputType: String
   ): DiagnoseType
+  getDiagnoseType(
+      bloodGlucoseValue: String
+      patientId: ID
+      measurementTime: String
+      measuredAt: Date
+      manualInputType: String
+    ): DiagnoseType
   getPatientInstitution(patientId: ID): InstitutionType
   getUserUseBg1Situation(patientId: ID): UserUseBG1Schema
   getOrderReceiverInfo(patientId: ID!): Order
-  getDiagnosticWords(
+  getDiagnosticWordsNew(
     diagnoseType: String
     bloodGlucoseValue: String
     bgValueBeforeMeal: String
@@ -90,6 +97,12 @@ type Query {
     measuredAt: Date
     measurementTime: String
   ): DiagnosticWords
+  getDiagnosticWords(
+      diagnoseType: String
+      bloodGlucoseValue: String
+      bgValueBeforeMeal: String
+      manualInputType: String
+    ): DiagnosticWords
   # 月预约日历
   monthlyAppointments(
     monthStr: String

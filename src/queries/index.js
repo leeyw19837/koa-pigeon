@@ -34,6 +34,8 @@ import * as terribleMeasure from './terribleMeasure'
 
 import * as getDiagnoseType from './getDiagnoseType'
 import * as getDiagnosticWords from './getDiagnosticWords'
+import * as getDiagnoseTypeNew from './getDiagnoseTypeNew'
+import * as getDiagnosticWordsNew from './getDiagnosticWordsNew'
 import * as getOrderReceiverInfo from './getOrderReceiverInfo'
 import * as getPatientInstitution from './getPatientInstitution'
 import * as getUserUseBg1Situation from './getUserUseBg1Situation'
@@ -74,6 +76,8 @@ const queries = {
   ...bloodMeasurementPlans,
   ...getDiagnoseType,
   ...getDiagnosticWords,
+  ...getDiagnoseTypeNew,
+  ...getDiagnosticWordsNew,
   ...getPatientInstitution,
   ...getUserUseBg1Situation,
   ...getOrderReceiverInfo,
