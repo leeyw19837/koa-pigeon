@@ -48,7 +48,7 @@ const getMedicineFrequency = async (patientId,measurementTime) => {
     .toArray()
   if (latestCaseRecord.length) {
     const isUseInsulin = latestCaseRecord[0].caseContent.prescription.medicines.filter(o =>
-      o.medicineType === 'insulin' && o.frequency.indexOf(medicineFrequencyMap[measurementTime]) >=0)
+      o.medicineType === 'insulin' && o.function==='BOLUS')
     medicineType = isUseInsulin.length ? true : false
   }
   return medicineType
