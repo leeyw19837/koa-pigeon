@@ -76,7 +76,7 @@ const getPairingBgRecord = async ({patientId, measurementTime, measuredAt}) => {
 
 const isLessFour = bgValue => bgValue <= 3.9
 
-const isAboveSeven = bgValue => bgValue >= 7
+const isAboveSeven = bgValue => bgValue > 7
 
 const isFasting = (measurementTime) => measurementTime === 'BEFORE_BREAKFAST'
 
