@@ -1,6 +1,7 @@
 type OrderCBResult {
   # 下单返回码
   returnCode: String!
+  errCode: String
   # 应用ID
   appid: String
   # 微信支付分配的商户号
@@ -8,7 +9,7 @@ type OrderCBResult {
   # 微信返回的支付交易会话ID
   prepayid: String
   # 暂填写固定值Sign=WXPay
-  package: String
+  packageName: String
   # 随机字符串
   noncestr: String
   # 时间戳

@@ -1,4 +1,5 @@
 const tenpay = require('tenpay')
+const omit = require('lodash/omit')
 import { sign, generate, getTimeStamp, strip } from './utils'
 import { createPayHistory } from './payHistories'
 import { findOrderById, updateOrder, createOrder } from './orders'
@@ -12,7 +13,7 @@ const {
   WX_NOTIFY_URL = 'https://pigeon-wechat.gtzh-stg.ihealthcn.com/api/wechat-pay',
 } = process.env
 
-const config = {
+export const config = {
   appid: WX_APP_ID,
   mchid: WX_MCH_ID,
   partnerKey: WX_API_KEY,
@@ -44,7 +45,7 @@ class WeChatPay {
       throw new Error('订单插入失败')
       return
     }
-    const { orderId, totalPrice, patientId } = orderData
+    const { orderId, totalPrice = 2.01, patientId } = orderData
     const params = {
       body: '护血糖-年费',
       out_trade_no: orderId,
@@ -56,21 +57,19 @@ class WeChatPay {
     let result = {}
     try {
       result = await this.wechatPayApi.unifiedOrder(params)
-      console.log(result)
       const { prepay_id } = result
+      const appParams = this.wechatPayApi.getAppParamsByPrepay({
+        prepay_id,
+      })
       returnObj = {
         returnCode: 'PREPAY_SUCCESS',
-        appid: WX_APP_ID,
-        partnerid: WX_MCH_ID,
-        prepayId: prepay_id,
-        package: this.package,
-        noncestr: generate(),
-        timestamp: getTimeStamp(),
-        sign: sign(params, WX_API_KEY),
+        ...omit(appParams, 'package'),
+        packageName: appParams.package,
       }
     } catch (error) {
       console.log(error, '~~~~')
       returnObj = {
+        returnCode: 'PREPAY_FAIL',
         errCode: error,
       }
     }
@@ -84,6 +83,7 @@ class WeChatPay {
       orderId,
       result: returnObj.errCode ? returnObj : result,
       type: 'unifiedorder',
+      status: returnObj.returnCode,
     })
     return returnObj
   }
@@ -95,11 +95,13 @@ class WeChatPay {
         : { out_trade_no: orderId }
 
     try {
-      const result = await api.orderQuery(params)
+      const result = await this.wechatPayApi.orderQuery(params)
       const { result_code, return_code, out_trade_no, trade_state } = result
-      const order = await findOrderById({ orderId: out_trade_no })
+      console.log(result)
+      const order = await findOrderById({ orderId })
       const { orderStatus, totalPrice } = order
-      console.log(orderStatus, trade_state)
+      console.log(order)
+      return result
     } catch (error) {
       console.log(error)
     }

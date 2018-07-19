@@ -21,5 +21,13 @@ restfulRouter.get('/wechatSandbox', async ctx => {
   })
   ctx.body = result
 })
+restfulRouter.get('/wechatSandbox/query', async ctx => {
+  const { orderId } = ctx.query
+  const result = await wechatPayServices.queryUnifiedOrder({
+    orderId,
+    type: 'out_trade_no',
+  })
+  ctx.body = result
+})
 
 export default restfulRouter

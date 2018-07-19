@@ -2,7 +2,7 @@ import { ObjectID } from 'mongodb'
 
 export const findOrderById = async ({ orderId }) => {
   const result = await db.collection('orders').findOne({
-    _id: orderId,
+    orderId,
   })
   return result
 }
@@ -21,7 +21,6 @@ export const createOrder = async ({ orderInfo }) => {
     orderId: `tr_${id}`,
     orderTime: new Date(),
     orderStatus: 'INIT',
-    payStatus: 'INIT',
     payWay: 'WECHAT',
     receiver: '',
     phoneNumber: '',
