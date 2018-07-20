@@ -20,7 +20,7 @@ const sourceTypeGroup = [
 export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   const db = getDb === undefined ? global.db : await getDb()
 
-  const { userId, chatRoomId, text, sourceType } = args
+  const { userId, chatRoomId, text, sourceType, bgRecordId } = args
 
   const userObjectId = ObjectId.createFromHexString(userId)
 
@@ -58,6 +58,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
     sourceType: sourceType || sourceTypeMap,
+    bgRecordId: bgRecordId,
   }
   await db.collection('needleChatMessages').insertOne(newChatMessage)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
@@ -95,6 +96,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     }
     return p
   })
+
   await db.collection('needleChatRooms').update(
     {
       _id: chatRoomId,

@@ -162,6 +162,7 @@ type Mutation {
     chatRoomId: ID!
     # The base64 encoded audio data. This gets turned into a URL on the server.
     base64EncodedImageData: String!
+    sourceType: String
   ): NeedleImageMessage!
   # Posts an text chat message to the given chat room.
   saveBloodGlucoseMeasurement(
@@ -186,6 +187,7 @@ type Mutation {
     chatRoomId: ID!
     text: String!
     sourceType: String
+    bgRecordId: String
   ): NeedleTextMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
