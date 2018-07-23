@@ -248,6 +248,39 @@ type Mutation {
     source: String
   ): Boolean
   createPayOrder(patientId: ID!, totalPrice: Int): OrderCBResult
+  createOrder(
+    # 病人编号
+    patientId: ID!
+    #  总价
+    totalPrice: Int
+    #  收货人
+    receiver: String
+    #  联系电话
+    phoneNumber: String
+    #  收货地址
+    receiveAddress: String
+    #  商品类型
+    goodsType: String
+    #  商品单价
+    goodsUnitPrice: Int
+    #  商品规格
+    goodsSpecification: String
+    #  购买数量
+    purchaseQuantity: Int
+    #  运费
+    freightPrice: Int
+    source: String
+  ): Order
+  createPrepayForWechat(
+    patientId: ID!
+    # 订单ID
+    orderId: ID!
+    # 总价
+    totalPrice: Int
+    # 商品规格
+    goodsSpecification: String
+  ): OrderCBResult
+  checkPayOrderStatus(orderId: ID!, type: String): PayOrder
   reportDevice(
     # 病人编号
     patientId: ID!

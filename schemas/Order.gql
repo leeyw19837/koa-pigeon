@@ -18,6 +18,15 @@ type OrderCBResult {
   sign: String
 }
 
+type PayOrder {
+  # 返回码
+  returnCode: String!
+  # 错误码
+  errCode: String
+  # 交易状态
+  tradeState: String
+}
+
 type Order {
   _id: ID!
   # 病人编号
