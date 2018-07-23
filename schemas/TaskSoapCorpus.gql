@@ -1,0 +1,15 @@
+enum TaskSoapCorpusState {
+  IN_USE
+  REMOVED
+}
+
+type TaskSoapCorpus {
+  _id: ID!
+  segment: String
+  category: String
+  group: String
+  dep: ID
+  code: String!
+  value: String!
+  state: TaskSoapCorpusState!
+}

@@ -19,7 +19,7 @@ type Patient {
   preYearApTime: Date
   patientState: String
   district: String
-  caseRecords: [CaseRecord]
+  caseRecords(limit: Int): [CaseRecord]
   remarks: String
   soaps: [SOAP]
   outHospitalSoaps: [SOAP]
@@ -41,4 +41,7 @@ type Patient {
   bloodGlucoses(startAt: Date, endAt: Date): [BloodGlucoseRecord]
   cdeInfo: CertifiedDiabetesEducator
   doctorInfo: User
+  # 模组完成度
+  MCR: Int
+  clinicalLabResults: [ClinicalLabResult!]
 }

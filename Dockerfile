@@ -8,5 +8,5 @@ WORKDIR /usr/src/app
 COPY package.json .
 RUN npm i --registry https://registry.npm.taobao.org
 COPY . .
-RUN npm run build
+RUN npm run babel:build
 CMD [ "node", "dist/index.js" ]

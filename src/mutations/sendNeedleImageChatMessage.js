@@ -31,6 +31,7 @@ export const sendNeedleImageChatMessage = async (_, args, context) => {
     senderId: userId,
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
+    sourceType: args.sourceType?args.sourceType:'FROM_COMMON_CHAT'
   }
   await db.collection('needleChatMessages').insertOne(newChatMessage)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
@@ -60,7 +61,7 @@ export const sendNeedleImageChatMessage = async (_, args, context) => {
       const user = await db
         .collection('users')
         .findOne({ _id: ObjectID.createFromHexString(p.userId) })
-      if (!user.roles) {
+      if (user && !user.roles) {
         pushChatNotification({
           patient: user,
           messageType: 'IMAGE',

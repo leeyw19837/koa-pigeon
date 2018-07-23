@@ -1,7 +1,5 @@
 import { isEmpty } from 'lodash'
-import * as moment from 'moment'
-import { ObjectID } from 'mongodb'
-import { IContext } from '../types'
+import moment from 'moment'
 
 export const treatmentStateApp = async (_, args, { getDb }) => {
   const db = await getDb()

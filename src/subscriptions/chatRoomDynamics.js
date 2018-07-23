@@ -1,6 +1,6 @@
 import { pubsub } from '../pubsub'
 import { withFilter } from 'graphql-subscriptions'
-const find = require('lodash/find')
+import find from 'lodash/find'
 
 export const chatRoomDynamics = {
   resolve: payload => {
@@ -15,6 +15,6 @@ export const chatRoomDynamics = {
           userId: variables.userId,
         })
       )
-    }
+    },
   ),
 }

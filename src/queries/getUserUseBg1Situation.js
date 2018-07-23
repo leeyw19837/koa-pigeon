@@ -1,5 +1,5 @@
 import { ObjectID } from 'mongodb'
-import { IContext } from '../types'
+
 import {HealthCareTeam} from "../resolvers/healthCareTeam";
 
 export const getUserUseBg1Situation = async (_, args, { getDb }) => {

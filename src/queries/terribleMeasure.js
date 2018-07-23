@@ -1,5 +1,5 @@
 import { ObjectID } from 'mongodb'
-import { IContext } from '../types'
+
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
 import { findIndex, indexOf } from 'lodash'
 const moment = require('moment')

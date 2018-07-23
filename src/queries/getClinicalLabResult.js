@@ -1,5 +1,5 @@
 import { ObjectID } from 'mongodb'
-import { IContext } from '../types'
+
 
 export const getClinicalLabResult = async (_, args, { getDb }) => {
   const db = await getDb()

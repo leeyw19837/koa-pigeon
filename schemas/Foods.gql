@@ -1,0 +1,40 @@
+enum MeasureTimeType {
+  BREAKFAST
+  BREAKFAST_SNACK
+  LUNCH
+  LUNCH_SNACK
+  DINNER
+  DINNER_SNACK
+}
+
+type Foods {
+  _id: ID!
+  # 测量三餐
+  measurementTime: MeasureTimeType
+  # 发表朋友圈内容
+  circleContet: String
+  # 患者ID
+  patientId: ID!
+  # 发表朋友圈图片
+  circleImages: [String]
+  # 总评分
+  totalScore: String
+  # 主食量评分
+  mainFoodScore: String
+  # 食物热量评分
+  foodEnergyScore: String
+  # 蛋白量评分
+  albumenScore: String
+  # 丰富程度评分
+  richnessScore: String
+  # 创建时间
+  createdAt: Date
+  # 测量时间
+  measuredAt: Date
+  # 餐前血糖
+  beforeBloodGlucose:[BloodGlucoseRecord]
+  # 餐后血糖
+  afterBloodGlucose:[BloodGlucoseRecord]
+  # 评论列表
+  comments:[Comments]
+}

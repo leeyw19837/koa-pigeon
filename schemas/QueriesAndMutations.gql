@@ -71,22 +71,39 @@ type Query {
   orders(patientId: ID!): [Order]
   # 新模板血糖测量作业
   bloodMeasurementPlans(patientId: ID!): BloodMeasurementPlans
-  getDiagnoseType(
+  getDiagnoseTypeNew(
     bloodGlucoseValue: String
     patientId: ID
     measurementTime: String
     measuredAt: Date
     manualInputType: String
   ): DiagnoseType
+  getDiagnoseType(
+      bloodGlucoseValue: String
+      patientId: ID
+      measurementTime: String
+      measuredAt: Date
+      manualInputType: String
+    ): DiagnoseType
   getPatientInstitution(patientId: ID): InstitutionType
   getUserUseBg1Situation(patientId: ID): UserUseBG1Schema
   getOrderReceiverInfo(patientId: ID!): Order
-  getDiagnosticWords(
+  getDiagnosticWordsNew(
+    bgRecordId: String
     diagnoseType: String
     bloodGlucoseValue: String
     bgValueBeforeMeal: String
     manualInputType: String
+    patientId: String
+    measuredAt: Date
+    measurementTime: String
   ): DiagnosticWords
+  getDiagnosticWords(
+      diagnoseType: String
+      bloodGlucoseValue: String
+      bgValueBeforeMeal: String
+      manualInputType: String
+    ): DiagnosticWords
   # 月预约日历
   monthlyAppointments(
     monthStr: String
@@ -98,6 +115,12 @@ type Query {
     cdeId: ID
     assistantId: ID
   ): CertifiedDiabetesEducator
+  getInterventionTasks(cdeId: ID, patientId: ID): [InterventionTask!]
+  getTaskSoapCorpus: [TaskSoapCorpus!]
+
+  getInterventionTasks(cdeId: ID): [InterventionTask!]
+  getFoodRecords(patientId: ID!): [Foods]
+  getTaskSoap(taskId: ID): TaskSoap
 }
 
 type Mutation {
@@ -139,6 +162,7 @@ type Mutation {
     chatRoomId: ID!
     # The base64 encoded audio data. This gets turned into a URL on the server.
     base64EncodedImageData: String!
+    sourceType: String
   ): NeedleImageMessage!
   # Posts an text chat message to the given chat room.
   saveBloodGlucoseMeasurement(
@@ -163,6 +187,8 @@ type Mutation {
     chatRoomId: ID!
     text: String!
     sourceType: String
+    bgRecordId: String
+    messagesPatientReplyFlag: String
   ): NeedleTextMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
@@ -281,12 +307,33 @@ type Mutation {
     type: String!
     patientId: ID!
   ): Boolean
+  saveTaskSoap(soap: TaskSoapInput!, _id: ID): Boolean
+   addFoodComments(
+    foodCircleId: ID
+    commentContent: String
+    authorId: ID
+    authorName: String
+    replyId: ID
+    replyName: String
+    type: String
+    commentIds:[ID]
+  ): Boolean!
+  deleteFoodComments(_id: ID!): Boolean!
+  saveFoodContents(
+    patientId: String!,
+    circleContent: String!,
+    circleImageBase64:[String],
+    measurementTime: String!,
+    measuredAt: Date!
+  ): Boolean
+
 }
 
 type Subscription {
   chatMessageAdded(chatRoomId: ID): NeedleChatMessage!
   chatRoomDynamics(userId: ID): NeedleChatRoom!
   warningAdded: Warning
+  interventionTaskDynamics(cdeId: ID): InterventionTask
 }
 
 schema {
