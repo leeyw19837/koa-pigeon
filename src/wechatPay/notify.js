@@ -1,5 +1,6 @@
 import { createPayHistory } from './payHistories'
 import { findOrderById, updateOrder } from '../modules/order'
+import { strip } from './utils'
 
 export const payNotify = async (ctx, next) => {
   let info = ctx.request.weixin
@@ -11,7 +12,7 @@ export const payNotify = async (ctx, next) => {
     const { orderStatus, totalPrice } = order
     if (orderStatus !== 'SUCCESS') {
       let setOrderObj = {}
-      if (total_fee * 100 !== totalPrice) {
+      if (total_fee !== strip(totalPrice * 100)) {
         replyResult = '订单金额和微信商户金额不匹配'
         setOrderObj = {
           orderStatus: 'PAY_FAIL',
