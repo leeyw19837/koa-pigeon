@@ -79,12 +79,12 @@ type Query {
     manualInputType: String
   ): DiagnoseType
   getDiagnoseType(
-      bloodGlucoseValue: String
-      patientId: ID
-      measurementTime: String
-      measuredAt: Date
-      manualInputType: String
-    ): DiagnoseType
+    bloodGlucoseValue: String
+    patientId: ID
+    measurementTime: String
+    measuredAt: Date
+    manualInputType: String
+  ): DiagnoseType
   getPatientInstitution(patientId: ID): InstitutionType
   getUserUseBg1Situation(patientId: ID): UserUseBG1Schema
   getOrderReceiverInfo(patientId: ID!): Order
@@ -99,11 +99,11 @@ type Query {
     measurementTime: String
   ): DiagnosticWords
   getDiagnosticWords(
-      diagnoseType: String
-      bloodGlucoseValue: String
-      bgValueBeforeMeal: String
-      manualInputType: String
-    ): DiagnosticWords
+    diagnoseType: String
+    bloodGlucoseValue: String
+    bgValueBeforeMeal: String
+    manualInputType: String
+  ): DiagnosticWords
   # 月预约日历
   monthlyAppointments(
     monthStr: String
@@ -119,7 +119,7 @@ type Query {
   getTaskSoapCorpus: [TaskSoapCorpus!]
 
   getInterventionTasks(cdeId: ID): [InterventionTask!]
-  getFoodRecords(patientId: ID!): [Foods]
+  getFoodRecords(patientId: ID, cdeId: ID): [Foods]
   getTaskSoap(taskId: ID): TaskSoap
 }
 
@@ -308,7 +308,7 @@ type Mutation {
     patientId: ID!
   ): Boolean
   saveTaskSoap(soap: TaskSoapInput!, _id: ID): Boolean
-   addFoodComments(
+  addFoodComments(
     foodCircleId: ID
     commentContent: String
     authorId: ID
@@ -316,17 +316,16 @@ type Mutation {
     replyId: ID
     replyName: String
     type: String
-    commentIds:[ID]
+    commentIds: [ID]
   ): Boolean!
   deleteFoodComments(_id: ID!): Boolean!
   saveFoodContents(
-    patientId: String!,
-    circleContent: String!,
-    circleImageBase64:[String],
-    measurementTime: String!,
+    patientId: String!
+    circleContent: String!
+    circleImageBase64: [String]
+    measurementTime: String!
     measuredAt: Date!
   ): Boolean
-
 }
 
 type Subscription {
@@ -334,6 +333,7 @@ type Subscription {
   chatRoomDynamics(userId: ID): NeedleChatRoom!
   warningAdded: Warning
   interventionTaskDynamics(cdeId: ID): InterventionTask
+  foodDynamics(cdeId: ID): Foods
 }
 
 schema {

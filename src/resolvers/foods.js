@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb'
 import moment from 'moment'
 import get from 'lodash/get'
 const dietMap = {
@@ -39,9 +40,7 @@ const getCursor = (food, time) => {
 export const Foods = {
   beforeBloodGlucose: async (food, _, { getDb }) => {
     const db = await getDb()
-
     const beforeCursor = getCursor(food, 'beforeTime')
-    console.log(beforeCursor)
     return await db
       .collection('bloodGlucoses')
       .find(beforeCursor)
@@ -51,9 +50,7 @@ export const Foods = {
   },
   afterBloodGlucose: async (food, _, { getDb }) => {
     const db = await getDb()
-
     const afterCursor = getCursor(food, 'afterTime')
-    console.log(afterCursor)
     return await db
       .collection('bloodGlucoses')
       .find(afterCursor)
@@ -69,5 +66,12 @@ export const Foods = {
       .find({ foodCircleId: foodId })
       .sort({ createdAt: 1 })
       .toArray()
+  },
+  patient: async (food, _, { getDb }) => {
+    if (!food.patientId) return null
+    const db = await getDb()
+    return await db
+      .collection('users')
+      .findOne({ _id: ObjectId(food.patientId) })
   },
 }

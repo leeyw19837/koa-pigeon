@@ -3,18 +3,22 @@ enum InterventionTaskType {
   EMPTY_STOMACH_HIGH
   FLUCTUATION
   LOW_BLOOD_GLUCOSE
+
+  FOOD_CIRCLE
 }
 
 enum InterventionTaskState {
   PENDING
   PROCESSING
   DONE
+  DONE_WITH_NO_SOAP
 }
 
 type InterventionTask {
   _id: ID!
   type: InterventionTaskType!
-  measurementRecords: [BloodGlucoseRecord]!
+  measurementRecords: [BloodGlucoseRecord]
+  foods: Foods
   state: InterventionTaskState!
   createdAt: Date!
   updatedAt: Date!
