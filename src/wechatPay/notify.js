@@ -13,7 +13,7 @@ export const payNotify = async (ctx, next) => {
     const { orderStatus, totalPrice, patientId } = order
     if (orderStatus !== 'SUCCESS') {
       let setOrderObj = {}
-      if (total_fee !== strip(totalPrice * 100)) {
+      if (+total_fee !== strip(totalPrice * 100)) {
         replyResult = '订单金额和微信商户金额不匹配'
         setOrderObj = {
           orderStatus: 'PAY_FAIL',
