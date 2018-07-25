@@ -68,7 +68,7 @@ class WeChatPay {
     }
     await updateOrder({
       orderId,
-      data: {
+      setData: {
         orderStatus: prePayParams.returnCode,
         prepayid,
         payWay: 'WECHAT',
