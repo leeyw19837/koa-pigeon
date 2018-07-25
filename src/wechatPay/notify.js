@@ -24,7 +24,7 @@ export const payNotify = async (ctx, next) => {
           orderStatus: 'SUCCESS',
           transactionId: transaction_id,
           payAt: convertTime(time_end),
-          serviceAt: moment(convertTime(time_end)).add(1, 'years')._d,
+          serviceEndAt: moment(convertTime(time_end)).add(1, 'years')._d,
         }
       }
       await updateOrder({
