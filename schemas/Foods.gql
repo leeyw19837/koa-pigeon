@@ -1,3 +1,8 @@
+enum ReplyStatus {
+  WAITING_REPLY
+  REPLIES
+}
+
 enum MeasureTimeType {
   BREAKFAST
   BREAKFAST_SNACK
@@ -32,9 +37,13 @@ type Foods {
   # 测量时间
   measuredAt: Date
   # 餐前血糖
-  beforeBloodGlucose:[BloodGlucoseRecord]
+  beforeBloodGlucose: [BloodGlucoseRecord]
   # 餐后血糖
-  afterBloodGlucose:[BloodGlucoseRecord]
+  afterBloodGlucose: [BloodGlucoseRecord]
   # 评论列表
-  comments:[Comments]
+  comments: [Comments]
+  # 照护师回复状态
+  replyStatus: ReplyStatus
+  # 操作类型（增 删 改，pubsub用）
+  _operation: Operation
 }
