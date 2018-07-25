@@ -23,7 +23,7 @@ type Query {
     timezone: String = "+0800"
   ): [TreatmentState!]!
   photos(patientId: ID!, owner: String!): [Photo!]!
-  chatMessages(appointmentId: ID!): ChatMessagesResponse!
+  chatMessages(patientId: ID!): ChatMessagesResponse!
   # Statistics
   totalTimeAtClinic: [DataPointNumberNumber!]!
   timeBetweenAppointments: [DataPointNumberNumberStdDev!]!
