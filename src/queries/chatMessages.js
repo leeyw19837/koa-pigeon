@@ -1,14 +1,14 @@
 export const chatMessages = async (_, args, { getDb }) => {
   const db = await getDb()
 
-  const appointment = (await db.collection('appointments').find({
-    _id: args.appointmentId
-  }).toArray())[0];
+  // const appointment = (await db.collection('appointments').find({
+  //   _id: args.appointmentId
+  // }).toArray())[0];
 
   // console.log(appointment)
 
   const appointments = await db.collection('appointments').find({
-    patientId: appointment.patientId
+    patientId: args.patientId
   }).toArray();
 
 
