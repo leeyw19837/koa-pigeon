@@ -252,7 +252,7 @@ type Mutation {
     # 病人编号
     patientId: ID!
     #  总价
-    totalPrice: Int
+    totalPrice: Float
     #  收货人
     receiver: String
     #  联系电话
@@ -276,9 +276,11 @@ type Mutation {
     # 订单ID
     orderId: ID!
     # 总价
-    totalPrice: Int
+    totalPrice: Float
     # 商品规格
     goodsSpecification: String
+    # 商品类型
+    goodsType: String
   ): OrderCBResult
   checkPayOrderStatus(orderId: ID!, type: String): PayOrder
   reportDevice(

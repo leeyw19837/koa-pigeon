@@ -41,4 +41,5 @@ type Patient {
   bloodGlucoses(startAt: Date, endAt: Date): [BloodGlucoseRecord]
   cdeInfo: CertifiedDiabetesEducator
   doctorInfo: User
+  yearServiceOrder: Order
 }

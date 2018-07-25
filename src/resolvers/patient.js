@@ -219,4 +219,22 @@ export const Patient = {
       return null
     }
   },
+  yearServiceOrder: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const orders = await db
+      .collection('orders')
+      .find({
+        patientId,
+        orderStatus: 'SUCCESS',
+        serviceEndAt: {
+          $gte: new Date(),
+        },
+      })
+      .sort({
+        serviceEndAt: -1,
+      })
+      .toArray()
+    return orders.length ? orders[0] : null
+  },
 }

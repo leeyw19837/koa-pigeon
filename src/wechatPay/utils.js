@@ -54,3 +54,13 @@ export const getTimeStamp = () => Math.round(new Date().getTime() / 1000)
  */
 export const strip = (num, precision = 12) =>
   +parseFloat(num.toPrecision(precision))
+
+export const convertTime = time => {
+  const year = time.substr(0, 4)
+  const month = +time.substr(4, 2) - 1
+  const date = time.substr(6, 2)
+  const hh = time.substr(8, 2)
+  const mm = time.substr(10, 2)
+  const ss = time.substr(12, 2)
+  return new Date(year, month, date, hh, mm, ss)
+}

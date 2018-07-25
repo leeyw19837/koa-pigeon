@@ -1,6 +1,8 @@
 import freshId from 'fresh-id'
+import moment from 'moment'
 import { wechatPayServices } from '../wechatPay'
 import * as orderServices from '../modules/order'
+import { convertTime } from '../wechatPay/utils'
 
 export const addOrder = async (_, args, context) => {
   const db = await context.getDb()
@@ -61,9 +63,10 @@ export const createOrder = async (_, args, context) => {
 }
 
 export const createPrepayForWechat = async (_, args, context) => {
-  const { totalPrice, goodsSpecification, orderId, patientId } = args
+  const { totalPrice, goodsSpecification, orderId, patientId, goodsType } = args
+  const price = goodsType === 'YEAR_SERVICE' ? 0.01 : totalPrice
   const result = await wechatPayServices.createUnifiedOrder({
-    totalPrice,
+    totalPrice: price,
     goodsSpecification,
     orderId,
     patientId,
@@ -86,7 +89,8 @@ export const checkPayOrderStatus = async (_, args, context) => {
       orderStatus: trade_state,
     }
     if (trade_state === 'SUCCESS') {
-      setData.payDate = time_end
+      setData.payAt = convertTime(time_end)
+      setData.serviceEndAt = moment(convertTime(time_end)).add(1, 'years')._d
       setData.transactionId = transaction_id
     }
     await orderServices.updateOrder({

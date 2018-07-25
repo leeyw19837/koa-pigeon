@@ -43,7 +43,7 @@ class WeChatPay {
     const params = {
       body: goodsSpecification || '共同照护-综合服务费',
       out_trade_no: orderId,
-      total_fee: strip(0.01 * 100),
+      total_fee: strip(totalPrice * 100),
       trade_type: 'APP',
     }
     let prePayParams = {}

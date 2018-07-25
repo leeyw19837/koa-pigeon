@@ -15,8 +15,7 @@ export const findOrderById = async ({ orderId }) => {
 export const createOrder = async orderInfo => {
   const id = new ObjectID().toString()
   const { goodsType, source } = orderInfo
-  const totalPrice =
-    goodsType === 'DONGFANG_SERVICES' ? 299 : orderInfo.totalPrice
+  const totalPrice = goodsType === 'YEAR_SERVICE' ? 0.01 : orderInfo.totalPrice
   const content = {
     _id: id,
     orderId: `ht_${id}`,

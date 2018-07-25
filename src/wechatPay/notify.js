@@ -1,6 +1,7 @@
+import moment from 'moment'
 import { createPayHistory } from './payHistories'
 import { findOrderById, updateOrder } from '../modules/order'
-import { strip } from './utils'
+import { strip, convertTime } from './utils'
 
 export const payNotify = async (ctx, next) => {
   let info = ctx.request.weixin
@@ -9,7 +10,7 @@ export const payNotify = async (ctx, next) => {
   console.log(info, order, '@result')
   let replyResult = ''
   if (order) {
-    const { orderStatus, totalPrice } = order
+    const { orderStatus, totalPrice, patientId } = order
     if (orderStatus !== 'SUCCESS') {
       let setOrderObj = {}
       if (total_fee !== strip(totalPrice * 100)) {
@@ -22,7 +23,8 @@ export const payNotify = async (ctx, next) => {
         setOrderObj = {
           orderStatus: 'SUCCESS',
           transactionId: transaction_id,
-          payDate: time_end,
+          payAt: convertTime(time_end),
+          serviceAt: moment(convertTime(time_end)).add(1, 'years')._d,
         }
       }
       await updateOrder({
@@ -30,6 +32,7 @@ export const payNotify = async (ctx, next) => {
         setData: setOrderObj,
       })
       await createPayHistory({
+        patientId,
         orderId: out_trade_no,
         result: info,
         type: 'pay_notification',

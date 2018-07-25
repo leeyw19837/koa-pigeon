@@ -54,5 +54,7 @@ type Order {
   #  运费
   freightPrice: Int
   #  总价
-  totalPrice: Int
+  totalPrice: Float
+  # 年费服务结束日期
+  serviceEndAt: Date
 }
