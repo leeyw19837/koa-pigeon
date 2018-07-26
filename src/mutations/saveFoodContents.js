@@ -1,5 +1,6 @@
 import { pubsub } from '../pubsub'
 import { uploadBase64Img } from '../utils/ks3'
+import freshId from 'fresh-id'
 
 const dietMap = {
   BREAKFAST: '早餐',
@@ -42,14 +43,14 @@ export const saveFoodContents = async (_, args, context) => {
   const newTask = {
     _id: freshId(),
     state: 'PENDING',
-    createdAt: now,
-    updatedAt: now,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     type: 'FOOD_CIRCLE',
-    patientId: measurement.patientId,
+    patientId: patientId,
   }
   await db.collection('interventionTask').insert(newTask)
   pubsub.publish('interventionTaskDynamics', {
-    ...task,
+    ...newTask,
     _operation: 'ADDED',
   })
 
