@@ -102,6 +102,12 @@ type Query {
     assistantId: ID
   ): CertifiedDiabetesEducator
   getInterventionTasks(cdeId: ID): [InterventionTask!]
+  getAlipay(
+    out_trade_no: String!
+    subject: String
+    body: String
+    total_amount: String!
+  ): Alipay
 }
 
 type Mutation {
@@ -321,6 +327,7 @@ type Mutation {
     type: String!
     patientId: ID!
   ): Boolean
+  checkAlipayOrder(out_trade_no: String!):AliPayOrder
 }
 
 type Subscription {

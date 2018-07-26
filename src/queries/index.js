@@ -38,7 +38,7 @@ import * as getOrderReceiverInfo from './getOrderReceiverInfo'
 import * as getPatientInstitution from './getPatientInstitution'
 import * as getUserUseBg1Situation from './getUserUseBg1Situation'
 import { blogs } from './blogs'
-
+import * as getAlipay from './getAlipay'
 import * as getInterventionTasks from './getInterventionTasks'
 
 const queries = {
@@ -79,6 +79,7 @@ const queries = {
   ...certifiedDiabetesEducator,
   blogs,
   ...getInterventionTasks,
+  ...getAlipay,
 }
 
 const queriesWithLogging = {}
