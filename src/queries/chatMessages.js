@@ -12,9 +12,16 @@ export const chatMessages = async (_, args, { getDb }) => {
     const messages = await db
       .collection('chatMessages')
       .find({
-        appointmentId: {
-          $in: appointments.map(a => { return a._id })
-        }
+        $or: [
+          {
+            appointmentId: {
+              $in: appointments.map(a => { return a._id })
+            }
+          },
+          {
+            patientId: args.patientId
+          }
+        ]
       })
       .sort({ sentAt: 1 })
       .toArray()

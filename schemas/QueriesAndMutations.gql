@@ -147,7 +147,7 @@ type Mutation {
   saveChatMessage(
     content: String!
     sentAtString: String!
-    appointmentId: ID!
+    patientId: ID!
     senderNickname: String!
   ): Boolean!
   sendNeedleAudioChatMessage(

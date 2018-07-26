@@ -1,12 +1,12 @@
 export const saveChatMessage = async (_, args, { getDb }) => {
   const db = await getDb()
 
-  const { content, sentAtString, appointmentId, senderNickname } = args
+  const { content, sentAtString, patientId, senderNickname } = args
 
   const chatMessage = {
     content,
     sentAt: new Date(sentAtString),
-    appointmentId,
+    patientId,
     senderNickname,
   }
 
