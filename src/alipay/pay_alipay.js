@@ -1,3 +1,5 @@
+import { createPayHistory } from '../wechatPay/payHistories'
+
 const fs = require('fs')
 var path = require('path')
 const Alipay = require('alipay-mobile')
@@ -13,7 +15,7 @@ const options = {
 }
 const service = new Alipay(options)
 //获取支付宝签名
-export const getAlipaySign = async (order) => {
+export const getAlipaySign = async (order, patientId) => {
   await createPayHistory({
     patientId,
     orderId: order.out_trade_no,

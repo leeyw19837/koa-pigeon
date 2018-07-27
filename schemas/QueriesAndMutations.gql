@@ -126,6 +126,7 @@ type Query {
     subject: String
     body: String
     total_amount: String!
+    patientId: String
   ): Alipay
 }
 
