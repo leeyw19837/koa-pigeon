@@ -4,6 +4,7 @@ import { uploadFileByType } from '../fileUpload/index'
 import { wechatPayServices } from '../../wechatPay'
 
 import { wechatPayment, payNotify } from '../../wechatPay'
+import { aliPayNotify } from '../../alipay/nofity'
 
 restfulRouter.post('/uploadFile', async ctx => {
   const result = await uploadFileByType(ctx)
@@ -11,6 +12,7 @@ restfulRouter.post('/uploadFile', async ctx => {
 })
 
 restfulRouter.post('/wechat-pay', wechatPayment.middleware('pay'), payNotify)
+restfulRouter.get('/alipay', aliPayNotify)
 
 restfulRouter.get('/wechatSandbox', async ctx => {
   const result = await wechatPayServices.createUnifiedOrder({

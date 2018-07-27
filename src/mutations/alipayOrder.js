@@ -10,35 +10,28 @@ export const checkAlipayOrder = async (_, args, context) => {
   let message = data.msg
   const trade_no = data.trade_no
   const send_pay_date = moment(data.send_pay_date).format('YYYYMMDDHHmmss')
-  console.log('trade_no---->', trade_no)
-  console.log('send_pay_date---->', send_pay_date)
   const tradeOrder = await db.collection('orders').findOne({
     orderId: out_trade_no,
   })
-  // const tradeOrder = await orderServices.findOrderById({ out_trade_no })
-  console.log('tradeOrder---->', tradeOrder)
   const { orderStatus } = tradeOrder
   if (data.msg === 'Success') {
     message = 'SUCCESS'
   } else {
-    message = 'FAIL'
+    message = 'INIT'
   }
   if (orderStatus !== message) {
     let setData = {
       orderStatus: message,
       payWay: 'ALIPAY',
     }
-    console.log('message---->', message)
     if (message === 'SUCCESS') {
       setData.payAt = convertTime(send_pay_date)
       setData.serviceEndAt = moment(convertTime(send_pay_date)).add(1, 'years')._d
       setData.transactionId = trade_no
-      console.log('setData---->', setData)
     }
     await orderServices.updateOrder({
       orderId: out_trade_no,
       setData,
-
     })
   }
   return {
