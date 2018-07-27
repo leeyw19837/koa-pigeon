@@ -2,11 +2,11 @@ import moment from 'moment'
 import { createPayHistory } from '../wechatPay/payHistories'
 import { findOrderById, updateOrder } from '../modules/order'
 import { strip, convertTime } from '../wechatPay/utils'
-const Alipay = require('alipay-mobile')
+import { makeNotifyResponseMethod } from '../alipay/pay_alipay'
 
 export const aliPayNotify = async (ctx) => {
   const info = ctx.request.body
-  const notifyResponse = Alipay.makeNotifyResponse(info)
+  const notifyResponse = makeNotifyResponseMethod(info)
   let replyResult = 'failure'
   if (!notifyResponse) {
     return replyResult

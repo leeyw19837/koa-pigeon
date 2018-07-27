@@ -30,4 +30,8 @@ export const checkAlipayOrderMethod = async (outTradeNo) => {
   const result = await service.queryOrder({ out_trade_no: outTradeNo })
   return result
 }
-
+//异步通知校验
+export const makeNotifyResponseMethod = async (params) => {
+  const result = await service.makeNotifyResponse({ params })
+  return result
+}

@@ -12,7 +12,7 @@ restfulRouter.post('/uploadFile', async ctx => {
 })
 
 restfulRouter.post('/wechat-pay', wechatPayment.middleware('pay'), payNotify)
-restfulRouter.get('/alipay', aliPayNotify)
+restfulRouter.post('/alipay', aliPayNotify)
 
 restfulRouter.get('/wechatSandbox', async ctx => {
   const result = await wechatPayServices.createUnifiedOrder({
