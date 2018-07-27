@@ -28,8 +28,10 @@
     "node": ">=8.1.4"
   },
   "dependencies": {
+    "alipay-mobile": "^2.2.5",
     "apollo-server-koa": "1.3.6",
     "co-wechat-oauth": "^2.0.1",
+    "crypto": "^1.0.1",
     "fresh-id": "^1.1.0",
     "graphql": "^0.11.7",
     "graphql-subscriptions": "^0.5.6",
@@ -52,7 +54,8 @@
     "request": "^2.34",
     "request-promise": "^4.2.2",
     "righteous-raven": "^1.0.5",
-    "subscriptions-transport-ws": "^0.9.0"
+    "subscriptions-transport-ws": "^0.9.0",
+    "tenpay": "^2.1.6"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

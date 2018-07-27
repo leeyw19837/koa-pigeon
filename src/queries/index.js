@@ -42,6 +42,7 @@ import * as getUserUseBg1Situation from './getUserUseBg1Situation'
 import { blogs } from './blogs'
 import * as getFoodRecords from './getFoodRecords'
 
+import * as getAlipay from './getAlipay'
 import * as getInterventionTasks from './getInterventionTasks'
 import * as getTaskSoapCorpus from './getTaskSoapCorpus'
 import * as getTaskSoap from './getTaskSoap'
@@ -89,6 +90,7 @@ const queries = {
   ...getTaskSoapCorpus,
   ...getFoodRecords,
   ...getTaskSoap,
+  ...getAlipay,
 }
 
 const queriesWithLogging = {}

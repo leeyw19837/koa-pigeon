@@ -44,4 +44,5 @@ type Patient {
   # 模组完成度
   MCR: Int
   clinicalLabResults: [ClinicalLabResult!]
+  yearServiceOrder: Order
 }

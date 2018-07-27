@@ -121,6 +121,12 @@ type Query {
   getInterventionTasks(cdeId: ID): [InterventionTask!]
   getFoodRecords(patientId: ID, cdeId: ID): [Foods]
   getTaskSoap(taskId: ID): TaskSoap
+  getAlipay(
+    out_trade_no: String!
+    subject: String
+    body: String
+    total_amount: String!
+  ): Alipay
 }
 
 type Mutation {
@@ -269,6 +275,42 @@ type Mutation {
     totalPrice: Int
     source: String
   ): Boolean
+  createPayOrder(patientId: ID!, totalPrice: Int): OrderCBResult
+  createOrder(
+    # 病人编号
+    patientId: ID!
+    #  总价
+    totalPrice: Float
+    #  收货人
+    receiver: String
+    #  联系电话
+    phoneNumber: String
+    #  收货地址
+    receiveAddress: String
+    #  商品类型
+    goodsType: String
+    #  商品单价
+    goodsUnitPrice: Int
+    #  商品规格
+    goodsSpecification: String
+    #  购买数量
+    purchaseQuantity: Int
+    #  运费
+    freightPrice: Int
+    source: String
+  ): Order
+  createPrepayForWechat(
+    patientId: ID!
+    # 订单ID
+    orderId: ID!
+    # 总价
+    totalPrice: Float
+    # 商品规格
+    goodsSpecification: String
+    # 商品类型
+    goodsType: String
+  ): OrderCBResult
+  checkPayOrderStatus(orderId: ID!, type: String): PayOrder
   reportDevice(
     # 病人编号
     patientId: ID!
@@ -326,6 +368,7 @@ type Mutation {
     measurementTime: String!
     measuredAt: Date!
   ): Boolean
+  checkAlipayOrder(out_trade_no: String!): AliPayOrder
 }
 
 type Subscription {

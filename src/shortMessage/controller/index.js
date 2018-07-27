@@ -3,8 +3,34 @@ import {
   ORDER_SUCCESS_TEMPLATE,
   STOP_OUTPATIENT_TEMPLATE,
   STOP_OUTPATIENT_TEMPLATE_DW,
+  sportPatientList,
 } from './constants'
 import { sendTxt } from '../../common'
+
+export const sportPatients = async isSender => {
+  await sendTxt({
+    mobile: '18612201226',
+    templateId: 'SMS_139982056',
+    params: {
+      nickname: '刘欢',
+    },
+  })
+  console.log(sportPatientList.length, '@patientList')
+  for (let i = 0; i < sportPatientList.length; i++) {
+    const { nickname, mobile } = sportPatientList[i]
+    try {
+      // await sendTxt({
+      //   mobile,
+      //   templateId: 'SMS_139982056',
+      //   params: {
+      //     nickname,
+      //   },
+      // })
+    } catch (e) {
+      console.log(e, '~~~')
+    }
+  }
+}
 
 export const orderSuccessPatients = async isSender => {
   console.log(patientList.length, '@patientList')
