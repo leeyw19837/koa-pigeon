@@ -51,3 +51,11 @@ type Foods {
   # 操作类型（增 删 改，pubsub用）
   _operation: Operation
 }
+
+input FoodsScoreInput {
+  totalScore: String!
+  mainFoodScore: String!
+  foodEnergyScore: String!
+  albumenScore: String!
+  richnessScore: String!
+}

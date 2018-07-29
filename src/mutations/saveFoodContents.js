@@ -1,6 +1,9 @@
+import { ObjectId } from 'mongodb'
 import { pubsub } from '../pubsub'
 import { uploadBase64Img } from '../utils/ks3'
+import { saveFoodComments } from './foodComments'
 import freshId from 'fresh-id'
+import some from 'lodash/some'
 
 const dietMap = {
   BREAKFAST: '早餐',
@@ -60,4 +63,32 @@ export const saveFoodContents = async (_, args, context) => {
   })
 
   return true
+}
+
+export const updateFoodScore = async (_, args, context) => {
+  const db = await context.getDb()
+  const { _id, scores, comment } = args
+  if (!_id) throw new Error('must set _id for foods')
+  const anyScoreUnset = some(scores, score => score === 0)
+  if (anyScoreUnset) throw new Error('must set all the score for foods')
+  let success = true
+  const updateResult = await db.collection('foods').update(
+    {
+      _id: ObjectId(_id),
+    },
+    {
+      $set: {
+        ...scores,
+        replyStatus: 'REPLIES',
+        updatedAt: new Date(),
+      },
+    },
+  )
+  success = !!updateResult.result.ok
+  if (success && comment) {
+    const saveCommentResult = await saveFoodComments(null, { comment }, context)
+    success = !!saveCommentResult
+  }
+  context.response.set('effect-types', 'Foods')
+  return success
 }

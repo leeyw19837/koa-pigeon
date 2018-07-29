@@ -368,8 +368,15 @@ type Mutation {
     circleImageBase64: [String]
     measurementTime: String!
     measuredAt: Date!
+    commentContent: CommentInput
   ): Boolean
   checkAlipayOrder(out_trade_no: String!): AliPayOrder
+  updateFoodScore(
+    _id: ID!
+    scores: FoodsScoreInput!
+    comment: CommentInput
+  ): Boolean
+  saveFoodComments(comment: CommentInput!): Boolean!
 }
 
 type Subscription {
