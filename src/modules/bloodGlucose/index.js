@@ -22,7 +22,7 @@ const TIME_PERIOD_MAP = {
   MIDNIGHT: '凌晨',
   RANDOM: '随机',
 }
-const assembleTaskDesc = measuerments => {
+const assembleTaskDesc = (measuerments,createdAt) => {
   const summaryOfMeasurements = map(
     measuerments,
     ({ measurementTime, bloodGlucoseValue }) => {
@@ -31,7 +31,7 @@ const assembleTaskDesc = measuerments => {
       return `${timePeriod} ${transformedBG}`
     },
   ).join('; ')
-  const fmtCreatedAt = moment(item.createdAt).format('MM-DD HH:mm')
+  const fmtCreatedAt = moment(createdAt).format('MM-DD HH:mm')
   return `${fmtCreatedAt} (${summaryOfMeasurements})`
 }
 
@@ -50,7 +50,7 @@ export const taskGen = async (measurement, getPairingMethod) => {
     // 低血糖
     newTask.type = 'LOW_BLOOD_GLUCOSE'
     newTask.measurementRecords = [measurement]
-    newTask.desc = assembleTaskDesc(newTask.measurementRecords)
+    newTask.desc = assembleTaskDesc(newTask.measurementRecords,now)
     return newTask
   }
   if (!isMealRecord(measurementTime)) return null
@@ -61,7 +61,7 @@ export const taskGen = async (measurement, getPairingMethod) => {
     newTask.type = 'FLUCTUATION'
     newTask.measurementRecords = [measurement, pairedRecord]
     if (isAfterMeal(measurementTime)) newTask.measurementRecords.reverse()
-    newTask.desc = assembleTaskDesc(newTask.measurementRecords)
+    newTask.desc = assembleTaskDesc(newTask.measurementRecords,now)
     return newTask
   }
 
@@ -69,7 +69,7 @@ export const taskGen = async (measurement, getPairingMethod) => {
     // 餐后高血糖
     newTask.type = 'AFTER_MEALS_HIGH'
     newTask.measurementRecords = [measurement]
-    newTask.desc = assembleTaskDesc(newTask.measurementRecords)
+    newTask.desc = assembleTaskDesc(newTask.measurementRecords,now)
     return newTask
   }
   if (
@@ -79,7 +79,7 @@ export const taskGen = async (measurement, getPairingMethod) => {
     // 空腹高血糖
     newTask.type = 'EMPTY_STOMACH_HIGH'
     newTask.measurementRecords = [measurement]
-    newTask.desc = assembleTaskDesc(newTask.measurementRecords)
+    newTask.desc = assembleTaskDesc(newTask.measurementRecords,now)
     return newTask
   }
 }
