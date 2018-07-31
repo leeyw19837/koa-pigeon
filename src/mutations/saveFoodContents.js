@@ -32,25 +32,27 @@ export const saveFoodContents = async (_, args, context) => {
     const imageUrl = await uploadBase64Img(imageUrlKey, circleImageBase64[i])
     imageUrls.push(imageUrl)
   }
-
+  const now = new Date()
   const foods = {
+    _id: freshId(),
     patientId,
     circleContet: circleContent,
     circleImages: imageUrls,
     measurementTime,
     measuredAt,
     latestState: `上传了${dietMap[measurementTime]}`,
-    createdAt: new Date(),
+    createdAt: now,
   }
   await db.collection('foods').insertOne(foods)
 
   const newTask = {
     _id: freshId(),
     state: 'PENDING',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: now,
+    updatedAt: now,
     type: 'FOOD_CIRCLE',
-    desc: `${moment(new Date()).format('MM-DD HH:mm')} ${foods.latestState}`,
+    foodId: foods._id,
+    desc: `${moment(now).format('MM-DD HH:mm')} ${foods.latestState}`,
     patientId: patientId,
   }
   await db.collection('interventionTask').insert(newTask)
