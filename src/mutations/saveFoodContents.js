@@ -4,6 +4,7 @@ import { uploadBase64Img } from '../utils/ks3'
 import { saveFoodComments } from './foodComments'
 import freshId from 'fresh-id'
 import some from 'lodash/some'
+import moment from 'moment'
 
 const dietMap = {
   BREAKFAST: '早餐',
@@ -49,6 +50,7 @@ export const saveFoodContents = async (_, args, context) => {
     createdAt: new Date(),
     updatedAt: new Date(),
     type: 'FOOD_CIRCLE',
+    desc: `${moment(new Date()).format('MM-DD HH:mm')} ${foods.latestState}`,
     patientId: patientId,
   }
   await db.collection('interventionTask').insert(newTask)
