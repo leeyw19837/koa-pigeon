@@ -29,6 +29,7 @@ import * as saveTaskSoap from './saveTaskSoap'
 import * as foodComments from './foodComments'
 import * as saveFoodContents from './saveFoodContents'
 import * as alipayOrder from './alipayOrder'
+import * as intervention from './interventionTask'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -63,6 +64,7 @@ const mutations = {
   ...foodComments,
   ...saveFoodContents,
   ...alipayOrder,
+  ...intervention,
 }
 
 const mutationsWithLogging = {}
