@@ -67,9 +67,8 @@ export const createPrepayForWechat = async (_, args, context) => {
   const { orderId, patientId, goodId } = args
   const goods = await findGoodById({ goodId })
   const { goodType, goodName, actualPrice } = goods
-  const price = goodType === 'YEAR_SERVICE' ? 0.01 : actualPrice
   const result = await wechatPayServices.createUnifiedOrder({
-    totalPrice: price,
+    totalPrice: actualPrice,
     goodsSpecification: goodName,
     orderId,
     patientId,

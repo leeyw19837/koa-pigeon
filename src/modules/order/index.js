@@ -17,8 +17,7 @@ export const createOrder = async orderInfo => {
   const id = new ObjectID().toString()
   const { goodId, source, patientId } = orderInfo
   const goods = await findGoodById({ goodId })
-  const { goodType, goodName } = goods
-  const totalPrice = goodType === 'YEAR_SERVICE' ? 0.01 : orderInfo.actualPrice
+  const { goodType, goodName, actualPrice } = goods || {}
   const content = {
     _id: id,
     orderId: `ht_${id}`,
@@ -29,7 +28,7 @@ export const createOrder = async orderInfo => {
     patientId,
     goodsType: goodType,
     goodsSpecification: goodName,
-    totalPrice,
+    totalPrice: actualPrice,
   }
 
   const data = await db.collection('orders').insertOne(content)
