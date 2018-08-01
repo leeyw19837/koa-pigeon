@@ -107,3 +107,12 @@ export const checkPayOrderStatus = async (_, args, context) => {
     errCode,
   }
 }
+
+export const updateOrder = async (_, args, context) => {
+  const { orderId, setData } = args
+  const data = await orderServices.updateOrder({
+    orderId,
+    setData,
+  })
+  return data.nModified === 1
+}

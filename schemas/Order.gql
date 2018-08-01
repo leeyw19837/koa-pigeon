@@ -1,3 +1,7 @@
+input OrderSetDataInput {
+  orderStatus: String
+}
+
 type OrderCBResult {
   # 下单返回码
   returnCode: String!

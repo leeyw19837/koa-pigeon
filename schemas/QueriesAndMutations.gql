@@ -359,6 +359,7 @@ type Mutation {
   ): Boolean
   saveFoodComments(comment: CommentInput!): Boolean!
   updateInterventionTaskState(_id: ID!, state: InterventionTaskState!): Boolean!
+  updateOrder(orderId: ID!, setData: OrderSetDataInput): Boolean
 }
 
 type Subscription {
