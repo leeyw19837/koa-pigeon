@@ -17,11 +17,15 @@ enum InterventionTaskState {
 type InterventionTask {
   _id: ID!
   type: InterventionTaskType!
+  # 测量导致的干预任务的相应测量数据
   measurementRecords: [BloodGlucoseRecord]
+  # 对应的饮食圈
   foods: Foods
   state: InterventionTaskState!
   createdAt: Date!
   updatedAt: Date!
   patient: Patient!
+  # 任务概要
+  desc: String
   _operation: Operation
 }
