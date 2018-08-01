@@ -78,7 +78,7 @@ export const updateFoodScore = async (_, args, context) => {
   let success = true
   const updateResult = await db.collection('foods').update(
     {
-      _id: ObjectId(_id),
+      _id,
     },
     {
       $set: {

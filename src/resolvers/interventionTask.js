@@ -10,7 +10,7 @@ export const InterventionTask = {
   foods: async (task, _, { getDb }) => {
     const db = await getDb()
     return await db.collection('foods').findOne({
-      _id: ObjectID(task.foodId),
+      _id: task.foodId,
     })
   },
 }
