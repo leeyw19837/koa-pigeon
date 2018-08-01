@@ -45,4 +45,5 @@ type Patient {
   MCR: Int
   clinicalLabResults: [ClinicalLabResult!]
   yearServiceOrder: Order
+  yearServiceStatus(platform: String): Boolean
 }

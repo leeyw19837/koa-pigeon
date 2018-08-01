@@ -30,7 +30,7 @@ type Query {
   activePatients: [DataPointNumberNumber!]!
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
   # Users
-  patient(patientId: ID, telephone: String): Patient
+  patient(patientId: ID, telephone: String, platform: String): Patient
   patients(cdeId: ID): [Patient]
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
@@ -121,12 +121,8 @@ type Query {
   getInterventionTasks(cdeId: ID): [InterventionTask!]
   getFoodRecords(patientId: ID, cdeId: ID): [Foods]
   getTaskSoap(taskId: ID): TaskSoap
-  getAlipay(
-    out_trade_no: String!
-    goodId: String!
-    patientId: String
-  ): Alipay
-  getGoods(goodId: ID,goodType: String): Goods
+  getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
+  getGoods(goodId: ID, goodType: String): Goods
 }
 
 type Mutation {

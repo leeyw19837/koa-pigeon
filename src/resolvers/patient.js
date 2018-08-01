@@ -287,4 +287,15 @@ export const Patient = {
       .toArray()
     return orders.length ? orders[0] : null
   },
+  yearServiceStatus: async (patient, { platform = 'Android' }, { getDb }) => {
+    const db = await getDb()
+    const control = await db
+      .collection('controls')
+      .find({
+        platform,
+        type: 'YEAR_SERVICE',
+      })
+      .toArray()
+    return control.length ? control[0].status === 'ACTIVE' : false
+  },
 }
