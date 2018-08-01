@@ -9,7 +9,11 @@ import { sendOutpatientPushMessages } from '../controller/outpatient-push'
 const Router = require('koa-router')
 const cronJob = new Router()
 
+<<<<<<< HEAD
 cronJob.post('/new-text-measure-plan', async ctx => {
+=======
+cronJob.get('/new-text-measure-plan', async ctx => {
+>>>>>>> develop
   const { body, header, ip } = ctx.request
   console.log('============== cron-job start =============' + 'from ip:' + ip)
   if (header.authorization != '4Z21FjF') {
@@ -18,7 +22,11 @@ cronJob.post('/new-text-measure-plan', async ctx => {
   const { weekday, patientsId = [], isTest } = body
   const result = await reminder(weekday, patientsId, isTest)
   console.log('============== cron-job end =============' + 'from ip:' + ip)
+<<<<<<< HEAD
   const bodyInfo = patientsId.length ? result : 'OK'
+=======
+  const bodyInfo = patientsId.length ? result : result.length
+>>>>>>> develop
   ctx.body = bodyInfo
 })
 

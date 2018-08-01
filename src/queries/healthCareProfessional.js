@@ -39,7 +39,7 @@ export const professionalLoginForWechat = async (
 
   const existingUser = await db
     .collection('users')
-    .findOne({ wechatOpenId: openid })
+    .findOne({ wechatOpenId: openid, status: 'ok' })
   if (existingUser) {
     return {
       ...existingUser,
@@ -71,7 +71,9 @@ export const professionalLoginForMobile = async (
       throw new Error('验证码不正确')
     }
   }
-  const existingUser = await db.collection('users').findOne({ mobile })
+  const existingUser = await db
+    .collection('users')
+    .findOne({ mobile, status: 'ok' })
   if (existingUser) {
     return {
       ...existingUser,

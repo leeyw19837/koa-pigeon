@@ -1,0 +1,21 @@
+type AlipayResponseContent{
+  code: Int
+  msg: String
+  sub_code: String
+  sub_msg: String
+}
+
+type AlipayResponse {
+  code: Int
+  message: String
+  data: AlipayResponseContent
+}
+
+type AliPayOrder {
+  # 返回码
+  code: String
+  # 返回消息
+  msg:String
+  # 交易状态
+  tradeState: String
+}

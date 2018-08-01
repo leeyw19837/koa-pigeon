@@ -54,9 +54,24 @@ if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
   // } else {
   //   app.use(morgan('dev'))
   // }
-  app.use(convert(cors()))
-  app.use(bodyParser({ jsonLimit: '30mb' }))
+  // app.use(async (ctx, next) => {
+  //   try {
+  //     await next()
+  //   } catch (err) {
+  //     console.log('Error handler:', err.message)
+  //   }
+  // })
 
+  app.use(convert(cors()))
+  app.use(
+    bodyParser({
+      jsonLimit: '30mb',
+      enableTypes: ['json', 'form', 'text'],
+      extendTypes: {
+        text: ['text/xml', 'application/xml'],
+      },
+    }),
+  )
   if (MONGO_URL === undefined) {
     console.error('Run with `yarn docker:dev`!')
     process.exit(-1)

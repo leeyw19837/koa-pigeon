@@ -1,7 +1,7 @@
 enum ReplyType {
-   # 评论圈子
+  # 评论圈子
   CIRCLE
-   # 回复照护师
+  # 回复照护师
   CDE
 }
 
@@ -17,10 +17,23 @@ type Comments {
   authorName: String
   # 评论类型
   type: ReplyType
-  # 回复人的Id
+  # 回复的人的Id
   replyId: ID
-  # 回复人的Name
+  # 回复的评论的ID
+  replyToCommentId: ID
+  # 回复的人的Name
   replyName: String
   # 点赞
   createdAt: Date
+}
+
+input CommentInput {
+  foodCircleId: String!
+  commentContent: String!
+  authorId: ID!
+  authorName: String!
+  type: ReplyType!
+  replyToUserId: ID
+  replyToUserName: String
+  replyToCommentId: ID
 }

@@ -1,3 +1,36 @@
+input OrderSetDataInput {
+  orderStatus: String
+}
+
+type OrderCBResult {
+  # 下单返回码
+  returnCode: String!
+  errCode: String
+  # 应用ID
+  appid: String
+  # 微信支付分配的商户号
+  partnerid: String
+  # 微信返回的支付交易会话ID
+  prepayid: String
+  # 暂填写固定值Sign=WXPay
+  packageName: String
+  # 随机字符串
+  noncestr: String
+  # 时间戳
+  timestamp: String
+  # 签名
+  sign: String
+}
+
+type PayOrder {
+  # 返回码
+  returnCode: String!
+  # 错误码
+  errCode: String
+  # 交易状态
+  tradeState: String
+}
+
 type Order {
   _id: ID!
   # 病人编号
@@ -25,5 +58,7 @@ type Order {
   #  运费
   freightPrice: Int
   #  总价
-  totalPrice: Int
+  totalPrice: Float
+  # 年费服务结束日期
+  serviceEndAt: Date
 }

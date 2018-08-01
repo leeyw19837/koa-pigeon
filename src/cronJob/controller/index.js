@@ -21,7 +21,7 @@ export const reminder = async (weekday, aPatientsId, isTest) => {
     console.error('Run with `yarn docker:dev`!')
     process.exit(-1)
   }
-
+  console.log('start to reminder for text')
   const currentDay = weekday ? +weekday : moment().isoWeekday()
   const bgMeasureModules = await getBgMeasureModules()
   const hcts = await getHcts()

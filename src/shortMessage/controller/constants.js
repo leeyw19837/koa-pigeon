@@ -85,6 +85,73 @@ export const patientList = [
   },
 ]
 
+export const sportPatientList = [
+  {
+    nickname: '李作龙',
+    mobile: '13801227251',
+  },
+  {
+    nickname: '张万军',
+    mobile: '13683266885',
+  },
+  {
+    nickname: '孟祥生',
+    mobile: '18710162051',
+  },
+  {
+    nickname: '徐明',
+    mobile: '13661105337',
+  },
+  {
+    nickname: '赵兴武',
+    mobile: '13683640342',
+  },
+  {
+    nickname: '刘鹤',
+    mobile: '13671028868',
+  },
+  {
+    nickname: '刘国芸',
+    mobile: '13901071172',
+  },
+  {
+    nickname: '祝开祥',
+    mobile: '13957039581',
+  },
+  {
+    nickname: '刘换生',
+    mobile: '13901105752',
+  },
+  {
+    nickname: '田世珍',
+    mobile: '13683640668',
+  },
+  {
+    nickname: '杨文英',
+    mobile: '13693028900',
+  },
+  {
+    nickname: '孙宏为',
+    mobile: '13611005619',
+  },
+  {
+    nickname: '景海玲',
+    mobile: '13146188871',
+  },
+  {
+    nickname: '罗泽衡',
+    mobile: '13801258142',
+  },
+  {
+    nickname: '马家诚',
+    mobile: '13810948018',
+  },
+  {
+    nickname: '周桐',
+    mobile: '15010077288',
+  },
+]
+
 export const ORDER_SUCCESS_TEMPLATE = 'SMS_133150323'
 export const STOP_OUTPATIENT_TEMPLATE = 'SMS_133180934'
 

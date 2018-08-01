@@ -23,14 +23,14 @@ type Query {
     timezone: String = "+0800"
   ): [TreatmentState!]!
   photos(patientId: ID!, owner: String!): [Photo!]!
-  chatMessages(appointmentId: ID!): ChatMessagesResponse!
+  chatMessages(patientId: ID!): ChatMessagesResponse!
   # Statistics
   totalTimeAtClinic: [DataPointNumberNumber!]!
   timeBetweenAppointments: [DataPointNumberNumberStdDev!]!
   activePatients: [DataPointNumberNumber!]!
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
   # Users
-  patient(patientId: ID, telephone: String): Patient
+  patient(patientId: ID, telephone: String, platform: String): Patient
   patients(cdeId: ID): [Patient]
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
@@ -79,12 +79,12 @@ type Query {
     manualInputType: String
   ): DiagnoseType
   getDiagnoseType(
-      bloodGlucoseValue: String
-      patientId: ID
-      measurementTime: String
-      measuredAt: Date
-      manualInputType: String
-    ): DiagnoseType
+    bloodGlucoseValue: String
+    patientId: ID
+    measurementTime: String
+    measuredAt: Date
+    manualInputType: String
+  ): DiagnoseType
   getPatientInstitution(patientId: ID): InstitutionType
   getUserUseBg1Situation(patientId: ID): UserUseBG1Schema
   getOrderReceiverInfo(patientId: ID!): Order
@@ -99,11 +99,11 @@ type Query {
     measurementTime: String
   ): DiagnosticWords
   getDiagnosticWords(
-      diagnoseType: String
-      bloodGlucoseValue: String
-      bgValueBeforeMeal: String
-      manualInputType: String
-    ): DiagnosticWords
+    diagnoseType: String
+    bloodGlucoseValue: String
+    bgValueBeforeMeal: String
+    manualInputType: String
+  ): DiagnosticWords
   # 月预约日历
   monthlyAppointments(
     monthStr: String
@@ -119,8 +119,10 @@ type Query {
   getTaskSoapCorpus: [TaskSoapCorpus!]
 
   getInterventionTasks(cdeId: ID): [InterventionTask!]
-  getFoodRecords(patientId: ID!): [Foods]
+  getFoodRecords(patientId: ID, cdeId: ID): [Foods]
   getTaskSoap(taskId: ID): TaskSoap
+  getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
+  getGoods(goodId: ID, goodType: String): Goods
 }
 
 type Mutation {
@@ -147,7 +149,7 @@ type Mutation {
   saveChatMessage(
     content: String!
     sentAtString: String!
-    appointmentId: ID!
+    patientId: ID!
     senderNickname: String!
   ): Boolean!
   sendNeedleAudioChatMessage(
@@ -269,6 +271,24 @@ type Mutation {
     totalPrice: Int
     source: String
   ): Boolean
+  createPayOrder(patientId: ID!, totalPrice: Int): OrderCBResult
+  createOrder(
+    # 病人编号
+    patientId: ID!
+    #  商品ID
+    goodId: ID
+    #  购买数量
+    purchaseQuantity: Int
+    source: String
+  ): Order
+  createPrepayForWechat(
+    patientId: ID!
+    # 订单ID
+    orderId: ID!
+    # 商品ID
+    goodId: ID!
+  ): OrderCBResult
+  checkPayOrderStatus(orderId: ID!, type: String): PayOrder
   reportDevice(
     # 病人编号
     patientId: ID!
@@ -308,7 +328,7 @@ type Mutation {
     patientId: ID!
   ): Boolean
   saveTaskSoap(soap: TaskSoapInput!, _id: ID): Boolean
-   addFoodComments(
+  addFoodComments(
     foodCircleId: ID
     commentContent: String
     authorId: ID
@@ -316,17 +336,26 @@ type Mutation {
     replyId: ID
     replyName: String
     type: String
-    commentIds:[ID]
+    commentIds: [ID]
   ): Boolean!
   deleteFoodComments(_id: ID!): Boolean!
   saveFoodContents(
-    patientId: String!,
-    circleContent: String!,
-    circleImageBase64:[String],
-    measurementTime: String!,
+    patientId: String!
+    circleContent: String!
+    circleImageBase64: [String]
+    measurementTime: String!
     measuredAt: Date!
+    commentContent: CommentInput
   ): Boolean
-
+  checkAlipayOrder(out_trade_no: String!): AliPayOrder
+  updateFoodScore(
+    _id: ID!
+    scores: FoodsScoreInput!
+    comment: CommentInput
+  ): Boolean
+  saveFoodComments(comment: CommentInput!): Boolean!
+  updateInterventionTaskState(_id: ID!, state: InterventionTaskState!): Boolean!
+  updateOrder(orderId: ID!, setData: OrderSetDataInput): Boolean
 }
 
 type Subscription {
@@ -334,6 +363,7 @@ type Subscription {
   chatRoomDynamics(userId: ID): NeedleChatRoom!
   warningAdded: Warning
   interventionTaskDynamics(cdeId: ID): InterventionTask
+  foodDynamics(cdeId: ID): Foods
 }
 
 schema {
