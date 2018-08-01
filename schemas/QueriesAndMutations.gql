@@ -123,11 +123,10 @@ type Query {
   getTaskSoap(taskId: ID): TaskSoap
   getAlipay(
     out_trade_no: String!
-    subject: String
-    body: String
-    total_amount: String!
+    goodId: String!
     patientId: String
   ): Alipay
+  getGoods(goodId: ID,goodType: String): Goods
 }
 
 type Mutation {
@@ -280,36 +279,18 @@ type Mutation {
   createOrder(
     # 病人编号
     patientId: ID!
-    #  总价
-    totalPrice: Float
-    #  收货人
-    receiver: String
-    #  联系电话
-    phoneNumber: String
-    #  收货地址
-    receiveAddress: String
-    #  商品类型
-    goodsType: String
-    #  商品单价
-    goodsUnitPrice: Int
-    #  商品规格
-    goodsSpecification: String
+    #  商品ID
+    goodId: ID
     #  购买数量
     purchaseQuantity: Int
-    #  运费
-    freightPrice: Int
     source: String
   ): Order
   createPrepayForWechat(
     patientId: ID!
     # 订单ID
     orderId: ID!
-    # 总价
-    totalPrice: Float
-    # 商品规格
-    goodsSpecification: String
-    # 商品类型
-    goodsType: String
+    # 商品ID
+    goodId: ID!
   ): OrderCBResult
   checkPayOrderStatus(orderId: ID!, type: String): PayOrder
   reportDevice(

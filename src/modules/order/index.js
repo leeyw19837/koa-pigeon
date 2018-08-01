@@ -1,4 +1,5 @@
 import { ObjectID } from 'mongodb'
+import { findGoodById } from '../goods/index'
 
 export const findOrderById = async ({ orderId }) => {
   const result = await db.collection('orders').findOne({
@@ -14,8 +15,10 @@ export const findOrderById = async ({ orderId }) => {
  */
 export const createOrder = async orderInfo => {
   const id = new ObjectID().toString()
-  const { goodsType, source } = orderInfo
-  const totalPrice = goodsType === 'YEAR_SERVICE' ? 0.01 : orderInfo.totalPrice
+  const { goodId, source, patientId } = orderInfo
+  const goods = await findGoodById({ goodId })
+  const { goodType, goodName } = goods
+  const totalPrice = goodType === 'YEAR_SERVICE' ? 0.01 : orderInfo.actualPrice
   const content = {
     _id: id,
     orderId: `ht_${id}`,
@@ -23,7 +26,9 @@ export const createOrder = async orderInfo => {
     orderStatus: 'INIT',
     createdAt: new Date(),
     source: source || 'NEEDLE',
-    ...orderInfo,
+    patientId,
+    goodsType: goodType,
+    goodsSpecification: goodName,
     totalPrice,
   }
 

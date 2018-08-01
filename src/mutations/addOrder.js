@@ -3,6 +3,7 @@ import moment from 'moment'
 import { wechatPayServices } from '../wechatPay'
 import * as orderServices from '../modules/order'
 import { convertTime } from '../wechatPay/utils'
+import { findGoodById } from '../modules/goods/index'
 
 export const addOrder = async (_, args, context) => {
   const db = await context.getDb()
@@ -63,11 +64,13 @@ export const createOrder = async (_, args, context) => {
 }
 
 export const createPrepayForWechat = async (_, args, context) => {
-  const { totalPrice, goodsSpecification, orderId, patientId, goodsType } = args
-  const price = goodsType === 'YEAR_SERVICE' ? 0.01 : totalPrice
+  const { orderId, patientId, goodId } = args
+  const goods = await findGoodById({ goodId })
+  const { goodType, goodName, actualPrice } = goods
+  const price = goodType === 'YEAR_SERVICE' ? 0.01 : actualPrice
   const result = await wechatPayServices.createUnifiedOrder({
     totalPrice: price,
-    goodsSpecification,
+    goodsSpecification: goodName,
     orderId,
     patientId,
   })

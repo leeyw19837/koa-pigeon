@@ -1,0 +1,19 @@
+type goodDetail{
+   name: String
+   type: String
+}
+
+type Goods {
+  _id: ID!
+  goodType: String
+  goodName: String
+  price: Float
+  feeType: String
+  couponFee: Float
+  actualPrice: Float
+  desc: String
+  goodStatus: String
+  details: [goodDetail]
+  publishAt: Date
+  createdAt: Date
+}
