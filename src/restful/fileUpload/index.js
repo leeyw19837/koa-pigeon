@@ -7,7 +7,7 @@ export const uploadFileByType = async ctx => {
     const key = `workwechat${new Date().getTime()}`
     url = await uploadBase64Img(key, base64Data)
   } else {
-    const key = `test${apkType}.apk`
+    const key = `${apkType}.apk`
     url = await uploadFile(key, base64Data)
   }
   return url
