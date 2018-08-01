@@ -287,7 +287,7 @@ export const Patient = {
       .toArray()
     return orders.length ? orders[0] : null
   },
-  yearServiceStatus: async (patient, { platform = 'Android' }, { getDb }) => {
+  yearServiceStatus: async (patient, { platform = 'android' }, { getDb }) => {
     const db = await getDb()
     const control = await db
       .collection('controls')
