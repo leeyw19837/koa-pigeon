@@ -1,6 +1,7 @@
 type ChatMessage {
   content: String!
   senderNickname: String!
+  sentAt:String!
 }
 
 type ChatMessagesResponse {

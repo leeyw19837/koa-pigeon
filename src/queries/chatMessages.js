@@ -1,3 +1,4 @@
+import moment from 'moment';
 export const chatMessages = async (_, args, { getDb }) => {
   if (args.patientId) {
     const db = await getDb()
@@ -25,6 +26,12 @@ export const chatMessages = async (_, args, { getDb }) => {
       })
       .sort({ sentAt: 1 })
       .toArray()
+
+    if (messages && messages.length > 0) {
+      messages.forEach(msg => {
+        msg.sentAt = moment(msg.sentAt).format('YY-MM-DD HH:mm')
+      })
+    }
 
     return {
       messages,
