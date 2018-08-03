@@ -52,6 +52,8 @@ export const blogs = async (_, args, context) => {
     return {
       ...blog,
       comments: tempCms,
+      publishedAt: new Date(blog.publishedAt),
+      createdAt: new Date(blog.publishedAt),
     }
   })
 
