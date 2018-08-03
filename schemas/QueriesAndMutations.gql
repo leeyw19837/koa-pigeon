@@ -363,7 +363,7 @@ type Subscription {
   chatRoomDynamics(userId: ID): NeedleChatRoom!
   warningAdded: Warning
   interventionTaskDynamics(cdeId: ID): InterventionTask
-  foodDynamics(cdeId: ID): Foods
+  foodDynamics(patientId: ID): Foods
 }
 
 schema {

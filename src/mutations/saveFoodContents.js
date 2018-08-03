@@ -93,6 +93,12 @@ export const updateFoodScore = async (_, args, context) => {
     const saveCommentResult = await saveFoodComments(null, { comment }, context)
     success = !!saveCommentResult
   }
+
+  const updatedFoods = await db.collection('foods').findOne({ _id })
+  pubsub.publish('foodDynamics', {
+    ...updatedFoods,
+    _operation: 'UPDATED',
+  })
   context.response.set('effect-types', 'Foods')
   return success
 }
