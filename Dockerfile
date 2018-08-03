@@ -1,6 +1,6 @@
 FROM node:alpine
 
-RUN apk add --no-cache tzdata
+RUN apk add --no-cache tzdata --repository https://mirrors.aliyun.com/alpine/latest-stable/main/
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
