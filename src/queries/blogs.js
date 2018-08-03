@@ -39,6 +39,21 @@ export const blogs = async (_, args, context) => {
   } catch (error) {
     console.log(error, 'error')
   }
+  result = result.map(blog => {
+    const { comments } = blog
+    let tempCms = []
+    if (comments.length) {
+      tempCms = comments.map(cm => ({
+        ...cm,
+        text: cm.content,
+        createdAt: new Date(cm.createdAt),
+      }))
+    }
+    return {
+      ...blog,
+      comments: tempCms,
+    }
+  })
 
   // const db = await context.getDb()
   // const { blogId } = args
