@@ -30,10 +30,16 @@ export const blogs = async (_, args, context) => {
       views(systemType: $systemType)
     }
   }`
+  let result = []
+  try {
+    const data = await request(BLOG_URL, query, {
+      systemType: 'BG',
+    })
+    result = data.getBlogsBySystemType
+  } catch (error) {
+    console.log(error, 'error')
+  }
 
-  const data = await request(BLOG_URL, query, {
-    systemType: 'BG',
-  })
   // const db = await context.getDb()
   // const { blogId } = args
   // const cursor = {}
@@ -44,5 +50,5 @@ export const blogs = async (_, args, context) => {
   //   .sort({ publishedAt: -1 })
   //   .toArray()
 
-  return data.getBlogsBySystemType
+  return result
 }
