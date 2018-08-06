@@ -68,6 +68,7 @@ export const NeedleChatRoom = {
         $or: [
           { sourceType: { $exists: false } },
           { sourceType: { $in: ['FROM_CDE', 'FROM_PATIENT'] } },
+          { messagesPatientReplyFlag: { $exists: true } },
         ],
       }
     }
