@@ -123,6 +123,7 @@ type Query {
   getTaskSoap(taskId: ID): TaskSoap
   getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
   getGoods(goodId: ID, goodType: String): Goods
+  achievement(patientId: ID, achievementType: String): Achievement
 }
 
 type Mutation {
@@ -356,6 +357,9 @@ type Mutation {
   saveFoodComments(comment: CommentInput!): Boolean!
   updateInterventionTaskState(_id: ID!, state: InterventionTaskState!): Boolean!
   updateOrder(orderId: ID!, setData: OrderSetDataInput): Boolean
+  glycatedHemoglobinAchieve(
+    patientId: ID!
+  ):Alipay
 }
 
 type Subscription {

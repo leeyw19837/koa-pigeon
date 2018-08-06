@@ -30,6 +30,7 @@ import * as foodComments from './foodComments'
 import * as saveFoodContents from './saveFoodContents'
 import * as alipayOrder from './alipayOrder'
 import * as intervention from './interventionTask'
+import * as glycatedHemoglobinAchieve from './glycatedHemoglobinAchieve'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -65,6 +66,7 @@ const mutations = {
   ...saveFoodContents,
   ...alipayOrder,
   ...intervention,
+  ...glycatedHemoglobinAchieve,
 }
 
 const mutationsWithLogging = {}

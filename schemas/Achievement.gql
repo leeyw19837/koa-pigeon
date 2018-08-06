@@ -1,0 +1,15 @@
+type Achievement {
+  _id: ID!
+  # 成就类型
+  achievementType: String
+  # 患者ID
+  patientId: ID
+   # 上次糖化数据
+  previousGlycatedHemoglobin: ClinicalLabResult
+   # 本次糖化数据
+  currentGlycatedHemoglobin: ClinicalLabResult
+  # 成就数据查询时间，表示成就是否已经使用
+  accessedTime: String
+  # 创建时间
+  createdAt: Date
+}
