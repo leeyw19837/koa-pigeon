@@ -1,4 +1,5 @@
 import freshId from 'fresh-id'
+import { pubsub } from '../pubsub'
 
 export const addFoodComments = async (_, args, context) => {
   const db = await context.getDb()
@@ -43,6 +44,13 @@ export const saveFoodComments = async (_, args, { getDb }) => {
     ...args.comment,
     _id: freshId(),
     createdAt: new Date(),
+  })
+  const reletedFoods = await db
+    .collection('foods')
+    .findOne({ _id: args.comment.foodCircleId })
+  pubsub.publish('foodDynamics', {
+    ...reletedFoods,
+    _operation: 'UPDATED',
   })
   return !!result.result.ok
 }
