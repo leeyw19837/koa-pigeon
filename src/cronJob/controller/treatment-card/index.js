@@ -1,7 +1,7 @@
 import { uniqBy, find, get } from 'lodash'
 import freshId from 'fresh-id'
 import { healthCareTeamMap } from '../constants'
-import { multiSendMiPush } from '../../../mipush/multiMiPush'
+import { multiSendMiPushForAlias } from '../../../mipush/multiMiPushForAlias'
 import { pubsub } from '../../../pubsub'
 const moment = require('moment')
 
@@ -310,14 +310,34 @@ const createChatCardMessage = async (cardMessages, isTest) => {
     }!!!`,
   )
   if (cardMessages.length) {
+    const miPushAlias = []
     const insertResult = await db
       .collection('needleChatMessages')
       .insert(cardMessages)
+    const chatInfoMsgs = cardMessages.map(o => {
+      const chatInfo = {
+        _id: freshId(),
+        chatRoomId: o.chatRoomId,
+        messageType: 'TEXT',
+        senderId: '66728d10dc75bc6a43052036',
+        createdAt: new Date(),
+        text: '请您点击上面卡片👆中的按钮确认是否能准时参加门诊。',
+        sourceType: 'FROM_SYSTEM',
+      }
+      miPushAlias.push(o.content.toUserId)
+      return chatInfo
+    })
+
+    const chatInfoInsertResult = await db
+      .collection('needleChatMessages')
+      .insert(chatInfoMsgs)
+
     if (insertResult.result.ok === 1) {
-      // if (isTest) {
-      await multiSendMiPush(cardMessages, 'CARD')
+      await multiSendMiPushForAlias(miPushAlias, 'CARD')
       pubChatMessages(cardMessages)
-      // }
+    }
+    if (chatInfoInsertResult.result.ok === 1) {
+      pubChatMessages(chatInfoMsgs)
     }
   }
 }
@@ -332,7 +352,7 @@ export const sendChatCardMessages = async isTest => {
   // 检查七天后要来门诊的人需要发送7天卡片
   try {
     const sevenDayCards = await checkSevenDays(isTest)
-    await createChatCardMessage(sevenDayCards, isTest)
+    // await createChatCardMessage(sevenDayCards, isTest)
   } catch (error) {
     console.log(error, '@seven days error')
   }
