@@ -24,8 +24,8 @@ export const changeChatCardStatus = async (_, args, context) => {
     recordId,
   } = args
 
-  const status = ''
-  const userId = '66728d10dc75bc6a43052036'
+  let status = ''
+  let userId = '66728d10dc75bc6a43052036'
   const db = await context.getDb()
 
   const measurement = await bloodMeasurementPlans(_, args, context)
@@ -62,7 +62,7 @@ export const changeChatCardStatus = async (_, args, context) => {
         .update(
           { _id: recordId },
           { $set: { confirmStatus: 'APPDoubleConfirm' } },
-        )
+      )
     } else if (operationType == 'CHANGE_DATE') {
       status = 'POSTPONING'
       userId = patientId
@@ -75,7 +75,7 @@ export const changeChatCardStatus = async (_, args, context) => {
   const chatRoomId = get(chatRoom, '_id')
 
   if (status) {
-    const result = await db
+    await db
       .collection('needleChatMessages')
       .update({ _id: messageId }, { $set: { 'content.status': status } })
   }
@@ -87,11 +87,7 @@ export const changeChatCardStatus = async (_, args, context) => {
     sourceType: sourceType,
   }
   const updateResult = await sendNeedleTextChatMessage(_, sendArgs, context)
-
-  if (result && !!result.result.ok) {
-    return true
-  }
-  return false
+  return !!updateResult
 }
 
 //根据测量完成比率返回不同的话术
@@ -251,7 +247,7 @@ const getContent = bloodData => {
         if (eveningPairing === 1) {
           cCount = cCount + 1
         }
-        return bCount / 6
+        return cCount / 6
       }
       break
     case 'D':

@@ -123,7 +123,7 @@ type Query {
   getTaskSoap(taskId: ID): TaskSoap
   getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
   getGoods(goodId: ID, goodType: String): Goods
-  achievement(patientId: ID, achievementType: String): Achievement
+  achievement(patientId: ID!, achievementType: String,queryType:String): Achievement
 }
 
 type Mutation {
