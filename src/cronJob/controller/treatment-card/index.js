@@ -352,7 +352,7 @@ export const sendChatCardMessages = async isTest => {
   // 检查七天后要来门诊的人需要发送7天卡片
   try {
     const sevenDayCards = await checkSevenDays(isTest)
-    // await createChatCardMessage(sevenDayCards, isTest)
+    await createChatCardMessage(sevenDayCards, isTest)
   } catch (error) {
     console.log(error, '@seven days error')
   }
