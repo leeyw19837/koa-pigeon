@@ -99,8 +99,8 @@ const getTextContent = (
 ) => {
   let textContent = ''
   let sourceType = 'BOP_1'
-  const endTime = moment(outpatientTime).format('YYYY-MM-DD')
-  const diffTime = moment(endTime).diff(moment(), 'days') + 1
+  let endTime = moment(outpatientTime).format('YYYY-MM-DD')
+  let diffTime = moment(endTime).diff(moment(), 'days') + 1
   if (dateType == 'BEFORE_SEVEN_DAYS') {
     diffTime = moment(endTime).diff(moment(), 'days') + 2
   }
@@ -265,8 +265,7 @@ const getContent = bloodData => {
         if (beforeSleepCount >= 1) {
           dCount = dCount + 1
         }
-        measurePercent = dCount / 4
-        return measurePercent
+        return dCount / 4
       }
       break
     case 'E':
