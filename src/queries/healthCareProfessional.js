@@ -35,11 +35,11 @@ export const professionalLoginForWechat = async (
   const { wechatCode } = args
   const token = await client.getAccessToken(wechatCode)
   const accessToken = get(token, 'data.access_token')
-  const openid = get(token, 'data.openid')
-  console.log('code & openid ---> ', wechatCode, openid)
+  const unionid = get(token, 'data.unionid')
+  console.log('code & unionid ---> ', wechatCode, unionid)
   const existingUser = await db
     .collection('users')
-    .findOne({ wechatOpenId: openid, status: 'ok' })
+    .findOne({ 'wechatInfo.unionid': unionid, status: 'ok' })
   if (existingUser) {
     return {
       ...existingUser,
