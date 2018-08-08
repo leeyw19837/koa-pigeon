@@ -1,3 +1,4 @@
+import startsWith from 'lodash/startsWith'
 import { verify } from 'jsonwebtoken'
 
 export const Auth = jwtSecret => {
@@ -6,7 +7,7 @@ export const Auth = jwtSecret => {
 
     const route = referer && origin && referer.substr(origin.length)
 
-    if (!authorization || route === '/login' || !route) {
+    if (!authorization || startsWith(route, '/login') || !route) {
       return await next()
     }
 
