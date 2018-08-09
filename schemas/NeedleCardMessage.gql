@@ -54,4 +54,5 @@ type NeedleCardMessage implements NeedleChatMessage {
   createdAt: Date!
   messageType: String
   needleChatRoom: NeedleChatRoom!
+  sourceType: String
 }

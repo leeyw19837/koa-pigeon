@@ -5,4 +5,5 @@ type NeedleImageMessage implements NeedleChatMessage {
   createdAt: Date!
   messageType: String
   needleChatRoom: NeedleChatRoom!
+  sourceType: String
 }
