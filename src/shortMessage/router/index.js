@@ -1,32 +1,45 @@
 import {
   orderSuccessPatients,
   stopOutpatientService,
-  sportPatients,
+  sportPatients
 } from '../controller'
+
+import {
+  authorization
+} from '../../utils/authorization'
 
 const Router = require('koa-router')
 const shortMessage = new Router()
 
 // 北大运动会报名成功
 shortMessage.get('/order-success', async ctx => {
-  if (ctx.query.pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
-    return ctx.throw(401, '密码错误')
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
   }
-  const { isSender } = ctx.query
+  const {
+    isSender
+  } = ctx.query
   await orderSuccessPatients(isSender)
   ctx.body = 'OK'
 })
 shortMessage.get('/sport-success', async ctx => {
-  const { isSender } = ctx.query
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const {
+    isSender
+  } = ctx.query
   await sportPatients(isSender)
   ctx.body = 'OK'
 })
 
 shortMessage.get('/stop-outpatient', async ctx => {
-  if (ctx.query.pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
-    return ctx.throw(401, '密码错误')
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
   }
-  const { isSender } = ctx.query
+  const {
+    isSender
+  } = ctx.query
   await stopOutpatientService(isSender)
   ctx.body = 'OK'
 })

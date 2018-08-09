@@ -1,38 +1,45 @@
-import { reminder } from '../controller'
-import { sendMiniProgram } from '../controller/sendMiniProgram'
-import {
-  sendChatCardMessages,
-  checkOverdueForAfterTreatment,
-} from '../controller/treatment-card'
-import { sendOutpatientPushMessages } from '../controller/outpatient-push'
+import {reminder} from '../controller'
+import {sendMiniProgram} from '../controller/sendMiniProgram'
+import {sendChatCardMessages, checkOverdueForAfterTreatment} from '../controller/treatment-card'
+import {sendOutpatientPushMessages} from '../controller/outpatient-push'
+import {authorization} from '../../utils/authorization'
 
 const Router = require('koa-router')
 const cronJob = new Router()
 
 cronJob.post('/new-text-measure-plan', async ctx => {
-  const { body, header, ip } = ctx.request
-  console.log('============== cron-job start =============' + 'from ip:' + ip)
-  if (header.authorization != '4Z21FjF') {
+  const {body, header, ip} = ctx.request
+  console.log('============== cron-job start =============from ip:' + ip)
+  if (!authorization(ctx)) {
     return ctx.throw(401, '密码错误或参数不正确')
   }
-  const { weekday, patientsId = [], isTest } = body
+  const {
+    weekday,
+    patientsId = [],
+    isTest
+  } = body
   const result = await reminder(weekday, patientsId, isTest)
-  console.log('============== cron-job end =============' + 'from ip:' + ip)
-  const bodyInfo = patientsId.length ? result : result.length
+  console.log('============== cron-job end =============from ip:' + ip)
+  const bodyInfo = patientsId.length
+    ? result
+    : result.length
   ctx.body = bodyInfo
 })
 
 cronJob.get('/mini-program-send', async ctx => {
-  if (ctx.query.pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
-    return ctx.throw(401, '密码错误')
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
   }
-  const { period, patientId } = ctx.query
+  const {period, patientId} = ctx.query
   const result = await sendMiniProgram(period, patientId)
   ctx.body = 'OK'
 })
 
 cronJob.get('/send-treatment-card', async ctx => {
-  const { pwd, isTest } = ctx.query
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const {pwd, isTest} = ctx.query
   if (pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
     return ctx.throw(401, '密码错误')
   }
@@ -41,7 +48,10 @@ cronJob.get('/send-treatment-card', async ctx => {
 })
 
 cronJob.get('/check-three-card-overdue', async ctx => {
-  const { pwd } = ctx.query
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const {pwd} = ctx.query
   if (pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
     return ctx.throw(401, '密码错误')
   }
@@ -50,7 +60,10 @@ cronJob.get('/check-three-card-overdue', async ctx => {
 })
 
 cronJob.get('/send-outpatient-push-msgs', async ctx => {
-  const { pwd, day, hour } = ctx.query
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const {pwd, day, hour} = ctx.query
   if (pwd !== 'cm9vc3Rlcl9kb2RneV9kb3Zl') {
     return ctx.throw(401, '密码错误')
   }
