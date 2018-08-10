@@ -7,7 +7,7 @@ import { ObjectID } from 'mongodb'
 export const sendNeedleAudioChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
-  const { userId, chatRoomId, base64EncodedAudioData } = args
+  const { userId, chatRoomId, base64EncodedAudioData, actualSenderId } = args
 
   let chatRoom = await db
     .collection('needleChatRooms')
@@ -34,7 +34,9 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
   }
-
+  if (actualSenderId) {
+    newChatMessage.actualSenderId = actualSenderId
+  }
   await db.collection('needleChatMessages').insertOne(newChatMessage)
 
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
@@ -53,7 +55,7 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
       $set: {
         participants,
       },
-    }
+    },
   )
   chatRoom = await db.collection('needleChatRooms').findOne({ _id: chatRoomId })
 

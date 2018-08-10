@@ -20,7 +20,15 @@ const sourceTypeGroup = [
 export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   const db = getDb === undefined ? global.db : await getDb()
 
-  const { userId, chatRoomId, text, sourceType, bgRecordId, messagesPatientReplyFlag } = args
+  const {
+    userId,
+    chatRoomId,
+    text,
+    sourceType,
+    bgRecordId,
+    messagesPatientReplyFlag,
+    actualSenderId,
+  } = args
 
   // console.log('chatMessageCount args', args)
 
@@ -61,7 +69,9 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     chatRoomId: chatRoom._id,
     sourceType: sourceType || sourceTypeMap,
   }
-
+  if (actualSenderId) {
+    newChatMessage.actualSenderId = actualSenderId
+  }
   if (bgRecordId) {
     newChatMessage.bgRecordId = bgRecordId
   }

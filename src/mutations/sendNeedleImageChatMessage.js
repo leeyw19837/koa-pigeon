@@ -7,7 +7,7 @@ import { ObjectID } from 'mongodb'
 export const sendNeedleImageChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
-  const { userId, chatRoomId, base64EncodedImageData } = args
+  const { userId, chatRoomId, base64EncodedImageData, actualSenderId } = args
 
   let chatRoom = await db
     .collection('needleChatRooms')
@@ -31,7 +31,10 @@ export const sendNeedleImageChatMessage = async (_, args, context) => {
     senderId: userId,
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
-    sourceType: args.sourceType?args.sourceType:'FROM_COMMON_CHAT'
+    sourceType: args.sourceType ? args.sourceType : 'FROM_COMMON_CHAT',
+  }
+  if (actualSenderId) {
+    newChatMessage.actualSenderId = actualSenderId
   }
   await db.collection('needleChatMessages').insertOne(newChatMessage)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
@@ -50,7 +53,7 @@ export const sendNeedleImageChatMessage = async (_, args, context) => {
       $set: {
         participants,
       },
-    }
+    },
   )
   chatRoom = await db.collection('needleChatRooms').findOne({ _id: chatRoomId })
 

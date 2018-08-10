@@ -123,7 +123,11 @@ type Query {
   getTaskSoap(taskId: ID): TaskSoap
   getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
   getGoods(goodId: ID, goodType: String): Goods
-  achievement(patientId: ID!, achievementType: String,queryType:String): Achievement
+  achievement(
+    patientId: ID!
+    achievementType: String
+    queryType: String
+  ): Achievement
 }
 
 type Mutation {
@@ -158,6 +162,7 @@ type Mutation {
     chatRoomId: ID!
     # The base64 encoded audio data. This gets turned into a URL on the server.
     base64EncodedAudioData: String!
+    actualSenderId: ID
   ): NeedleAudioMessage!
   # Posts an audio chat message to the given chat room.
   sendNeedleImageChatMessage(
@@ -166,6 +171,7 @@ type Mutation {
     # The base64 encoded audio data. This gets turned into a URL on the server.
     base64EncodedImageData: String!
     sourceType: String
+    actualSenderId: ID
   ): NeedleImageMessage!
   # Posts an text chat message to the given chat room.
   saveBloodGlucoseMeasurement(
@@ -192,6 +198,7 @@ type Mutation {
     sourceType: String
     bgRecordId: String
     messagesPatientReplyFlag: String
+    actualSenderId: ID
   ): NeedleTextMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
@@ -357,9 +364,7 @@ type Mutation {
   saveFoodComments(comment: CommentInput!): Boolean!
   updateInterventionTaskState(_id: ID!, state: InterventionTaskState!): Boolean!
   updateOrder(orderId: ID!, setData: OrderSetDataInput): Boolean
-  glycatedHemoglobinAchieve(
-    patientId: ID!
-  ):Alipay
+  glycatedHemoglobinAchieve(patientId: ID!): Alipay
 }
 
 type Subscription {

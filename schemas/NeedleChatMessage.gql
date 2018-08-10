@@ -5,4 +5,5 @@ interface NeedleChatMessage {
   messageType: String
   needleChatRoom: NeedleChatRoom!
   sourceType: String
+  actualSender: User
 }
