@@ -5,6 +5,7 @@ import {
   checkOverdueForAfterTreatment,
 } from '../controller/treatment-card'
 import { sendOutpatientPushMessages } from '../controller/outpatient-push'
+import { assignPatientToCde } from '../controller/cde-account'
 
 const Router = require('koa-router')
 const cronJob = new Router()
@@ -58,6 +59,23 @@ cronJob.get('/send-outpatient-push-msgs', async ctx => {
   if (result) {
     ctx.body = 'OK! ' + result
   }
+})
+
+cronJob.post('/assign-patient-to-cde', async ctx => {
+  const { header, ip } = ctx.request
+  console.log(
+    '============== assign-patient-to-cde start =============' +
+      'from ip:' +
+      ip,
+  )
+  if (header.authorization != '4Z21FjF') {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const result = await assignPatientToCde()
+  console.log(
+    '============== assign-patient-to-cde end =============' + 'from ip:' + ip,
+  )
+  ctx.body = 'OK'
 })
 
 export default cronJob
