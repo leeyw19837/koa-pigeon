@@ -2,6 +2,7 @@ import find from 'lodash/find'
 import get from 'lodash/get'
 import maxBy from 'lodash/maxBy'
 import findIndex from 'lodash/findIndex'
+import { ObjectID } from 'mongodb'
 
 import { strip } from '../../../wechatPay/utils'
 
@@ -117,6 +118,9 @@ const dealWithDb = async (cdeId, patientIds) => {
         updatedAt: new Date(),
       },
     },
+    {
+      multi: true,
+    },
   )
 }
 const setCdeIdForPatients = async assignPatients => {
@@ -139,9 +143,10 @@ const setCdeIdForPatients = async assignPatients => {
     const cde = cdes[index]
     const cdeIds = Object.keys(cde)
     for (let i = 0; i < cdeIds.length; i++) {
-      const patientIds = cde[i]
+      const patientIds = cde[cdeIds[i]]
+      // console.log(patientIds, '~~~')
       if (patientIds.length) {
-        await dealWithDb(i, patientIds)
+        await dealWithDb(cdeIds[i], patientIds)
       }
     }
   }
@@ -181,6 +186,6 @@ export const assignPatientToCde = async () => {
       }
     })
   }
-  // await insertEvent(assignPatients, notCdeUsers)
-  setCdeIdForPatients(assignPatients)
+  await setCdeIdForPatients(assignPatients)
+  await insertEvent(assignPatients, notCdeUsers)
 }
