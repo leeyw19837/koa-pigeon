@@ -73,8 +73,8 @@ export const updateFoodScore = async (_, args, context) => {
   const db = await context.getDb()
   const { _id, scores, comment } = args
   if (!_id) throw new Error('must set _id for foods')
-  const anyScoreUnset = some(scores, score => score === 0)
-  if (anyScoreUnset) throw new Error('must set all the score for foods')
+  const allScoreUnset = !some(scores, score => score > 0)
+  if (allScoreUnset) throw new Error('should be scored items at least one')
   let success = true
   const updateResult = await db.collection('foods').update(
     {

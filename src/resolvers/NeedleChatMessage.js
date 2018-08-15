@@ -46,6 +46,12 @@ export const sharedNeedleChatMessageResolvers = {
       avatar: '',
     }
   },
+  async actualSender(needleChatMessage, _, { getDb }) {
+    const db = await getDb()
+    if (!needleChatMessage.actualSenderId) return null
+    const userId = maybeCreateFromHexString(needleChatMessage.actualSenderId)
+    return await db.collection('users').findOne({ _id: userId })
+  },
   async needleChatRoom(needleChatMessage, _, { getDb }) {
     const db = getDb === undefined ? global.db : await getDb()
     return db

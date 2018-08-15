@@ -22,7 +22,7 @@ export const patient = async (_, args, { getDb }) => {
 export const patients = async (_, { cdeId }, { getDb }) => {
   const db = await getDb()
   const condition = {
-    patientState: { $nin: ['REMOVED', 'ARCHIVE'] },
+    patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
     roles: { $exists: 0 },
   }
   if (cdeId) condition.cdeId = cdeId
