@@ -369,7 +369,7 @@ type Mutation {
 
 type Subscription {
   chatMessageAdded(chatRoomId: ID): NeedleChatMessage!
-  chatRoomDynamics(userId: ID): NeedleChatRoom!
+  chatRoomDynamics(userId: ID, nosy: Boolean): NeedleChatRoom!
   warningAdded: Warning
   interventionTaskDynamics(cdeId: ID): InterventionTask
   foodDynamics(patientId: ID): Foods

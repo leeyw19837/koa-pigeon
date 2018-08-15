@@ -1,5 +1,4 @@
 import { maybeCreateFromHexString } from '../utils'
-
 export const NeedleChatRoom = {
   async participants(needleChatRoom, _, { getDb }) {
     const db = await getDb()
@@ -53,12 +52,23 @@ export const NeedleChatRoom = {
   async unreadMessageCount(needleChatRoom, args, { getDb }) {
     const db = getDb === undefined ? global.db : await getDb()
     const userId = args.userId || '66728d10dc75bc6a43052036'
-    const me = needleChatRoom.participants.find(user => {
-      return user.userId === userId
-    })
+    const me =
+      needleChatRoom.participants.find(user => {
+        return user.userId === userId
+      }) ||
+      (args.nosy
+        ? needleChatRoom.participants.find(user => {
+            return user.role === '医助'
+          })
+        : null)
+    if (!me) {
+      console.log('can not found any assistant in chatroom', needleChatRoom._id)
+      return 0
+    }
     const defaultCursor = {
       chatRoomId: needleChatRoom._id,
       senderId: { $ne: me.userId },
+      actualSenderId: { $ne: me.userId },
       createdAt: { $gt: me.lastSeenAt },
     }
     let cursor = defaultCursor
@@ -78,9 +88,15 @@ export const NeedleChatRoom = {
   },
   async lastSeenAt(needleChatRoom, args, context) {
     const userId = args.userId || '66728d10dc75bc6a43052036'
-    const me = needleChatRoom.participants.find(user => {
-      return user.userId === userId
-    })
+    let me =
+      needleChatRoom.participants.find(user => {
+        return user.userId === userId
+      }) ||
+      (args.nosy
+        ? needleChatRoom.participants.find(user => {
+            return user.role === '医助'
+          })
+        : null)
     return me && me.lastSeenAt
   },
 }
