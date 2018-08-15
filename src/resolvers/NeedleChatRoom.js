@@ -99,4 +99,15 @@ export const NeedleChatRoom = {
         : null)
     return me && me.lastSeenAt
   },
+  async patient(chatroom, _, { getDb }) {
+    const patientId = chatroom.participants.find(user => {
+      return user.role === '患者'
+    })
+    if (!patientId) return
+
+    const db = await getDb()
+    return await db
+      .collection('users')
+      .findOne({ _id: maybeCreateFromHexString(patientId) })
+  },
 }

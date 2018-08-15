@@ -7,4 +7,5 @@ type NeedleChatRoom {
   # This is specific to the currently logged in user
   unreadMessageCount(userId: ID, nosy: Boolean = false): Int!
   lastSeenAt(userId: ID): Date!
+  patient: Patient!
 }
