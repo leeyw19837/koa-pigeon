@@ -74,3 +74,28 @@ export const unreadMessages = async (_, args, context) => {
   }
   return null
 }
+
+export const getChatrooms = async (_, { cdeId, page, limit }, { getDb }) => {
+  const db = await getDb()
+  let condition = {}
+  if (cdeId) {
+    const patientsIds = db
+      .collection('users')
+      .find({ cdeId, patientState: { $nin: ['REMOVED', 'ARCHIVED'] } }, { _id })
+      .toArray()
+      .map(p => p._id.str)
+    condition = {
+      participants: {
+        $elemMatch: { userId: { $in: patientsIds }, role: '患者' },
+      },
+    }
+  }
+  const chatrooms = await db
+    .collection('needleChatRooms')
+    .find(condition)
+    .sort({ lastMessageSendAt: -1 })
+    .skip(page * limit)
+    .limit(limit)
+    .toArray()
+  return chatrooms
+}

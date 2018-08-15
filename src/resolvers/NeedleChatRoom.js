@@ -1,4 +1,6 @@
 import { maybeCreateFromHexString } from '../utils'
+import { ObjectId } from 'mongodb'
+
 export const NeedleChatRoom = {
   async participants(needleChatRoom, _, { getDb }) {
     const db = await getDb()
@@ -100,14 +102,14 @@ export const NeedleChatRoom = {
     return me && me.lastSeenAt
   },
   async patient(chatroom, _, { getDb }) {
-    const patientId = chatroom.participants.find(user => {
+    const patient = chatroom.participants.find(user => {
       return user.role === '患者'
     })
-    if (!patientId) return
+    if (!patient) return
 
     const db = await getDb()
     return await db
       .collection('users')
-      .findOne({ _id: maybeCreateFromHexString(patientId) })
+      .findOne({ _id: ObjectId(patient.userId) })
   },
 }
