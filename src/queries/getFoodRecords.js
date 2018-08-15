@@ -1,23 +1,18 @@
 import moment from 'moment'
 import {
-  GraphQLError
-} from 'graphql';
+  userAuth
+} from '../utils/authentication'
 
 export const getFoodRecords = async (_, args, context) => {
   const db = await context.getDb()
-  const user = context.userInfo
-  console.log('getFoodRecords', user)
-  if (!user) {
-    throw new GraphQLError(
-      'AuthenticationError',
-    );
-  }
+  userAuth(context.userInfo)
   const {
     patientId,
     cdeId
   } = args
   const cursor = {}
-  if (patientId) cursor.patientId = patientId
+  if (patientId)
+    cursor.patientId = patientId
 
   if (cdeId) {
     const patientIds = await db
@@ -28,7 +23,7 @@ export const getFoodRecords = async (_, args, context) => {
       })
       .map(patient => patient._id.toString())
     cursor.patientId = {
-      $in: patientIds,
+      $in: patientIds
     }
   }
   let foods = await db
