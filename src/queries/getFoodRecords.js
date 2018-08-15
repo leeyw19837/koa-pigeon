@@ -1,11 +1,7 @@
 import moment from 'moment'
-import {
-  userAuth
-} from '../utils/authentication'
 
 export const getFoodRecords = async (_, args, context) => {
   const db = await context.getDb()
-  userAuth(context.userInfo)
   const {
     patientId,
     cdeId
