@@ -67,7 +67,9 @@ export const NeedleChatRoom = {
         ...defaultCursor,
         $or: [
           { sourceType: { $exists: false } },
-          { sourceType: { $in: ['FROM_CDE', 'FROM_PATIENT'] } },
+          {
+            sourceType: { $in: ['FROM_CDE', 'FROM_PATIENT', 'SMS', 'WECHAT'] },
+          },
           { messagesPatientReplyFlag: { $exists: true } },
         ],
       }

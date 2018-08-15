@@ -2,6 +2,7 @@ import {
   orderSuccessPatients,
   stopOutpatientService,
   sportPatients,
+  sendFoodPairMeasure,
 } from '../controller'
 
 const Router = require('koa-router')
@@ -28,6 +29,15 @@ shortMessage.get('/stop-outpatient', async ctx => {
   }
   const { isSender } = ctx.query
   await stopOutpatientService(isSender)
+  ctx.body = 'OK'
+})
+
+shortMessage.post('/food-pair-measure', async ctx => {
+  const { header } = ctx.request
+  if (header.authorization != '4Z21FjF') {
+    return ctx.throw(401, '密码错误')
+  }
+  await sendFoodPairMeasure(true)
   ctx.body = 'OK'
 })
 
