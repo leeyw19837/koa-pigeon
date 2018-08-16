@@ -23,4 +23,4 @@ export const isBigFluctuation = (meala, mealb) => {
 export const isMealRecord = measurementTime =>
   !!mealsPeriodTextMap[measurementTime]
 
-export const isAboveTen = value => value >= 10
+export const isAboveTen = value => value > 10 * 18
