@@ -35,7 +35,6 @@ export const syncMessageFromOtherSide = async ({
       chatRoomId: needleChatRoomId,
       text: content,
       sourceType,
-      actualSenderId: patientId,
     }
     await sendNeedleTextChatMessage(null, args, {})
   } else {
