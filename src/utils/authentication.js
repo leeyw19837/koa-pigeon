@@ -8,13 +8,8 @@ export const userAuth = user => {
   }
 }
 
-
-export const authForApp = (requestType, funcName, func) => async (
-  rootValue,
-  args,
-  ctx,
-) => {
-  if (funcName !== 'loginOrSignUp' && funcName !== 'wechatLoginOrSignUp') {
+export const authForApp = (requestType, funcName, func) => async (rootValue, args, ctx, ) => {
+  if (['loginOrSignUp', 'wechatLoginOrSignUp', 'professionalLoginForWechat', 'professionalLoginForMobile'].indexOf(funcName) > -1) {
     if (!ctx.userInfo) {
       throw new GraphQLError('AuthenticationError', );
     }
