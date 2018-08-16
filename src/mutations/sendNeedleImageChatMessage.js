@@ -52,6 +52,7 @@ export const sendNeedleImageChatMessage = async (_, args, context) => {
     {
       $set: {
         participants,
+        lastMessageSendAt: new Date(),
       },
     },
   )

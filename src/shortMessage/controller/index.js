@@ -4,6 +4,8 @@ import {
   STOP_OUTPATIENT_TEMPLATE,
   STOP_OUTPATIENT_TEMPLATE_DW,
   sportPatientList,
+  pairMeasureFoodPatients,
+  FOOD_PAIR_MEASURE,
 } from './constants'
 import { sendTxt } from '../../common'
 
@@ -72,6 +74,34 @@ export const stopOutpatientService = async isSender => {
         //     userName: nickname,
         //   },
         // })
+      } catch (e) {
+        console.log(e, '~~~')
+      }
+    }
+  }
+}
+
+export const sendFoodPairMeasure = async isSender => {
+  await sendTxt({
+    mobile: '18612201226',
+    templateId: FOOD_PAIR_MEASURE,
+    params: {
+      nickname: '刘欢',
+    },
+  })
+  console.log(pairMeasureFoodPatients.length, '@pairMeasureFoodPatients')
+  for (let i = 0; i < pairMeasureFoodPatients.length; i++) {
+    if (isSender) {
+      const { nickname, mobile } = pairMeasureFoodPatients[i]
+      try {
+        // await sendTxt({
+        //   mobile,
+        //   templateId: FOOD_PAIR_MEASURE,
+        //   params: {
+        //     nickname,
+        //   },
+        // })
+        console.log(i, mobile)
       } catch (e) {
         console.log(e, '~~~')
       }

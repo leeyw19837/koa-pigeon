@@ -10,10 +10,11 @@ export const chatRoomDynamics = {
     () => pubsub.asyncIterator('chatRoomDynamics'),
     (payload, variables) => {
       return (
-        payload &&
-        !!find(payload.participants, {
-          userId: variables.userId,
-        })
+        variables.nosy ||
+        (payload &&
+          !!find(payload.participants, {
+            userId: variables.userId,
+          }))
       )
     },
   ),

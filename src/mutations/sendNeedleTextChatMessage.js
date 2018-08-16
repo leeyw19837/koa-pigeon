@@ -124,6 +124,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     {
       $set: {
         participants,
+        lastMessageSendAt: new Date(),
       },
     },
   )

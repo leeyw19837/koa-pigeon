@@ -54,6 +54,7 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
     {
       $set: {
         participants,
+        lastMessageSendAt: new Date(),
       },
     },
   )
