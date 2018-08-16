@@ -75,15 +75,25 @@ export const unreadMessages = async (_, args, context) => {
   return null
 }
 
-export const getChatrooms = async (_, { cdeId, page, limit }, { getDb }) => {
+export const getChatrooms = async (
+  _,
+  { nosy, cdeId, page, limit },
+  { getDb },
+) => {
+  if (!nosy && !cdeId) {
+    return
+  }
   const db = await getDb()
   let condition = {}
-  if (cdeId) {
-    const patientsIds = db
+  if (!nosy && cdeId) {
+    let patientsIds = await db
       .collection('users')
-      .find({ cdeId, patientState: { $nin: ['REMOVED', 'ARCHIVED'] } }, { _id })
+      .find(
+        { cdeId, patientState: { $nin: ['REMOVED', 'ARCHIVED'] } },
+        { _id: 1 },
+      )
       .toArray()
-      .map(p => p._id.str)
+    patientsIds = patientsIds.map(p => p._id.toString())
     condition = {
       participants: {
         $elemMatch: { userId: { $in: patientsIds }, role: '患者' },

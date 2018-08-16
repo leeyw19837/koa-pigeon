@@ -116,9 +116,9 @@ type Query {
     assistantId: ID
   ): CertifiedDiabetesEducator
   getInterventionTasks(cdeId: ID, patientId: ID): [InterventionTask!]
+  getGroupedInterventionTasks(cdeId: ID): [InterventionTaskCount!]
   getTaskSoapCorpus: [TaskSoapCorpus!]
 
-  getInterventionTasks(cdeId: ID): [InterventionTask!]
   getFoodRecords(patientId: ID, cdeId: ID): [Foods]
   getTaskSoap(taskId: ID): TaskSoap
   getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
@@ -128,7 +128,12 @@ type Query {
     achievementType: String
     queryType: String
   ): Achievement
-  getChatrooms(cdeId: ID, page: Int, limit: Int): [NeedleChatRoom!]
+  getChatrooms(
+    nosy: Boolean
+    cdeId: ID
+    page: Int
+    limit: Int
+  ): [NeedleChatRoom!]
 }
 
 type Mutation {
