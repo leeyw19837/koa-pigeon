@@ -1,7 +1,8 @@
 import {
   orderSuccessPatients,
   stopOutpatientService,
-  sportPatients
+  sportPatients,
+  sendFoodPairMeasure,
 } from '../controller'
 
 import {
@@ -41,6 +42,17 @@ shortMessage.get('/stop-outpatient', async ctx => {
     isSender
   } = ctx.query
   await stopOutpatientService(isSender)
+  ctx.body = 'OK'
+})
+
+shortMessage.post('/food-pair-measure', async ctx => {
+  const {
+    header
+  } = ctx.request
+  if (header.authorization != '4Z21FjF') {
+    return ctx.throw(401, '密码错误')
+  }
+  await sendFoodPairMeasure(true)
   ctx.body = 'OK'
 })
 

@@ -20,6 +20,7 @@ enum CardContentStatus {
 enum CardContentType {
   # 预约类型
   APPOINTMENT
+  KNOWLEDGE
 }
 
 enum CardContentSourceType {
