@@ -1,15 +1,64 @@
+type AchievementDetails {
+  # 上次糖化数据
+  previousGlycatedHemoglobin: ClinicalLabResult
+  # 本次糖化数据
+  currentGlycatedHemoglobin: ClinicalLabResult
+}
+
 type Achievement {
   _id: ID!
+  # 大的类型：控糖，用药，饮食，分享
+  category: String!
+  # 某一个类型的细分: 速降兵
+  type: String!
+  # 成就名字
+  title: String
+  # 未获得成就图标
+  inAvatar: String
+  # 点亮的成就图标
+  avatar: String
+  # 成就描述
+  desc: String
+  # 分享得奖励的次数上限
+  shareLimit: Int
+  # 成就本身的积分
+  bonusPoint: Int
+  # 成就的状态
+  status: String
+}
+
+type AchievementRecord {
+  _id: ID!
+  # 用户ID
+  patientId: ID!
+  # 获取成就的时间
+  achieveAt: Date
   # 成就类型
-  achievementType: String
-  # 患者ID
-  patientId: ID
-   # 上次糖化数据
-  previousGlycatedHemoglobin: ClinicalLabResult
-   # 本次糖化数据
-  currentGlycatedHemoglobin: ClinicalLabResult
-  # 成就数据查询时间，表示成就是否已经使用
-  accessedTime: String
-  # 创建时间
+  achievement: Achievement!
+  # 冗余成就的详情
+  achievementDetails: AchievementDetails!
+  # 是否展示
+  isShow: Boolean
+  # 分享了多少次
+  shareTimes: [ID]
+}
+
+type BonusPointSource {
+  # 积分来源的Id
+  sourceId: ID
+  # 积分来源的类型
+  sourceType: String
+  # 积分来源的描述
+  sourceTitle: String
+  # 积分来源的方式 // shareToGroup|shareToMoments|getAchievement
+  sourceWay: String
+}
+
+type BonusPoint {
+  _id: ID!
+  patientId: ID!
+  source: BonusPointSource!
+  point: Int!
+  expireAt: Date
   createdAt: Date
 }

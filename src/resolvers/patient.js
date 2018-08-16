@@ -298,4 +298,29 @@ export const Patient = {
       .toArray()
     return control.length ? control[0].status === 'ACTIVE' : false
   },
+  achievements: async (patient, args, { getDb }) => {
+    const db = await getDb()
+    const achievements = await db
+      .collection('achievements')
+      .find({
+        status: { $ne: 'INACTIVE' },
+      })
+      .toArray()
+    return achievements
+  },
+  achievementRecords: async (patient, { achievementId }, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const cursor = {
+      patientId,
+    }
+    if (!achievementId) {
+      cursor._id = achievementId
+    }
+    const achievements = await db
+      .collection('achievementRecords')
+      .find(cursor)
+      .toArray()
+    return achievements
+  },
 }

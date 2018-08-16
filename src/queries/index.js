@@ -47,7 +47,6 @@ import * as getInterventionTasks from './getInterventionTasks'
 import * as getTaskSoapCorpus from './getTaskSoapCorpus'
 import * as getTaskSoap from './getTaskSoap'
 import * as getGoods from './getGoods'
-import * as achievement from './achievement'
 
 const queries = {
   ...bloodGlucoseMeasurements,
@@ -94,7 +93,6 @@ const queries = {
   ...getTaskSoap,
   ...getAlipay,
   ...getGoods,
-  ...achievement,
 }
 
 const queriesWithLogging = {}
