@@ -14,7 +14,7 @@ type Achievement {
   # 成就名字
   title: String
   # 未获得成就图标
-  inAvatar: String
+  inactiveAvatar: String
   # 点亮的成就图标
   avatar: String
   # 成就描述
@@ -38,7 +38,7 @@ type AchievementRecord {
   # 冗余成就的详情
   achievementDetails: AchievementDetails!
   # 是否展示
-  isShow: Boolean
+  isShown: Boolean
   # 分享了多少次
   shareTimes: [ID]
 }
