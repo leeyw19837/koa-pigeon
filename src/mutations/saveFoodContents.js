@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb'
+import {ObjectID, ObjectId} from 'mongodb'
 import { pubsub } from '../pubsub'
 import { uploadBase64Img } from '../utils/ks3'
 import { saveFoodComments } from './foodComments'
@@ -76,6 +76,8 @@ export const updateFoodScore = async (_, args, context) => {
   const allScoreUnset = !some(scores, score => score > 0)
   if (allScoreUnset) throw new Error('should be scored items at least one')
   let success = true
+  const foodRecord = await db.collection('foods').findOne({_id})
+  const updatedScoreFlag = foodRecord.totalScore && foodRecord.totalScore !== '0'
   const updateResult = await db.collection('foods').update(
     {
       _id,
@@ -89,16 +91,40 @@ export const updateFoodScore = async (_, args, context) => {
     },
   )
   success = !!updateResult.result.ok
-  if (success && comment) {
-    const saveCommentResult = await saveFoodComments(null, { comment }, context)
-    success = !!saveCommentResult
+  if (comment){
+    if (updatedScoreFlag) {
+      const saveCommentResult = await saveFoodComments(null, { comment, _operationDetailType: 'COMMENTS', patientId: foodRecord.patientId}, context)
+      success = !!saveCommentResult
+    } else if (success) {
+      const saveCommentResult = await saveFoodComments(null, { comment, _operationDetailType: 'SCORES_AND_COMMENTS', patientId: foodRecord.patientId}, context)
+      success = !!saveCommentResult
+    }
+  } else {
+    const badgeId = new ObjectID().toString()
+    const badgeCreatedAt = new Date()
+    const recordId = freshId()
+    db.collection('badgeRecords').insert({
+      badgeId,
+      recordId,
+      badgeType: 'FOOD_MOMENTS',
+      badgeState: 'AVAILABLE',
+      recordType: 'SCORES',
+      mainContentId: _id,
+      patientId:foodRecord.patientId,
+      senderId:'cde',
+      isRead:false,
+      badgeCreatedAt,
+    })
+    const updatedFoods = await db.collection('foods').findOne({ _id })
+    pubsub.publish('foodDynamics', {
+      ...updatedFoods,
+      _operation: 'UPDATED',
+      _operationDetailType:'SCORES',
+      _recordId: recordId,
+      badgeId,
+      badgeCreatedAt,
+    })
   }
-
-  const updatedFoods = await db.collection('foods').findOne({ _id })
-  pubsub.publish('foodDynamics', {
-    ...updatedFoods,
-    _operation: 'UPDATED',
-  })
   context.response.set('effect-types', 'Foods')
   return success
 }

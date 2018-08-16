@@ -50,6 +50,14 @@ type Foods {
   latestState: String
   # 操作类型（增 删 改，pubsub用）
   _operation: Operation
+  # 操作的具体类型（评星和评论、仅评星、仅评论）
+  _operationDetailType: String
+  # 修改的内容的ID（评星和评论ID、评星ID、评论ID）
+  _recordId: String
+  # 徽章记录的ID（在badgeRecords中的记录的ID）
+  badgeId: String
+  # 徽章记录的创建时间（在badgeRecords中的记录的创建时间）
+  badgeCreatedAt: Date
 }
 
 input FoodsScoreInput {

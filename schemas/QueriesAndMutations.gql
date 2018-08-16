@@ -128,6 +128,8 @@ type Query {
     achievementType: String
     queryType: String
   ): Achievement
+
+  getUnreadFoodBadges(patientId: ID): [BadgeRecords]
 }
 
 type Mutation {
@@ -365,6 +367,8 @@ type Mutation {
   updateInterventionTaskState(_id: ID!, state: InterventionTaskState!): Boolean!
   updateOrder(orderId: ID!, setData: OrderSetDataInput): Boolean
   glycatedHemoglobinAchieve(patientId: ID!): Alipay
+  updateFoodBadgeReadState(badgeId: ID): Boolean
+  setFoodBadgeState(badgeIds: [ID], badgeState: String): Boolean
 }
 
 type Subscription {

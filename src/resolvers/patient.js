@@ -5,6 +5,7 @@ import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
 
 import moment from 'moment'
 import { getMeasureFeedback } from '../cronJob/controller/getMeasureFeedback'
+import {patient} from "../queries/patients";
 
 export const Patient = {
   footAssessmentPhotos: async (patient, _, { getDb }) => {
@@ -297,5 +298,5 @@ export const Patient = {
       })
       .toArray()
     return control.length ? control[0].status === 'ACTIVE' : false
-  },
+  }
 }

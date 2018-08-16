@@ -1,4 +1,5 @@
 import freshId from 'fresh-id'
+import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
 
 export const addFoodComments = async (_, args, context) => {
@@ -40,17 +41,41 @@ export const deleteFoodComments = async (_, args, context) => {
 
 export const saveFoodComments = async (_, args, { getDb }) => {
   const db = await getDb()
-  const result = await db.collection('comments').insert({
+  const commentId = freshId()
+  const {foodCircleId, authorId} = args.comment
+  const resultComments = await db.collection('comments').insert({
     ...args.comment,
-    _id: freshId(),
+    _id: commentId,
     createdAt: new Date(),
   })
-  const reletedFoods = await db
+
+  const badgeId = new ObjectID().toString()
+  const badgeCreatedAt = new Date()
+  const resultBadgeRecords = await db.collection('badgeRecords').insert({
+    badgeId,
+    recordId: commentId,
+    badgeType: 'FOOD_MOMENTS',
+    badgeState: 'AVAILABLE',
+    recordType: args._operationDetailType,
+    mainContentId: foodCircleId,
+    patientId:args.patientId,
+    senderId:authorId,
+    isRead:false,
+    badgeCreatedAt,
+  })
+
+  const relatedFoods = await db
     .collection('foods')
     .findOne({ _id: args.comment.foodCircleId })
   pubsub.publish('foodDynamics', {
-    ...reletedFoods,
+    ...relatedFoods,
     _operation: 'UPDATED',
+    _operationDetailType:args._operationDetailType,
+    _recordId: commentId,
+    badgeId,
+    badgeCreatedAt,
   })
-  return !!result.result.ok
+  return !!resultComments.result.ok && !!resultBadgeRecords.result.ok
+
 }
+

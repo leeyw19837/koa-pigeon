@@ -49,6 +49,8 @@ import * as getTaskSoap from './getTaskSoap'
 import * as getGoods from './getGoods'
 import * as achievement from './achievement'
 
+import * as getUnreadFoodBadges from './getUnreadFoodBadges'
+
 const queries = {
   ...bloodGlucoseMeasurements,
   ...chatMessages,
@@ -95,6 +97,7 @@ const queries = {
   ...getAlipay,
   ...getGoods,
   ...achievement,
+  ...getUnreadFoodBadges,
 }
 
 const queriesWithLogging = {}
