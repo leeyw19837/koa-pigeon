@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 import { pubsub } from '../pubsub'
 import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
+import { whoAmI } from '../modules/chat'
 
 const sourceTypeGroup = [
   'LG',
@@ -28,9 +29,8 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     bgRecordId,
     messagesPatientReplyFlag,
     actualSenderId,
+    nosy,
   } = args
-
-  // console.log('chatMessageCount args', args)
 
   const userObjectId = ObjectId.createFromHexString(userId)
 
@@ -42,23 +42,28 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     throw new Error('Can not find chat room')
   }
 
-  const participantObject = chatRoom.participants.map(p => p.userId === userId)
+  // 等聊天室成员数据清洗完再做这个检查
+  // const participantObject = chatRoom.participants.find(p => p.userId === userId)
+  // if (!participantObject) {
+  //   throw new Error('You can not post to chat rooms you are not a member of')
+  // }
+  const participant = await whoAmI(
+    actualSenderId || userId,
+    nosy,
+    chatRoom.participants,
+    db,
+  )
+  const sender = await db
+    .collection('users')
+    .findOne({ _id: { $in: [userId, userObjectId] } }, { roles: 1 })
+  const isAssistant = sender.roles === '医助'
+  const isPatient = !sender.roles
+  let chatMessageCount = await db
+    .collection('needleChatMessages')
+    .find({ senderId: userId })
+    .count()
 
-  if (!participantObject) {
-    throw new Error('You can not post to chat rooms you are not a member of')
-  }
-
-  let chatMessageCount =
-    userId === '66728d10dc75bc6a43052036'
-      ? -1
-      : await db
-          .collection('needleChatMessages')
-          .find({ senderId: userId })
-          .count()
-  console.log('chatMessageCount', chatMessageCount)
-
-  const sourceTypeMap =
-    userId === '66728d10dc75bc6a43052036' ? 'FROM_CDE' : 'FROM_PATIENT'
+  const sourceTypeMap = isAssistant ? 'FROM_CDE' : 'FROM_PATIENT'
 
   const newChatMessage = {
     _id: freshId(),
@@ -69,7 +74,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     chatRoomId: chatRoom._id,
     sourceType: sourceType || sourceTypeMap,
   }
-  if (actualSenderId) {
+  if (nosy && actualSenderId) {
     newChatMessage.actualSenderId = actualSenderId
   }
   if (bgRecordId) {
@@ -82,14 +87,14 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
-
-  if (chatMessageCount === 0) {
+  const assistant = chatRoom.participants.find(p => p.role === '医助')
+  if (isPatient && chatMessageCount === 0 && assistant) {
     if (text === '你好' || text === '您好') {
       const newChatMessageAutoReplied = {
         _id: freshId(),
         messageType: 'TEXT',
         text: '欢迎您加入共同照护门诊，请问有什么能帮您的吗？',
-        senderId: '66728d10dc75bc6a43052036',
+        senderId: assistant.userId,
         createdAt: new Date(),
         chatRoomId: chatRoom._id,
         sourceType: 'greeting',
@@ -104,19 +109,13 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   }
   const sourceTypeRegex = new RegExp(sourceTypeGroup.join('|'), 'i')
   const participants = chatRoom.participants.map(p => {
-    if (p.userId === userId) {
-      // 如果是系统自动回复的话，照护师的未读数不应该消失
-      if (
-        p.userId === '66728d10dc75bc6a43052036' &&
-        sourceTypeRegex.test(sourceType)
-      ) {
-        return p
-      }
+    // 如果是系统自动回复的话，照护师的未读数不应该消失
+    if (p.userId === participant.userId && !sourceTypeRegex.test(sourceType)) {
       return { ...p, lastSeenAt: new Date() }
     }
     return p
   })
-
+  console.log('participants', participants)
   await db.collection('needleChatRooms').update(
     {
       _id: chatRoomId,
@@ -135,14 +134,9 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   chatRoom.participants.map(async p => {
     if (p.userId !== userId) {
       const user = await db.collection('users').findOne({
-        $or: [
-          {
-            _id: ObjectID.createFromHexString(p.userId),
-          },
-          { _id: p.userId },
-        ],
+        _id: { $in: [ObjectID.createFromHexString(p.userId), p.userId] },
       })
-      if (!user.roles) {
+      if (user && !user.roles) {
         pushChatNotification({
           patient: user,
           messageType: 'TEXT',

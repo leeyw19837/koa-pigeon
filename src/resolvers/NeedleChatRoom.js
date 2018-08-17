@@ -1,5 +1,6 @@
 import { maybeCreateFromHexString } from '../utils'
 import { ObjectId } from 'mongodb'
+import { whoAmI } from '../modules/chat'
 
 export const NeedleChatRoom = {
   async participants(needleChatRoom, _, { getDb }) {
@@ -54,33 +55,17 @@ export const NeedleChatRoom = {
   async unreadMessageCount(needleChatRoom, args, { getDb }) {
     const db = getDb === undefined ? global.db : await getDb()
     const userId = args.userId || '66728d10dc75bc6a43052036'
-    // 为了兼容历史数据这块暂时注掉，等数据清洗完毕+其他的应用做好相应调整后再打开
-    // const me =
-    //   needleChatRoom.participants.find(user => {
-    //     return user.userId === userId
-    //   }) ||
-    //   args.nosy
-    //     ? needleChatRoom.participants.find(user => {
-    //         return user.role === '医助'
-    //       })
-    //     : null
-    const me = needleChatRoom.participants.find(user => {
-      return user.role === '医助'
-    })
-    if (!me) {
-      console.log('can not found any assistant in chatroom', needleChatRoom._id)
-      return 0
-    }
-    const defaultCursor = {
+
+    const me = await whoAmI(userId, args.nosy, needleChatRoom.participants, db)
+    if (!me) return 0
+
+    let cursor = {
       chatRoomId: needleChatRoom._id,
-      senderId: { $ne: me.userId },
-      actualSenderId: { $ne: me.userId },
       createdAt: { $gt: me.lastSeenAt },
     }
-    let cursor = defaultCursor
-    if (userId === '66728d10dc75bc6a43052036') {
+    if (me.role === '医助') {
       cursor = {
-        ...defaultCursor,
+        ...cursor,
         $or: [
           { sourceType: { $exists: false } },
           {
@@ -94,15 +79,7 @@ export const NeedleChatRoom = {
   },
   async lastSeenAt(needleChatRoom, args, context) {
     const userId = args.userId || '66728d10dc75bc6a43052036'
-    let me =
-      needleChatRoom.participants.find(user => {
-        return user.userId === userId
-      }) ||
-      (args.nosy
-        ? needleChatRoom.participants.find(user => {
-            return user.role === '医助'
-          })
-        : null)
+    const me = await whoAmI(userId, args.nosy, needleChatRoom.participants, db)
     return me && me.lastSeenAt
   },
   async patient(chatroom, _, { getDb }) {

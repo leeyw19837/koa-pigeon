@@ -4,10 +4,18 @@ import { pubsub } from '../pubsub'
 
 import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
+import { whoAmI } from '../modules/chat'
+
 export const sendNeedleAudioChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
-  const { userId, chatRoomId, base64EncodedAudioData, actualSenderId } = args
+  const {
+    userId,
+    chatRoomId,
+    base64EncodedAudioData,
+    actualSenderId,
+    nosy,
+  } = args
 
   let chatRoom = await db
     .collection('needleChatRooms')
@@ -17,12 +25,17 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
     throw new Error('Can not find chat room')
   }
 
-  const participantObject = chatRoom.participants.map(p => p.userId === userId)
-
-  if (!participantObject) {
-    throw new Error('You can not post to chat rooms you are not a member of')
-  }
-
+  // 等聊天室成员数据清洗完再做这个检查
+  // const participantObject = chatRoom.participants.find(p => p.userId === userId)
+  // if (!participantObject) {
+  //   throw new Error('You can not post to chat rooms you are not a member of')
+  // }
+  const participant = await whoAmI(
+    actualSenderId || userId,
+    nosy,
+    chatRoom.participants,
+    db,
+  )
   const audioUrlKey = `${userId}${Date.now()}`
   const audioUrl = await uploadFile(audioUrlKey, base64EncodedAudioData)
 
@@ -42,7 +55,7 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
 
   const participants = chatRoom.participants.map(p => {
-    if (p.userId === userId) {
+    if (p.userId === participant.userId) {
       return { ...p, lastSeenAt: new Date() }
     }
     return p
@@ -64,10 +77,10 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
 
   chatRoom.participants.map(async p => {
     if (p.userId !== userId) {
-      const user = await db
-        .collection('users')
-        .findOne({ _id: ObjectID.createFromHexString(p.userId) })
-      if (!user.roles) {
+      const user = await db.collection('users').findOne({
+        _id: { $in: [ObjectID.createFromHexString(p.userId), p.userId] },
+      })
+      if (user && !user.roles) {
         pushChatNotification({
           patient: user,
           messageType: 'AUDIO',

@@ -22,19 +22,17 @@ export const sharedNeedleChatMessageResolvers = {
   async sender(needleChatMessage, _, { getDb }) {
     const db = getDb === undefined ? global.db : await getDb()
 
-    // TODO(tangweikun) Hard Cord should replace of healthCareProfessional id
     const senderId = needleChatMessage.senderId
-    const user =
-      (await db.collection('users').findOne({ _id: senderId })) ||
-      (await db
-        .collection('users')
-        .findOne({ _id: maybeCreateFromHexString(senderId) }))
+    const user = await db
+      .collection('users')
+      .findOne({ _id: { $in: [senderId, maybeCreateFromHexString(senderId)] } })
     if (user) {
+      const isPro = !!user.roles
       return {
         ...user,
         avatar: user.avatar
           ? user.avatar
-          : needleChatMessage.senderId === '66728d10dc75bc6a43052036'
+          : isPro
             ? 'https://prod.gtzh.51ijk.com/imgs/app/avatars/doctor.png'
             : user.gender === 'male'
               ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
