@@ -1,8 +1,11 @@
 type AchievementDetails {
+  type: String
+  name: String
   # 上次糖化数据
-  previousGlycatedHemoglobin: ClinicalLabResult
-  # 本次糖化数据
-  currentGlycatedHemoglobin: ClinicalLabResult
+  preA1c: Int
+  # preClinId: later add the resolve
+  # 当次糖化数据
+  currentA1c: Int
 }
 
 type Achievement {
@@ -12,6 +15,8 @@ type Achievement {
   # 某一个类型的细分: 速降兵
   type: String!
   # 成就名字
+  name: String
+  # 成就详情
   title: String
   # 未获得成就图标
   inactiveAvatar: String
@@ -41,17 +46,19 @@ type AchievementRecord {
   isShown: Boolean
   # 分享了多少次
   shareTimes: [ID]
+  # 成就进度
+  progress: Int
 }
 
 type BonusPointSource {
   # 积分来源的Id
-  sourceId: ID
+  recordId: ID
   # 积分来源的类型
-  sourceType: String
-  # 积分来源的描述
-  sourceTitle: String
-  # 积分来源的方式 // shareToGroup|shareToMoments|getAchievement
-  sourceWay: String
+  type: String
+  # 积分来源的名字
+  name: String
+  # 积分来源的方式 // SHARE_GROUPS|SHARE_MOMENTS|ACHIEVEMENT
+  fromWay: String
 }
 
 type BonusPoint {
