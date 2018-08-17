@@ -2,9 +2,7 @@ import bcrypt from 'bcryptjs'
 import jsonwebtoken from 'jsonwebtoken'
 const omit = require('lodash/omit')
 
-const {
-  JWT_SECRET
-} = process.env;
+const {JWT_SECRET} = process.env;
 
 class LoginController {
 
@@ -12,16 +10,16 @@ class LoginController {
    * curl -X POST http://localhost:3080/login -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' -d 'username=superman2&password=123456'
    */
   async login(ctx) {
-    const {
-      body
-    } = ctx.request
+    const {body} = ctx.request
     const db = await global.db
 
     try {
       const user = await db
-        .collection('User')
+        .collection('systemUsers')
         .findOne({
-          username: body.username
+          username: body
+            .username
+            .toString()
         });
       if (!user) {
         ctx.status = 401
@@ -59,9 +57,7 @@ class LoginController {
    * curl -X POST http://localhost:3080/register  -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded'  -d 'username=superman2&password=123456'
    */
   async register(ctx) {
-    const {
-      body
-    } = ctx.request;
+    const {body} = ctx.request;
 
     console.log(ctx);
     const db = await global.db
@@ -77,12 +73,14 @@ class LoginController {
       let user = db
         .collection('User')
         .find({
-          username: body.username
+          username: body
+            .username
+            .toString()
         });
       if (!user.length) {
         const newUser = body;
         user = await db
-          .collection('User')
+          .collection('systemUsers')
           .insert(newUser);
         ctx.status = 200;
         ctx.body = {

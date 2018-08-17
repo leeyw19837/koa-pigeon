@@ -10,6 +10,8 @@ services:
     environment:
       - MONGO_URL=mongodb://paperKingByiHealth:djsdF3fQa@120.131.8.26:27017,120.131.8.27:27017,120.131.8.46:27017,mongoprod1.ihealthcn.com:27017,mongoprod2.ihealthcn.com:27017,mongoprod3.ihealthcn.com:27017/paper-king?replicaSet=iHealthMongo
       - SECRET=8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo
+      - JWT_SECRET=tctocFi4FLDZtLcbwmxgRJmUj3RHCWwK
+      - AUTH=TRUE
       - PORT=3080
       - NODE_ENV=production
       - RIGHTEOUS_RAVEN_URL=https://raven.ihealthlabs.com.cn

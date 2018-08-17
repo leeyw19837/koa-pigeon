@@ -29,13 +29,22 @@ import LoginController from './login/login.controller'
 import {Date, formatError} from './utils'
 import restfulApi from './restful/router'
 
-let {NODE_ENV, PORT, MONGO_URL, SECRET, JWT_SECRET} = process.env
+let {
+  NODE_ENV,
+  PORT,
+  MONGO_URL,
+  SECRET,
+  JWT_SECRET,
+  AUTH
+} = process.env
 if (!PORT) 
   PORT = '3080'
 if (!NODE_ENV) 
   NODE_ENV = 'development'
 if (!SECRET) 
   SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo';
+if (!AUTH) 
+  AUTH = 'FALSE';
 
 (async() => {
   const resolverMap = {
@@ -78,7 +87,7 @@ if (!SECRET)
     getDb,
     jwtsign: payload => {
       console.log(payload, 'payload')
-      return sign(payload, SECRET, {expiresIn: '7 day'})
+      return sign(payload, JWT_SECRET, {expiresIn: '7 day'})
     }
   }
   global.db = await getDb()
@@ -128,19 +137,20 @@ if (!SECRET)
   app
     .use(router.routes())
     .use(router.allowedMethods())
-
-  app.use(koajwt({secret: JWT_SECRET}).unless({
-    path: [
-      /^\/public/,
-      '/healthcheck',
-      '/login',
-      '/register',
-      '/api',
-      '/wx-mini',
-      `/${SECRET}`,
-      '/feedback'
-    ]
-  }));
+  if (AUTH === "TRUE") {
+    app.use(koajwt({secret: JWT_SECRET}).unless({
+      path: [
+        /^\/public/,
+        '/healthcheck',
+        '/login',
+        '/register',
+        /\/api*/,
+        /\/wx-mini*/,
+        `/${SECRET}`,
+        /\/feedback*/
+      ]
+    }));
+  }
 
   const ws = createServer(app.callback())
   ws.listen(PORT, () => {
