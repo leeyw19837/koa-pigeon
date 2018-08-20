@@ -366,6 +366,11 @@ type Mutation {
   updateInterventionTaskState(_id: ID!, state: InterventionTaskState!): Boolean!
   updateOrder(orderId: ID!, setData: OrderSetDataInput): Boolean
   glycatedHemoglobinAchieve(patientId: ID!): Alipay
+  addSharing(
+    achievementRecordId: ID!
+    shareWay: String!
+    shareStatus: String!
+  ): Boolean
 }
 
 type Subscription {
