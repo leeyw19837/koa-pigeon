@@ -47,7 +47,6 @@ import * as getInterventionTasks from './getInterventionTasks'
 import * as getTaskSoapCorpus from './getTaskSoapCorpus'
 import * as getTaskSoap from './getTaskSoap'
 import * as getGoods from './getGoods'
-import * as achievement from './achievement'
 import { authForApp } from '../utils/authentication'
 
 import * as getUnreadFoodBadges from './getUnreadFoodBadges'
@@ -97,7 +96,6 @@ const queries = {
   ...getTaskSoap,
   ...getAlipay,
   ...getGoods,
-  ...achievement,
   ...getUnreadFoodBadges,
 }
 
