@@ -116,9 +116,9 @@ type Query {
     assistantId: ID
   ): CertifiedDiabetesEducator
   getInterventionTasks(cdeId: ID, patientId: ID): [InterventionTask!]
+  getGroupedInterventionTasks(cdeId: ID): [InterventionTaskCount!]
   getTaskSoapCorpus: [TaskSoapCorpus!]
 
-  getInterventionTasks(cdeId: ID): [InterventionTask!]
   getFoodRecords(patientId: ID, cdeId: ID): [Foods]
   getTaskSoap(taskId: ID): TaskSoap
   getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
@@ -128,7 +128,12 @@ type Query {
     achievementType: String
     queryType: String
   ): Achievement
-  getChatrooms(cdeId: ID, page: Int, limit: Int): [NeedleChatRoom!]
+  getChatrooms(
+    nosy: Boolean
+    cdeId: ID
+    page: Int
+    limit: Int
+  ): [NeedleChatRoom!]
 }
 
 type Mutation {
@@ -164,6 +169,7 @@ type Mutation {
     # The base64 encoded audio data. This gets turned into a URL on the server.
     base64EncodedAudioData: String!
     actualSenderId: ID
+    nosy: Boolean
   ): NeedleAudioMessage!
   # Posts an audio chat message to the given chat room.
   sendNeedleImageChatMessage(
@@ -173,6 +179,7 @@ type Mutation {
     base64EncodedImageData: String!
     sourceType: String
     actualSenderId: ID
+    nosy: Boolean
   ): NeedleImageMessage!
   # Posts an text chat message to the given chat room.
   saveBloodGlucoseMeasurement(
@@ -200,6 +207,7 @@ type Mutation {
     bgRecordId: String
     messagesPatientReplyFlag: String
     actualSenderId: ID
+    nosy: Boolean
   ): NeedleTextMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!

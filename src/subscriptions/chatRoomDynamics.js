@@ -1,6 +1,6 @@
 import { pubsub } from '../pubsub'
 import { withFilter } from 'graphql-subscriptions'
-import find from 'lodash/find'
+import { whoAmI } from '../modules/chat'
 
 export const chatRoomDynamics = {
   resolve: payload => {
@@ -8,14 +8,15 @@ export const chatRoomDynamics = {
   },
   subscribe: withFilter(
     () => pubsub.asyncIterator('chatRoomDynamics'),
-    (payload, variables) => {
-      return (
-        variables.nosy ||
-        (payload &&
-          !!find(payload.participants, {
-            userId: variables.userId,
-          }))
+    async (payload, variables, ctx) => {
+      const { userId, nosy } = variables
+      const me = await whoAmI(
+        userId,
+        nosy,
+        payload.participants,
+        await ctx.getDb(),
       )
+      return !!me
     },
   ),
 }
