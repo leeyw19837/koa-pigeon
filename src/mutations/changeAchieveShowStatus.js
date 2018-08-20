@@ -1,14 +1,19 @@
 export const changeAchieveShowStatus = async (_, args, context) => {
   const db = await context.getDb()
-  const { achievementRecordId } = args
+  const { patientId } = args
   return db.collection('achievementRecords').update(
     {
-      _id: achievementRecordId
+      patientId,
+      isShown: false,
     },
     {
       $set: {
         isShown: true,
+        updatedAt: new Date(),
       },
     },
+    {
+      multi: true
+    }
   )
 }

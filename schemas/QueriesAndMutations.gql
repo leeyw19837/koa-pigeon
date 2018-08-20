@@ -371,7 +371,7 @@ type Mutation {
     shareWay: String!
     shareStatus: String!
   ): Boolean
-  changeAchieveShowStatus(achievementRecordId: String!): Boolean
+  changeAchieveShowStatus(patientId: ID!): Boolean
   
 }
 
