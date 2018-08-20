@@ -32,15 +32,12 @@ import * as alipayOrder from './alipayOrder'
 import * as intervention from './interventionTask'
 import * as glycatedHemoglobinAchieve from './glycatedHemoglobinAchieve'
 import * as updateBadges from './updateBadges'
+import * as sharing from './sharing'
+import * as changeAchieveShowStatus from './changeAchieveShowStatus'
 
+import { logQueryOrMutation } from '../utils'
 
-import {
-  logQueryOrMutation
-} from '../utils'
-
-import {
-  authForApp
-} from '../utils/authentication'
+import { authForApp } from '../utils/authentication'
 
 const mutations = {
   ...assessmentTime,
@@ -76,17 +73,29 @@ const mutations = {
   ...intervention,
   ...glycatedHemoglobinAchieve,
   ...updateBadges,
+  ...sharing,
+  ...changeAchieveShowStatus,
 }
 
 const mutationsWithLogging = {}
 const mutationsWithAuth = {}
 
-Object
-  .keys(mutations)
-  .map(mutationName => (mutationsWithLogging[mutationName] = logQueryOrMutation('MUTATION', mutationName, mutations[mutationName], )), )
+Object.keys(mutations).map(
+  mutationName =>
+    (mutationsWithLogging[mutationName] = logQueryOrMutation(
+      'MUTATION',
+      mutationName,
+      mutations[mutationName],
+    )),
+)
 
-Object
-  .keys(mutationsWithLogging)
-  .map(mutationName => (mutationsWithAuth[mutationName] = authForApp('MUTATION', mutationName, mutations[mutationName], )), )
+Object.keys(mutationsWithLogging).map(
+  mutationName =>
+    (mutationsWithAuth[mutationName] = authForApp(
+      'MUTATION',
+      mutationName,
+      mutations[mutationName],
+    )),
+)
 
 export default mutationsWithAuth
