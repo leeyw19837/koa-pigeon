@@ -9,7 +9,7 @@ export const Auth = jwtSecret => {
     // if (route === '/login' || !route) {   return await next() }
 
     if (authorization) {
-      console.log('This request has authorization header')
+      // console.log('This request has authorization header')
       const parts = authorization.split(' ')
       if (parts[0] == 'Bearer') {
         const token = parts[1]
@@ -20,12 +20,12 @@ export const Auth = jwtSecret => {
 
         } catch (e) {
           ctx.userInfo = null
-          console.log('jwt expired')
+          // console.log('jwt expired')
         }
         await next()
       }
     } else {
-      console.log('This request has NO authorization header')
+      // console.log('This request has NO authorization header')
       return await next()
     }
 

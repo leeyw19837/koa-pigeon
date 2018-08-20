@@ -1,33 +1,24 @@
-import {
-  get
-} from 'lodash'
+import {get} from 'lodash'
 const OAuth = require('co-wechat-oauth')
 import jsonwebtoken from 'jsonwebtoken'
 
-const {
-  APP_ID,
-  APP_SECRET
-} = process.env
+const {APP_ID, APP_SECRET} = process.env
 const client = new OAuth(APP_ID, APP_SECRET)
 
-export const wechatLoginOrSignUp = async (_, args, context) => {
+export const wechatLoginOrSignUp = async(_, args, context) => {
   const db = await context.getDb()
-  const {
-    wechatCode
-  } = args
+  const {wechatCode} = args
   const token = await client.getAccessToken(wechatCode)
   const accessToken = get(token, 'data.access_token')
   const openid = get(token, 'data.openid')
 
   const existingPatient = await db
     .collection('users')
-    .findOne({
-      wechatOpenId: openid
-    })
+    .findOne({wechatOpenId: openid})
   console.log('existingPatient', existingPatient, openid)
   if (existingPatient) {
     console.log('existingPatient---->>>', existingPatient)
-    let exp = Math.floor(Date.now() / 1000) + (60 * 1); // 60 seconds * 60 minutes * 24 hours * 30 days= 1 month
+    let exp = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7);
     if (existingPatient.patientState === 'ACTIVE') {
       exp = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365); //1 year
     }
@@ -69,19 +60,15 @@ export const wechatLoginOrSignUp = async (_, args, context) => {
       updatedAt: new Date()
     }, {
       upsert: true
-    }, )
+    },)
   //JWT签名
   console.log('准备为新用户进行JWT签名：', newPatient)
   const JWT = jsonwebtoken.sign({
     user: wechatOpenId,
     // 设置 token 过期时间
-    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 30), // 60 seconds * 60 minutes = 1 hour
+    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7)
   }, JWT_SECRET)
   console.log('JWT', JWT)
 
-  return {
-    wechatOpenId: openid,
-    didCreateNewPatient: true,
-    JWT
-  }
+  return {wechatOpenId: openid, didCreateNewPatient: true, JWT}
 }

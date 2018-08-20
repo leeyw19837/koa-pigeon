@@ -1,31 +1,13 @@
-import {
-  GraphQLError
-} from 'graphql/error'
-import {
-  verify
-} from 'righteous-raven'
+import {GraphQLError} from 'graphql/error'
+import {verify} from 'righteous-raven'
 import jsonwebtoken from 'jsonwebtoken'
 
-import {
-  generateJwt,
-  createNewPatient
-} from '../utils'
+import {generateJwt, createNewPatient} from '../utils'
 
-const {
-  RIGHTEOUS_RAVEN_URL,
-  RIGHTEOUS_RAVEN_ID,
-  RIGHTEOUS_RAVEN_KEY,
-  JWT_SECRET
-} = process.env
-export const updatePatientDemographics = async (_, args, context) => {
+const {RIGHTEOUS_RAVEN_URL, RIGHTEOUS_RAVEN_ID, RIGHTEOUS_RAVEN_KEY, JWT_SECRET} = process.env
+export const updatePatientDemographics = async(_, args, context) => {
   const db = await context.getDb()
-  const {
-    mobile,
-    birthday,
-    height,
-    weight,
-    gender
-  } = args
+  const {mobile, birthday, height, weight, gender} = args
   await db
     .collection('users')
     .update({
@@ -40,18 +22,14 @@ export const updatePatientDemographics = async (_, args, context) => {
         gender,
         updatedAt: new Date()
       }
-    }, )
+    },)
   return true
 }
 
-export const loginOrSignUp = async (_, args, context) => {
+export const loginOrSignUp = async(_, args, context) => {
   const db = await context.getDb()
   // const clientCodename = context.state.clientCodename
-  const {
-    mobile,
-    verificationCode,
-    wechatOpenId
-  } = args
+  const {mobile, verificationCode, wechatOpenId} = args
 
   if (!/^1[3|4|5|7|8][0-9]\d{8}$/.test(mobile)) {
     throw new Error('手机号码格式不正确')
@@ -88,7 +66,7 @@ export const loginOrSignUp = async (_, args, context) => {
             updatedAt: new Date(),
             isUseNeedle: true
           }
-        }, )
+        },)
     } else {
       await db
         .collection('users')
@@ -99,21 +77,20 @@ export const loginOrSignUp = async (_, args, context) => {
             updatedAt: new Date(),
             isUseNeedle: true
           }
-        }, )
+        },)
     }
-    let exp = Math.floor(Date.now() / 1000) + (60 * 1); // 60 seconds * 60 minutes * 24 hours * 30 days= 1 month
+    let exp = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7);
     if (existingPatient.patientState === 'ACTIVE') {
-      exp = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365); //1 year
+      exp = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365); // 1 year
     }
 
-    //JWT签名
-    console.log('准备为用户进行JWT签名：', existingPatient)
+    //JWT签名 console.log('准备为用户进行JWT签名：', existingPatient)
     const JWT = jsonwebtoken.sign({
       user: existingPatient,
       // 设置 token 过期时间
-      exp,
+      exp
     }, JWT_SECRET)
-    console.log('JWT', JWT)
+    // console.log('JWT', JWT)
     return {
       patientId: existingPatient._id,
       didCreateNewPatient: false,
@@ -130,7 +107,7 @@ export const loginOrSignUp = async (_, args, context) => {
       mobile: existingPatient
         .username
         .replace('@ijk.com', ''),
-      JWT,
+      JWT
     }
   }
 
@@ -140,21 +117,20 @@ export const loginOrSignUp = async (_, args, context) => {
     patientState: 'POTENTIAL',
     isUseNeedle: true
   }
-  if (wechatOpenId)
+  if (wechatOpenId) 
     patientInfo.wechatOpenId = wechatOpenId
 
   const response = await db
     .collection('users')
     .insertOne(patientInfo)
   const newPatient = response.ops[0]
-  //JWT签名
-  console.log('准备为新用户进行JWT签名：', newPatient)
+  //JWT签名 console.log('准备为新用户进行JWT签名：', newPatient)
   const JWT = jsonwebtoken.sign({
     user: newPatient,
     // 设置 token 过期时间
-    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 30), // 60 seconds * 60 minutes = 1 hour
+    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7)
   }, JWT_SECRET)
-  console.log('JWT', JWT)
+  // console.log('JWT', JWT)
   return {
     patientId: newPatient._id,
     didCreateNewPatient: true,
@@ -162,6 +138,6 @@ export const loginOrSignUp = async (_, args, context) => {
     mobile: newPatient
       .username
       .replace('@ijk.com', ''),
-    JWT,
+    JWT
   }
 }
