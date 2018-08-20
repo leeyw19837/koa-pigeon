@@ -123,17 +123,19 @@ type Query {
   getTaskSoap(taskId: ID): TaskSoap
   getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
   getGoods(goodId: ID, goodType: String): Goods
-  achievement(
-    patientId: ID!
-    achievementType: String
-    queryType: String
-  ): Achievement
   getChatrooms(
     nosy: Boolean
     cdeId: ID
     page: Int
     limit: Int
   ): [NeedleChatRoom!]
+  getUnreadFoodBadges(patientId: ID): [BadgeRecords]
+  # achievement(
+  #   patientId: ID!
+  #   achievementType: String
+  #   queryType: String
+  # ): Achievement
+  getChatrooms(cdeId: ID, page: Int, limit: Int): [NeedleChatRoom!]
 }
 
 type Mutation {
@@ -374,6 +376,14 @@ type Mutation {
   updateInterventionTaskState(_id: ID!, state: InterventionTaskState!): Boolean!
   updateOrder(orderId: ID!, setData: OrderSetDataInput): Boolean
   glycatedHemoglobinAchieve(patientId: ID!): Alipay
+  updateFoodBadgeReadState(badgeId: ID): Boolean
+  setFoodBadgeState(badgeIds: [ID], badgeState: String): Boolean
+  addSharing(
+    achievementRecordId: ID!
+    shareWay: String!
+    shareStatus: String!
+  ): Boolean
+  changeAchieveShowStatus(patientId: ID!): Boolean
 }
 
 type Subscription {

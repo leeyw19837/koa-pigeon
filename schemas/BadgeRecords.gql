@@ -1,0 +1,51 @@
+enum BadgeType {
+  # 聊天消息
+  CHAT_MESSAGES
+  # 饮食圈消息
+  FOOD_MOMENTS
+  # 涨知识文章
+  KNOWLEDGE_ARTICLES
+  # 其他消息
+  OTHERS
+}
+
+enum RecordType {
+  # 饮食圈-仅评论消息
+  COMMENTS
+  # 饮食圈-仅评分消息
+  SCORES
+  # 饮食圈-评分和评论消息
+  SCORES_AND_COMMENTS
+}
+
+enum BadgeState {
+  # 饮食圈-评论消息-未读为新消息状态
+  UNREAD
+  # 饮食圈-评论消息-已读为历史消息状态
+  HISTORICAL
+  # 饮食圈-评论消息-删除状态
+  DELETED
+}
+
+type BadgeRecords {
+    # 徽章记录ID（这条未读徽章标记的唯一ID，用来后续查找这条徽章记录）
+    badgeId: ID
+    # 徽章类型（准备为以后拓展，聊天、饮食、知识文章、其他）
+    badgeType: BadgeType
+    # 徽章状态（记录是否被删除(逻辑删除)）
+    badgeState: BadgeState
+    # 记录ID（饮食朋友圈评论ID）
+    recordId: String
+    # 记录类型（饮食圈-评论/评分/评论加评分）
+    recordType: RecordType
+    # 关联的主内容ID（饮食朋友圈条目ID）
+    mainContentId: String
+    # 患者
+    patientId: ID
+    # 评论发出者
+    senderId: ID
+    # 徽章创建时间（用来标记评论时间或者评星时间）
+    badgeCreatedAt: Date
+    # 记录详情（饮食详情）
+    contentDetail: [Foods]
+}

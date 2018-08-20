@@ -46,4 +46,8 @@ type Patient {
   clinicalLabResults: [ClinicalLabResult!]
   yearServiceOrder: Order
   yearServiceStatus(platform: String): Boolean
+  achievements: [Achievement]
+  achievementRecords(achievementId: ID): [AchievementRecord]
+  achievementShownRecords: [AchievementRecord]
+  bonusPoints: [BonusPoint!]
 }
