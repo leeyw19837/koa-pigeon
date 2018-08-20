@@ -314,8 +314,20 @@ export const Patient = {
     const cursor = {
       patientId,
     }
-    if (!achievementId) {
+    if (achievementId) {
       cursor._id = achievementId
+    }
+    const achievements = await db
+      .collection('achievementRecords')
+      .find(cursor)
+      .toArray()
+    return achievements
+  },
+  achievementShownRecords: async (patient) => {
+    const patientId = patient._id.toString()
+    const cursor = {
+      patientId,
+      isShown: false,
     }
     const achievements = await db
       .collection('achievementRecords')

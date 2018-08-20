@@ -371,6 +371,8 @@ type Mutation {
     shareWay: String!
     shareStatus: String!
   ): Boolean
+  changeAchieveShowStatus(achievementRecordId: String!): Boolean
+  
 }
 
 type Subscription {

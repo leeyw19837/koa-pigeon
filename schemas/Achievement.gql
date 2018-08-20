@@ -1,11 +1,10 @@
 type AchievementDetails {
-  type: String
-  name: String
+  type:String
+  name:String
   # 上次糖化数据
-  preA1c: Int
-  # preClinId: later add the resolve
-  # 当次糖化数据
-  currentA1c: Int
+  preA1c: String
+  # 本次糖化数据
+  currentA1c: String
 }
 
 type Achievement {
@@ -25,7 +24,7 @@ type Achievement {
   # 成就描述
   desc: String
   # 分享得奖励的次数上限
-  shareLimit: Int
+  shareWithBonusLimit: Int
   # 成就本身的积分
   bonusPoint: Int
   # 成就的状态
@@ -39,7 +38,7 @@ type AchievementRecord {
   # 获取成就的时间
   achieveAt: Date
   # 成就类型
-  achievement: Achievement!
+  achievement: Achievement
   # 冗余成就的详情
   achievementDetails: AchievementDetails!
   # 是否展示

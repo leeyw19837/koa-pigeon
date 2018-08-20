@@ -32,6 +32,7 @@ import * as alipayOrder from './alipayOrder'
 import * as intervention from './interventionTask'
 import * as glycatedHemoglobinAchieve from './glycatedHemoglobinAchieve'
 import * as sharing from './sharing'
+import * as changeAchieveShowStatus from './changeAchieveShowStatus'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -69,6 +70,7 @@ const mutations = {
   ...intervention,
   ...glycatedHemoglobinAchieve,
   ...sharing,
+  ...changeAchieveShowStatus,
 }
 
 const mutationsWithLogging = {}
