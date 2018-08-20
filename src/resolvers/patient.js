@@ -335,4 +335,21 @@ export const Patient = {
       .toArray()
     return achievements
   },
+  bonusPoints: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const bonusPoints = await db
+      .collection('bonusPoints')
+      .find({
+        patientId,
+        expireAt: {
+          $gt: new Date(),
+        },
+      })
+      .sort({
+        createdAt: -1,
+      })
+      .toArray()
+    return bonusPoints
+  },
 }

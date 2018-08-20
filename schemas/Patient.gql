@@ -49,4 +49,5 @@ type Patient {
   achievements: [Achievement]
   achievementRecords(achievementId: ID): [AchievementRecord]
   achievementShownRecords: [AchievementRecord]
+  bonusPoints: [BonusPoint!]
 }
