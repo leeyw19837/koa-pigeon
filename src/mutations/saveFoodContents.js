@@ -92,10 +92,7 @@ export const updateFoodScore = async (_, args, context) => {
   )
   success = !!updateResult.result.ok
   if (comment){
-    if (updatedScoreFlag) {
-      const saveCommentResult = await saveFoodComments(null, { comment, _operationDetailType: 'COMMENTS', patientId: foodRecord.patientId}, context)
-      success = !!saveCommentResult
-    } else if (success) {
+    if (success) {
       const saveCommentResult = await saveFoodComments(null, { comment, _operationDetailType: 'SCORES_AND_COMMENTS', patientId: foodRecord.patientId}, context)
       success = !!saveCommentResult
     }
@@ -107,12 +104,11 @@ export const updateFoodScore = async (_, args, context) => {
       badgeId,
       recordId,
       badgeType: 'FOOD_MOMENTS',
-      badgeState: 'AVAILABLE',
+      badgeState: 'UNREAD',
       recordType: 'SCORES',
       mainContentId: _id,
       patientId:foodRecord.patientId,
       senderId:'cde',
-      isRead:false,
       badgeCreatedAt,
     })
     const updatedFoods = await db.collection('foods').findOne({ _id })

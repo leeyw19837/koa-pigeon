@@ -19,9 +19,9 @@ enum RecordType {
 }
 
 enum BadgeState {
-  # 饮食圈-评论消息-可用状态
-  AVAILABLE
-  # 饮食圈-评论消息-历史消息状态
+  # 饮食圈-评论消息-未读为新消息状态
+  UNREAD
+  # 饮食圈-评论消息-已读为历史消息状态
   HISTORICAL
   # 饮食圈-评论消息-删除状态
   DELETED
@@ -44,8 +44,6 @@ type BadgeRecords {
     patientId: ID
     # 评论发出者
     senderId: ID
-    # 徽章是否被读（true:已读，false:未读）
-    isRead: Boolean
     # 徽章创建时间（用来标记评论时间或者评星时间）
     badgeCreatedAt: Date
     # 记录详情（饮食详情）

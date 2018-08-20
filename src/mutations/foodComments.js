@@ -43,34 +43,36 @@ export const saveFoodComments = async (_, args, { getDb }) => {
   const db = await getDb()
   const commentId = freshId()
   const {foodCircleId, authorId} = args.comment
+  // console.log('---saveFoodComments---',args)
   const resultComments = await db.collection('comments').insert({
     ...args.comment,
     _id: commentId,
     createdAt: new Date(),
   })
 
+  const relatedFoods = await db
+    .collection('foods')
+    .findOne({ _id: args.comment.foodCircleId })
+
   const badgeId = new ObjectID().toString()
   const badgeCreatedAt = new Date()
+  const patientId = relatedFoods.patientId
   const resultBadgeRecords = await db.collection('badgeRecords').insert({
     badgeId,
     recordId: commentId,
     badgeType: 'FOOD_MOMENTS',
-    badgeState: 'AVAILABLE',
-    recordType: args._operationDetailType,
+    badgeState: 'UNREAD',
+    recordType: !!args._operationDetailType ? args._operationDetailType : 'COMMENTS',
     mainContentId: foodCircleId,
-    patientId:args.patientId,
-    senderId:authorId,
-    isRead:false,
+    patientId: patientId,
+    senderId: authorId,
     badgeCreatedAt,
   })
 
-  const relatedFoods = await db
-    .collection('foods')
-    .findOne({ _id: args.comment.foodCircleId })
   pubsub.publish('foodDynamics', {
     ...relatedFoods,
     _operation: 'UPDATED',
-    _operationDetailType:args._operationDetailType,
+    _operationDetailType: !!args._operationDetailType ? args._operationDetailType : 'COMMENTS',
     _recordId: commentId,
     badgeId,
     badgeCreatedAt,

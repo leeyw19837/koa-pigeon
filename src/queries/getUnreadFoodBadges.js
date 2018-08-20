@@ -6,8 +6,9 @@ export const getUnreadFoodBadges = async (_, args, context) => {
     .find({
       patientId,
       badgeType: 'FOOD_MOMENTS',
+      badgeState: {$ne: 'DELETED'},
       senderId: {$ne: patientId},
-      isRead: false,
     })
+    .sort({badgeCreatedAt:-1})
     .toArray()
 }

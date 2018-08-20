@@ -7,7 +7,6 @@ export const updateFoodBadgeReadState = async (_, args, context) => {
     },
     {
       $set: {
-        isRead: true,
         badgeState: 'HISTORICAL',
         badgeUpdatedAt: new Date(),
       },
@@ -24,6 +23,7 @@ export const setFoodBadgeState = async (_, args, context) => {
     updateResult = updateResult && await db.collection('badgeRecords').update(
       {
         badgeId:i,
+        badgeState: {$ne: 'DELETED'}
       },
       {
         $set: {
