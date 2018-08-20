@@ -7,6 +7,7 @@ const client = new OAuth(APP_ID, APP_SECRET)
 
 export const wechatLoginOrSignUp = async(_, args, context) => {
   const db = await context.getDb()
+  const {JWT_SECRET} = process.env
   const {wechatCode} = args
   const token = await client.getAccessToken(wechatCode)
   const accessToken = get(token, 'data.access_token')
@@ -62,9 +63,9 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
       upsert: true
     },)
   //JWT签名
-  console.log('准备为新用户进行JWT签名：', newPatient)
+  console.log('准备为新用户进行JWT签名：', openid)
   const JWT = jsonwebtoken.sign({
-    user: wechatOpenId,
+    user: openid,
     // 设置 token 过期时间
     exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7)
   }, JWT_SECRET)
