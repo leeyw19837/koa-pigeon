@@ -1,4 +1,5 @@
 import { ObjectID } from 'mongodb'
+import moment from 'moment'
 
 const insertBonusPoint = async (sourceData, patientId) => {
   const defaultPoints = {
@@ -14,6 +15,7 @@ const insertBonusPoint = async (sourceData, patientId) => {
 }
 
 const createSharing = async ({
+  patientId,
   name,
   type,
   recordId,
@@ -72,6 +74,7 @@ export const addSharing = async (_, args, context) => {
     const { type, name } = achievementDetails
     // create sharing
     const shareId = await createSharing({
+      patientId,
       type,
       name,
       recordId: _id,
@@ -86,7 +89,7 @@ export const addSharing = async (_, args, context) => {
     if (achievement) {
       const { shareWithBonusLimit } = achievement
       // Need add the bonusPoint
-      if (shareTimes.length < shareWithBonusLimit && shareStatus === 'SUCESS') {
+      if (shareTimes.length < shareWithBonusLimit && shareStatus === 'SUCCESS') {
         await insertBonusPoint(
           {
             recordId: shareId,
