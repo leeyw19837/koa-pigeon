@@ -1,21 +1,15 @@
-import {
-  verify
-} from 'jsonwebtoken'
+import {verify} from 'jsonwebtoken'
 
 export const Auth = jwtSecret => {
-  return async (ctx, next) => {
-    const {
-      authorization,
-      referer,
-      origin
-    } = ctx.request.headers
+  return async(ctx, next) => {
+    const {authorization, referer, origin} = ctx.request.headers
 
     const route = referer && origin && referer.substr(origin.length)
 
     // if (route === '/login' || !route) {   return await next() }
 
     if (authorization) {
-      console.log('if (authorization)', true)
+      console.log('This request has authorization header')
       const parts = authorization.split(' ')
       if (parts[0] == 'Bearer') {
         const token = parts[1]
@@ -31,7 +25,7 @@ export const Auth = jwtSecret => {
         await next()
       }
     } else {
-      console.log('if (authorization)', false)
+      console.log('This request has NO authorization header')
       return await next()
     }
 

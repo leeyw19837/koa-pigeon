@@ -12,7 +12,7 @@ export const userAuth = user => {
   }
 
 export const authForApp = (requestType, funcName, func) => async(rootValue, args, ctx,) => {
-  if (['loginOrSignUp', 'wechatLoginOrSignUp', 'professionalLoginForWechat', 'professionalLoginForMobile'].indexOf(funcName) > -1) {
+  if (['loginOrSignUp', 'wechatLoginOrSignUp', 'professionalLoginForWechat', 'professionalLoginForMobile'].indexOf(funcName) == -1) {
     if (!ctx.userInfo) {
       if (AUTH === 'TRUE') 
         throw new GraphQLError('AuthenticationError',);
