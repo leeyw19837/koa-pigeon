@@ -31,6 +31,7 @@ import * as saveFoodContents from './saveFoodContents'
 import * as alipayOrder from './alipayOrder'
 import * as intervention from './interventionTask'
 import * as glycatedHemoglobinAchieve from './glycatedHemoglobinAchieve'
+import * as updateBadges from './updateBadges'
 
 
 import {
@@ -73,7 +74,8 @@ const mutations = {
   ...saveFoodContents,
   ...alipayOrder,
   ...intervention,
-  ...glycatedHemoglobinAchieve
+  ...glycatedHemoglobinAchieve,
+  ...updateBadges,
 }
 
 const mutationsWithLogging = {}

@@ -56,6 +56,8 @@ import {
   authForApp
 } from '../utils/authentication'
 
+import * as getUnreadFoodBadges from './getUnreadFoodBadges'
+
 const queries = {
   ...bloodGlucoseMeasurements,
   ...chatMessages,
@@ -102,6 +104,7 @@ const queries = {
   ...getAlipay,
   ...getGoods,
   ...achievement,
+  ...getUnreadFoodBadges,
 }
 
 const queriesWithLogging = {}
