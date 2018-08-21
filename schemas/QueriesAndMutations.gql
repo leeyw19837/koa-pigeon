@@ -116,7 +116,10 @@ type Query {
     assistantId: ID
   ): CertifiedDiabetesEducator
   getInterventionTasks(cdeId: ID, patientId: ID): [InterventionTask!]
-  getGroupedInterventionTasks(cdeId: ID): [InterventionTaskCount!]
+  getGroupedInterventionTasks(
+    cdeId: ID
+    nosy: Boolean
+  ): [InterventionTaskCount!]
   getTaskSoapCorpus: [TaskSoapCorpus!]
 
   getFoodRecords(patientId: ID, cdeId: ID): [Foods]

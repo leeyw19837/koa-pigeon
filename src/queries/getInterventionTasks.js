@@ -41,10 +41,14 @@ export const getInterventionTasks = async (
   return result
 }
 
-export const getGroupedInterventionTasks = async (_, { cdeId }, { getDb }) => {
+export const getGroupedInterventionTasks = async (
+  _,
+  { cdeId, nosy },
+  { getDb },
+) => {
   const db = await getDb()
   const condition = { state: { $nin: ['DONE', 'DONE_WITH_NO_SOAP'] } }
-  if (cdeId) {
+  if (!nosy && cdeId) {
     const patients = await db
       .collection('users')
       .find(
@@ -57,7 +61,7 @@ export const getGroupedInterventionTasks = async (_, { cdeId }, { getDb }) => {
       .toArray()
     const patientsIds = patients.map(p => p._id.toString())
     condition.patientId = { $in: patientsIds }
-  } else {
+  } else if (nosy) {
     const patients = await db
       .collection('users')
       .find(
@@ -69,6 +73,8 @@ export const getGroupedInterventionTasks = async (_, { cdeId }, { getDb }) => {
       .toArray()
     const patientsIds = patients.map(p => p._id.toString())
     condition.patientId = { $in: patientsIds }
+  } else {
+    return null
   }
   const result = await db
     .collection('interventionTask')
