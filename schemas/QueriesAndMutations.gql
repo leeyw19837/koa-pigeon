@@ -135,7 +135,6 @@ type Query {
   #   achievementType: String
   #   queryType: String
   # ): Achievement
-  getChatrooms(cdeId: ID, page: Int, limit: Int): [NeedleChatRoom!]
 }
 
 type Mutation {
@@ -384,7 +383,7 @@ type Mutation {
     shareStatus: String!
   ): String
   changeAchieveShowStatus(patientId: ID!): Boolean
-  sharingConfirm(shareId: ID!,confirmStatus:String!): Boolean
+  sharingConfirm(shareId: ID!, confirmStatus: String!): Boolean
 }
 
 type Subscription {
