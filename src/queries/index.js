@@ -47,7 +47,7 @@ import * as getInterventionTasks from './getInterventionTasks'
 import * as getTaskSoapCorpus from './getTaskSoapCorpus'
 import * as getTaskSoap from './getTaskSoap'
 import * as getGoods from './getGoods'
-import {LogandAuthForApp} from '../utils/authentication'
+import {logandAuthForApp} from '../utils/authentication'
 
 import * as getUnreadFoodBadges from './getUnreadFoodBadges'
 
@@ -103,6 +103,6 @@ const queriesWithAuthandLog = {}
 
 Object
   .keys(queries)
-  .map(queryName => (queriesWithAuthandLog[queryName] = LogandAuthForApp('QUERY', queryName, queries[queryName],)),)
+  .map(queryName => (queriesWithAuthandLog[queryName] = logandAuthForApp('QUERY', queryName, queries[queryName],)),)
 
 export default queriesWithAuthandLog

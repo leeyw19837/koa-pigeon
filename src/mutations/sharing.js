@@ -57,11 +57,12 @@ const updateAchievementRecord = async (shareId, recordId) => {
 export const addSharing = async (_, args, context) => {
   const db = await context.getDb()
   const { achievementRecordId, shareWay, shareStatus } = args
+  console.log('shar1111-->')
 
   const achieveRecord = await db
     .collection('achievementRecords')
     .findOne({ _id: achievementRecordId })
-
+  let resultId = ''
   if (achieveRecord) {
     const {
       achievementId,
@@ -81,7 +82,7 @@ export const addSharing = async (_, args, context) => {
       shareWay,
       shareStatus,
     })
-
+    resultId = shareId
     const achievement = await db.collection('achievements').findOne({
       _id: achievementId,
     })
@@ -106,4 +107,22 @@ export const addSharing = async (_, args, context) => {
   } else {
     throw new Error('achievementRecord not existed')
   }
+  return resultId
+}
+
+export const sharingConfirm = async (_, args, context) => {
+  const db = await context.getDb()
+  const { shareId, confirmStatus } = args
+  console.log('shareId, confirmStatus-->', shareId, confirmStatus)
+  return db.collection('sharing').update(
+    {
+      _id: shareId,
+    },
+    {
+      $set: {
+        shareStatus: confirmStatus,
+        updatedAt: new Date(),
+      },
+    },
+  )
 }

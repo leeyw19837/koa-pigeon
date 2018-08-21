@@ -37,7 +37,7 @@ import * as changeAchieveShowStatus from './changeAchieveShowStatus'
 
 import {logQueryOrMutation} from '../utils'
 
-import {LogandAuthForApp} from '../utils/authentication'
+import {logandAuthForApp} from '../utils/authentication'
 
 const mutations = {
   ...assessmentTime,
@@ -81,6 +81,6 @@ const mutationsWithAuthandLog = {}
 
 Object
   .keys(mutations)
-  .map(mutationName => (mutationsWithAuthandLog[mutationName] = LogandAuthForApp('MUTATION', mutationName, mutations[mutationName],)),)
+  .map(mutationName => (mutationsWithAuthandLog[mutationName] = logandAuthForApp('MUTATION', mutationName, mutations[mutationName],)),)
 
 export default mutationsWithAuthandLog

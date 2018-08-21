@@ -382,8 +382,9 @@ type Mutation {
     achievementRecordId: ID!
     shareWay: String!
     shareStatus: String!
-  ): Boolean
+  ): String
   changeAchieveShowStatus(patientId: ID!): Boolean
+  sharingConfirm(shareId: ID!,confirmStatus:String!): Boolean
 }
 
 type Subscription {
