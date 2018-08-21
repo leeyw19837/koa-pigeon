@@ -305,6 +305,9 @@ export const Patient = {
       .find({
         status: { $ne: 'INACTIVE' },
       })
+      .sort({
+        createdAt: -1,
+      })
       .toArray()
     return achievements
   },
@@ -320,6 +323,9 @@ export const Patient = {
     const achievements = await db
       .collection('achievementRecords')
       .find(cursor)
+      .sort({
+        achieveAt: -1,
+      })
       .toArray()
     return achievements
   },
