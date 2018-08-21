@@ -11,7 +11,10 @@ export const userAuth = user => {
     }
   }
 
-export const authForApp = (requestType, funcName, func) => async(rootValue, args, ctx,) => {
+export const LogandAuthForApp = (requestType, funcName, func) => async(rootValue, args, ctx,) => {
+  if (funcName !== 'saveFoodContents') {
+    console.log(`${requestType}: Calling ${funcName} with args ${JSON.stringify(args)}`,)
+  }
   if (['loginOrSignUp', 'wechatLoginOrSignUp', 'professionalLoginForWechat', 'professionalLoginForMobile'].indexOf(funcName) == -1) {
     if (!ctx.userInfo) {
       if (AUTH === 'TRUE') 

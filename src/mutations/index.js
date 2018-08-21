@@ -35,9 +35,9 @@ import * as updateBadges from './updateBadges'
 import * as sharing from './sharing'
 import * as changeAchieveShowStatus from './changeAchieveShowStatus'
 
-import { logQueryOrMutation } from '../utils'
+import {logQueryOrMutation} from '../utils'
 
-import { authForApp } from '../utils/authentication'
+import {LogandAuthForApp} from '../utils/authentication'
 
 const mutations = {
   ...assessmentTime,
@@ -74,28 +74,13 @@ const mutations = {
   ...glycatedHemoglobinAchieve,
   ...updateBadges,
   ...sharing,
-  ...changeAchieveShowStatus,
+  ...changeAchieveShowStatus
 }
 
-const mutationsWithLogging = {}
-const mutationsWithAuth = {}
+const mutationsWithAuthandLog = {}
 
-Object.keys(mutations).map(
-  mutationName =>
-    (mutationsWithLogging[mutationName] = logQueryOrMutation(
-      'MUTATION',
-      mutationName,
-      mutations[mutationName],
-    )),
-)
+Object
+  .keys(mutations)
+  .map(mutationName => (mutationsWithAuthandLog[mutationName] = LogandAuthForApp('MUTATION', mutationName, mutations[mutationName],)),)
 
-Object.keys(mutationsWithLogging).map(
-  mutationName =>
-    (mutationsWithAuth[mutationName] = authForApp(
-      'MUTATION',
-      mutationName,
-      mutations[mutationName],
-    )),
-)
-
-export default mutationsWithAuth
+export default mutationsWithAuthandLog
