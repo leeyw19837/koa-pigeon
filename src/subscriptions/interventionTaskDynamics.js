@@ -12,7 +12,12 @@ export const interventionTaskDynamics = {
       const patient = await global.db
         .collection('users')
         .findOne({ _id: ObjectID(payload.patientId) })
-      return patient && patient.cdeId === variables.cdeId
+      return (
+        variables.nosy ||
+        (patient &&
+          (patient.cdeId === variables.cdeId ||
+            patient._id.toString() === variables.patientId))
+      )
     },
   ),
 }

@@ -115,7 +115,11 @@ type Query {
     cdeId: ID
     assistantId: ID
   ): CertifiedDiabetesEducator
-  getInterventionTasks(cdeId: ID, patientId: ID): [InterventionTask!]
+  getInterventionTasks(
+    cdeId: ID
+    patientId: ID
+    nosy: Boolean
+  ): [InterventionTask!]
   getGroupedInterventionTasks(
     cdeId: ID
     nosy: Boolean
@@ -393,7 +397,7 @@ type Subscription {
   chatMessageAdded(chatRoomId: ID): NeedleChatMessage!
   chatRoomDynamics(userId: ID, nosy: Boolean): NeedleChatRoom!
   warningAdded: Warning
-  interventionTaskDynamics(cdeId: ID): InterventionTask
+  interventionTaskDynamics(cdeId: ID, patientId: ID, nosy: Boolean): InterventionTask
   foodDynamics(patientId: ID): Foods
 }
 

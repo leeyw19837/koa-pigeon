@@ -1,11 +1,11 @@
 export const getInterventionTasks = async (
   _,
-  { cdeId, patientId },
+  { cdeId, patientId, nosy },
   { getDb },
 ) => {
   const db = await getDb()
-  const condition = {}
-  if (!patientId && cdeId) {
+  let condition = { state: { $nin: ['DONE', 'DONE_WITH_NO_SOAP'] } }
+  if (!patientId && !nosy && cdeId) {
     const patients = await db
       .collection('users')
       .find(
@@ -19,8 +19,8 @@ export const getInterventionTasks = async (
     const patientsIds = patients.map(p => p._id.toString())
     condition.patientId = { $in: patientsIds }
   } else if (patientId) {
-    condition.patientId = patientId
-  } else {
+    condition = { patientId }
+  } else if (nosy) {
     const patients = await db
       .collection('users')
       .find(
