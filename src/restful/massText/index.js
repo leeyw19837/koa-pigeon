@@ -1,7 +1,7 @@
 import { ObjectID } from 'mongodb'
 import find from 'lodash/find'
 
-import { multiSendMiPush } from '../../mipush/multiMiPush'
+import { multiSendMiPushForAlias } from '../../mipush/multiMiPushForAlias'
 import { pubsub } from '../../pubsub'
 
 export const sendMassText = async ctx => {
@@ -19,6 +19,7 @@ export const sendMassText = async ctx => {
     .toArray()
   const massTextMessages = []
   const patientIds = users.map(o => o._id.toString())
+  const mipushAlias = []
   const chatRooms = await db
     .collection('needleChatRooms')
     .find({
@@ -31,6 +32,7 @@ export const sendMassText = async ctx => {
       find(o.participants, item => item.userId === patientId),
     )[0]
     if (chatRoom) {
+      mipushAlias.push(patientId)
       const message = {
         _id: new ObjectID().toString(),
         messageType: 'TEXT',
@@ -55,7 +57,7 @@ export const sendMassText = async ctx => {
       .collection('needleChatMessages')
       .insert(massTextMessages)
     if (insertResult.result.ok === 1) {
-      await multiSendMiPush(massTextMessages, 'TEXT')
+      // await multiSendMiPushForAlias(mipushAlias, 'TEXT')
       pubChatMessages(massTextMessages)
     }
   }
