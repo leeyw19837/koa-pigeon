@@ -48,6 +48,7 @@ type Patient {
   yearServiceStatus(platform: String): Boolean
   achievements: [Achievement]
   achievementRecords(achievementId: ID): [AchievementRecord]
+  achievementResult(achievementId: ID):[AchievementResult]
   achievementShownRecords: [AchievementRecord]
   bonusPoints: [BonusPoint!]
 }
