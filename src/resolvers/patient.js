@@ -329,6 +329,34 @@ export const Patient = {
       .toArray()
     return achievements
   },
+  achievementResult: async (patient, { achievementId }, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const achievements = await db
+      .collection('achievements')
+      .find({
+        status: { $ne: 'INACTIVE' },
+      })
+      .sort({
+        createdAt: -1,
+      })
+      .toArray()
+
+    const cursor = {
+      patientId,
+    }
+    if (achievementId) {
+      cursor._id = achievementId
+    }
+    const achievementRecords = await db
+      .collection('achievementRecords')
+      .find(cursor)
+      .sort({
+        achieveAt: -1,
+      })
+      .toArray()
+    return { achievements, achievementRecords }
+  },
   achievementShownRecords: async patient => {
     const patientId = patient._id.toString()
     const cursor = {

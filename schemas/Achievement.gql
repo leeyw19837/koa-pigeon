@@ -68,3 +68,8 @@ type BonusPoint {
   expireAt: Date
   createdAt: Date
 }
+
+type AchievementResult{
+  achievements:Achievement
+  achievementRecords:AchievementRecord
+}
