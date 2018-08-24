@@ -6,6 +6,7 @@ import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
 import { whoAmI } from '../modules/chat'
 
+const sourceTypesProCare = ['FROM_CDE', 'FROM_PATIENT', 'SMS', 'WECHAT']
 export const sendNeedleAudioChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
@@ -57,6 +58,15 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
   const participants = chatRoom.participants.map(p => {
     if (p.userId === participant.userId) {
       return { ...p, lastSeenAt: new Date() }
+    } else if (p.userId !== participant.userId) {
+      if (
+        p.role !== '患者' &&
+        sourceType &&
+        !sourceTypesProCare.includes(sourceType) &&
+        !messagesPatientReplyFlag
+      )
+        return p
+      return { ...p, unreadCount: (participant.unreadCount || 0) + 1 }
     }
     return p
   })

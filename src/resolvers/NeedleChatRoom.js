@@ -59,23 +59,7 @@ export const NeedleChatRoom = {
     const me = await whoAmI(userId, args.nosy, needleChatRoom.participants, db)
     if (!me) return 0
 
-    let cursor = {
-      chatRoomId: needleChatRoom._id,
-      createdAt: { $gt: me.lastSeenAt },
-    }
-    if (me.role === '医助') {
-      cursor = {
-        ...cursor,
-        $or: [
-          { sourceType: { $exists: false } },
-          {
-            sourceType: { $in: ['FROM_CDE', 'FROM_PATIENT', 'SMS', 'WECHAT'] },
-          },
-          { messagesPatientReplyFlag: { $exists: true } },
-        ],
-      }
-    }
-    return await db.collection('needleChatMessages').count(cursor)
+    return me.unreadCount || 0
   },
   async lastSeenAt(needleChatRoom, args, context) {
     const userId = args.userId || '66728d10dc75bc6a43052036'

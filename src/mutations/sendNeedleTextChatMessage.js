@@ -18,6 +18,8 @@ const sourceTypeGroup = [
   'BOP',
 ]
 
+const sourceTypesProCare = ['FROM_CDE', 'FROM_PATIENT', 'SMS', 'WECHAT']
+
 export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   const db = getDb === undefined ? global.db : await getDb()
 
@@ -112,6 +114,15 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     // 如果是系统自动回复的话，照护师的未读数不应该消失
     if (p.userId === participant.userId && !sourceTypeRegex.test(sourceType)) {
       return { ...p, lastSeenAt: new Date() }
+    } else if (p.userId !== participant.userId) {
+      if (
+        p.role !== '患者' &&
+        sourceType &&
+        !sourceTypesProCare.includes(sourceType) &&
+        !messagesPatientReplyFlag
+      )
+        return p
+      return { ...p, unreadCount: (participant.unreadCount || 0) + 1 }
     }
     return p
   })

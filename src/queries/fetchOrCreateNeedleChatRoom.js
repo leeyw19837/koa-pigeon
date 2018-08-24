@@ -23,8 +23,12 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
     chatRoom = {
       _id: freshId(),
       participants: [
-        { userId, lastSeenAt: new Date() },
-        { userId: '66728d10dc75bc6a43052036', lastSeenAt: new Date() },
+        { userId, role: user.roles || '患者', lastSeenAt: new Date() },
+        {
+          userId: '66728d10dc75bc6a43052036',
+          role: '医助',
+          lastSeenAt: new Date(),
+        },
         // TODO(tangweikun): Hard code(use yushuiqing's account)
       ],
       lastMessageSendAt: new Date('2000-01-01'),
@@ -99,6 +103,19 @@ export const getChatrooms = async (
         $elemMatch: { userId: { $in: patientsIds }, role: '患者' },
       },
     }
+  } else if (nosy) {
+    let patientsIds = await db
+      .collection('users')
+      .find({ patientState: { $nin: ['REMOVED', 'ARCHIVED'] } }, { _id: 1 })
+      .toArray()
+    patientsIds = patientsIds.map(p => p._id.toString())
+    condition = {
+      participants: {
+        $elemMatch: { userId: { $in: patientsIds }, role: '患者' },
+      },
+    }
+  } else {
+    return null
   }
   const chatrooms = await db
     .collection('needleChatRooms')
