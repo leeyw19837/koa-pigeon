@@ -1,5 +1,6 @@
 import { ObjectID } from 'mongodb'
 import moment from 'moment'
+import { blogs } from '../queries/blogs'
 
 const insertBonusPoint = async (sourceData, patientId) => {
   const defaultPoints = {
@@ -54,10 +55,64 @@ const updateAchievementRecord = async (shareId, recordId) => {
   )
 }
 
+// 查询当前患者分享本条涨知识文章的次数
+const userBlogShare = async (patientId, recordId) => {
+  const cursor = {
+    patientId, 'shareData.recordId': recordId
+  }
+  console.log('cursor', cursor)
+  const blogs = await db
+    .collection('sharing')
+    .find(cursor)
+    .toArray()
+  return blogs
+}
+
+// 根据type判断，以Id查询分享的内容
+const shareRecords = async (type, recordId) => {
+  switch (type) {
+    case 'KNOWLEDGE':
+      const result = {}
+      const blogsArray = await blogs()
+      const blog = blogsArray.filter(b => b._id === recordId)
+      if (blog) {
+        const { type, title } = blog[0]
+        result.type = type
+        result.name = title
+      }
+      return result
+    default:
+      break
+  }
+}
+// 根据type判断，调用插入积分的接口
+const insertBonusPointByType = async (shareType, shareContentId, shareObj) => {
+  const { patientId, type, name, shareWay, recordId } = shareObj
+  console.log(patientId, recordId)
+  const sourceData = {
+    recordId,
+    fromWay: shareWay,
+    type,
+    name,
+  }
+  switch (shareType) {
+    case 'KNOWLEDGE':
+      const blogShare = await userBlogShare(patientId, shareContentId)
+      let times = 0
+      if (blogShare) {
+        times = blogShare.length
+      }
+      if (times < 6) {
+        await insertBonusPoint(sourceData, patientId)
+      }
+    default:
+      break
+  }
+}
+
 export const addSharing = async (_, args, context) => {
   const db = await context.getDb()
   const { achievementRecordId, shareWay, shareStatus } = args
-  console.log('shar1111-->')
 
   const achieveRecord = await db
     .collection('achievementRecords')
@@ -110,10 +165,10 @@ export const addSharing = async (_, args, context) => {
   return resultId
 }
 
+// 前端分享回调后，调用的确认接口
 export const sharingConfirm = async (_, args, context) => {
   const db = await context.getDb()
   const { shareId, confirmStatus } = args
-  console.log('shareId, confirmStatus-->', shareId, confirmStatus)
   return db.collection('sharing').update(
     {
       _id: shareId,
@@ -125,4 +180,31 @@ export const sharingConfirm = async (_, args, context) => {
       },
     },
   )
+}
+
+// 添加分享数据的共通接口
+export const addCommonSharing = async (_, args, context) => {
+  const { patientId, shareType, recordId, shareWay, shareStatus } = args
+  const shareRecode = await shareRecords(shareType, recordId)
+  const { type, name } = shareRecode
+  const shareObj = {
+    patientId,
+    type,
+    name,
+    recordId,
+    shareWay,
+    shareStatus,
+  }
+  // create sharing
+  const shareId = await createSharing({
+    patientId,
+    name,
+    type,
+    recordId,
+    shareWay,
+    shareStatus,
+  })
+  shareObj.recordId = shareId
+  insertBonusPointByType(shareType, recordId, shareObj)
+  return shareId
 }

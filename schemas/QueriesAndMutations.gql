@@ -391,6 +391,13 @@ type Mutation {
   ): String
   changeAchieveShowStatus(patientId: ID!): Boolean
   sharingConfirm(shareId: ID!, confirmStatus: String!): Boolean
+  addCommonSharing(
+    patientId: ID!
+    shareType:String
+    recordId: ID!
+    shareWay: String!
+    shareStatus: String!
+  ): String
 }
 
 type Subscription {
