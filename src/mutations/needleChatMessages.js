@@ -1,4 +1,3 @@
-
 import { pubsub } from '../pubsub'
 
 export const updateLastSeenAt = async (_, args, { getDb }) => {
@@ -14,14 +13,21 @@ export const updateLastSeenAt = async (_, args, { getDb }) => {
     const { participants } = chatRoom
     const index = participants.findIndex(item => item.userId === userId)
 
-    await db
+    await db.collection('needleChatRooms').update(
+      { _id: chatRoomId },
+      {
+        $set: {
+          [`participants.${index}`]: {
+            lastSeenAt: new Date(),
+            unreadCount: 0,
+          },
+        },
+      },
+    )
+
+    chatRoom = await db
       .collection('needleChatRooms')
-      .update(
-        { _id: chatRoomId },
-        { $set: { [`participants.${index}.lastSeenAt`]: new Date() } },
-      )
-    
-    chatRoom = await db.collection('needleChatRooms').findOne({ _id: chatRoomId })
+      .findOne({ _id: chatRoomId })
     pubsub.publish('chatRoomDynamics', chatRoom)
   }
 

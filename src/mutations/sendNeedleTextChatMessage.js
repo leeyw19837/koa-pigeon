@@ -113,7 +113,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   const participants = chatRoom.participants.map(p => {
     // 如果是系统自动回复的话，照护师的未读数不应该消失
     if (p.userId === participant.userId && !sourceTypeRegex.test(sourceType)) {
-      return { ...p, lastSeenAt: new Date() }
+      return { ...p, lastSeenAt: new Date(), unreadCount: 0 }
     } else if (p.userId !== participant.userId) {
       if (
         p.role !== '患者' &&

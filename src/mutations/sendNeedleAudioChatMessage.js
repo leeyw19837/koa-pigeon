@@ -57,7 +57,7 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
 
   const participants = chatRoom.participants.map(p => {
     if (p.userId === participant.userId) {
-      return { ...p, lastSeenAt: new Date() }
+      return { ...p, lastSeenAt: new Date(), unreadCount: 0 }
     } else if (p.userId !== participant.userId) {
       if (
         p.role !== '患者' &&
