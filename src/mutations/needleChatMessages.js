@@ -17,10 +17,8 @@ export const updateLastSeenAt = async (_, args, { getDb }) => {
       { _id: chatRoomId },
       {
         $set: {
-          [`participants.${index}`]: {
-            lastSeenAt: new Date(),
-            unreadCount: 0,
-          },
+          [`participants.${index}.lastSeenAt`]: new Date(),
+          [`participants.${index}.unreadCount`]: 0,
         },
       },
     )
