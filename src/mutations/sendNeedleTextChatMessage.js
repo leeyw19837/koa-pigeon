@@ -122,7 +122,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
         !messagesPatientReplyFlag
       )
         return p
-      return { ...p, unreadCount: (participant.unreadCount || 0) + 1 }
+      return { ...p, unreadCount: (p.unreadCount || 0) + 1 }
     }
     return p
   })

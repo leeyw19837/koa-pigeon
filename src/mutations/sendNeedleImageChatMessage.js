@@ -57,7 +57,7 @@ export const sendNeedleImageChatMessage = async (_, args, context) => {
     if (p.userId === participant.userId) {
       return { ...p, lastSeenAt: new Date(), unreadCount: 0 }
     } else if (p.userId !== participant.userId) {
-      return { ...p, unreadCount: (participant.unreadCount || 0) + 1 }
+      return { ...p, unreadCount: (p.unreadCount || 0) + 1 }
     }
     return p
   })
