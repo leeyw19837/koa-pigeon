@@ -11,6 +11,7 @@ export const updateLastSeenAt = async (_, args, { getDb }) => {
 
   if (chatRoom) {
     const { participants } = chatRoom
+
     const index = participants.findIndex(item => item.userId === userId)
 
     await db.collection('needleChatRooms').update(
