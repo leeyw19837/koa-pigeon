@@ -75,3 +75,46 @@ export const saveFootAssessment = async (_, args, { getDb }) => {
 
   return null
 }
+
+const updateFootRecord = async (recordId, setObj, role, db) => {
+  await db.collection('footAssessment').update(
+    { _id: recordId },
+    {
+      $set: {
+        updatedAt: new Date(),
+        role,
+        ...setObj,
+        highRiskFoot: highRiskFoot(setObj),
+        uploadAt: new Date(),
+      },
+    },
+  )
+}
+
+export const uploadMultiAssessmentFoots = async (_, args, { getDb }) => {
+  const db = await getDb()
+  const { healthCareTeamId, role, assessmentDetailsJsons } = args
+  let cacheAssessments = []
+  try {
+    cacheAssessments = JSON.parse(assessmentDetailsJsons)
+  } catch (error) {
+    throw new Error('parse json error')
+  }
+  const footRecords = cacheAssessments.filter(
+    o => o.healthCareTeamId === healthCareTeamId,
+  )
+  if (footRecords.length) {
+    for (let index = 0; index < footRecords.length; index++) {
+      const { recordId, assessmentDetailsJson } = footRecords[index] || {}
+      try {
+        const setObj = JSON.parse(assessmentDetailsJson)
+        if (recordId) {
+          await updateFootRecord(recordId, setObj, role, db)
+        }
+      } catch (error) {
+        throw new Error('parse json error')
+      }
+    }
+  }
+  return null
+}

@@ -145,6 +145,11 @@ type Query {
 }
 
 type Mutation {
+  uploadMultiAssessmentFoots(
+    healthCareTeamId: ID!
+    role: String
+    assessmentDetailsJsons: String!
+  ): String
   saveFootAssessment(
     recordId: ID!
     updatedAtString: String!
@@ -404,7 +409,11 @@ type Subscription {
   chatMessageAdded(chatRoomId: ID): NeedleChatMessage!
   chatRoomDynamics(userId: ID, nosy: Boolean): NeedleChatRoom!
   warningAdded: Warning
-  interventionTaskDynamics(cdeId: ID, patientId: ID, nosy: Boolean): InterventionTask
+  interventionTaskDynamics(
+    cdeId: ID
+    patientId: ID
+    nosy: Boolean
+  ): InterventionTask
   foodDynamics(patientId: ID): Foods
 }
 
