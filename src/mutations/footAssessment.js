@@ -91,6 +91,24 @@ const updateFootRecord = async (recordId, setObj, role, db) => {
   )
 }
 
+const updateTreatmentState = async (
+  treatmentId,
+  healthCareTeamId,
+  footBloodAt,
+) => {
+  await db.collection('treatmentState').findOneAndUpdate(
+    { _id: treatmentId },
+    {
+      $set: {
+        healthCareTeamId,
+        footBloodAt,
+        footAt: true,
+        updatedAt: new Date(),
+      },
+    },
+  )
+}
+
 export const uploadMultiAssessmentFoots = async (_, args, { getDb }) => {
   const db = await getDb()
   const { healthCareTeamId, role, assessmentDetailsJsons } = args
@@ -105,11 +123,20 @@ export const uploadMultiAssessmentFoots = async (_, args, { getDb }) => {
   )
   if (footRecords.length) {
     for (let index = 0; index < footRecords.length; index++) {
-      const { recordId, assessmentDetailsJson } = footRecords[index] || {}
+      const { recordId, assessmentDetailsJson, footBloodAt, treatmentStateId } =
+        footRecords[index] || {}
       try {
-        const setObj = JSON.parse(assessmentDetailsJson)
+        const setObj = {
+          ...JSON.parse(assessmentDetailsJson),
+          footBloodAt,
+        }
         if (recordId) {
           await updateFootRecord(recordId, setObj, role, db)
+          await updateTreatmentState(
+            treatmentStateId,
+            healthCareTeamId,
+            footBloodAt,
+          )
         }
       } catch (error) {
         throw new Error('parse json error')
