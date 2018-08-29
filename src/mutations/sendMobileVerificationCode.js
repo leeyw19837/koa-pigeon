@@ -16,7 +16,7 @@ export const sendMobileVerificationCode = async (_, args, context) => {
     client_id: RIGHTEOUS_RAVEN_ID,
     client_key: RIGHTEOUS_RAVEN_KEY,
     rec: mobile,
-    prefix: '护血糖',
+    prefix: '共同照护',
     expired: EXPIRES_IN,
   })
 
