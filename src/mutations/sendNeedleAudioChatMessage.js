@@ -4,9 +4,8 @@ import { pubsub } from '../pubsub'
 
 import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
-import { whoAmI } from '../modules/chat'
+import { whoAmI, sessionFeeder } from '../modules/chat'
 
-const sourceTypesProCare = ['FROM_CDE', 'FROM_PATIENT', 'SMS', 'WECHAT']
 export const sendNeedleAudioChatMessage = async (_, args, context) => {
   const db = await context.getDb()
 
@@ -52,7 +51,7 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
     newChatMessage.actualSenderId = actualSenderId
   }
   await db.collection('needleChatMessages').insertOne(newChatMessage)
-
+  sessionFeeder(newChatMessage, db)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
 
   const participants = chatRoom.participants.map(p => {

@@ -1,4 +1,10 @@
+import freshId from 'fresh-id'
 import { maybeCreateFromHexString } from '../../utils'
+import {
+  addDelayEvent,
+  deleteDelayEvent,
+  queryDelayEvent,
+} from '../../redisCron/controller'
 
 export const whoAmI = async (userId, nosy, participants, db) => {
   let me = participants.find(user => {
@@ -22,4 +28,36 @@ export const whoAmI = async (userId, nosy, participants, db) => {
     }
   }
   return me
+}
+
+const delay = 60 * 15
+export const sessionFeeder = async (message, db) => {
+  const { senderId, messageType, sourceType, chatRoomId, createdAt } = message
+  if (
+    messageType === 'TEXT' &&
+    sourceType !== 'FROM_CDE' &&
+    sourceType !== 'FROM_PATIENT'
+  ) {
+    return
+  }
+  const eventKey = `session_${chatRoomId}`
+
+  let eventExists = !!(await queryDelayEvent(eventKey)).length
+  if (eventExists) {
+    await deleteDelayEvent(eventKey)
+    addDelayEvent(eventKey, delay)
+  } else {
+    const sender = db
+      .collection('users')
+      .findOne({ _id: { $in: [senderId, maybeCreateFromHexString(senderId)] } })
+    if (!sender.roles) {
+      db.collection('sessions').insert({
+        _id: freshId(),
+        chatRoomId,
+        startAt: createdAt,
+        createdAt: new Date(),
+      })
+      addDelayEvent(eventKey, delay)
+    }
+  }
 }

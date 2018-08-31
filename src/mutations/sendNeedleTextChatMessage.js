@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 import { pubsub } from '../pubsub'
 import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
-import { whoAmI } from '../modules/chat'
+import { whoAmI, sessionFeeder } from '../modules/chat'
 
 const sourceTypeGroup = [
   'LG',
@@ -88,6 +88,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   }
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
+  sessionFeeder(newChatMessage, db)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
   const assistant = chatRoom.participants.find(p => p.role === '医助')
   if (isPatient && chatMessageCount === 0 && assistant) {

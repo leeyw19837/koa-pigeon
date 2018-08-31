@@ -23,13 +23,18 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
     chatRoom = {
       _id: freshId(),
       participants: [
-        { userId, role: user.roles || '患者', lastSeenAt: new Date() },
+        {
+          userId,
+          role: user.roles || '患者',
+          lastSeenAt: new Date(),
+          unreadCount: 0,
+        },
         {
           userId: '66728d10dc75bc6a43052036',
           role: '医助',
           lastSeenAt: new Date(),
+          unreadCount: 0,
         },
-        // TODO(tangweikun): Hard code(use yushuiqing's account)
       ],
       lastMessageSendAt: new Date('2000-01-01'),
     }

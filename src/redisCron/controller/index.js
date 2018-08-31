@@ -78,6 +78,20 @@ sub.on('pmessage', async (pattern, channel, message) => {
     // 订阅消息：bg_88f5578370f3a04743d43fac_BEFORE_LUNCH_16:19
     const messageType = resultArr[0]
     switch (messageType) {
+      case 'session': {
+        await db.collection('sessions').update(
+          {
+            chatRoomId: resultArr[1],
+            endAt: { $exists: 0 },
+          },
+          {
+            $set: {
+              endAt: new Date(),
+            },
+          },
+        )
+        break
+      }
       case 'bg':
         const bgPushMessage = {
           patientId: resultArr[1],
