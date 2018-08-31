@@ -127,30 +127,31 @@ export const Patient = {
   },
   useIGluco: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const result = await db
-      .collection('bloodGlucoses')
-      .distinct('bloodGlucoseDataSource', {
-        patientId: patient._id.toString(),
-      })
-    return result.includes('IGLUCO_ICLUCO')
+    const result = await db.collection('bloodGlucoses').findOne({
+      patientId: patient._id.toString(),
+      bloodGlucoseDataSource: 'IGLUCO_ICLUCO',
+    })
+    return !!result
   },
   useNeedle: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const result = await db
-      .collection('bloodGlucoses')
-      .distinct('bloodGlucoseDataSource', {
-        patientId: patient._id.toString(),
-      })
-    return result.includes('NEEDLE_BG1')
+    const patientId = patient._id.toString()
+    const bgDataFromNeedle = await db.collection('bloodGlucoses').findOne({
+      patientId,
+      bloodGlucoseDataSource: 'NEEDLE_BG1',
+    })
+    const anyBehaviors = await db.collection('userBehaviors').findOne({
+      patientId,
+    })
+    return !!(bgDataFromNeedle || anyBehaviors)
   },
   useSPT: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const result = await db
-      .collection('bloodGlucoses')
-      .distinct('bloodGlucoseDataSource', {
-        patientId: patient._id.toString(),
-      })
-    return result.includes('SPT_SPT')
+    const result = await db.collection('bloodGlucoses').findOne({
+      patientId: patient._id.toString(),
+      bloodGlucoseDataSource: 'SPT_SPT',
+    })
+    return !!result
   },
   usePublicNumber: async (patient, _, { getDb }) => {
     const db = await getDb()
