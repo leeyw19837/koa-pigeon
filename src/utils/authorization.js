@@ -1,25 +1,26 @@
 import jwt from 'jsonwebtoken'
 
 export const authorization = ctx => {
-  const {body, header, ip} = ctx.request
-  const {JWT_SECRET, AUTH} = process.env;
-
+  const { body, header, ip } = ctx.request
+  const { JWT_SECRET, AUTH } = process.env
+  // TODO Remove
   if (AUTH === 'FALSE') {
     return true
   }
-
   if (header.authorization) {
-    const parts = header
-      .authorization
-      .split(' ');
+    const parts = header.authorization.split(' ')
     if (parts.length === 2) {
-      const scheme = parts[0];
-      const credentials = parts[1];
+      const scheme = parts[0]
+      const credentials = parts[1]
       if (/^Bearer$/i.test(scheme)) {
         try {
-          const jwtData = jwt.verify(credentials, JWT_SECRET);
+          const jwtData = jwt.verify(credentials, JWT_SECRET)
           console.log('authorization', jwtData)
-          if (jwtData.user && jwtData.user.roles && jwtData.user.roles.indexOf('admin') > -1) {
+          if (
+            jwtData.user &&
+            jwtData.user.roles &&
+            jwtData.user.roles.indexOf('admin') > -1
+          ) {
             return true
           }
         } catch (e) {
