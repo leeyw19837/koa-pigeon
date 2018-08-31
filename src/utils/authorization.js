@@ -1,17 +1,17 @@
 import jwt from 'jsonwebtoken'
 
 export const authorization = ctx => {
-  const {
-    body,
-    header,
-    ip
-  } = ctx.request
-  const {
-    JWT_SECRET,
-  } = process.env;
+  const {body, header, ip} = ctx.request
+  const {JWT_SECRET, AUTH} = process.env;
+
+  if (AUTH === 'FALSE') {
+    return true
+  }
 
   if (header.authorization) {
-    const parts = header.authorization.split(' ');
+    const parts = header
+      .authorization
+      .split(' ');
     if (parts.length === 2) {
       const scheme = parts[0];
       const credentials = parts[1];
