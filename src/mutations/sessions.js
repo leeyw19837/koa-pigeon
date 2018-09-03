@@ -1,4 +1,5 @@
 import { pubsub } from '../pubsub'
+import { deleteDelayEvent } from '../../redisCron/controller'
 
 export const finishSession = async (_, { chatRoomId }, { getDb }) => {
   const db = await getDb()
@@ -11,6 +12,7 @@ export const finishSession = async (_, { chatRoomId }, { getDb }) => {
       $set: { endAt: new Date() },
     },
   )
+  await deleteDelayEvent(`session_${chatRoomId}`)
   const room = await db.collection('needleChatRooms').findOne({
     _id: chatRoomId,
   })
