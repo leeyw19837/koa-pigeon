@@ -42,10 +42,11 @@ export const sessionFeeder = async (message, db) => {
     return
   }
   const eventKey = `session_${chatRoomId}`
+  const longKey = `pigeon__${eventKey}`
 
   let eventExists = !!(await queryDelayEvent(eventKey)).length
   if (eventExists) {
-    await deleteDelayEvent(eventKey)
+    await deleteDelayEvent(longKey)
     addDelayEvent(eventKey, delay)
   } else {
     const sender = await db
