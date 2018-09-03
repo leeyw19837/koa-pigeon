@@ -19,11 +19,12 @@ const getChatRooms = async patientIds =>
     })
     .toArray()
 
-const insertEvent = async (response, deviceType, msgCounts) => {
+const insertEvent = async (response, deviceType, msgCounts, messageText) => {
   await db.collection('event').insert({
     _id: new ObjectID(),
     eventType: 'treatment/sendChatCard',
     deviceType,
+    messageText,
     pushCounts: msgCounts,
     result: JSON.parse(response),
     createdAt: new Date(),
@@ -118,7 +119,11 @@ const generateSendMessages = async ({
 /**
  * 小米多条推送的时候不区分平台，所以我们应该把ios和android分开两条来推
  */
-const pushChatNotification = async (deviceType, result) => {
+const pushChatNotification = async (
+  deviceType,
+  result,
+  messageText = 'card',
+) => {
   const formData = result[deviceType]
   if (formData.alias) {
     const options = {
@@ -132,7 +137,7 @@ const pushChatNotification = async (deviceType, result) => {
     try {
       const response = await request(options)
       const msgCounts = formData.alias.split(',').length
-      await insertEvent(response, deviceType, msgCounts)
+      await insertEvent(response, deviceType, msgCounts, messageText)
     } catch (error) {
       console.log(error, '@error')
     }
@@ -143,6 +148,7 @@ export const multiSendMiPushForAlias = async (
   messageType,
   title,
   desc,
+  messageText,
 ) => {
   const result = await generateSendMessages({
     type: 'CHAT',
@@ -151,6 +157,6 @@ export const multiSendMiPushForAlias = async (
     title,
     desc,
   })
-  await pushChatNotification('ios', result)
-  await pushChatNotification('android', result)
+  await pushChatNotification('ios', result, messageText)
+  await pushChatNotification('android', result, messageText)
 }

@@ -38,7 +38,7 @@ export const sendMassText = async ctx => {
         messageType: 'TEXT',
         text:
           text ||
-          '李昂医生健康直播于2018年7月28日本周六10：00开播，请您关注“共同照护”公众号回复“直播”两个字，查看详细信息并识别图中二维码，进入直播间，感谢您的配合！',
+          '前段时间，我们糖友一起配合北大医院内分泌科及体科所，与北京电视台共同摄制了几期关于科学体育运动指导的一些栏目，第一期定于9月1日18：18在北京电视台科教频道《健康北京》栏目播出，欢迎各位糖友收看！',
         senderId: '66728d10dc75bc6a43052036',
         chatRoomId: chatRoom._id,
         sourceType: 'SYSTEM',
@@ -57,7 +57,13 @@ export const sendMassText = async ctx => {
       .collection('needleChatMessages')
       .insert(massTextMessages)
     if (insertResult.result.ok === 1) {
-      // await multiSendMiPushForAlias(mipushAlias, 'TEXT')
+      await multiSendMiPushForAlias(
+        mipushAlias,
+        'TEXT',
+        '',
+        '',
+        massTextMessages[0].text,
+      )
       pubChatMessages(massTextMessages)
     }
   }
