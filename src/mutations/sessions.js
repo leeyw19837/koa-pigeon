@@ -24,7 +24,7 @@ export const finishSession = async (_, { chatRoomId }, { getDb }) => {
     })
   }
 
-  await deleteDelayEvent(`session_${chatRoomId}`)
+  await deleteDelayEvent(`pigeon__session_${chatRoomId}`)
   const room = await db.collection('needleChatRooms').findOne({
     _id: chatRoomId,
   })
