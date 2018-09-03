@@ -1,4 +1,5 @@
 import freshId from 'fresh-id'
+import { pubsub } from '../../pubsub'
 import { maybeCreateFromHexString } from '../../utils'
 import {
   addDelayEvent,
@@ -51,11 +52,16 @@ export const sessionFeeder = async (message, db) => {
       .collection('users')
       .findOne({ _id: { $in: [senderId, maybeCreateFromHexString(senderId)] } })
     if (!sender.roles) {
-      await db.collection('sessions').insert({
+      const newSession = {
         _id: freshId(),
         chatRoomId,
         startAt: createdAt,
         createdAt: new Date(),
+      }
+      await db.collection('sessions').insert(newSession)
+      pubsub.publish('sessionDynamics', {
+        newSession,
+        _operation: 'ADDED',
       })
       addDelayEvent(eventKey, delay)
     }

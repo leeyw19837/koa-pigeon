@@ -1,4 +1,5 @@
 import { resolve } from 'url'
+import { pubsub } from '../../pubsub'
 
 const redis = require('redis')
 import { get } from 'lodash'
@@ -90,6 +91,17 @@ sub.on('pmessage', async (pattern, channel, message) => {
             },
           },
         )
+        const sessions = await db
+          .collection('sessions')
+          .find({ chatRoomId })
+          .sort({ endAt: -1 })
+          .toArray()
+        if (sessions.length) {
+          pubsub.publish('sessionDynamics', {
+            ...sessions[0],
+            _operation: 'UPDATED',
+          })
+        }
         break
       }
       case 'bg':

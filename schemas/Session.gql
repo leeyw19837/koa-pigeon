@@ -5,4 +5,5 @@ type Session {
   startAt: Date!
   endAt: Date
   createdAt: Date
+  _operation: Operation
 }

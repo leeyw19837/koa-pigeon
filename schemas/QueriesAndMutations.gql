@@ -417,6 +417,7 @@ type Subscription {
     nosy: Boolean
   ): InterventionTask
   foodDynamics(patientId: ID): Foods
+  sessionDynamics(chatRoomId: ID!): Session
 }
 
 schema {

@@ -12,6 +12,18 @@ export const finishSession = async (_, { chatRoomId }, { getDb }) => {
       $set: { endAt: new Date() },
     },
   )
+  const sessions = await db
+    .collection('sessions')
+    .find({ chatRoomId })
+    .sort({ endAt: -1 })
+    .toArray()
+  if (sessions.length) {
+    pubsub.publish('sessionDynamics', {
+      ...sessions[0],
+      _operation: 'UPDATED',
+    })
+  }
+
   await deleteDelayEvent(`session_${chatRoomId}`)
   const room = await db.collection('needleChatRooms').findOne({
     _id: chatRoomId,
