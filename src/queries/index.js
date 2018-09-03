@@ -19,7 +19,7 @@ import * as treatmentState from './treatmentState'
 import * as treatmentStateApp from './treatmentStateApp'
 import * as treatmentStates from './treatmentStates'
 
-import {logQueryOrMutation} from '../utils'
+import { logQueryOrMutation } from '../utils'
 import * as evaluate from './evaluate'
 import * as getClinicalLabResult from './getClinicalLabResult'
 import * as warningsOfHigh from './warningsOfHigh'
@@ -39,7 +39,7 @@ import * as getDiagnosticWordsNew from './getDiagnosticWordsNew'
 import * as getOrderReceiverInfo from './getOrderReceiverInfo'
 import * as getPatientInstitution from './getPatientInstitution'
 import * as getUserUseBg1Situation from './getUserUseBg1Situation'
-import {blogs} from './blogs'
+import { blogs } from './blogs'
 import * as getFoodRecords from './getFoodRecords'
 
 import * as getAlipay from './getAlipay'
@@ -47,9 +47,10 @@ import * as getInterventionTasks from './getInterventionTasks'
 import * as getTaskSoapCorpus from './getTaskSoapCorpus'
 import * as getTaskSoap from './getTaskSoap'
 import * as getGoods from './getGoods'
-import {logandAuthForApp} from '../utils/authentication'
+import { logandAuthForApp } from '../utils/authentication'
 
 import * as getUnreadFoodBadges from './getUnreadFoodBadges'
+import * as session from './session'
 
 const queries = {
   ...bloodGlucoseMeasurements,
@@ -96,13 +97,19 @@ const queries = {
   ...getTaskSoap,
   ...getAlipay,
   ...getGoods,
-  ...getUnreadFoodBadges
+  ...getUnreadFoodBadges,
+  ...session,
 }
 
 const queriesWithAuthandLog = {}
 
-Object
-  .keys(queries)
-  .map(queryName => (queriesWithAuthandLog[queryName] = logandAuthForApp('QUERY', queryName, queries[queryName],)),)
+Object.keys(queries).map(
+  queryName =>
+    (queriesWithAuthandLog[queryName] = logandAuthForApp(
+      'QUERY',
+      queryName,
+      queries[queryName],
+    )),
+)
 
 export default queriesWithAuthandLog

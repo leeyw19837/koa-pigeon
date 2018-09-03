@@ -1,0 +1,8 @@
+type Session {
+  _id: ID!
+  type: String
+  chatRoomId: ID!
+  startAt: Date!
+  endAt: Date
+  createdAt: Date
+}
