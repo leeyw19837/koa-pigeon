@@ -404,6 +404,7 @@ type Mutation {
     shareWay: String!
     shareStatus: String!
   ): String
+  finishSession(chatRoomId: ID!): Boolean
 }
 
 type Subscription {

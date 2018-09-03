@@ -47,11 +47,11 @@ export const sessionFeeder = async (message, db) => {
     await deleteDelayEvent(eventKey)
     addDelayEvent(eventKey, delay)
   } else {
-    const sender = db
+    const sender = await db
       .collection('users')
       .findOne({ _id: { $in: [senderId, maybeCreateFromHexString(senderId)] } })
     if (!sender.roles) {
-      db.collection('sessions').insert({
+      await db.collection('sessions').insert({
         _id: freshId(),
         chatRoomId,
         startAt: createdAt,

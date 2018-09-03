@@ -34,10 +34,11 @@ import * as glycatedHemoglobinAchieve from './glycatedHemoglobinAchieve'
 import * as updateBadges from './updateBadges'
 import * as sharing from './sharing'
 import * as changeAchieveShowStatus from './changeAchieveShowStatus'
+import * as sessions from './sessions'
 
-import {logQueryOrMutation} from '../utils'
+import { logQueryOrMutation } from '../utils'
 
-import {logandAuthForApp} from '../utils/authentication'
+import { logandAuthForApp } from '../utils/authentication'
 
 const mutations = {
   ...assessmentTime,
@@ -74,13 +75,19 @@ const mutations = {
   ...glycatedHemoglobinAchieve,
   ...updateBadges,
   ...sharing,
-  ...changeAchieveShowStatus
+  ...changeAchieveShowStatus,
+  ...sessions,
 }
 
 const mutationsWithAuthandLog = {}
 
-Object
-  .keys(mutations)
-  .map(mutationName => (mutationsWithAuthandLog[mutationName] = logandAuthForApp('MUTATION', mutationName, mutations[mutationName],)),)
+Object.keys(mutations).map(
+  mutationName =>
+    (mutationsWithAuthandLog[mutationName] = logandAuthForApp(
+      'MUTATION',
+      mutationName,
+      mutations[mutationName],
+    )),
+)
 
 export default mutationsWithAuthandLog
