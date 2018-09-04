@@ -88,7 +88,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     newChatMessage.messagesPatientReplyFlag = messagesPatientReplyFlag
   }
 
-  if (process.env.AI === 'true' && !participant.role === '患者') {
+  if (process.env.AI === 'true' && participant.role === '患者') {
     // messaged by patient, do AI interface call.
     newChatMessage.contentType = await classify(newChatMessage.text)
     newChatMessage.approved = false
@@ -96,6 +96,10 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
   sessionFeeder(newChatMessage, db)
+  newChatMessage.options = []
+  if (process.env.AI === 'true' && participant.role === '患者') {
+    newChatMessage.options = await categories()
+  }
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
   const assistant = chatRoom.participants.find(p => p.role === '医助')
   if (isPatient && chatMessageCount === 0 && assistant) {

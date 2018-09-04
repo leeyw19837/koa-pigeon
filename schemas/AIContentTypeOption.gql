@@ -1,0 +1,4 @@
+type AIContentTypeOption {
+  value: String!
+  color: String!
+}
