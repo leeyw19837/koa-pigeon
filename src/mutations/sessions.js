@@ -9,7 +9,7 @@ export const finishSession = async (_, { chatRoomId }, { getDb }) => {
       endAt: null,
     },
     {
-      $set: { endAt: new Date() },
+      $set: { endAt: new Date(), finishReason: 'manually' },
     },
   )
   const sessions = await db

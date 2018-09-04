@@ -88,6 +88,7 @@ sub.on('pmessage', async (pattern, channel, message) => {
           {
             $set: {
               endAt: new Date(),
+              finishReason: 'timeout',
             },
           },
         )
