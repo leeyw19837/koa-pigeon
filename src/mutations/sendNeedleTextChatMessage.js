@@ -4,6 +4,7 @@ import { pubsub } from '../pubsub'
 import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
 import { whoAmI, sessionFeeder } from '../modules/chat'
+import { categories, classify } from '../modules/AI'
 
 const sourceTypeGroup = [
   'LG',
@@ -85,6 +86,12 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
 
   if (messagesPatientReplyFlag) {
     newChatMessage.messagesPatientReplyFlag = messagesPatientReplyFlag
+  }
+
+  if (process.env.AI === 'true' && !participant.role === '患者') {
+    // messaged by patient, do AI interface call.
+    newChatMessage.contentType = await classify(newChatMessage.text)
+    newChatMessage.approved = false
   }
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)

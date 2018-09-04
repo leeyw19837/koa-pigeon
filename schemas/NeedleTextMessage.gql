@@ -6,5 +6,7 @@ type NeedleTextMessage implements NeedleChatMessage {
   messageType: String
   needleChatRoom: NeedleChatRoom!
   sourceType: String
+  contentType: String
+  approved: Boolean
   actualSender: User
 }
