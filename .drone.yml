@@ -79,7 +79,7 @@ pipeline:
       - plugin_agent_id
     title: '${DRONE_REPO_NAME}'
     description: |
-      构建序列: ${DRONE_BUILD_NUMBER} 部署成功！ 🕊🕊🕊🕊🕊🕊🕊🕊🕊🕊！
+      构建序列: ${DRONE_BUILD_NUMBER} 部署成功！
       更新内容: ${DRONE_COMMIT_MESSAGE}
     msg_url: 'http://120.92.88.112:7001/'
     btn_txt: 查看运行状况
