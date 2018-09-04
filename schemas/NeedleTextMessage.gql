@@ -9,4 +9,5 @@ type NeedleTextMessage implements NeedleChatMessage {
   contentType: String
   approved: Boolean
   actualSender: User
+  options: [AIContentTypeOption]
 }
