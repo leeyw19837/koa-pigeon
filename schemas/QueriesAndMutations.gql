@@ -136,6 +136,7 @@ type Query {
     page: Int
     limit: Int
   ): [NeedleChatRoom!]
+  queryAIContentTypes: [AIContentTypeOption]
   getUnreadFoodBadges(patientId: ID): [BadgeRecords]
   # achievement(
   #   patientId: ID!

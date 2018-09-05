@@ -52,6 +52,9 @@ import { logandAuthForApp } from '../utils/authentication'
 import * as getUnreadFoodBadges from './getUnreadFoodBadges'
 import * as session from './session'
 
+//AI
+import * as queryAIContentTypes from './queryAIContentTypes'
+
 const queries = {
   ...bloodGlucoseMeasurements,
   ...chatMessages,
@@ -99,6 +102,7 @@ const queries = {
   ...getGoods,
   ...getUnreadFoodBadges,
   ...session,
+  ...queryAIContentTypes,
 }
 
 const queriesWithAuthandLog = {}
