@@ -1,9 +1,15 @@
+enum FinishReason {
+  manually
+  timeout
+}
+
 type Session {
   _id: ID!
   type: String
   chatRoomId: ID!
   startAt: Date!
   endAt: Date
+  finishReason: FinishReason
   createdAt: Date
   _operation: Operation
 }
