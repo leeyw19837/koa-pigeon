@@ -12,6 +12,7 @@ export const updateContentType = async (_, args, context) => {
       },
     },
   )
+  //TODO: 调用天津fix接口
   return await db.collection('needleChatMessages').findOne({
     _id: messageId,
   })
