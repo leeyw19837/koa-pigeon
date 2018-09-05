@@ -61,7 +61,7 @@ export const sessionFeeder = async (message, db) => {
       }
       await db.collection('sessions').insert(newSession)
       pubsub.publish('sessionDynamics', {
-        newSession,
+        ...newSession,
         _operation: 'ADDED',
       })
       addDelayEvent(eventKey, delay)
