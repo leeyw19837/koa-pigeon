@@ -45,6 +45,7 @@ export const categories = async () => {
     }
     const res = await request(options)
     const rst = []
+    // res.result.push('1新增测试1')
     if (res && res.result instanceof Array && res.result.length > 0) {
       res.result.forEach(opt => {
         const cas = colorful(opt)

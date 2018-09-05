@@ -406,6 +406,7 @@ type Mutation {
     shareStatus: String!
   ): String
   finishSession(chatRoomId: ID!): Boolean
+  updateContentType(messageId: ID!, contentType: String!): NeedleTextMessage
 }
 
 type Subscription {
