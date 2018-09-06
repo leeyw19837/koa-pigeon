@@ -6,7 +6,6 @@ import {
   deleteDelayEvent,
   queryDelayEvent,
 } from '../../redisCron/controller'
-import { CLIENT_RENEG_LIMIT } from 'tls'
 
 export const whoAmI = async (userId, nosy, participants, db) => {
   let me = participants.find(user => {

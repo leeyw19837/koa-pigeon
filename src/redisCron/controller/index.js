@@ -80,9 +80,10 @@ sub.on('pmessage', async (pattern, channel, message) => {
     const messageType = resultArr[0]
     switch (messageType) {
       case 'session': {
+        const chatRoomId = resultArr[1]
         await db.collection('sessions').update(
           {
-            chatRoomId: resultArr[1],
+            chatRoomId,
             endAt: { $exists: 0 },
           },
           {
