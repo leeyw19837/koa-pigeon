@@ -34,16 +34,23 @@ export const whoAmI = async (userId, nosy, participants, db) => {
 
 const delay = 60 * 15
 export const sessionFeeder = async (message, db) => {
-  const { senderId, sourceType, chatRoomId, createdAt } = message
+  const {
+    senderId,
+    actualSenderId,
+    sourceType,
+    chatRoomId,
+    createdAt,
+  } = message
 
   const eventKey = `session_${chatRoomId}`
   const longKey = `pigeon__${eventKey}`
 
   let eventExists = !!(await queryDelayEvent(eventKey)).length
   const now = new Date()
+  const actualId = actualSenderId || senderId
   const sender = await db
     .collection('users')
-    .findOne({ _id: { $in: [senderId, maybeCreateFromHexString(senderId)] } })
+    .findOne({ _id: { $in: [actualId, maybeCreateFromHexString(actualId)] } })
 
   if (eventExists) {
     let processingSession = await db
