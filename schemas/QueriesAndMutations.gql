@@ -136,6 +136,7 @@ type Query {
     page: Int
     limit: Int
   ): [NeedleChatRoom!]
+  queryAIContentTypes: [AIContentTypeOption]
   getUnreadFoodBadges(patientId: ID): [BadgeRecords]
   # achievement(
   #   patientId: ID!
@@ -405,6 +406,7 @@ type Mutation {
     shareStatus: String!
   ): String
   finishSession(chatRoomId: ID!): Boolean
+  updateContentType(messageId: ID!, contentType: String!): NeedleTextMessage
 }
 
 type Subscription {

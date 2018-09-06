@@ -1,5 +1,5 @@
 import request from 'request-promise'
-import { get } from 'lodash'
+import { get, orderBy } from 'lodash'
 const host = process.env.AI_HOST
 
 const rd = (lower, upper) => {
@@ -16,19 +16,19 @@ const randomColor = () => {
 export const colorful = opt => {
   switch (opt) {
     case '饮食':
-      return '#B2EBF2'
+      return { color: '#B2EBF2', sortId: 200 }
     case '问候':
-      return '#BBDEFB'
+      return { color: '#BBDEFB', sortId: 100 }
     case '病情咨询':
-      return '#FFCCBC'
+      return { color: '#FFCCBC', sortId: 500 }
     case '用药':
-      return '#FFF9C4'
+      return { color: '#FFF9C4', sortId: 400 }
     case '就诊':
-      return '#C8E6C9'
+      return { color: '#C8E6C9', sortId: 300 }
     case '其它':
-      return '#F5F5F5'
+      return { color: '#F5F5F5', sortId: 50000 }
     default:
-      return randomColor()
+      return { color: randomColor(), sortId: rd(40000, 49999) }
   }
 }
 /**
@@ -45,14 +45,17 @@ export const categories = async () => {
     }
     const res = await request(options)
     const rst = []
+    // res.result.push('1新增测试1')
     if (res && res.result instanceof Array && res.result.length > 0) {
       res.result.forEach(opt => {
+        const cas = colorful(opt)
         rst.push({
           value: opt,
-          color: colorful(opt),
+          color: cas.color,
+          sort: cas.sortId,
         })
       })
-      return rst
+      return orderBy(rst, ['sort', 'asc'])
     }
   } catch (e) {
     console.error(`获取所有分类接口调用错误：${e.message}`)
