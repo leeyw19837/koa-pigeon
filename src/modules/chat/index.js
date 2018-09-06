@@ -1,6 +1,7 @@
 import freshId from 'fresh-id'
 import { pubsub } from '../../pubsub'
 import { maybeCreateFromHexString } from '../../utils'
+import first from 'lodash/first'
 import {
   addDelayEvent,
   deleteDelayEvent,
@@ -33,38 +34,68 @@ export const whoAmI = async (userId, nosy, participants, db) => {
 
 const delay = 60 * 15
 export const sessionFeeder = async (message, db) => {
-  const { senderId, messageType, sourceType, chatRoomId, createdAt } = message
-  if (
-    messageType === 'TEXT' &&
-    sourceType !== 'FROM_CDE' &&
-    sourceType !== 'FROM_PATIENT'
-  ) {
-    return
-  }
+  const { senderId, sourceType, chatRoomId, createdAt } = message
+
   const eventKey = `session_${chatRoomId}`
   const longKey = `pigeon__${eventKey}`
 
   let eventExists = !!(await queryDelayEvent(eventKey)).length
+  const now = new Date()
+  const sender = await db
+    .collection('users')
+    .findOne({ _id: { $in: [senderId, maybeCreateFromHexString(senderId)] } })
+
   if (eventExists) {
+    let processingSession = await db
+      .collection('sessions')
+      .find({
+        chatRoomId,
+        startAt: { $lte: now },
+        endAt: null,
+        educatorId: null,
+      })
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .toArray()
+    processingSession = first(processingSession)
+    if (processingSession) {
+      const educator = { educatorId: senderId, educatorName: sender.nickname }
+      await db
+        .collection('sessions')
+        .update({ _id: processingSession._id }, { $set: educator })
+      pubsub.publish('sessionDynamics', {
+        ...processingSession,
+        ...educator,
+        _operation: 'UPDATED',
+      })
+    }
     await deleteDelayEvent(longKey)
     addDelayEvent(eventKey, delay)
   } else {
-    const sender = await db
-      .collection('users')
-      .findOne({ _id: { $in: [senderId, maybeCreateFromHexString(senderId)] } })
+    let initiator = null
     if (!sender.roles) {
-      const newSession = {
-        _id: freshId(),
-        chatRoomId,
-        startAt: createdAt,
-        createdAt: new Date(),
-      }
-      await db.collection('sessions').insert(newSession)
-      pubsub.publish('sessionDynamics', {
-        ...newSession,
-        _operation: 'ADDED',
-      })
-      addDelayEvent(eventKey, delay)
+      initiator = 'PATIENT'
+    } else if (sender.roles === '医助' && sourceType === 'FROM_CDE') {
+      initiator = 'ASSISTANT'
+    } else {
+      initiator = 'SYSTEM'
     }
+    const newSession = {
+      _id: freshId(),
+      chatRoomId,
+      initiator,
+      startAt: createdAt,
+      createdAt: now,
+    }
+    if (initiator === 'ASSISTANT') {
+      newSession.educatorId = senderId
+      newSession.educatorName = sender.nickname
+    }
+    await db.collection('sessions').insert(newSession)
+    pubsub.publish('sessionDynamics', {
+      ...newSession,
+      _operation: 'ADDED',
+    })
+    addDelayEvent(eventKey, delay)
   }
 }

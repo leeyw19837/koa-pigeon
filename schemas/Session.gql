@@ -3,6 +3,12 @@ enum FinishReason {
   timeout
 }
 
+enum SessionInitiator {
+  PATIENT
+  ASSISTANT
+  SYSTEM
+}
+
 type Session {
   _id: ID!
   type: String
@@ -10,6 +16,8 @@ type Session {
   startAt: Date!
   endAt: Date
   finishReason: FinishReason
+  educatorName: String
+  initiator: SessionInitiator
   createdAt: Date
   _operation: Operation
 }

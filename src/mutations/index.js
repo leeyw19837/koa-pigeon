@@ -35,6 +35,7 @@ import * as updateBadges from './updateBadges'
 import * as sharing from './sharing'
 import * as changeAchieveShowStatus from './changeAchieveShowStatus'
 import * as sessions from './sessions'
+import * as updateContentType from './updateContentType'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -77,6 +78,7 @@ const mutations = {
   ...sharing,
   ...changeAchieveShowStatus,
   ...sessions,
+  ...updateContentType,
 }
 
 const mutationsWithAuthandLog = {}
