@@ -138,7 +138,6 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     }
     return p
   })
-  console.log('participants', participants)
   await db.collection('needleChatRooms').update(
     {
       _id: chatRoomId,
