@@ -16,6 +16,7 @@ type Session {
   startAt: Date!
   endAt: Date
   finishReason: FinishReason
+  educatorId: ID
   educatorName: String
   initiator: SessionInitiator
   createdAt: Date
