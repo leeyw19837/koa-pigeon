@@ -26,9 +26,35 @@ export const patients = async (_, { cdeId }, { getDb }) => {
     roles: { $exists: 0 },
   }
   if (cdeId) condition.cdeId = cdeId
-  return db
+
+  return await db
     .collection('users')
     .find(condition)
+    .toArray()
+}
+
+export const patientsHasCDE = async (
+  _,
+  { cdeId, nosy, page, limit, nameFilter },
+  { getDb },
+) => {
+  const db = await getDb()
+  const condition = {
+    patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
+    cdeId: { $exists: 1 },
+    roles: { $exists: 0 },
+  }
+  if (nameFilter) {
+    condition.nickname = { $regex: nameFilter }
+  }
+  if (!nosy && cdeId) condition.cdeId = cdeId
+
+  return await db
+    .collection('users')
+    .find(condition)
+    .sort({ nickname: 1 })
+    .skip(page * limit)
+    .limit(limit)
     .toArray()
 }
 

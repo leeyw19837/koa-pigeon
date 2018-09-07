@@ -32,6 +32,13 @@ type Query {
   # Users
   patient(patientId: ID, telephone: String, platform: String): Patient
   patients(cdeId: ID): [Patient]
+  patientsHasCDE(
+    nosy: Boolean
+    cdeId: ID
+    page: Int
+    limit: Int
+    nameFilter: String
+  ): [Patient]
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
