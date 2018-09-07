@@ -1,3 +1,4 @@
+import { first } from 'lodash'
 import { maybeCreateFromHexString } from '../utils'
 import { ObjectId } from 'mongodb'
 import { whoAmI } from '../modules/chat'
@@ -76,5 +77,22 @@ export const NeedleChatRoom = {
     return await db
       .collection('users')
       .findOne({ _id: ObjectId(patient.userId) })
+  },
+  async replying({ _id }, _, { getDb }) {
+    const db = await getDb()
+    let processingSession = await db
+      .collection('sessions')
+      .find({
+        chatRoomId: _id,
+      })
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .toArray()
+    processingSession = first(processingSession)
+    const replying =
+      processingSession &&
+      !processingSession.endAt &&
+      processingSession.educatorId
+    return !!replying
   },
 }
