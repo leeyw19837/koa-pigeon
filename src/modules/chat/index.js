@@ -48,7 +48,7 @@ export const sessionFeeder = async (message, db) => {
   let eventExists = !!(await queryDelayEvent(eventKey)).length
   const now = new Date()
   const actualId = actualSenderId || senderId
-  const sender = await db
+  const actualSender = await db
     .collection('users')
     .findOne({ _id: { $in: [actualId, maybeCreateFromHexString(actualId)] } })
 
@@ -66,7 +66,10 @@ export const sessionFeeder = async (message, db) => {
       .toArray()
     processingSession = first(processingSession)
     if (processingSession) {
-      const educator = { educatorId: senderId, educatorName: sender.nickname }
+      const educator = {
+        educatorId: actualId,
+        educatorName: actualSender.nickname,
+      }
       await db
         .collection('sessions')
         .update({ _id: processingSession._id }, { $set: educator })
@@ -80,9 +83,9 @@ export const sessionFeeder = async (message, db) => {
     addDelayEvent(eventKey, delay)
   } else {
     let initiator = null
-    if (!sender.roles) {
+    if (!actualSender.roles) {
       initiator = 'PATIENT'
-    } else if (sender.roles === '医助' && sourceType === 'FROM_CDE') {
+    } else if (actualSender.roles === '医助' && sourceType === 'FROM_CDE') {
       initiator = 'ASSISTANT'
     } else {
       initiator = 'SYSTEM'
@@ -95,8 +98,8 @@ export const sessionFeeder = async (message, db) => {
       createdAt: now,
     }
     if (initiator === 'ASSISTANT') {
-      newSession.educatorId = senderId
-      newSession.educatorName = sender.nickname
+      newSession.educatorId = actualId
+      newSession.educatorName = actualSender.nickname
     }
     await db.collection('sessions').insert(newSession)
     pubsub.publish('sessionDynamics', {
