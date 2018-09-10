@@ -101,8 +101,8 @@ export const healthCareTeamMap = {
     5: 'morning',
   },
   healthCareTeam2: {
+    1: 'morning',
     3: 'morning',
-    5: 'morning',
   },
   healthCareTeam3: {
     3: 'afternoon',
