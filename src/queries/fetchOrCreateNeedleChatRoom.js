@@ -86,15 +86,17 @@ export const unreadMessages = async (_, args, context) => {
 
 export const getChatrooms = async (
   _,
-  { nosy, cdeId, page, limit },
+  { nosy, cdeId, page, limit, chatRoomId },
   { getDb },
 ) => {
-  if (!nosy && !cdeId) {
+  if (!nosy && !cdeId && !chatRoomId) {
     return
   }
   const db = await getDb()
   let condition = {}
-  if (!nosy && cdeId) {
+  if (chatRoomId) {
+    condition = { _id: chatRoomId }
+  } else if (!nosy && cdeId) {
     let patientsIds = await db
       .collection('users')
       .find(

@@ -13,10 +13,11 @@ export const interventionTaskDynamics = {
         .collection('users')
         .findOne({ _id: ObjectID(payload.patientId) })
       return (
-        variables.nosy ||
-        (patient &&
-          (patient.cdeId === variables.cdeId ||
-            patient._id.toString() === variables.patientId))
+        (variables.patientId === payload.patientId) ||
+        (variables.nosy ||
+          (patient &&
+            (patient.cdeId === variables.cdeId ||
+              patient._id.toString() === variables.patientId)))
       )
     },
   ),

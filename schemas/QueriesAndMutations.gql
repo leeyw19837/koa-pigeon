@@ -127,6 +127,10 @@ type Query {
     patientId: ID
     nosy: Boolean
   ): [InterventionTask!]
+   getUnreadTask(
+    patientId: ID
+    type: String
+  ): Int
   getGroupedInterventionTasks(
     cdeId: ID
     nosy: Boolean
@@ -142,6 +146,7 @@ type Query {
     cdeId: ID
     page: Int
     limit: Int
+    chatRoomId: ID
   ): [NeedleChatRoom!]
   queryAIContentTypes: [AIContentTypeOption]
   getUnreadFoodBadges(patientId: ID): [BadgeRecords]
@@ -418,12 +423,13 @@ type Mutation {
 
 type Subscription {
   chatMessageAdded(chatRoomId: ID): NeedleChatMessage!
-  chatRoomDynamics(userId: ID, nosy: Boolean): NeedleChatRoom!
+  chatRoomDynamics(userId: ID, nosy: Boolean, chatRoomId: ID): NeedleChatRoom!
   warningAdded: Warning
   interventionTaskDynamics(
     cdeId: ID
     patientId: ID
     nosy: Boolean
+    type: InterventionTaskType
   ): InterventionTask
   foodDynamics(patientId: ID): Foods
   sessionDynamics(chatRoomId: ID!): Session

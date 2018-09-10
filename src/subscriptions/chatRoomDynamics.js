@@ -9,7 +9,10 @@ export const chatRoomDynamics = {
   subscribe: withFilter(
     () => pubsub.asyncIterator('chatRoomDynamics'),
     async (payload, variables, ctx) => {
-      const { userId, nosy } = variables
+      const { userId, nosy, chatRoomId } = variables
+      if (chatRoomId) {
+        return payload._id === chatRoomId
+      }
       const me = await whoAmI(
         userId,
         nosy,
