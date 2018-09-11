@@ -1,6 +1,7 @@
 import request from 'request-promise'
 import { get, orderBy } from 'lodash'
 const host = process.env.AI_HOST
+const modelTrainHost = process.env.AI_RETRAIN_HOST
 
 const rd = (lower, upper) => {
   return Math.floor(Math.random() * (upper - lower + 1)) + lower
@@ -119,6 +120,79 @@ export const retrain = async (content, tag) => {
     throw new Error(res)
   } catch (e) {
     console.error(`修正分类接口调用错误：${e.message}`)
+    return false
+  }
+}
+
+/**
+ * AI QA search interface
+ * @param {String} question
+ */
+export const qa = async q => {
+  const data = {
+    matched: false,
+    qa: [],
+    message: '',
+  }
+  try {
+    const route = '/search'
+    const method = 'post'
+    const options = {
+      method,
+      uri: `${host}${route}`,
+      body: { q },
+      json: true,
+    }
+    const res = await request(options)
+    if (
+      res &&
+      res.code.toString() === '200' &&
+      res.result &&
+      res.result.length > 0
+    ) {
+      data.matched = true
+      data.message = 'ok'
+      data.qa = res.result.reduce((last, curr) => {
+        curr.source.esorce = curr.esorce
+        curr.source.id = curr.id
+        last.push(curr.source)
+        return last
+      }, [])
+    } else {
+      data.matched = false
+      data.message = res
+    }
+  } catch (e) {
+    data.matched = false
+    data.message = e.message
+  }
+  return data
+}
+
+/**
+ * 修正QA接口
+ * @param {String} sentence Q
+ * @param {String} norm A
+ */
+export const modelRetrain = async (sentence, norm) => {
+  try {
+    const immidiately = false
+    const body = { sentence, norm, immidiately }
+    const route = '/retrain'
+    const method = 'post'
+    const options = {
+      method,
+      uri: `${modelTrainHost}${route}`,
+      body,
+      json: true,
+    }
+    const res = await request(options)
+    if (res && res.code.toString() === '200') {
+      return true
+    }
+    throw new Error(res)
+  } catch (e) {
+    console.error(`修正QA接口调用错误：${e.message}`)
     return false
   }
 }
