@@ -95,7 +95,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   }
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
-  sessionFeeder(newChatMessage, db)
+  await sessionFeeder(newChatMessage, db)
   newChatMessage.options = []
   if (process.env.AI === 'true' && participant.role === '患者') {
     newChatMessage.options = await categories()

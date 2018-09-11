@@ -127,10 +127,7 @@ type Query {
     patientId: ID
     nosy: Boolean
   ): [InterventionTask!]
-   getUnreadTask(
-    patientId: ID
-    type: String
-  ): Int
+  getUnreadTask(patientId: ID, type: String): Int
   getGroupedInterventionTasks(
     cdeId: ID
     nosy: Boolean
@@ -432,7 +429,7 @@ type Subscription {
     type: InterventionTaskType
   ): InterventionTask
   foodDynamics(patientId: ID): Foods
-  sessionDynamics(chatRoomId: ID!): Session
+  sessionDynamics(userId: ID, nosy: Boolean, chatRoomId: ID): Session
 }
 
 schema {

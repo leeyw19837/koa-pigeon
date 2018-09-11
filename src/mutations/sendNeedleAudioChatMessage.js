@@ -51,7 +51,7 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
     newChatMessage.actualSenderId = actualSenderId
   }
   await db.collection('needleChatMessages').insertOne(newChatMessage)
-  sessionFeeder(newChatMessage, db)
+  await sessionFeeder(newChatMessage, db)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
 
   const participants = chatRoom.participants.map(p => {
