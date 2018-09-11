@@ -4,7 +4,7 @@ import { pubsub } from '../pubsub'
 import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
 import { whoAmI, sessionFeeder } from '../modules/chat'
-import { categories, classify } from '../modules/AI'
+import { categories, classify, qa } from '../modules/AI'
 
 const sourceTypeGroup = [
   'LG',
@@ -99,6 +99,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   newChatMessage.options = []
   if (process.env.AI === 'true' && participant.role === '患者') {
     newChatMessage.options = await categories()
+    newChatMessage.IntelligentQA = await qa(newChatMessage.text)
   }
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
   const assistant = chatRoom.participants.find(p => p.role === '医助')
