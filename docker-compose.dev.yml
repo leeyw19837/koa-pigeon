@@ -28,6 +28,7 @@ services:
       - APP_ID=wx915efa8b538a4df4
       - APP_SECRET=d7be675b1fa83094a446087a90cf4f76
       - AI_HOST=http://172.31.48.26:7011
+      - AI_RETRAIN_HOST=http://172.31.48.26:7016
       - AI=true
   redis:
     build:
