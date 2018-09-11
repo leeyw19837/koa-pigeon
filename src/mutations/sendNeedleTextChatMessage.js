@@ -99,7 +99,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   newChatMessage.options = []
   if (process.env.AI === 'true' && participant.role === '患者') {
     newChatMessage.options = await categories()
-    newChatMessage.qa = await qa(newChatMessage.text)
+    newChatMessage.IntelligentQA = await qa(newChatMessage.text)
   }
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
   const assistant = chatRoom.participants.find(p => p.role === '医助')
