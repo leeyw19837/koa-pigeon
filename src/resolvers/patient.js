@@ -264,7 +264,7 @@ export const Patient = {
     const patientId = patient._id.toString()
     const results = await db
       .collection('clinicalLabResults')
-      .find({ patientId })
+      .find({ patientId, glycatedHemoglobin: { $exists: 1 } })
       .sort({ testDate: -1 })
       .limit(3)
       .toArray()
