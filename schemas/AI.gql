@@ -1,0 +1,12 @@
+type IntelligentQA {
+  matched: Boolean
+  message: String
+  qa: [QA]
+}
+
+type QA {
+  id: ID!
+  esorce: String
+  q: String
+  a: String
+}

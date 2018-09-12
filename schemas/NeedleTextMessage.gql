@@ -10,4 +10,5 @@ type NeedleTextMessage implements NeedleChatMessage {
   approved: Boolean
   actualSender: User
   options: [AIContentTypeOption]
+  intelligentQA: IntelligentQA
 }
