@@ -91,7 +91,7 @@ export const NeedleChatRoom = {
       .collection('users')
       .findOne({ _id: ObjectId(patient.userId) })
   },
-  async replying({ _id }, _, { getDb }) {
+  async responder({ _id }, _, { getDb }) {
     const db = await getDb()
     let processingSession = await db
       .collection('sessions')
@@ -102,10 +102,15 @@ export const NeedleChatRoom = {
       .limit(1)
       .toArray()
     processingSession = first(processingSession)
-    const replying =
+    const educatorId =
       processingSession &&
       !processingSession.endAt &&
       processingSession.educatorId
-    return !!replying
+    if (educatorId) {
+      return {
+        _id: processingSession.educatorId,
+        nickname: processingSession.educatorName,
+      }
+    }
   },
 }
