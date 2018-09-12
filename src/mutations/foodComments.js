@@ -1,4 +1,5 @@
 import freshId from 'fresh-id'
+import moment from 'moment'
 import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
 
@@ -26,6 +27,34 @@ export const addFoodComments = async (_, args, context) => {
     replyName,
     createdAt: new Date(),
   })
+  const author = await db
+    .collection('users')
+    .findOne({ _id: { $in: [ObjectID(authorId), authorId] } }, { roles: 1 })
+  if (!author.roles) {
+    const now = new Date()
+    const newTask = {
+      _id: freshId(),
+      state: 'PENDING',
+      createdAt: now,
+      updatedAt: now,
+      type: 'FOOD_CIRCLE',
+      foodId: foodCircleId,
+      desc: `${moment(now).format('MM-DD HH:mm')} 写了一条新的评论`,
+      patientId: authorId,
+    }
+    await db.collection('interventionTask').insert(newTask)
+    const relatedFoods = await db
+      .collection('foods')
+      .findOne({ _id: foodCircleId })
+    pubsub.publish('interventionTaskDynamics', {
+      ...newTask,
+      _operation: 'ADDED',
+    })
+    pubsub.publish('foodDynamics', {
+      ...relatedFoods,
+      _operation: 'UPDATED',
+    })
+  }
   return !!result.result.ok
 }
 
@@ -42,7 +71,7 @@ export const deleteFoodComments = async (_, args, context) => {
 export const saveFoodComments = async (_, args, { getDb }) => {
   const db = await getDb()
   const commentId = freshId()
-  const {foodCircleId, authorId} = args.comment
+  const { foodCircleId, authorId } = args.comment
   // console.log('---saveFoodComments---',args)
   const resultComments = await db.collection('comments').insert({
     ...args.comment,
@@ -62,7 +91,9 @@ export const saveFoodComments = async (_, args, { getDb }) => {
     recordId: commentId,
     badgeType: 'FOOD_MOMENTS',
     badgeState: 'UNREAD',
-    recordType: !!args._operationDetailType ? args._operationDetailType : 'COMMENTS',
+    recordType: !!args._operationDetailType
+      ? args._operationDetailType
+      : 'COMMENTS',
     mainContentId: foodCircleId,
     patientId: patientId,
     senderId: authorId,
@@ -72,12 +103,12 @@ export const saveFoodComments = async (_, args, { getDb }) => {
   pubsub.publish('foodDynamics', {
     ...relatedFoods,
     _operation: 'UPDATED',
-    _operationDetailType: !!args._operationDetailType ? args._operationDetailType : 'COMMENTS',
+    _operationDetailType: !!args._operationDetailType
+      ? args._operationDetailType
+      : 'COMMENTS',
     _recordId: commentId,
     badgeId,
     badgeCreatedAt,
   })
   return !!resultComments.result.ok && !!resultBadgeRecords.result.ok
-
 }
-
