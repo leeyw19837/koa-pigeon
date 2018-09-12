@@ -1,0 +1,15 @@
+type AssessmentTag {
+  _id: ID
+  value: String
+}
+
+type Assessment {
+  _id: ID!
+  value: String
+  tags: [AssessmentTag]
+  createdAt: Date
+}
+
+extend type Query {
+  assessments(selectedTags: [String], searchValue: String): [Assessment]
+}
