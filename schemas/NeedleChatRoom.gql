@@ -8,5 +8,5 @@ type NeedleChatRoom {
   unreadMessageCount(userId: ID, nosy: Boolean = false): Int!
   lastSeenAt(userId: ID): Date!
   patient: Patient
-  replying: Boolean
+  responder: HealthcareProfessional
 }
