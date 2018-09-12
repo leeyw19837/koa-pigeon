@@ -57,6 +57,9 @@ export const categories = async () => {
         })
       })
       return orderBy(rst, ['sort', 'asc'])
+    } else {
+      console.error(`获取所有分类接口调用错误：${res}`)
+      return []
     }
   } catch (e) {
     console.error(`获取所有分类接口调用错误：${e.message}`)
