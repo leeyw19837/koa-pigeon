@@ -60,7 +60,6 @@ const userBlogShare = async (patientId, recordId) => {
   const cursor = {
     patientId, 'shareData.recordId': recordId
   }
-  console.log('cursor', cursor)
   const blogs = await db
     .collection('sharing')
     .find(cursor)
@@ -88,12 +87,12 @@ const shareRecords = async (type, recordId) => {
 // 根据type判断，调用插入积分的接口
 const insertBonusPointByType = async (shareType, shareContentId, shareObj) => {
   const { patientId, type, name, shareWay, recordId } = shareObj
-  console.log(patientId, recordId)
   const sourceData = {
     recordId,
     fromWay: shareWay,
     type,
     name,
+    shareType,
   }
   switch (shareType) {
     case 'KNOWLEDGE':
@@ -112,7 +111,7 @@ const insertBonusPointByType = async (shareType, shareContentId, shareObj) => {
 
 export const addSharing = async (_, args, context) => {
   const db = await context.getDb()
-  const { achievementRecordId, shareWay, shareStatus } = args
+  const { achievementRecordId, shareWay, shareStatus, shareType } = args
 
   const achieveRecord = await db
     .collection('achievementRecords')
@@ -152,6 +151,7 @@ export const addSharing = async (_, args, context) => {
             fromWay: shareWay,
             type,
             name,
+            shareType,
           },
           patientId,
         )

@@ -1,0 +1,12 @@
+# Later or the tag and assessment should be a resolver for adminTable but right now use the query
+type Tag {
+  _id: ID!
+  title: String
+  parentId: String
+  createdAt: Date
+}
+
+extend type Query {
+  # Later or the tag and assessment should be a resolver for adminTable but right now use the query
+  tags: [Tag]
+}

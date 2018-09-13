@@ -16,4 +16,7 @@ export const HealthcareProfessional = {
 
     return await db.collection('certifiedDiabetesEducators').findOne({userId: professional._id})
   },
+  // tags: async(hcp, _, {getDb}) => {
+    
+  // }
 }
