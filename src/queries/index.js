@@ -53,6 +53,7 @@ import * as getUnreadFoodBadges from './getUnreadFoodBadges'
 import * as session from './session'
 import * as getUnreadTask from './getUnreadTask'
 import * as assessments from './assessments'
+import * as tags from './tags'
 
 //AI
 import * as queryAIContentTypes from './queryAIContentTypes'
@@ -107,6 +108,7 @@ const queries = {
   ...queryAIContentTypes,
   ...getUnreadTask,
   ...assessments,
+  ...tags,
 }
 
 const queriesWithAuthandLog = {}

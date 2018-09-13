@@ -417,6 +417,13 @@ type Mutation {
   ): String
   finishSession(chatRoomId: ID!): Boolean
   updateContentType(messageId: ID!, contentType: String!): NeedleTextMessage
+  updateTag(
+    type: String!
+    title: String
+    tagId: ID
+    parentId: ID
+    operator: ID
+  ): Boolean
 }
 
 type Subscription {
