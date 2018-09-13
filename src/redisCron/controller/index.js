@@ -79,33 +79,6 @@ sub.on('pmessage', async (pattern, channel, message) => {
     // 订阅消息：bg_88f5578370f3a04743d43fac_BEFORE_LUNCH_16:19
     const messageType = resultArr[0]
     switch (messageType) {
-      case 'session': {
-        const chatRoomId = resultArr[1]
-        await db.collection('sessions').update(
-          {
-            chatRoomId,
-            endAt: { $exists: 0 },
-          },
-          {
-            $set: {
-              endAt: new Date(),
-              finishReason: 'timeout',
-            },
-          },
-        )
-        const sessions = await db
-          .collection('sessions')
-          .find({ chatRoomId })
-          .sort({ endAt: -1 })
-          .toArray()
-        if (sessions.length) {
-          pubsub.publish('sessionDynamics', {
-            ...sessions[0],
-            _operation: 'UPDATED',
-          })
-        }
-        break
-      }
       case 'bg':
         const bgPushMessage = {
           patientId: resultArr[1],
