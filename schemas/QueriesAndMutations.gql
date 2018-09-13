@@ -404,6 +404,7 @@ type Mutation {
     achievementRecordId: ID!
     shareWay: String!
     shareStatus: String!
+    shareType: String
   ): String
   changeAchieveShowStatus(patientId: ID!): Boolean
   sharingConfirm(shareId: ID!, confirmStatus: String!): Boolean
