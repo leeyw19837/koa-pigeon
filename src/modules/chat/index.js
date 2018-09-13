@@ -65,7 +65,11 @@ export const sessionFeeder = async (message, db) => {
       .limit(1)
       .toArray()
     processingSession = first(processingSession)
-    if (processingSession && !!actualSender.roles) {
+    if (
+      processingSession &&
+      !!actualSender.roles &&
+      sourceType === 'FROM_CDE'
+    ) {
       const educator = {
         educatorId: actualId,
         educatorName: actualSender.nickname,
