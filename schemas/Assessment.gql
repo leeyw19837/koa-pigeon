@@ -1,12 +1,8 @@
-type AssessmentTag {
-  _id: ID
-  value: String
-}
-
 type Assessment {
   _id: ID!
   value: String
-  tags: [AssessmentTag]
+  tags: [Tag]
+  tagListIds: [String]
   createdAt: Date
 }
 
