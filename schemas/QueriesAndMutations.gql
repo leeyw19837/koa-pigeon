@@ -424,6 +424,8 @@ type Mutation {
     parentId: ID
     operator: ID
   ): Boolean
+  retrainQA(q: String!, a: String!): Boolean
+  saveNewQA(q: String!, a: String!, msgId: ID!, cde: ID!): Boolean
 }
 
 type Subscription {

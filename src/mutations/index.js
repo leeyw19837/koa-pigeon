@@ -37,6 +37,8 @@ import * as changeAchieveShowStatus from './changeAchieveShowStatus'
 import * as sessions from './sessions'
 import * as updateContentType from './updateContentType'
 import * as updateTag from './tags'
+import * as saveNewQA from './saveNewQA'
+import * as retrainQA from './retrainQA'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -81,6 +83,8 @@ const mutations = {
   ...sessions,
   ...updateContentType,
   ...updateTag,
+  ...retrainQA,
+  ...saveNewQA,
 }
 
 const mutationsWithAuthandLog = {}
