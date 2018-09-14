@@ -28,7 +28,7 @@ export const whoAmI = async (userId, nosy, participants, db) => {
   return me
 }
 
-const delay = 15
+const delay = 15 * 60
 export const finishSession = async (db, chatRoomId, finishReason) => {
   await db.collection('sessions').update(
     {
