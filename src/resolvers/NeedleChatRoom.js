@@ -2,6 +2,7 @@ import { first } from 'lodash'
 import { maybeCreateFromHexString } from '../utils'
 import { ObjectId } from 'mongodb'
 import { whoAmI } from '../modules/chat'
+import { qa } from '../modules/AI'
 
 export const NeedleChatRoom = {
   async participants(needleChatRoom, _, { getDb }) {
@@ -41,6 +42,18 @@ export const NeedleChatRoom = {
       .limit(limit)
       .toArray()
 
+    // query AI QA
+    const patientLatestMsg = messages.filter(msg => {
+      return msg.sourceType === 'FROM_PATIENT' && msg.messageType === 'TEXT'
+    })
+
+    for (
+      let i = 0, len = patientLatestMsg.length;
+      i < (len > 5 ? 5 : len);
+      i++
+    ) {
+      patientLatestMsg[i].intelligentQA = await qa(patientLatestMsg[i].text)
+    }
     return messages.reverse()
   },
   async latestMessage(needleChatRoom, _, { getDb }) {
@@ -78,7 +91,7 @@ export const NeedleChatRoom = {
       .collection('users')
       .findOne({ _id: ObjectId(patient.userId) })
   },
-  async replying({ _id }, _, { getDb }) {
+  async responder({ _id }, _, { getDb }) {
     const db = await getDb()
     let processingSession = await db
       .collection('sessions')
@@ -89,10 +102,15 @@ export const NeedleChatRoom = {
       .limit(1)
       .toArray()
     processingSession = first(processingSession)
-    const replying =
+    const educatorId =
       processingSession &&
       !processingSession.endAt &&
       processingSession.educatorId
-    return !!replying
+    if (educatorId) {
+      return {
+        _id: processingSession.educatorId,
+        nickname: processingSession.educatorName,
+      }
+    }
   },
 }

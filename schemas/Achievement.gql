@@ -58,6 +58,8 @@ type BonusPointSource {
   name: String
   # 积分来源的方式 // SHARE_GROUPS|SHARE_MOMENTS|ACHIEVEMENT
   fromWay: String
+  # 积分分享的类型 // 
+  shareType: ShareTypes
 }
 
 type BonusPoint {
@@ -72,4 +74,9 @@ type BonusPoint {
 type AchievementResult{
   achievements:Achievement
   achievementRecords:AchievementRecord
+}
+
+enum ShareTypes {
+  ACHIEVEMENT
+  KNOWLEDGE
 }

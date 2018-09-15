@@ -404,6 +404,7 @@ type Mutation {
     achievementRecordId: ID!
     shareWay: String!
     shareStatus: String!
+    shareType: String
   ): String
   changeAchieveShowStatus(patientId: ID!): Boolean
   sharingConfirm(shareId: ID!, confirmStatus: String!): Boolean
@@ -416,6 +417,15 @@ type Mutation {
   ): String
   finishSession(chatRoomId: ID!): Boolean
   updateContentType(messageId: ID!, contentType: String!): NeedleTextMessage
+  updateTag(
+    type: String!
+    title: String
+    tagId: ID
+    parentId: ID
+    operator: ID
+  ): Boolean
+  retrainQA(q: String!, a: String!): Boolean
+  saveNewQA(q: String!, a: String!, msgId: ID!, cde: ID!): Boolean
 }
 
 type Subscription {

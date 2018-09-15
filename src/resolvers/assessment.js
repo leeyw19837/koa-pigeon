@@ -3,17 +3,39 @@ import { ObjectID } from 'mongodb'
 export const Assessment = {
   tags: async (assessment, _, { getDb }) => {
     const db = await getDb()
-    console.log(assessment, '@assessment')
-    const { tags = [], value, createdAt, _id } = assessment
-    const transforTags = []
-    if (tags.length) {
-      tags.map((o, index) => {
-        transforTags.push({
-          _id: `${_id}_${index}_tag`,
-          value: '饮食不均衡',
-        })
+    const { tags } = assessment
+    const dbTags = await db
+      .collection('tags')
+      .find({
+        status: 'ACTIVE',
+        _id: { $in: tags },
       })
+      .toArray()
+    return dbTags
+  },
+  tagListIds: async (assessment, _, { getDb }) => {
+    const db = await getDb()
+    const { tags } = assessment
+    const dbTags = await db
+      .collection('tags')
+      .find({
+        status: 'ACTIVE',
+      })
+      .toArray()
+    // get the parentIds
+    const tagListIds = []
+    const getParentIds = (tagId, dbTags) => {
+      const currentTag = dbTags.filter(tag => tag._id === tagId)[0]
+      if (tagListIds.indexOf(currentTag._id) === -1) {
+        tagListIds.push(currentTag._id)
+      }
+      if (currentTag.parentId) {
+        getParentIds(currentTag.parentId, dbTags)
+      }
     }
-    return transforTags
+    tags.filter(tagId => {
+      getParentIds(tagId, dbTags)
+    })
+    return tagListIds
   },
 }
