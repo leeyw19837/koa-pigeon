@@ -1,0 +1,22 @@
+type SelfTestSchemes {
+    startAt: String
+    endAt: String
+    type: String
+    bgMeasureModuleId: String
+    schemeDetail: schemeModules
+}
+
+type schemeModules {
+  type: String
+  morning: schemeQuantityUnit
+  midday: schemeQuantityUnit
+  evening: schemeQuantityUnit
+  beforeSleep: schemeQuantityUnit
+  noLimit: schemeQuantityUnit
+  createdAt: Date
+}
+
+type schemeQuantityUnit {
+  quantity: Int
+  unit: String
+}

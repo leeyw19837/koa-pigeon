@@ -1,0 +1,11 @@
+type HealthInformation {
+    avatar: String
+    nickname: String
+    gender: String
+    age: String
+    hospital: String
+    doctor: String
+    diabetesType: String
+    courseOfDisease: String
+}
+

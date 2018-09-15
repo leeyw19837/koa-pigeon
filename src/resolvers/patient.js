@@ -387,4 +387,67 @@ export const Patient = {
       .toArray()
     return bonusPoints
   },
+  healthInformation: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    let hospital = '无照护组'
+    if (patient.healthCareTeamId) {
+      hospital = await db
+        .collection('healthCareTeams')
+        .findOne({ _id: patient.healthCareTeamId[0] })
+    }
+    const patientBriefInformation = {}
+    patientBriefInformation.avatar = patient.avatar ? patient.avatar : 'empty'
+    patientBriefInformation.nickname = patient.nickname
+    patientBriefInformation.gender = patient.gender === 'male'? '男' : '女'
+    patientBriefInformation.age = moment(new Date()).diff(patient.dateOfBirth,'years')
+    patientBriefInformation.hospital = hospital.institutionName
+    patientBriefInformation.doctor = patient.doctor
+    patientBriefInformation.diabetesType = patient.diabetesType
+    patientBriefInformation.courseOfDisease = moment().get('year') - patient.startOfIllness.split('/')[0]
+    return patientBriefInformation
+  },
+  selfTestSchemes: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const module = await db
+      .collection('measureModules')
+      .find({ patientId })
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .toArray()
+
+    // console.log('module',module)
+    if (isEmpty(module)) return null
+    const bgMeasureModule = await db
+      .collection('bgMeasureModule')
+      .findOne({ type: module[0].type })
+
+    // console.log('bgMeasureModule',bgMeasureModule)
+
+    const selfTestSchemes = {}
+    selfTestSchemes.startAt = module[0].startAt
+    selfTestSchemes.endAt = module[0].endAt
+    selfTestSchemes.type = module[0].type
+    selfTestSchemes.bgMeasureModuleId = module[0].bgMeasureModuleId
+    selfTestSchemes.schemeDetail = bgMeasureModule
+
+    return selfTestSchemes
+  },
+  sugarControlGoals: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const caseRecord = await db
+      .collection('caseRecord')
+      .find({ patientId })
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .toArray()
+
+    let sugarControlGoals = null
+    if (caseRecord && caseRecord.length>0){
+      sugarControlGoals = caseRecord[0]
+    }
+    return sugarControlGoals
+  }
 }

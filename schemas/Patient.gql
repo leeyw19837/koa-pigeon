@@ -51,4 +51,10 @@ type Patient {
   achievementResult(achievementId: ID):[AchievementResult]
   achievementShownRecords: [AchievementRecord]
   bonusPoints: [BonusPoint!]
+  # 模组（Needle/健康模块/自测要求/自测方案）
+  selfTestSchemes: SelfTestSchemes
+  # 控糖目标（Needle/健康模块/自测要求/控糖目标）
+  sugarControlGoals: CaseRecord
+  # 用户基本信息（Needle/健康模块/基本信息）
+  healthInformation: HealthInformation
 }
