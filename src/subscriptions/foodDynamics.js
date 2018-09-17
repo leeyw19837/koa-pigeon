@@ -8,7 +8,7 @@ export const foodDynamics = {
   subscribe: withFilter(
     () => pubsub.asyncIterator('foodDynamics'),
     async (payload, variables) => {
-      return payload.patientId === variables.patientId
+      return payload.patientId === variables.patientId && (!variables.client  ? payload._senderRole : true)
     },
   ),
 }

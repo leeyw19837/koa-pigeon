@@ -53,6 +53,7 @@ export const addFoodComments = async (_, args, context) => {
     pubsub.publish('foodDynamics', {
       ...relatedFoods,
       _operation: 'UPDATED',
+      _senderRole: author.roles,
     })
   }
   return !!result.result.ok
@@ -100,6 +101,10 @@ export const saveFoodComments = async (_, args, { getDb }) => {
     badgeCreatedAt,
   })
 
+  const author = await db
+    .collection('users')
+    .findOne({ _id: { $in: [ObjectID(authorId), authorId] } }, { roles: 1 }) || {}
+
   pubsub.publish('foodDynamics', {
     ...relatedFoods,
     _operation: 'UPDATED',
@@ -109,6 +114,7 @@ export const saveFoodComments = async (_, args, { getDb }) => {
     _recordId: commentId,
     badgeId,
     badgeCreatedAt,
+    _senderRole: author.roles,
   })
   return !!resultComments.result.ok && !!resultBadgeRecords.result.ok
 }
