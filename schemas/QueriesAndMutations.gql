@@ -427,6 +427,13 @@ type Mutation {
   ): Boolean
   retrainQA(q: String!, a: String!): Boolean
   saveNewQA(q: String!, a: String!, msgId: ID!, cde: ID!): Boolean
+  updateAssessment(
+    assessmentId: ID!
+    value: String
+    tagIds: [String]
+    operator: ID
+    status: String
+  ): Boolean
 }
 
 type Subscription {
