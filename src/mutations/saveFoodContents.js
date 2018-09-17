@@ -90,6 +90,7 @@ export const updateFoodScore = async (_, args, context) => {
       },
     },
   )
+
   success = !!updateResult.result.ok
   if (comment){
     if (success) {
@@ -119,6 +120,7 @@ export const updateFoodScore = async (_, args, context) => {
       _recordId: recordId,
       badgeId,
       badgeCreatedAt,
+      _senderRole: 'cde'
     })
   }
   context.response.set('effect-types', 'Foods')
