@@ -402,9 +402,9 @@ export const Patient = {
     patientBriefInformation.gender = patient.gender === 'male'? '男' : '女'
     patientBriefInformation.age = moment(new Date()).diff(patient.dateOfBirth,'years')
     patientBriefInformation.hospital = hospital.institutionName
-    patientBriefInformation.doctor = patient.doctor
-    patientBriefInformation.diabetesType = patient.diabetesType
-    patientBriefInformation.courseOfDisease = moment().get('year') - patient.startOfIllness.split('/')[0]
+    patientBriefInformation.doctor = patient.doctor ? patient.doctor : '--'
+    patientBriefInformation.diabetesType = patient.diabetesType ? patient.diabetesType : '--'
+    patientBriefInformation.courseOfDisease = patient.startOfIllness ? (moment().get('year') - patient.startOfIllness.split('/')[0]) : '--'
     return patientBriefInformation
   },
   selfTestSchemes: async (patient, _, { getDb }) => {
@@ -417,13 +417,13 @@ export const Patient = {
       .limit(1)
       .toArray()
 
-    // console.log('module',module)
+    console.log('module',module)
     if (isEmpty(module)) return null
     const bgMeasureModule = await db
       .collection('bgMeasureModule')
       .findOne({ type: module[0].type })
 
-    // console.log('bgMeasureModule',bgMeasureModule)
+    console.log('bgMeasureModule',bgMeasureModule)
 
     const selfTestSchemes = {}
     selfTestSchemes.startAt = module[0].startAt
