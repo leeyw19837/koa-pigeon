@@ -1,0 +1,7 @@
+type CertifiedDiabetesEducatorForDuty{
+  _id:String!
+  userId:String!
+  nickname:String!
+  phoneNumber:String
+  stopPeriod:String
+}

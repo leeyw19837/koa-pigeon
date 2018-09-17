@@ -122,6 +122,7 @@ type Query {
     cdeId: ID
     assistantId: ID
   ): CertifiedDiabetesEducator
+  cdeForDuty:[CertifiedDiabetesEducatorForDuty]
   getInterventionTasks(
     cdeId: ID
     patientId: ID
