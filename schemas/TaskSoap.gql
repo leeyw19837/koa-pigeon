@@ -1,13 +1,12 @@
 type TaskSoapPlan {
-  relatedAssessmentCode: String!
-  content: String!
+  assessment: Assessment
+  content: String
 }
 
 type TaskSoap {
   _id: ID!
   taskId: ID!
   patientId: ID!
-  assessments: [String]
   plans: [TaskSoapPlan]
   byTel: Boolean!
   createdAt: Date
@@ -15,13 +14,12 @@ type TaskSoap {
 }
 
 input TaskSoapPlanInput {
-  relatedAssessmentCode: String!
+  assessmentId: ID!
   content: String!
 }
 input TaskSoapInput {
   patientId: ID!
   taskId: ID!
-  assessments: [String]
   plans: [TaskSoapPlanInput]
   byTel: Boolean!
 }
