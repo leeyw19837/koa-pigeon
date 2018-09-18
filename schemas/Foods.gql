@@ -58,6 +58,7 @@ type Foods {
   badgeId: String
   # 徽章记录的创建时间（在badgeRecords中的记录的创建时间）
   badgeCreatedAt: Date
+  _senderRole: String
 }
 
 input FoodsScoreInput {

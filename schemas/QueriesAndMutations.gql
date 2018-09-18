@@ -427,6 +427,13 @@ type Mutation {
   ): Boolean
   retrainQA(q: String!, a: String!): Boolean
   saveNewQA(q: String!, a: String!, msgId: ID!, cde: ID!): Boolean
+  updateAssessment(
+    assessmentId: ID!
+    value: String
+    tagIds: [String]
+    operator: ID
+    status: String
+  ): Boolean
 }
 
 type Subscription {
@@ -439,7 +446,7 @@ type Subscription {
     nosy: Boolean
     type: InterventionTaskType
   ): InterventionTask
-  foodDynamics(patientId: ID): Foods
+  foodDynamics(patientId: ID, client: String): Foods
   sessionDynamics(userId: ID, nosy: Boolean, chatRoomId: ID): Session
 }
 

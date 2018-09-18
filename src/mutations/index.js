@@ -39,6 +39,7 @@ import * as updateContentType from './updateContentType'
 import * as updateTag from './tags'
 import * as saveNewQA from './saveNewQA'
 import * as retrainQA from './retrainQA'
+import * as assessment from './assessment'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -85,6 +86,7 @@ const mutations = {
   ...updateTag,
   ...retrainQA,
   ...saveNewQA,
+  ...assessment,
 }
 
 const mutationsWithAuthandLog = {}

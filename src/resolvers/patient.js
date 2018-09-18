@@ -417,13 +417,13 @@ export const Patient = {
       .limit(1)
       .toArray()
 
-    console.log('module',module)
+    // console.log('module',module)
     if (isEmpty(module)) return null
     const bgMeasureModule = await db
       .collection('bgMeasureModule')
       .findOne({ type: module[0].type })
 
-    console.log('bgMeasureModule',bgMeasureModule)
+    // console.log('bgMeasureModule',bgMeasureModule)
 
     const selfTestSchemes = {}
     selfTestSchemes.startAt = module[0].startAt
