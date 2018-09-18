@@ -122,6 +122,7 @@ type Query {
     cdeId: ID
     assistantId: ID
   ): CertifiedDiabetesEducator
+  # 照护师值班
   cdeForDuty:[CertifiedDiabetesEducatorForDuty]
   getInterventionTasks(
     cdeId: ID
@@ -434,6 +435,11 @@ type Mutation {
     operator: ID
     status: String
   ): Boolean
+  # 修改照护师值班时间段
+  updateCdeDutyStopPeriod(
+    userId:String!
+    stopPeriod:String!
+  ):Boolean
 }
 
 type Subscription {

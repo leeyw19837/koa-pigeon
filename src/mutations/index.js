@@ -40,10 +40,11 @@ import * as updateTag from './tags'
 import * as saveNewQA from './saveNewQA'
 import * as retrainQA from './retrainQA'
 import * as assessment from './assessment'
+import * as updateCdeDutyStopPeriod from './updateCdeDutyStopPeriod'
 
-import { logQueryOrMutation } from '../utils'
+import {logQueryOrMutation} from '../utils'
 
-import { logandAuthForApp } from '../utils/authentication'
+import {logandAuthForApp} from '../utils/authentication'
 
 const mutations = {
   ...assessmentTime,
@@ -87,17 +88,13 @@ const mutations = {
   ...retrainQA,
   ...saveNewQA,
   ...assessment,
+  ...updateCdeDutyStopPeriod
 }
 
 const mutationsWithAuthandLog = {}
 
-Object.keys(mutations).map(
-  mutationName =>
-    (mutationsWithAuthandLog[mutationName] = logandAuthForApp(
-      'MUTATION',
-      mutationName,
-      mutations[mutationName],
-    )),
-)
+Object
+  .keys(mutations)
+  .map(mutationName => (mutationsWithAuthandLog[mutationName] = logandAuthForApp('MUTATION', mutationName, mutations[mutationName],)),)
 
 export default mutationsWithAuthandLog
