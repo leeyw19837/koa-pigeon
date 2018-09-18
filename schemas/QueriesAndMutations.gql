@@ -440,6 +440,10 @@ type Mutation {
     userId:String!
     stopPeriod:String!
   ):Boolean
+  # 修改每天照护师值班人数
+  updateCdeDutyPeopleperDay(
+    dutyPeopleperDay:Int!
+  ):Boolean
 }
 
 type Subscription {
