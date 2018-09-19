@@ -252,3 +252,51 @@ export const verifyNotify = async() => {
     }
   }
 }
+
+export const reNotify = async() => {
+  if (isHoliday()) {
+    // 查询今天创建的历史
+    let todaySchedules = await getHistories();
+    // 今天尚未确认的任务
+    let unConfirmed = todaySchedules.filter(t => {
+      return !t.confirmed
+    });
+    for (let i = 0; i < unConfirmed.length; i++) {
+      let objisReply = await isReply(unConfirmed[i].mobile); // 是否回复了短信
+      if (!objisReply) {
+        // 发给当事人
+        await sendTxt({
+          mobile: unConfirmed[i].mobile,
+          templateId: 'SMS_145501348',
+          params: {
+            adjective: '可爱',
+            name: unConfirmed[i].nickname,
+            date: moment()
+              .add(1, 'd')
+              .format('YYYY年MM月DD日')
+          }
+        });
+        // 发给于水清
+        await sendTxt({
+          mobile: '15620536989',
+          templateId: 'SMS_128635144',
+          params: {
+            name: unConfirmed[i].name,
+            time: unConfirmed[i].date,
+            phone: unConfirmed[i].mobile
+          }
+        });
+        // 发给燕妮
+        await sendTxt({
+          mobile: '15620536989',
+          templateId: 'SMS_128635144',
+          params: {
+            name: unConfirmed[i].name,
+            time: unConfirmed[i].date,
+            phone: unConfirmed[i].mobile
+          }
+        });
+      }
+    }
+  }
+}
