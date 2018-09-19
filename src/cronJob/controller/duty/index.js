@@ -1,6 +1,7 @@
 import moment from 'moment'
 import {ObjectID} from 'mongodb'
-import {get, omit, last, difference} from 'lodash'
+import {get, omit, last, difference, pullAt} from 'lodash'
+import {sendTxt} from '../../../common'
 
 const getAllCdes = async() => {
   const cdes = await db
@@ -43,7 +44,7 @@ const isHoliday = async() => {
     moment('2018-09-30').startOf('day')
   ]
 
-  if (jrdate_2018.indexOf(moment().startOf('day')) > -1 || (txr_2018.indexOf() < 0 && (dayOfWeek === 0 || dayOfWeek === 6))) {
+  if (jrdate_2018.indexOf(moment().add(1, 'd').startOf('day')) > -1 || (txr_2018.indexOf(moment().add(1, 'd').startOf('day')) < 0 && (dayOfWeek === 0 || dayOfWeek === 6))) {
     return true
   } else {
     return false
@@ -60,17 +61,17 @@ const checkDutyCde = async(cdes) => {
       if (cde.stopPeriod) {
         const periodSpliter = cde
           .stopPeriod
-          .split('——');
+          .split('--');
         const startTime = moment(periodSpliter[0]).startOf('day');
         const endTime = periodSpliter[1] === '无限'
           ? moment('2999-12-31').endOf('day')
           : moment(periodSpliter[1]).endOf('day');
         console.log(periodSpliter, startTime, endTime)
-        if (moment().isBefore(startTime)) {
+        if (moment().add(1, 'd').isBefore(startTime)) {
           dutyCdes.push(cde);
           console.log('isBefore', startTime, cde);
         }
-        if (moment().isAfter(endTime)) {
+        if (moment().add(1, 'd').isAfter(endTime)) {
           dutyCdes.push(cde);
           console.log('isAfter', endTime, cde);
           // Todo 删除 Period
@@ -100,7 +101,10 @@ const generateNewDutyQueue = async(currentDutyCdes, todayDutyCdes) => {
   let addArr = difference(todayDutyIds, currentDutyIds);
   // 取seq
   console.log('要增加的照护师ID：——>', addArr);
-  const seq = currentDutyCdes[0].seq;
+  let seq = 1;
+  if (currentDutyCdes.length) {
+    seq = currentDutyCdes[0].seq;
+  }
   console.log('当前seq', seq);
   // 新Arr
   let newArr = [];
@@ -168,4 +172,64 @@ export const saveDutyQueue = async() => {
       .insert({_id, state: true, dutyPeopleperDay: 1, cdes: todayDutyCdes})
     return JSON.stringify(todayDutyCdes);
   }
+}
+
+export const getNextDutyCdes = async() => {
+  const duty = await db
+    .collection('cdeDutys')
+    .findOne({state: true})
+  const dutyPeopleperDay = duty.dutyPeopleperDay;
+  const cdes = duty.cdes;
+  const _id = duty._id;
+  let pulledCdes = []
+  if (cdes.length) {
+    console.log('取出的照护师队列👉 ', cdes);
+    let lastSeq = last(cdes).seq;
+    let pullIndex = [];
+    for (let i = 0; i < dutyPeopleperDay; i++) {
+      pullIndex.push(i);
+    }
+    pulledCdes = pullAt(cdes, pullIndex);
+    console.log('将要发短信的照护师们👉 ', pulledCdes);
+    //重组数据
+    for (const key in pulledCdes) {
+      if (pulledCdes.hasOwnProperty(key)) {
+        const element = pulledCdes[key];
+        element.seq = Number(lastSeq) + Number(key) + 1;
+        cdes.push(element);
+      }
+    }
+    console.log('重组后的照护师队列👉 ', cdes);
+    await db
+      .collection('cdeDutys')
+      .update({
+        _id
+      }, {$set: {
+          cdes
+        }})
+  }
+  return pulledCdes
+}
+
+export const sendDutyMessage = async() => {
+  await saveDutyQueue();
+  const cdes = await getNextDutyCdes();
+  for (const key in cdes) {
+    if (cdes.hasOwnProperty(key)) {
+      const cde = cdes[key];
+      const option = {
+        mobile: cde.phoneNumber,
+        templateId: 'SMS_145501348',
+        params: {
+          adjective: '可爱',
+          name: cde.nickname,
+          date: moment()
+            .add(1, 'd')
+            .format('YYYY年MM月DD日')
+        }
+      }
+      await sendTxt(option)
+    }
+  }
+  return 'OK'
 }

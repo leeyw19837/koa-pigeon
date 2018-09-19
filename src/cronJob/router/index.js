@@ -4,7 +4,7 @@ import {sendChatCardMessages, checkOverdueForAfterTreatment} from '../controller
 import {sendOutpatientPushMessages} from '../controller/outpatient-push'
 import {assignPatientToCde} from '../controller/cde-account'
 import {authorization} from '../../utils/authorization'
-import {saveDutyQueue} from '../controller/duty'
+import {saveDutyQueue, getNextDutyCdes, sendDutyMessage} from '../controller/duty'
 
 const Router = require('koa-router')
 const cronJob = new Router()
@@ -91,6 +91,25 @@ cronJob.get('/save-duty-queue', async ctx => {
     return ctx.throw(401, '密码错误或参数不正确')
   }
   const result = await saveDutyQueue()
+  if (result) {
+    ctx.body = 'OK! ' + result
+  }
+})
+cronJob.get('/get-next-duty-cdes', async ctx => {
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const result = await getNextDutyCdes()
+  if (result) {
+    ctx.body = 'OK! ' + result
+  }
+})
+
+cronJob.get('/send-duty-message', async ctx => {
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const result = await sendDutyMessage()
   if (result) {
     ctx.body = 'OK! ' + result
   }
