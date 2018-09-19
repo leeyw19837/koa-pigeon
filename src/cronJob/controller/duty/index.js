@@ -2,18 +2,16 @@ import moment from 'moment'
 import {ObjectID} from 'mongodb'
 import {get, omit, last, difference, pullAt} from 'lodash'
 import {sendTxt} from '../../../common'
-
-const getAllCdes = async() => {
-  const cdes = await db
-    .collection('certifiedDiabetesEducators')
-    .find({
-      patientPercent: {
-        $exists: true
-      }
-    })
-    .toArray()
-  return cdes
-}
+import {
+  getAllCdes,
+  getCdeDutys,
+  updateCdeDutys,
+  insertCdeDutys,
+  saveHistory,
+  getHistories,
+  isReply,
+  updateHistrty
+} from '../../services/duty'
 
 const isHoliday = async() => {
   // 2018年节假日
@@ -137,10 +135,7 @@ export const saveDutyQueue = async() => {
   // 查询所有照护师
   const cdes = await getAllCdes();
   const todayDutyCdes = await checkDutyCde(cdes);
-  const cdedutys = await db
-    .collection('cdeDutys')
-    .find({state: true})
-    .toArray()
+  const cdedutys = await getCdeDutys()
   let _id = new ObjectID().toHexString();
   if (cdedutys.length) {
     _id = cdedutys[0]._id;
@@ -148,15 +143,7 @@ export const saveDutyQueue = async() => {
     const currentCdes = cdedutys[0].cdes
     const newCdes = await generateNewDutyQueue(currentCdes, todayDutyCdes);
     // 更新照护师值班
-    await db
-      .collection('cdeDutys')
-      .update({
-        _id
-      }, {
-        $set: {
-          cdes: newCdes
-        }
-      })
+    await updateCdeDutys(_id, newCdes);
     return JSON.stringify(newCdes);
   } else {
     // 插入排队序列
@@ -167,9 +154,7 @@ export const saveDutyQueue = async() => {
       }
     }
     // 插入值班照护师数组，每日值班人数默认为1
-    await db
-      .collection('cdeDutys')
-      .insert({_id, state: true, dutyPeopleperDay: 1, cdes: todayDutyCdes})
+    await insertCdeDutys(todayDutyCdes)
     return JSON.stringify(todayDutyCdes);
   }
 }
@@ -200,13 +185,7 @@ export const getNextDutyCdes = async() => {
       }
     }
     console.log('重组后的照护师队列👉 ', cdes);
-    await db
-      .collection('cdeDutys')
-      .update({
-        _id
-      }, {$set: {
-          cdes
-        }})
+    await updateCdeDutys(_id, cdes);
   }
   return pulledCdes
 }
@@ -228,8 +207,40 @@ export const sendDutyMessage = async() => {
             .format('YYYY年MM月DD日')
         }
       }
-      await sendTxt(option)
+      await sendTxt(option);
+      await saveHistory(cde);
     }
   }
   return 'OK'
+}
+
+export const verifyNotify = async() => {
+  // 查询今天创建的历史
+  let todaySchedules = await getHistories();
+  // 今天尚未确认的任务
+  let unConfirmed = todaySchedules.filter(t => {
+    return !t.confirmed
+  });
+  // 查询是否有确认短信
+  for (let i = 0; i < unConfirmed.length; i++) {
+    const objisReply = await isReply(unConfirmed[i].mobile);
+    if (objisReply) {
+      // 更新schedule
+      unConfirmed[i].confirmed = true;
+      unConfirmed[i].sendVerifyConfirm = true;
+      const updateRst = await updateHistrty(unConfirmed[i]);
+      console.log(updateRst);
+      // 回了确认短信，发短信给于水清和王燕妮
+      // Todo修改模板
+      await sendTxt({
+        mobile: '15620536989',
+        templateId: 'SMS_128635142',
+        params: {
+          name: unConfirmed[i].name,
+          hospital: '',
+          time: unConfirmed[i].date
+        }
+      });
+    }
+  }
 }

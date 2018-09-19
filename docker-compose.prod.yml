@@ -9,6 +9,7 @@ services:
     restart: always
     environment:
       - MONGO_URL=mongodb://paperKingByiHealth:djsdF3fQa@120.131.8.26:27017,120.131.8.27:27017,120.131.8.46:27017,mongoprod1.ihealthcn.com:27017,mongoprod2.ihealthcn.com:27017,mongoprod3.ihealthcn.com:27017/paper-king?replicaSet=iHealthMongo
+       - MONGO_RAVEN_URL=mongodb://sa:Nu29Yips@mongoprod1.ihealthcn.com:27017,mongoprod2.ihealthcn.com:27017,mongoprod3.ihealthcn.com:27017/righteous-raven?replicaSet=iHealthMongo&authSource=admin
       - SECRET=8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo
       - JWT_SECRET=tctocFi4FLDZtLcbwmxgRJmUj3RHCWwK
       - AUTH=TRUE

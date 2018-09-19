@@ -17,6 +17,7 @@ services:
     command: yarn watchAndRun
     environment:
       - MONGO_URL=mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@mongodev.ihealthcn.com:27017,mongodev.ihealthcn.com:27018,mongodev.ihealthcn.com:27019,mongodev1.ihealthcn.com:27017,mongodev2.ihealthcn.com:27018,mongodev3.ihealthcn.com:27019/paper-king-developing?replicaSet=rs
+      - MONGO_RAVEN_URL=mongodb://sa:Nu29Yips@mongoprod1.ihealthcn.com:27017,mongoprod2.ihealthcn.com:27017,mongoprod3.ihealthcn.com:27017/righteous-raven?replicaSet=iHealthMongo&authSource=admin
       - SECRET=8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo
       - JWT_SECRET=tctocFi4FLDZtLcbwmxgRJmUj3RHCWwK
       - AUTH=FALSE
