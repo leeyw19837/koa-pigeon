@@ -13,5 +13,14 @@ export const setDelayJob = (id, job, sec) => {
   if (isJobExists(id)) {
     delDelayJob(id)
   }
-  jobs[id] = setTimeout(job, sec * 1000).toString()
+  jobs[id] = setTimeout(() => {
+    job()
+    delDelayJob(id)
+  }, sec * 1000).toString()
 }
+
+export const resetJobs = () => {
+  Object.keys(jobs).forEach(delDelayJob)
+}
+
+export const getAllJobs = () => ({ ...jobs })
