@@ -42,6 +42,7 @@ import * as retrainQA from './retrainQA'
 import * as assessment from './assessment'
 import * as updateCdeDutyStopPeriod from './updateCdeDutyStopPeriod'
 import * as updateCdeDutyPeopleperDay from './updateCdeDutyPeopleperDay'
+import * as updateCdeDutyAdjective from './updateCdeDutyAdjective'
 
 import {logQueryOrMutation} from '../utils'
 
@@ -90,7 +91,8 @@ const mutations = {
   ...saveNewQA,
   ...assessment,
   ...updateCdeDutyStopPeriod,
-  ...updateCdeDutyPeopleperDay
+  ...updateCdeDutyPeopleperDay,
+  ...updateCdeDutyAdjective
 }
 
 const mutationsWithAuthandLog = {}

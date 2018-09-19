@@ -155,6 +155,7 @@ type Query {
   #   queryType: String
   # ): Achievement
   getSessions(chatRoomId: ID): [Session]
+  cdeDutyAdjective:[String]
 }
 
 type Mutation {
@@ -443,6 +444,10 @@ type Mutation {
   # 修改每天照护师值班人数
   updateCdeDutyPeopleperDay(
     dutyPeopleperDay:Int!
+  ):Boolean
+  # 修改照护师形容词
+  updateCdeDutyAdjective(
+    adjective:[String]!
   ):Boolean
 }
 

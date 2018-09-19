@@ -55,6 +55,7 @@ import * as session from './session'
 import * as getUnreadTask from './getUnreadTask'
 import * as assessments from './assessments'
 import * as tags from './tags'
+import * as cdeDutyAdjective from './cdeDutyAdjective'
 
 //AI
 import * as queryAIContentTypes from './queryAIContentTypes'
@@ -110,7 +111,8 @@ const queries = {
   ...getUnreadTask,
   ...assessments,
   ...tags,
-  ...cdeForDuty
+  ...cdeForDuty,
+  ...cdeDutyAdjective
 }
 
 const queriesWithAuthandLog = {}
