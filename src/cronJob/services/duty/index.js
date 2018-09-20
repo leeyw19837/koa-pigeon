@@ -1,5 +1,5 @@
 import {ObjectID} from 'mongodb'
-import moment from 'moment'
+import moment from 'dayjs' // The moment ALWAYS overwrite original object！fuck moment！
 
 export const confirmContent = [
   /\.*好的\.*/,
@@ -60,16 +60,16 @@ export const insertCdeDutys = async(cdes) => {
   return true
 }
 
-export const saveHistory = async(cde) => {
+export const saveHistory = async(cde, date = new moment()) => {
   await db
     .collection('cdeDutyHistories')
     .insert({
       name: cde.nickname,
       mobile: cde.phoneNumber,
-      datetime: moment()
+      datetime: date
         .add(1, 'd')
         .format('YYYY-MM-DD'),
-      date: moment()
+      date: date
         .add(1, 'd')
         .format('MM月DD日'),
       confirmed: false,

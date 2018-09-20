@@ -87,6 +87,7 @@ cronJob.post('/assign-patient-to-cde', async ctx => {
 })
 
 cronJob.get('/save-duty-queue', async ctx => {
+  //------------FOR TEST ONLY！------------
   if (!authorization(ctx)) {
     return ctx.throw(401, '密码错误或参数不正确')
   }
@@ -96,6 +97,7 @@ cronJob.get('/save-duty-queue', async ctx => {
   }
 })
 cronJob.get('/get-next-duty-cdes', async ctx => {
+  //------------FOR TEST ONLY！------------
   if (!authorization(ctx)) {
     return ctx.throw(401, '密码错误或参数不正确')
   }
@@ -109,7 +111,8 @@ cronJob.get('/send-duty-message', async ctx => {
   if (!authorization(ctx)) {
     return ctx.throw(401, '密码错误或参数不正确')
   }
-  const result = await sendDutyMessage()
+  const {testDate} = ctx.query
+  const result = await sendDutyMessage(testDate)
   if (result) {
     ctx.body = 'OK! ' + result
   }
@@ -119,7 +122,8 @@ cronJob.get('/verify-duty-message', async ctx => {
   if (!authorization(ctx)) {
     return ctx.throw(401, '密码错误或参数不正确')
   }
-  await verifyNotify()
+  const {testDate} = ctx.query
+  await verifyNotify(testDate)
   ctx.body = 'OK! '
 })
 
@@ -127,7 +131,8 @@ cronJob.get('/renotify-duty-message', async ctx => {
   if (!authorization(ctx)) {
     return ctx.throw(401, '密码错误或参数不正确')
   }
-  await reNotify()
+  const {testDate} = ctx.query
+  await reNotify(testDate)
   ctx.body = 'OK! '
 })
 
