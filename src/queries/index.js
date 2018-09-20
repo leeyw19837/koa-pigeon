@@ -56,6 +56,7 @@ import * as getUnreadTask from './getUnreadTask'
 import * as assessments from './assessments'
 import * as tags from './tags'
 import * as cdeDutyAdjective from './cdeDutyAdjective'
+import * as cdeDutyPeopleperDay from './cdeDutyPeopleperDay'
 
 //AI
 import * as queryAIContentTypes from './queryAIContentTypes'
@@ -112,7 +113,8 @@ const queries = {
   ...assessments,
   ...tags,
   ...cdeForDuty,
-  ...cdeDutyAdjective
+  ...cdeDutyAdjective,
+  ...cdeDutyPeopleperDay
 }
 
 const queriesWithAuthandLog = {}
