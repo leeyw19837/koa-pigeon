@@ -8,17 +8,6 @@ import {
 
 jest.useFakeTimers()
 
-describe('useFakeTimers', () => {
-  test('', () => {
-    const start = new Date().getTime()
-    setTimeout(() => {
-      const end = new Date().getTime()
-      expect(end - start).toBeLessThan(10)
-    }, 10000)
-    jest.runOnlyPendingTimers()
-  })
-})
-
 describe('延迟任务单元测试', () => {
   test('可以添加任务', () => {
     setDelayJob('testAdd1', () => {}, 10)
@@ -38,7 +27,7 @@ describe('延迟任务单元测试', () => {
     expect(getAllJobs()).not.toHaveProperty(jobId)
   })
 
-  test('任务会在指定时间执行,', () => {
+  test('任务会在指定时间执行', () => {
     const jobId = 'testRun'
     const mockFn = jest.fn()
     setDelayJob(jobId, mockFn, 10)
