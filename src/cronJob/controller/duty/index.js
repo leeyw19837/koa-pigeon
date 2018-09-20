@@ -13,7 +13,7 @@ import {
   updateHistrty
 } from '../../services/duty'
 
-const isHoliday = async() => {
+const isHoliday = () => {
   // 2018年节假日
   const jrdate_2018 = [
     moment('2018-01-01').startOf('day'),
@@ -41,10 +41,14 @@ const isHoliday = async() => {
     moment('2018-09-29').startOf('day'),
     moment('2018-09-30').startOf('day')
   ]
-
+  const dayOfWeek = moment()
+    .add(1, 'd')
+    .dayOfWeek;
   if (jrdate_2018.indexOf(moment().add(1, 'd').startOf('day')) > -1 || (txr_2018.indexOf(moment().add(1, 'd').startOf('day')) < 0 && (dayOfWeek === 0 || dayOfWeek === 6))) {
+    console.log('------------------------ is holiday ------------------------');
     return true
   } else {
+    console.log('------------------------ is not holiday ------------------------');
     return false
   }
 
@@ -193,54 +197,106 @@ export const getNextDutyCdes = async() => {
 export const sendDutyMessage = async() => {
   await saveDutyQueue();
   const cdes = await getNextDutyCdes();
-  for (const key in cdes) {
-    if (cdes.hasOwnProperty(key)) {
-      const cde = cdes[key];
-      const option = {
-        mobile: cde.phoneNumber,
-        templateId: 'SMS_145501348',
-        params: {
-          adjective: '可爱',
-          name: cde.nickname,
-          date: moment()
-            .add(1, 'd')
-            .format('YYYY年MM月DD日')
+  if (isHoliday()) {
+    for (const key in cdes) {
+      if (cdes.hasOwnProperty(key)) {
+        const cde = cdes[key];
+        const option = {
+          mobile: cde.phoneNumber,
+          templateId: 'SMS_145501348',
+          params: {
+            adjective: '可爱',
+            name: cde.nickname,
+            date: moment()
+              .add(1, 'd')
+              .format('YYYY年MM月DD日')
+          }
         }
+        await sendTxt(option);
+        await saveHistory(cde);
       }
-      await sendTxt(option);
-      await saveHistory(cde);
     }
   }
   return 'OK'
 }
 
 export const verifyNotify = async() => {
-  // 查询今天创建的历史
-  let todaySchedules = await getHistories();
-  // 今天尚未确认的任务
-  let unConfirmed = todaySchedules.filter(t => {
-    return !t.confirmed
-  });
-  // 查询是否有确认短信
-  for (let i = 0; i < unConfirmed.length; i++) {
-    const objisReply = await isReply(unConfirmed[i].mobile);
-    if (objisReply) {
-      // 更新schedule
-      unConfirmed[i].confirmed = true;
-      unConfirmed[i].sendVerifyConfirm = true;
-      const updateRst = await updateHistrty(unConfirmed[i]);
-      console.log(updateRst);
-      // 回了确认短信，发短信给于水清和王燕妮
-      // Todo修改模板
-      await sendTxt({
-        mobile: '15620536989',
-        templateId: 'SMS_128635142',
-        params: {
-          name: unConfirmed[i].name,
-          hospital: '',
-          time: unConfirmed[i].date
-        }
-      });
+  if (isHoliday()) {
+    // 查询今天创建的历史
+    let todaySchedules = await getHistories();
+    // 今天尚未确认的任务
+    let unConfirmed = todaySchedules.filter(t => {
+      return !t.confirmed
+    });
+    // 查询是否有确认短信
+    for (let i = 0; i < unConfirmed.length; i++) {
+      const objisReply = await isReply(unConfirmed[i].mobile);
+      if (objisReply) {
+        // 更新schedule
+        unConfirmed[i].confirmed = true;
+        unConfirmed[i].sendVerifyConfirm = true;
+        const updateRst = await updateHistrty(unConfirmed[i]);
+        console.log(updateRst);
+        // 回了确认短信，发短信给于水清和王燕妮
+        // Todo修改模板
+        await sendTxt({
+          mobile: '15620536989',
+          templateId: 'SMS_128635142',
+          params: {
+            name: unConfirmed[i].name,
+            hospital: '',
+            time: unConfirmed[i].date
+          }
+        });
+      }
+    }
+  }
+}
+
+export const reNotify = async() => {
+  if (isHoliday()) {
+    // 查询今天创建的历史
+    let todaySchedules = await getHistories();
+    // 今天尚未确认的任务
+    let unConfirmed = todaySchedules.filter(t => {
+      return !t.confirmed
+    });
+    for (let i = 0; i < unConfirmed.length; i++) {
+      let objisReply = await isReply(unConfirmed[i].mobile); // 是否回复了短信
+      if (!objisReply) {
+        // 发给当事人
+        await sendTxt({
+          mobile: unConfirmed[i].mobile,
+          templateId: 'SMS_145501348',
+          params: {
+            adjective: '可爱',
+            name: unConfirmed[i].nickname,
+            date: moment()
+              .add(1, 'd')
+              .format('YYYY年MM月DD日')
+          }
+        });
+        // 发给于水清
+        await sendTxt({
+          mobile: '15620536989',
+          templateId: 'SMS_128635144',
+          params: {
+            name: unConfirmed[i].name,
+            time: unConfirmed[i].date,
+            phone: unConfirmed[i].mobile
+          }
+        });
+        // 发给燕妮
+        await sendTxt({
+          mobile: '15620536989',
+          templateId: 'SMS_128635144',
+          params: {
+            name: unConfirmed[i].name,
+            time: unConfirmed[i].date,
+            phone: unConfirmed[i].mobile
+          }
+        });
+      }
     }
   }
 }
