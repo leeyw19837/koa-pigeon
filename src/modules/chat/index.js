@@ -57,7 +57,7 @@ export const finishSession = async (db, chatRoomId, finishReason) => {
   })
   let { participants } = room
   participants = participants.map(p => {
-    if (p.role !== '医助') return p
+    if (p.role !== '医助' || finishReason === 'timeout') return p
     return {
       ...p,
       lastSeenAt: new Date(),
