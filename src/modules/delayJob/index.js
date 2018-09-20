@@ -16,5 +16,5 @@ export const setDelayJob = (id, job, sec) => {
   jobs[id] = setTimeout(() => {
     job()
     delDelayJob(id)
-  }, sec * 1000).toString()
+  }, sec * 1000)
 }

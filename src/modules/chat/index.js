@@ -57,7 +57,7 @@ export const finishSession = async (db, chatRoomId, finishReason) => {
   })
   let { participants } = room
   participants = participants.map(p => {
-    if (p.role !== '医助') return p
+    if (p.role === '患者' || finishReason === 'timeout') return p
     return {
       ...p,
       lastSeenAt: new Date(),
@@ -180,7 +180,7 @@ export const correctSessions = async db => {
         .update({ _id }, { $set: { endAt: startAt, finishReason: 'timeout' } })
     } else {
       const jobId = `session_${chatRoomId}`
-      setDelayJob(jobId, finishSession(db, chatRoomId, 'timeout'), delay)
+      setDelayJob(jobId, () => finishSession(db, chatRoomId, 'timeout'), delay)
     }
   }
 }
