@@ -40,7 +40,7 @@ export const patientsHasCDE = async (
 ) => {
   const db = await getDb()
   const condition = {
-    patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
+    patientState: { $nin: ['REMOVED'] },
     cdeId: { $exists: 1 },
     roles: { $exists: 0 },
   }
