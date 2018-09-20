@@ -123,7 +123,7 @@ type Query {
     assistantId: ID
   ): CertifiedDiabetesEducator
   # 照护师值班
-  cdeForDuty:[CertifiedDiabetesEducatorForDuty]
+  cdeForDuty: [CertifiedDiabetesEducatorForDuty]
   getInterventionTasks(
     cdeId: ID
     patientId: ID
@@ -155,8 +155,9 @@ type Query {
   #   queryType: String
   # ): Achievement
   getSessions(chatRoomId: ID): [Session]
-  cdeDutyAdjective:[String]
-  cdeDutyPeopleperDay:Int!
+  cdeDutyAdjective: [String]
+  cdeDutyAdjective: [String]
+  cdeDutyPeopleperDay: Int!
 }
 
 type Mutation {
@@ -429,7 +430,13 @@ type Mutation {
     operator: ID
   ): Boolean
   retrainQA(q: String!, a: String!): Boolean
-  saveNewQA(q: String!, a: String!, msgId: ID!, cde: ID!): Boolean
+  saveNewQA(
+    q: String!
+    a: String!
+    msgId: ID!
+    cdeId: ID!
+    cdeName: String!
+  ): Boolean
   updateAssessment(
     assessmentId: ID!
     value: String
@@ -438,18 +445,11 @@ type Mutation {
     status: String
   ): Boolean
   # 修改照护师值班时间段
-  updateCdeDutyStopPeriod(
-    userId:String!
-    stopPeriod:String!
-  ):Boolean
+  updateCdeDutyStopPeriod(userId: String!, stopPeriod: String!): Boolean
   # 修改每天照护师值班人数
-  updateCdeDutyPeopleperDay(
-    dutyPeopleperDay:Int!
-  ):Boolean
+  updateCdeDutyPeopleperDay(dutyPeopleperDay: Int!): Boolean
   # 修改照护师形容词
-  updateCdeDutyAdjective(
-    adjective:[String]!
-  ):Boolean
+  updateCdeDutyAdjective(adjective: [String]!): Boolean
 }
 
 type Subscription {
