@@ -19,37 +19,48 @@ let {HOLIDAY_SEND, LEADER_MOBILE1, LEADER_MOBILE2} = process.env
 const isHoliday = (date) => {
   // 2018年节假日
   const jrdate_2018 = [
-    moment('2018-01-01').startOf('day'),
-    moment('2018-02-15').startOf('day'),
-    moment('2018-02-16').startOf('day'),
-    moment('2018-02-17').startOf('day'),
-    moment('2018-02-18').startOf('day'),
-    moment('2018-02-19').startOf('day'),
-    moment('2018-02-20').startOf('day'),
-    moment('2018-02-21').startOf('day'),
-    moment('2018-06-18').startOf('day'),
-    moment('2018-09-24').startOf('day'),
-    moment('2018-10-01').startOf('day'),
-    moment('2018-10-02').startOf('day'),
-    moment('2018-10-03').startOf('day'),
-    moment('2018-10-04').startOf('day'),
-    moment('2018-10-05').startOf('day')
+    '2018-09-24',
+    '2018-10-01',
+    '2018-10-02',
+    '2018-10-03',
+    '2018-10-04',
+    '2018-10-05',
+    '2018-12-31',
+    '2019-01-01',
+    '2019-02-04',
+    '2019-02-05',
+    '2019-02-06',
+    '2019-02-07',
+    '2019-02-08',
+    '2019-04-05',
+    '2019-04-29',
+    '2019-04-30',
+    '2019-05-01',
+    '2019-06-07',
+    '2019-09-13',
+    '2019-10-01',
+    '2019-10-02',
+    '2019-10-03',
+    '2019-10-04',
+    '2019-10-07'
   ]
   // 2018年调休日
   const txr_2018 = [
-    moment('2018-02-11').startOf('day'),
-    moment('2018-02-24').startOf('day'),
-    moment('2018-04-08').startOf('day'),
-    moment('2018-04-28').startOf('day'),
-    moment('2018-09-29').startOf('day'),
-    moment('2018-09-30').startOf('day')
+    '2018-09-29',
+    '2018-09-30',
+    '2018-12-29',
+    '2019-02-02',
+    '2019-02-03',
+    '2019-04-27',
+    '2019-04-28',
+    '2019-09-29',
+    '2019-10-12'
   ]
+  const dateAdd1d = date.add(1, 'd');
 
-  const dayOfWeek = date
-    .add(1, 'd')
-    .day();
-  console.log('isHoliday', date.format('YYYY-MM-DD'), dayOfWeek);
-  if (jrdate_2018.indexOf(date.add(1, 'd').startOf('day')) > -1 || (txr_2018.indexOf(date.add(1, 'd').startOf('day')) < 0 && (dayOfWeek === 0 || dayOfWeek === 6))) {
+  const dayOfWeek = dateAdd1d.day();
+  console.log('isHoliday', date.format('YYYY-MM-DD'), 'date add 1d', dateAdd1d.format('YYYY-MM-DD'), dayOfWeek, 'jrindex', jrdate_2018.indexOf(dateAdd1d.startOf('day').format('YYYY-MM-DD')), 'txrindex', txr_2018.indexOf(dateAdd1d.startOf('day').format('YYYY-MM-DD')));
+  if (jrdate_2018.indexOf(dateAdd1d.startOf('day').format('YYYY-MM-DD')) > -1 || (txr_2018.indexOf(dateAdd1d.startOf('day').format('YYYY-MM-DD')) < 0 && (dayOfWeek === 0 || dayOfWeek === 6))) {
     console.log('------------------------ is holiday ------------------------');
     return true
   } else {
@@ -73,7 +84,7 @@ const checkDutyCde = async(cdes, date) => {
         const endTime = periodSpliter[1] === '无限'
           ? moment('2999-12-31').endOf('day')
           : moment(periodSpliter[1]).endOf('day');
-        console.log(periodSpliter, startTime, endTime)
+        console.log(periodSpliter, startTime.format('YYYY-MM-DD'), endTime)
         if (date.add(1, 'd').isBefore(startTime)) {
           dutyCdes.push(cde);
           console.log('isBefore', startTime.format('YYYY-MM-DD'), cde);
