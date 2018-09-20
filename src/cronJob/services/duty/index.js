@@ -127,3 +127,11 @@ export const updateHistrty = async(history) => {
       _id: id
     }, {$set: history});
 }
+
+export const getAdjectives = async() => {
+  const adjs = await db
+    .collection('cdeDutyAdjective')
+    .find({state: true})
+    .toArray()
+  return adjs[0].adjective
+}

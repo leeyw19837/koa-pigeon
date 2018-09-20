@@ -31,6 +31,9 @@ services:
       - AI_HOST=http://172.31.48.39:7011
       - AI_RETRAIN_HOST=http://172.31.48.39:7016
       - AI=true
+      - HOLIDAY_SEND=true
+      - LEADER_MOBILE1=15620536989
+      - LEADER_MOBILE2=15620536989
   redis:
     build:
       context: .
