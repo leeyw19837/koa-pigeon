@@ -10,8 +10,11 @@ import {
   saveHistory,
   getHistories,
   isReply,
-  updateHistrty
+  updateHistrty,
+  getAdjectives
 } from '../../services/duty'
+
+let {HOLIDAY_SEND, LEADER_MOBILE1, LEADER_MOBILE2} = process.env
 
 const isHoliday = () => {
   // 2018年节假日
@@ -195,108 +198,129 @@ export const getNextDutyCdes = async() => {
 }
 
 export const sendDutyMessage = async() => {
+  if (HOLIDAY_SEND === 'true' && !isHoliday()) {
+    return;
+  }
+
   await saveDutyQueue();
   const cdes = await getNextDutyCdes();
-  if (isHoliday()) {
-    for (const key in cdes) {
-      if (cdes.hasOwnProperty(key)) {
-        const cde = cdes[key];
-        const option = {
-          mobile: cde.phoneNumber,
-          templateId: 'SMS_145501348',
-          params: {
-            adjective: '可爱',
-            name: cde.nickname,
-            date: moment()
-              .add(1, 'd')
-              .format('YYYY年MM月DD日')
-          }
+  // 初始化形容词
+  const adjs = await getAdjectives();
+  for (const key in cdes) {
+    if (cdes.hasOwnProperty(key)) {
+      const cde = cdes[key];
+      const option = {
+        mobile: cde.phoneNumber,
+        templateId: 'SMS_145501348',
+        params: {
+          adjective: adjs.randomElement(),
+          name: cde.nickname,
+          date: moment()
+            .add(1, 'd')
+            .format('YYYY年MM月DD日')
         }
-        await sendTxt(option);
-        await saveHistory(cde);
       }
+      await sendTxt(option);
+      await saveHistory(cde);
     }
   }
   return 'OK'
 }
 
 export const verifyNotify = async() => {
-  if (isHoliday()) {
-    // 查询今天创建的历史
-    let todaySchedules = await getHistories();
-    // 今天尚未确认的任务
-    let unConfirmed = todaySchedules.filter(t => {
-      return !t.confirmed
-    });
-    // 查询是否有确认短信
-    for (let i = 0; i < unConfirmed.length; i++) {
-      const objisReply = await isReply(unConfirmed[i].mobile);
-      if (objisReply) {
-        // 更新schedule
-        unConfirmed[i].confirmed = true;
-        unConfirmed[i].sendVerifyConfirm = true;
-        const updateRst = await updateHistrty(unConfirmed[i]);
-        console.log(updateRst);
-        // 回了确认短信，发短信给于水清和王燕妮
-        // Todo修改模板
-        await sendTxt({
-          mobile: '15620536989',
-          templateId: 'SMS_128635142',
-          params: {
-            name: unConfirmed[i].name,
-            hospital: '',
-            time: unConfirmed[i].date
-          }
-        });
-      }
+  if (HOLIDAY_SEND === 'true' && !isHoliday()) {
+    return;
+  }
+  // 查询今天创建的历史
+  let todaySchedules = await getHistories();
+  // 今天尚未确认的任务
+  let unConfirmed = todaySchedules.filter(t => {
+    return !t.confirmed
+  });
+  // 查询是否有确认短信
+  for (let i = 0; i < unConfirmed.length; i++) {
+    const objisReply = await isReply(unConfirmed[i].mobile);
+    if (objisReply) {
+      // 更新schedule
+      unConfirmed[i].confirmed = true;
+      unConfirmed[i].sendVerifyConfirm = true;
+      const updateRst = await updateHistrty(unConfirmed[i]);
+      console.log(updateRst);
+      // 回了确认短信，发短信给于水清和王燕妮
+      // Todo修改模板
+      await sendTxt({
+        mobile: LEADER_MOBILE1,
+        templateId: 'SMS_128635142',
+        params: {
+          name: unConfirmed[i].name,
+          hospital: '',
+          time: unConfirmed[i].date
+        }
+      });
+      await sendTxt({
+        mobile: LEADER_MOBILE2,
+        templateId: 'SMS_128635142',
+        params: {
+          name: unConfirmed[i].name,
+          hospital: '',
+          time: unConfirmed[i].date
+        }
+      });
     }
   }
 }
 
 export const reNotify = async() => {
-  if (isHoliday()) {
-    // 查询今天创建的历史
-    let todaySchedules = await getHistories();
-    // 今天尚未确认的任务
-    let unConfirmed = todaySchedules.filter(t => {
-      return !t.confirmed
-    });
-    for (let i = 0; i < unConfirmed.length; i++) {
-      let objisReply = await isReply(unConfirmed[i].mobile); // 是否回复了短信
-      if (!objisReply) {
-        // 发给当事人
-        await sendTxt({
-          mobile: unConfirmed[i].mobile,
-          templateId: 'SMS_145501348',
-          params: {
-            adjective: '可爱',
-            name: unConfirmed[i].nickname,
-            date: moment()
-              .add(1, 'd')
-              .format('YYYY年MM月DD日')
-          }
-        });
-        // 发给于水清
-        await sendTxt({
-          mobile: '15620536989',
-          templateId: 'SMS_128635144',
-          params: {
-            name: unConfirmed[i].name,
-            time: unConfirmed[i].date,
-            phone: unConfirmed[i].mobile
-          }
-        });
-        // 发给燕妮
-        await sendTxt({
-          mobile: '15620536989',
-          templateId: 'SMS_128635144',
-          params: {
-            name: unConfirmed[i].name,
-            time: unConfirmed[i].date,
-            phone: unConfirmed[i].mobile
-          }
-        });
-      }
+  if (HOLIDAY_SEND === 'true' && !isHoliday()) {
+    return;
+  }
+  // 查询今天创建的历史
+  let todaySchedules = await getHistories();
+  // 今天尚未确认的任务
+  let unConfirmed = todaySchedules.filter(t => {
+    return !t.confirmed
+  });
+  // 初始化形容词
+  const adjs = await getAdjectives();
+  for (let i = 0; i < unConfirmed.length; i++) {
+    let objisReply = await isReply(unConfirmed[i].mobile); // 是否回复了短信
+    if (!objisReply) {
+      // 发给当事人
+      await sendTxt({
+        mobile: unConfirmed[i].mobile,
+        templateId: 'SMS_145501348',
+        params: {
+          adjective: adjs.randomElement(),
+          name: unConfirmed[i].nickname,
+          date: moment()
+            .add(1, 'd')
+            .format('YYYY年MM月DD日')
+        }
+      });
+      // 发给于水清
+      await sendTxt({
+        mobile: LEADER_MOBILE1,
+        templateId: 'SMS_128635144',
+        params: {
+          name: unConfirmed[i].name,
+          time: unConfirmed[i].date,
+          phone: unConfirmed[i].mobile
+        }
+      });
+      // 发给燕妮
+      await sendTxt({
+        mobile: LEADER_MOBILE1,
+        templateId: 'SMS_128635144',
+        params: {
+          name: unConfirmed[i].name,
+          time: unConfirmed[i].date,
+          phone: unConfirmed[i].mobile
+        }
+      });
     }
   }
+}
+// HackArray
+Array.prototype.randomElement = function () {
+  return this[Math.floor(Math.random() * this.length)]
 }
