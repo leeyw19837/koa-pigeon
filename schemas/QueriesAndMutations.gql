@@ -156,6 +156,7 @@ type Query {
   # ): Achievement
   getSessions(chatRoomId: ID): [Session]
   cdeDutyAdjective:[String]
+  cdeDutyPeopleperDay:Int!
 }
 
 type Mutation {
