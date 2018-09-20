@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb'
 export const saveNewQA = async (_, args, context) => {
   const db = await context.getDb()
   // 把qa保存起来
-  const { q, a, msgId, cde } = args
+  const { q, a, msgId, cdeId, cdeName } = args
 
   // query sender detail information
   const msg = await db.collection('needleChatMessages').findOne({ _id: msgId })
@@ -24,7 +24,8 @@ export const saveNewQA = async (_, args, context) => {
     questioner: sender.nickname,
     hospital: healthCareTeam.institutionName,
     msgId,
-    cde,
+    cdeId,
+    cdeName,
     approved: 0,
     approvedUser: null,
     createdAt: new Date(),
