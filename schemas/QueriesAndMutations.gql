@@ -239,6 +239,15 @@ type Mutation {
     actualSenderId: ID
     nosy: Boolean
   ): NeedleTextMessage!
+  sendNeedleTaskChatMessage(
+    userId: String!
+    chatRoomId: ID!
+    text: String!
+    sourceType: String
+    taskType: String
+    actualSenderId: ID
+    nosy: Boolean
+  ): NeedleTaskMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
   sendMobileVerificationCodeForWeb(mobile: String!): Int!
