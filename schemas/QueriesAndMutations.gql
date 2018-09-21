@@ -2,6 +2,7 @@
 scalar GraphQLDateTime
 
 type Query {
+  getQAList(approved: Int!, pageSize: Int!, pageIndex: Int!): QAAddition!
   footAssessment(
     patientId: ID!
     healthCareTeamId: ID!

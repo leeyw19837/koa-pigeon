@@ -25,7 +25,8 @@ export const getQAList = async (_, args, { getDb }) => {
     })
     .sort(condition)
     .skip((pageIndex - 1) * pageSize) // 忽略前n页
-    .limit(pageSize) // 拿pageSize条数
+    .limit(pageSize)
+    .toArray() // 拿pageSize条数
 
   return {
     totalPage,

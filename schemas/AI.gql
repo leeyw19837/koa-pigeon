@@ -10,3 +10,27 @@ type QA {
   q: String
   a: String
 }
+
+# 新增QA类型
+type QAAddition {
+  _id: ID!
+  q: String!
+  a: String!
+  patientId: ID!
+  questioner: String!
+  hospital: String!
+  msgId: ID!
+  cdeId: ID!
+  cdeName: String!
+  approved: Int!
+  approvedUser: String
+  createdAt: Date!
+  approvedAt: Date
+}
+
+type QAListReponse {
+  totalPage: Int!
+  pageIndex: Int!
+  pageSize: Int!
+  records: [QAAddition]!
+}
