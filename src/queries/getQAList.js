@@ -1,6 +1,6 @@
 export const getQAList = async (_, args, { getDb }) => {
   const db = await getDb()
-  const condition = {}
+  let condition = {}
   switch (args.approved) {
     case 0:
       condition = { createdAt: 1 }
@@ -9,14 +9,16 @@ export const getQAList = async (_, args, { getDb }) => {
       condition = { createdAt: -1 }
       break
   }
-  const { pageSize, pageIndex } = args
+  let { pageSize, pageIndex } = args
+  pageIndex < 1 ? (pageIndex = 1) : (pageIndex = pageIndex)
 
-  const recordsCount = await db
+  let recordsCount = await db
     .collection('aiChatQA')
     .count({ approved: args.approved })
+  recordsCount < 1 ? (recordsCount = 1) : (recordsCount = recordsCount)
 
   const totalPage = Math.ceil(recordsCount / pageSize)
-  pageIndex = totalPage > pageIndex ? totalPage : pageIndex
+  pageIndex = totalPage < pageIndex ? totalPage : pageIndex
 
   const records = await db
     .collection('aiChatQA')
