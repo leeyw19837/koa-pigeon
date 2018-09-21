@@ -460,6 +460,7 @@ type Mutation {
   updateCdeDutyPeopleperDay(dutyPeopleperDay: Int!): Boolean
   # 修改照护师形容词
   updateCdeDutyAdjective(adjective: [String]!): Boolean
+  updateQAStatus(qaId: ID!, approved: Int!): Boolean
 }
 
 type Subscription {

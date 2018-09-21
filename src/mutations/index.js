@@ -2,7 +2,6 @@ import * as addOrder from './addOrder'
 import * as appointment from './appointment'
 import * as assessmentTime from './assessmentTime'
 import * as bloodGlucoseMeasurement from './bloodGlucoseMeasurement'
-import * as updateRemarkOfBloodglucoses from './bloodGlucoseMeasurement'
 import * as changeUsername from './changeUsername'
 import * as updateBG1Reason from './updateBG1Reason'
 import * as chatMessages from './chatMessages'
@@ -44,6 +43,7 @@ import * as assessment from './assessment'
 import * as updateCdeDutyStopPeriod from './updateCdeDutyStopPeriod'
 import * as updateCdeDutyPeopleperDay from './updateCdeDutyPeopleperDay'
 import * as updateCdeDutyAdjective from './updateCdeDutyAdjective'
+import * as updateQAStatus from './updateQAStatus'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -94,13 +94,19 @@ const mutations = {
   ...assessment,
   ...updateCdeDutyStopPeriod,
   ...updateCdeDutyPeopleperDay,
-  ...updateCdeDutyAdjective
+  ...updateCdeDutyAdjective,
+  ...updateQAStatus,
 }
 
 const mutationsWithAuthandLog = {}
 
-Object
-  .keys(mutations)
-  .map(mutationName => (mutationsWithAuthandLog[mutationName] = logandAuthForApp('MUTATION', mutationName, mutations[mutationName])))
+Object.keys(mutations).map(
+  mutationName =>
+    (mutationsWithAuthandLog[mutationName] = logandAuthForApp(
+      'MUTATION',
+      mutationName,
+      mutations[mutationName],
+    )),
+)
 
 export default mutationsWithAuthandLog
