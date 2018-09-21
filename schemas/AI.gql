@@ -29,6 +29,7 @@ type QAAddition {
 }
 
 type QAListReponse {
+  recordsCount: Int!
   totalPage: Int!
   pageIndex: Int!
   pageSize: Int!

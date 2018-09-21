@@ -31,6 +31,7 @@ export const getQAList = async (_, args, { getDb }) => {
     .toArray()
 
   return {
+    recordsCount,
     totalPage,
     pageIndex,
     pageSize,
