@@ -2,8 +2,8 @@ import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import reduce from 'lodash/reduce'
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
-
 import moment from 'moment'
+import axios from 'axios'
 import { getMeasureFeedback } from '../cronJob/controller/getMeasureFeedback'
 
 export const Patient = {
@@ -399,8 +399,8 @@ export const Patient = {
     const patientBriefInformation = {}
     patientBriefInformation.avatar = patient.avatar ? patient.avatar : 'empty'
     patientBriefInformation.nickname = patient.nickname
-    patientBriefInformation.gender = patient.gender === 'male'? '男' : '女'
-    patientBriefInformation.age = moment(new Date()).diff(patient.dateOfBirth,'years')
+    patientBriefInformation.gender = patient.gender === 'male' ? '男' : '女'
+    patientBriefInformation.age = moment(new Date()).diff(patient.dateOfBirth, 'years')
     patientBriefInformation.hospital = hospital.institutionName
     patientBriefInformation.doctor = patient.doctor ? patient.doctor : '--'
     patientBriefInformation.diabetesType = patient.diabetesType ? patient.diabetesType : '--'
@@ -445,9 +445,29 @@ export const Patient = {
       .toArray()
 
     let sugarControlGoals = null
-    if (caseRecord && caseRecord.length>0){
+    if (caseRecord && caseRecord.length > 0) {
       sugarControlGoals = caseRecord[0]
+
+      return sugarControlGoals
     }
-    return sugarControlGoals
+  },
+  predictionA1c: async (patient) => {
+    const A1C_URL = 'http://172.31.48.12:50050/api/getPredictA1CByUserIDs'
+    let a1c = ''
+    try {
+      const formData = {
+        userId: patient._id
+      }
+      axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+      const result = await axios.post(A1C_URL, formData)
+      a1c = get(result, 'data.result.prediction[0].a1cValue', null)
+    } catch (e) {
+      a1c = ''
+    }
+    if (a1c) {
+      a1c = a1c.toFixed(1)
+    }
+    console.log(a1c)
+    return a1c
   }
 }

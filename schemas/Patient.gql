@@ -57,6 +57,7 @@ type Patient {
   sugarControlGoals: CaseRecord
   # 用户基本信息（Needle/健康模块/基本信息）
   healthInformation: HealthInformation
+  predictionA1c: String
 }
 
 enum Gender {
