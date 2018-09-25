@@ -48,6 +48,7 @@ import * as updateQAStatus from './updateQAStatus'
 import { logQueryOrMutation } from '../utils'
 
 import { logandAuthForApp } from '../utils/authentication'
+import * as bloodGlucoese from './bloodGlucoses'
 
 const mutations = {
   ...assessmentTime,
@@ -96,6 +97,7 @@ const mutations = {
   ...updateCdeDutyPeopleperDay,
   ...updateCdeDutyAdjective,
   ...updateQAStatus,
+  ...bloodGlucoese,
 }
 
 const mutationsWithAuthandLog = {}
