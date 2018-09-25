@@ -173,22 +173,22 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
     })
 
     //聊天页面插入task气泡
-    const taskTextMap = {
-      AFTER_MEALS_HIGH: '餐后高血糖',
-      EMPTY_STOMACH_HIGH: '空腹高血糖',
-      FLUCTUATION: '大波动',
-      LOW_BLOOD_GLUCOSE: '低血糖',
-    }
-    const { _id, patientId, type, desc } = task
-    const sendArgs = {
-      taskId: _id,
-      patientId,
-      textContent: taskTextMap[type],
-      sourceType: 'FROM_SYSTEM',
-      taskType: type,
-      desc,
-    }
-    await insertChat(_, sendArgs, context)
+    // const taskTextMap = {
+    //   AFTER_MEALS_HIGH: '餐后高血糖',
+    //   EMPTY_STOMACH_HIGH: '空腹高血糖',
+    //   FLUCTUATION: '大波动',
+    //   LOW_BLOOD_GLUCOSE: '低血糖',
+    // }
+    // const { _id, patientId, type, desc } = task
+    // const sendArgs = {
+    //   taskId: _id,
+    //   patientId,
+    //   textContent: taskTextMap[type],
+    //   sourceType: 'FROM_SYSTEM',
+    //   taskType: type,
+    //   desc,
+    // }
+    // await insertChat(_, sendArgs, context)
   }
   // 餐前血糖测量后添加定时事件
   // 只有自动测量和餐前才添加定时事件
