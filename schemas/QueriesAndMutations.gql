@@ -463,6 +463,7 @@ type Mutation {
   updateQAStatus(qaId: ID!, approved: Int!): Boolean
   # 修改患者信息
   updatePatientProfile(patientId: ID!, profile: ProfileInput!): Boolean
+  updateBloodGlucoses(bgId: ID!, dataStatus: String, mTime: String): Boolean
 }
 
 type Subscription {

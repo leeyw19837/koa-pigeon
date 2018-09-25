@@ -49,6 +49,7 @@ import * as patient from './patient'
 import { logQueryOrMutation } from '../utils'
 
 import { logandAuthForApp } from '../utils/authentication'
+import * as bloodGlucoese from './bloodGlucoses'
 
 const mutations = {
   ...assessmentTime,
@@ -98,6 +99,7 @@ const mutations = {
   ...updateCdeDutyAdjective,
   ...updateQAStatus,
   ...patient,
+  ...bloodGlucoese,
 }
 
 const mutationsWithAuthandLog = {}
