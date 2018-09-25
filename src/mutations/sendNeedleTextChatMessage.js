@@ -33,6 +33,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     messagesPatientReplyFlag,
     actualSenderId,
     nosy,
+    messageType,
   } = args
 
   const userObjectId = ObjectId.createFromHexString(userId)
@@ -70,7 +71,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
 
   const newChatMessage = {
     _id: freshId(),
-    messageType: 'TEXT',
+    messageType: messageType === 'TASK' ? 'TASK' : 'TEXT',
     text,
     senderId: userId,
     createdAt: new Date(),
@@ -156,7 +157,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
       if (user && !user.roles) {
         pushChatNotification({
           patient: user,
-          messageType: 'TEXT',
+          messageType: messageType === 'TASK' ? 'TASK' : 'TEXT',
           text,
           db,
         })

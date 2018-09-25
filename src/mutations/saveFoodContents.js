@@ -1,10 +1,11 @@
-import {ObjectID, ObjectId} from 'mongodb'
+import { ObjectID, ObjectId } from 'mongodb'
 import { pubsub } from '../pubsub'
 import { uploadBase64Img } from '../utils/ks3'
 import { saveFoodComments } from './foodComments'
 import freshId from 'fresh-id'
 import some from 'lodash/some'
 import moment from 'moment'
+import { insertChat } from '../utils/insertNeedleChatMessage'
 
 const dietMap = {
   BREAKFAST: '早餐',
@@ -45,8 +46,9 @@ export const saveFoodContents = async (_, args, context) => {
   }
   await db.collection('foods').insertOne(foods)
 
+  const taskId = freshId()
   const newTask = {
-    _id: freshId(),
+    _id: taskId,
     state: 'PENDING',
     createdAt: now,
     updatedAt: now,
@@ -66,6 +68,16 @@ export const saveFoodContents = async (_, args, context) => {
     _operation: 'ADDED',
   })
 
+  //聊天页面插入task气泡
+  const textContent = `上传了${dietMap[measurementTime]}`
+  const sendArgs = {
+    taskId,
+    patientId,
+    textContent,
+    sourceType: 'FROM_SYSTEM',
+    taskType: 'FOOD_CIRCLE',
+  }
+  await insertChat(_, sendArgs, context)
   return true
 }
 
@@ -76,7 +88,7 @@ export const updateFoodScore = async (_, args, context) => {
   const allScoreUnset = !some(scores, score => score > 0)
   if (allScoreUnset) throw new Error('should be scored items at least one')
   let success = true
-  const foodRecord = await db.collection('foods').findOne({_id})
+  const foodRecord = await db.collection('foods').findOne({ _id })
   const updatedScoreFlag = foodRecord.totalScore && foodRecord.totalScore !== '0'
   const updateResult = await db.collection('foods').update(
     {
@@ -92,9 +104,9 @@ export const updateFoodScore = async (_, args, context) => {
   )
 
   success = !!updateResult.result.ok
-  if (comment){
+  if (comment) {
     if (success) {
-      const saveCommentResult = await saveFoodComments(null, { comment, _operationDetailType: 'SCORES_AND_COMMENTS', patientId: foodRecord.patientId}, context)
+      const saveCommentResult = await saveFoodComments(null, { comment, _operationDetailType: 'SCORES_AND_COMMENTS', patientId: foodRecord.patientId }, context)
       success = !!saveCommentResult
     }
   } else {
@@ -108,15 +120,15 @@ export const updateFoodScore = async (_, args, context) => {
       badgeState: 'UNREAD',
       recordType: 'SCORES',
       mainContentId: _id,
-      patientId:foodRecord.patientId,
-      senderId:'cde',
+      patientId: foodRecord.patientId,
+      senderId: 'cde',
       badgeCreatedAt,
     })
     const updatedFoods = await db.collection('foods').findOne({ _id })
     pubsub.publish('foodDynamics', {
       ...updatedFoods,
       _operation: 'UPDATED',
-      _operationDetailType:'SCORES',
+      _operationDetailType: 'SCORES',
       _recordId: recordId,
       badgeId,
       badgeCreatedAt,

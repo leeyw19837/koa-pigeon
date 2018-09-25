@@ -10,6 +10,7 @@ import {
 } from '../redisCron/controller'
 import { DigestiveStateLookup } from '../utils/i18n'
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
+import { insertChat } from '../utils/insertNeedleChatMessage'
 
 export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
   const db = await getDb()
@@ -35,15 +36,15 @@ export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
     ([key, value]) => value === digestiveState,
   )[0]
   const convertGlucoseTypeToUSString = value => {
-    if (!value) 
+    if (!value)
       return ''
     return `${Math.round(value * 18)}`
   }
   let bgValue = ''
-  if (bloodGlucose.unit.toLowerCase() === 'mg/dl') 
+  if (bloodGlucose.unit.toLowerCase() === 'mg/dl')
     bgValue = bloodGlucose.value
 
-  if (bloodGlucose.unit.toLowerCase() === 'mmol/l') 
+  if (bloodGlucose.unit.toLowerCase() === 'mmol/l')
     bgValue = convertGlucoseTypeToUSString(bloodGlucose.value)
 
   const oldFormat = {
@@ -106,8 +107,8 @@ export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
     ? retVal.insertedId
     : null
 }
-export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
-  const db = await getDb()
+export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
+  const db = await context.getDb()
   const {
     bloodGlucoseValue,
     bloodGlucoseDataSource,
@@ -170,6 +171,24 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
       ...task,
       _operation: 'ADDED',
     })
+
+    //聊天页面插入task气泡
+    const taskTextMap = {
+      AFTER_MEALS_HIGH: '餐后高血糖',
+      EMPTY_STOMACH_HIGH: '空腹高血糖',
+      FLUCTUATION: '大波动',
+      LOW_BLOOD_GLUCOSE: '低血糖',
+    }
+    const { _id, patientId, type, desc } = task
+    const sendArgs = {
+      taskId: _id,
+      patientId,
+      textContent: taskTextMap[type],
+      sourceType: 'FROM_SYSTEM',
+      taskType: type,
+      desc,
+    }
+    await insertChat(_, sendArgs, context)
   }
   // 餐前血糖测量后添加定时事件
   // 只有自动测量和餐前才添加定时事件
@@ -211,10 +230,10 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
       .update({
         _id: user._id
       }, {
-        $set: {
-          isUseBg1: true
-        }
-      },)
+          $set: {
+            isUseBg1: true
+          }
+        })
   }
   const mobile = user
     .username
@@ -247,7 +266,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
       await db
         .collection('warnings')
         .insertOne(warning)
-      pubsub.publish('warningAdded', {warningAdded: warning})
+      pubsub.publish('warningAdded', { warningAdded: warning })
     }
   }
   return !!retVal.result.ok
@@ -258,7 +277,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, { getDb }) => {
 export const updateRemarkOfBloodglucoses = async (_, args, { getDb }) => {
   const db = await getDb()
 
-  const {_id, remark} = args
+  const { _id, remark } = args
 
   const retVal = await db
     .collection('bloodglucoses')
@@ -271,7 +290,7 @@ export const updateRemarkOfBloodglucoses = async (_, args, { getDb }) => {
 export const updateRemarkOfBloodglucosesNew = async (_, args, { getDb }) => {
   const db = await getDb()
 
-  const {_id, remark, updatedAt} = args
+  const { _id, remark, updatedAt } = args
 
   const retVal = await db
     .collection('bloodGlucoses')
@@ -298,7 +317,7 @@ export const deleteOfBloodglucoses = async (_, args, { getDb }) => {
 export const logicalDeleteOfBloodglucoses = async (_, args, { getDb }) => {
   const db = await getDb()
 
-  const {_id} = args
+  const { _id } = args
   const retValue = await db
     .collection('bloodGlucoses')
     .updateOne(

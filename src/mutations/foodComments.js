@@ -2,6 +2,7 @@ import freshId from 'fresh-id'
 import moment from 'moment'
 import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
+// import { insertChat } from '../utils/insertNeedleChatMessage'
 
 export const addFoodComments = async (_, args, context) => {
   const db = await context.getDb()
@@ -30,10 +31,11 @@ export const addFoodComments = async (_, args, context) => {
   const author = await db
     .collection('users')
     .findOne({ _id: { $in: [ObjectID(authorId), authorId] } }, { roles: 1 })
+  const taskId = freshId()
   if (!author.roles) {
     const now = new Date()
     const newTask = {
-      _id: freshId(),
+      _id: taskId,
       state: 'PENDING',
       createdAt: now,
       updatedAt: now,
@@ -56,6 +58,18 @@ export const addFoodComments = async (_, args, context) => {
       _senderRole: author.roles,
     })
   }
+
+  //聊天页面插入task气泡
+  // const textContent = '写了一条新的评论'
+  // const sendArgs = {
+  //   taskId,
+  //   patientId: authorId,
+  //   textContent,
+  //   sourceType: 'FROM_SYSTEM',
+  //   taskType: 'FOOD_CIRCLE',
+  // }
+  // await insertChat(_, sendArgs, context)
+
   return !!result.result.ok
 }
 

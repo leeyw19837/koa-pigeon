@@ -1,0 +1,15 @@
+type NeedleTaskMessage implements NeedleChatMessage {
+  _id: ID!
+  text: String!
+  sender: User!
+  createdAt: Date!
+  messageType: String
+  needleChatRoom: NeedleChatRoom!
+  sourceType: String
+  contentType: String
+  approved: Boolean
+  actualSender: User
+  taskType: String
+  taskId: String
+  desc:String
+}

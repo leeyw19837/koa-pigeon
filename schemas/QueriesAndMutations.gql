@@ -2,6 +2,7 @@
 scalar GraphQLDateTime
 
 type Query {
+  getQAList(approved: Int!, pageSize: Int!, pageIndex: Int!): QAListReponse!
   footAssessment(
     patientId: ID!
     healthCareTeamId: ID!
@@ -238,6 +239,15 @@ type Mutation {
     actualSenderId: ID
     nosy: Boolean
   ): NeedleTextMessage!
+  sendNeedleTaskChatMessage(
+    userId: String!
+    chatRoomId: ID!
+    text: String!
+    sourceType: String
+    taskType: String
+    actualSenderId: ID
+    nosy: Boolean
+  ): NeedleTaskMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
   sendMobileVerificationCodeForWeb(mobile: String!): Int!
@@ -450,6 +460,7 @@ type Mutation {
   updateCdeDutyPeopleperDay(dutyPeopleperDay: Int!): Boolean
   # 修改照护师形容词
   updateCdeDutyAdjective(adjective: [String]!): Boolean
+  updateQAStatus(qaId: ID!, approved: Int!): Boolean
 }
 
 type Subscription {
