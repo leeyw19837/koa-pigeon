@@ -461,6 +461,8 @@ type Mutation {
   # 修改照护师形容词
   updateCdeDutyAdjective(adjective: [String]!): Boolean
   updateQAStatus(qaId: ID!, approved: Int!): Boolean
+  # 修改患者信息
+  updatePatientProfile(patientId: ID!, profile: ProfileInput!): Boolean
 }
 
 type Subscription {

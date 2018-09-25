@@ -48,7 +48,7 @@ type Patient {
   yearServiceStatus(platform: String): Boolean
   achievements: [Achievement]
   achievementRecords(achievementId: ID): [AchievementRecord]
-  achievementResult(achievementId: ID):[AchievementResult]
+  achievementResult(achievementId: ID): [AchievementResult]
   achievementShownRecords: [AchievementRecord]
   bonusPoints: [BonusPoint!]
   # 模组（Needle/健康模块/自测要求/自测方案）
@@ -57,4 +57,17 @@ type Patient {
   sugarControlGoals: CaseRecord
   # 用户基本信息（Needle/健康模块/基本信息）
   healthInformation: HealthInformation
+}
+
+enum Gender {
+  male
+  female
+}
+
+input ProfileInput {
+  nickname: String
+  gender: Gender
+  height: Int
+  weight: Int
+  username: String
 }
