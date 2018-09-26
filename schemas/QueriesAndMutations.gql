@@ -59,7 +59,7 @@ type Query {
   # Sms
   smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
   fetchOrCreateNeedleChatRoom(userId: ID!): NeedleChatRoom!
-  unreadMessages(userId: String!): UnReadMessage
+  unreadMessages(userId: String!, client: String = "APP"): UnReadMessage
   outreachs(period: String, startDay: Date): [Outreach]
   professionalLogin(
     username: String!
