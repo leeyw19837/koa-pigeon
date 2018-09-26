@@ -467,6 +467,14 @@ type Mutation {
     approvedUser: String!
     approvedUserId: ID!
   ): Boolean
+  # 问答审核通过，并推送给天津
+  updateQAtoAI(
+    qaId: ID!
+    q: String!
+    a: String!
+    approvedUser: String!
+    approvedUserId: ID!
+  ): Boolean
   # 修改患者信息
   updatePatientProfile(patientId: ID!, profile: ProfileInput!): Boolean
   updateBloodGlucoses(bgId: ID!, dataStatus: String, mTime: String): Boolean
