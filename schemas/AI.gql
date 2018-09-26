@@ -23,6 +23,7 @@ type QAAddition {
   cdeId: ID!
   cdeName: String!
   approved: Int!
+  approvedUserId: ID
   approvedUser: String
   createdAt: Date!
   approvedAt: Date

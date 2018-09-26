@@ -1,4 +1,5 @@
-export const updateQAtoAI = async (_, args, { getDb }) => {
+export const updateQAtoAI = async (_, args, context) => {
+  const { getDb } = context
   const db = await getDb()
   const { qaId, q, a, approvedUser, approvedUserId } = args
   // update QA
@@ -19,6 +20,6 @@ export const updateQAtoAI = async (_, args, { getDb }) => {
   )
 
   // Push new QA to Tianjin guys
-
+  context.response.set('effect-types', 'QAAddition')
   return true
 }
