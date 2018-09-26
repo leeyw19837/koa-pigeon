@@ -38,7 +38,7 @@ type Patient {
   isLiDocter: Boolean
   tempFilter: Boolean
   lastHbAlc: String
-  bloodGlucoses(startAt: Date, endAt: Date): [BloodGlucoseRecord]
+  bloodGlucoses(startAt: Date, endAt: Date, limit: Int): [BloodGlucoseRecord]
   cdeInfo: CertifiedDiabetesEducator
   doctorInfo: User
   # 模组完成度

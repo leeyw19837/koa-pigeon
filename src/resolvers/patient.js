@@ -189,10 +189,12 @@ export const Patient = {
         measuredAt: { $gt: args.startAt, $lt: args.endAt },
       })
     }
+    const limit = args.limit || 0
     return await db
       .collection('bloodGlucoses')
       .find(cursor)
       .sort({ measuredAt: -1 })
+      .limit(limit)
       .toArray()
   },
   cdeInfo: async (patient, _, { getDb }) => {
@@ -400,11 +402,18 @@ export const Patient = {
     patientBriefInformation.avatar = patient.avatar ? patient.avatar : 'empty'
     patientBriefInformation.nickname = patient.nickname
     patientBriefInformation.gender = patient.gender === 'male' ? '男' : '女'
-    patientBriefInformation.age = moment(new Date()).diff(patient.dateOfBirth, 'years')
+    patientBriefInformation.age = moment(new Date()).diff(
+      patient.dateOfBirth,
+      'years',
+    )
     patientBriefInformation.hospital = hospital.institutionName
     patientBriefInformation.doctor = patient.doctor ? patient.doctor : '--'
-    patientBriefInformation.diabetesType = patient.diabetesType ? patient.diabetesType : '--'
-    patientBriefInformation.courseOfDisease = patient.startOfIllness ? (moment().get('year') - patient.startOfIllness.split('/')[0]) : '--'
+    patientBriefInformation.diabetesType = patient.diabetesType
+      ? patient.diabetesType
+      : '--'
+    patientBriefInformation.courseOfDisease = patient.startOfIllness
+      ? moment().get('year') - patient.startOfIllness.split('/')[0]
+      : '--'
     return patientBriefInformation
   },
   selfTestSchemes: async (patient, _, { getDb }) => {
@@ -451,14 +460,15 @@ export const Patient = {
       return sugarControlGoals
     }
   },
-  predictionA1c: async (patient) => {
+  predictionA1c: async patient => {
     const A1C_URL = 'http://172.31.48.12:50050/api/getPredictA1CByUserIDs'
     let a1c = ''
     try {
       const formData = {
-        userId: patient._id
+        userId: patient._id,
       }
-      axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+      axios.defaults.headers.post['Content-Type'] =
+        'application/x-www-form-urlencoded'
       const result = await axios.post(A1C_URL, formData)
       a1c = get(result, 'data.result.prediction[0].a1cValue', null)
     } catch (e) {
@@ -469,5 +479,5 @@ export const Patient = {
     }
     console.log(a1c)
     return a1c
-  }
+  },
 }
