@@ -76,7 +76,7 @@ export const unreadMessages = async (_, args, context) => {
         createdAt: { $gt: lastSeenAt },
       }
       if (client === 'APP') {
-        condition.messageType = { $ne: 'TASK' }
+        condition.messageType = { $ne: 'BUBBLE' }
       }
       const count = await db.collection('needleChatMessages').count(condtion)
       return {

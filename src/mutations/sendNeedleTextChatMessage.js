@@ -71,7 +71,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
 
   const newChatMessage = {
     _id: freshId(),
-    messageType: messageType === 'TASK' ? 'TASK' : 'TEXT',
+    messageType: 'TEXT',
     text,
     senderId: userId,
     createdAt: new Date(),
@@ -157,7 +157,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
       if (user && !user.roles) {
         pushChatNotification({
           patient: user,
-          messageType: messageType === 'TASK' ? 'TASK' : 'TEXT',
+          messageType: 'TEXT',
           text,
           db,
         })

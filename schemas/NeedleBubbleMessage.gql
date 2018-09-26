@@ -1,4 +1,4 @@
-type NeedleTaskMessage implements NeedleChatMessage {
+type NeedleBubbleMessage implements NeedleChatMessage {
   _id: ID!
   text: String!
   sender: User!
