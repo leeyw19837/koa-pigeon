@@ -17,7 +17,7 @@ export const NeedleChatMessage = {
     if (obj.messageType === 'BUBBLE') {
       return 'NeedleBubbleMessage'
     }
-    throw new Error(`Unrecognized chat message type: ${obj.type}`)
+    throw new Error(`Unrecognized chat message type: ${JSON.stringify(obj)}`)
   },
 }
 
