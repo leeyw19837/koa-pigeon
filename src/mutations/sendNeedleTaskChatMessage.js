@@ -40,26 +40,9 @@ export const sendNeedleTaskChatMessage = async (_, args, { getDb }) => {
   }
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
-  await sessionFeeder(newChatMessage, db)
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
 
   chatRoom = await db.collection('needleChatRooms').findOne({ _id: chatRoomId })
   pubsub.publish('chatRoomDynamics', chatRoom)
-
-  chatRoom.participants.map(async p => {
-    if (p.userId !== userId) {
-      const user = await db.collection('users').findOne({
-        _id: { $in: [ObjectID.createFromHexString(p.userId), p.userId] },
-      })
-      if (user && !user.roles) {
-        pushChatNotification({
-          patient: user,
-          messageType: 'TASK',
-          text,
-          db,
-        })
-      }
-    }
-  })
   return newChatMessage
 }
