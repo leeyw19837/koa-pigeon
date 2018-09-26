@@ -239,7 +239,7 @@ type Mutation {
     actualSenderId: ID
     nosy: Boolean
   ): NeedleTextMessage!
-  sendNeedleTaskChatMessage(
+  sendNeedleBubbleChatMessage(
     userId: String!
     chatRoomId: ID!
     text: String!
@@ -247,7 +247,7 @@ type Mutation {
     taskType: String
     actualSenderId: ID
     nosy: Boolean
-  ): NeedleTaskMessage!
+  ): NeedleBubbleMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
   sendMobileVerificationCodeForWeb(mobile: String!): Int!
@@ -460,7 +460,21 @@ type Mutation {
   updateCdeDutyPeopleperDay(dutyPeopleperDay: Int!): Boolean
   # 修改照护师形容词
   updateCdeDutyAdjective(adjective: [String]!): Boolean
-  updateQAStatus(qaId: ID!, approved: Int!): Boolean
+  # 更新问答状态
+  updateQAStatus(
+    qaId: ID!
+    approved: Int!
+    approvedUser: String!
+    approvedUserId: ID!
+  ): Boolean
+  # 问答审核通过，并推送给天津
+  updateQAtoAI(
+    qaId: ID!
+    q: String!
+    a: String!
+    approvedUser: String!
+    approvedUserId: ID!
+  ): Boolean
   # 修改患者信息
   updatePatientProfile(patientId: ID!, profile: ProfileInput!): Boolean
   updateBloodGlucoses(bgId: ID!, dataStatus: String, mTime: String): Boolean

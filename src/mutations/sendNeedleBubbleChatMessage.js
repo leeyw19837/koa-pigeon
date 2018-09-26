@@ -5,7 +5,7 @@ import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
 import { sessionFeeder } from '../modules/chat'
 
-export const sendNeedleTaskChatMessage = async (_, args, { getDb }) => {
+export const sendNeedleBubbleChatMessage = async (_, args, { getDb }) => {
   const db = getDb === undefined ? global.db : await getDb()
 
   const {
@@ -28,7 +28,7 @@ export const sendNeedleTaskChatMessage = async (_, args, { getDb }) => {
 
   const newChatMessage = {
     _id: freshId(),
-    messageType: 'TASK',
+    messageType: 'BUBBLE',
     text,
     senderId: '66728d10dc75bc6a43052036',
     createdAt: new Date(),

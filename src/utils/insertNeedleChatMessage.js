@@ -1,5 +1,5 @@
 import get from 'lodash/get'
-import { sendNeedleTaskChatMessage } from '../mutations/sendNeedleTaskChatMessage'
+import { sendNeedleBubbleChatMessage } from '../mutations/sendNeedleBubbleChatMessage'
 
 export const insertChat = async (_, args, context) => {
   const { patientId, textContent, sourceType, taskId, taskType, desc } = args
@@ -17,8 +17,8 @@ export const insertChat = async (_, args, context) => {
     taskId,
     taskType,
     desc,
-    messageType: 'TASK',
+    messageType: 'BUBBLE',
   }
-  const updateResult = await sendNeedleTaskChatMessage(_, sendArgs, context)
+  const updateResult = await sendNeedleBubbleChatMessage(_, sendArgs, context)
   return !!updateResult
 }

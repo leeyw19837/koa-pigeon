@@ -37,7 +37,7 @@ export const NeedleChatRoom = {
       createdAt: { $lt: new Date(before) },
     }
     if (client === 'APP') {
-      params.messageType = { $ne: 'TASK' }
+      params.messageType = { $ne: 'BUBBLE' }
     }
     const messages = await db
       .collection('needleChatMessages')
@@ -65,7 +65,7 @@ export const NeedleChatRoom = {
     const { client } = args
     const condition = { chatRoomId: needleChatRoom._id }
     if (client === 'APP') {
-      condition.messageType = { $ne: 'TASK' }
+      condition.messageType = { $ne: 'BUBBLE' }
     }
     const messageArray = await db
       .collection('needleChatMessages')

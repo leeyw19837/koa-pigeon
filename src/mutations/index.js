@@ -18,7 +18,7 @@ import * as sendMobileVerificationCode from './sendMobileVerificationCode'
 import * as sendNeedleAudioChatMessage from './sendNeedleAudioChatMessage'
 import * as sendNeedleImageChatMessage from './sendNeedleImageChatMessage'
 import * as sendNeedleTextChatMessage from './sendNeedleTextChatMessage'
-import * as sendNeedleTaskChatMessage from './sendNeedleTaskChatMessage'
+import * as sendNeedleBubbleChatMessage from './sendNeedleBubbleChatMessage'
 import * as sentence from './sentence'
 import * as submitFeedback from './submitFeedback'
 import * as updateUserDevices from './updateUserDevices'
@@ -44,6 +44,7 @@ import * as updateCdeDutyStopPeriod from './updateCdeDutyStopPeriod'
 import * as updateCdeDutyPeopleperDay from './updateCdeDutyPeopleperDay'
 import * as updateCdeDutyAdjective from './updateCdeDutyAdjective'
 import * as updateQAStatus from './updateQAStatus'
+import * as updateQAtoAI from './updateQAtoAI'
 import * as patient from './patient'
 
 import { logQueryOrMutation } from '../utils'
@@ -60,7 +61,7 @@ const mutations = {
   ...sendNeedleAudioChatMessage,
   ...sendNeedleImageChatMessage,
   ...sendNeedleTextChatMessage,
-  ...sendNeedleTaskChatMessage,
+  ...sendNeedleBubbleChatMessage,
   ...needleChatMessages,
   ...sendMobileVerificationCode,
   ...loginOrSignUp,
@@ -98,6 +99,7 @@ const mutations = {
   ...updateCdeDutyPeopleperDay,
   ...updateCdeDutyAdjective,
   ...updateQAStatus,
+  ...updateQAtoAI,
   ...patient,
   ...bloodGlucoese,
 }

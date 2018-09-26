@@ -69,15 +69,15 @@ export const saveFoodContents = async (_, args, context) => {
   })
 
   //聊天页面插入task气泡
-  // const textContent = `上传了${dietMap[measurementTime]}`
-  // const sendArgs = {
-  //   taskId,
-  //   patientId,
-  //   textContent,
-  //   sourceType: 'FROM_SYSTEM',
-  //   taskType: 'FOOD_CIRCLE',
-  // }
-  // await insertChat(_, sendArgs, context)
+  const textContent = `上传了${dietMap[measurementTime]}`
+  const sendArgs = {
+    taskId,
+    patientId,
+    textContent,
+    sourceType: 'FROM_SYSTEM',
+    taskType: 'FOOD_CIRCLE',
+  }
+  await insertChat(_, sendArgs, context)
   return true
 }
 
