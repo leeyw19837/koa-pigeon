@@ -30,14 +30,18 @@ export const NeedleChatRoom = {
   async messages(needleChatRoom, args, { getDb }) {
     const db = await getDb()
 
-    const { before = new Date('2999/01/01'), limit } = args
+    const { before = new Date('2999/01/01'), limit, client } = args
 
+    const params = {
+      chatRoomId: needleChatRoom._id,
+      createdAt: { $lt: new Date(before) },
+    }
+    if (client === 'APP') {
+      params.messageType = { $ne: 'TASK' }
+    }
     const messages = await db
       .collection('needleChatMessages')
-      .find({
-        chatRoomId: needleChatRoom._id,
-        createdAt: { $lt: new Date(before) },
-      })
+      .find(params)
       .sort({ createdAt: -1 })
       .limit(limit)
       .toArray()
@@ -56,11 +60,16 @@ export const NeedleChatRoom = {
     }
     return messages.reverse()
   },
-  async latestMessage(needleChatRoom, _, { getDb }) {
+  async latestMessage(needleChatRoom, args, { getDb }) {
     const db = getDb === undefined ? global.db : await getDb()
+    const { client } = args
+    const condition = { chatRoomId: needleChatRoom._id }
+    if (client === 'APP') {
+      condition.messageType = { $ne: 'TASK' }
+    }
     const messageArray = await db
       .collection('needleChatMessages')
-      .find({ chatRoomId: needleChatRoom._id })
+      .find(condition)
       .sort({ createdAt: -1 })
       .limit(1)
       .toArray()

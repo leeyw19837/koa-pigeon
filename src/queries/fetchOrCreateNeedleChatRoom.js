@@ -70,11 +70,15 @@ export const unreadMessages = async (_, args, context) => {
       const me = participants.find(item => item.userId === userId) || {}
       const { lastSeenAt = new Date() } = me
 
-      const count = await db.collection('needleChatMessages').count({
+      const condition = {
         chatRoomId: needleChatRoomId,
         senderId: { $ne: userId },
         createdAt: { $gt: lastSeenAt },
-      })
+      }
+      if (client === 'APP') {
+        condition.messageType = { $ne: 'TASK' }
+      }
+      const count = await db.collection('needleChatMessages').count(condtion)
       return {
         count,
         chatRoomId: needleChatRoomId,
