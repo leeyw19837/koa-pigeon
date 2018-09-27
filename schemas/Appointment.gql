@@ -16,6 +16,14 @@ type Appointment {
   confirmStatus: String
   institutionId: ID
   healthCareTeamId: ID
+  note: String
+  blood: Boolean
+  footAt: Boolean
+  eyeGroundAt: Boolean
+  insulinAt: Boolean
+  nutritionAt: Boolean
+  healthTech: Boolean
+  quantizationAt: Boolean
 }
 
 type DailyAppointment {

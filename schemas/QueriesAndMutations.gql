@@ -461,6 +461,49 @@ type Mutation {
   updateCdeDutyPeopleperDay(dutyPeopleperDay: Int!): Boolean
   # 修改照护师形容词
   updateCdeDutyAdjective(adjective: [String]!): Boolean
+  # 更新待预约信息（姓名/电话/...）
+  updateAppointmentInfos(
+    patientId: ID
+    nickname: String
+    mobile: String
+    source: ID
+    expectedTime: Date
+    note: String
+  ): Boolean
+  # 更新待预约详情信息（病历号/检查项目）
+  updateAppointmentDetailInfos(
+    patientId: ID
+    hisNumber: String
+    blood: Boolean
+    footAt: Boolean
+    eyeGroundAt: Boolean
+    insulinAt: Boolean
+    nutritionAt: Boolean
+    healthTech: Boolean
+    quantizationAt: Boolean
+  ): Boolean
+  # 删除待预约信息
+  deletePatientAppointment(
+    patientId: ID
+  ): Boolean
+  # 新增待预约信息
+  addPatientAppointment(
+    patientId: ID
+    institutionId: String
+    nickname: String
+    expectedTime: Date
+    hisNumber: String
+    source: ID
+    mobile: String
+    blood: Boolean
+    footAt: Boolean
+    eyeGroundAt: Boolean
+    insulinAt: Boolean
+    nutritionAt: Boolean
+    healthTech: Boolean
+    quantizationAt: Boolean
+    note: String
+  ): Boolean
   # 更新问答状态
   updateQAStatus(
     qaId: ID!
