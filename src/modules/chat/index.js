@@ -180,7 +180,7 @@ export const correctSessions = async db => {
         .update({ _id }, { $set: { endAt: startAt, finishReason: 'timeout' } })
     } else {
       const jobId = `session_${chatRoomId}`
-      setDelayJob(jobId, finishSession(db, chatRoomId, 'timeout'), delay)
+      setDelayJob(jobId, () => finishSession(db, chatRoomId, 'timeout'), delay)
     }
   }
 }

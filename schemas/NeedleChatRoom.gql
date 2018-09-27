@@ -2,8 +2,8 @@ type NeedleChatRoom {
   _id: ID!
   # The users in this chat room
   participants: [User!]!
-  messages(before: String, limit: Int = 100): [NeedleChatMessage!]!
-  latestMessage: NeedleChatMessage
+  messages(before: String, limit: Int = 100, client: String="APP"): [NeedleChatMessage!]!
+  latestMessage(client: String="APP"): NeedleChatMessage
   # This is specific to the currently logged in user
   unreadMessageCount(userId: ID, nosy: Boolean = false): Int!
   lastSeenAt(userId: ID): Date!

@@ -12,12 +12,15 @@ export const interventionTaskDynamics = {
       const patient = await global.db
         .collection('users')
         .findOne({ _id: ObjectID(payload.patientId) })
+
+      const typeMatch = variables.type ? variables.type === payload.type : true
       return (
-        (variables.patientId === payload.patientId) ||
-        (variables.nosy ||
-          (patient &&
-            (patient.cdeId === variables.cdeId ||
-              patient._id.toString() === variables.patientId)))
+        typeMatch &&
+        (variables.patientId === payload.patientId ||
+          (variables.nosy ||
+            (patient &&
+              (patient.cdeId === variables.cdeId ||
+                patient._id.toString() === variables.patientId))))
       )
     },
   ),

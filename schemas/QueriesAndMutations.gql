@@ -2,6 +2,7 @@
 scalar GraphQLDateTime
 
 type Query {
+  getQAList(approved: Int!, pageSize: Int!, pageIndex: Int!): QAListReponse!
   footAssessment(
     patientId: ID!
     healthCareTeamId: ID!
@@ -58,7 +59,7 @@ type Query {
   # Sms
   smses(currPage: Int!, size: Int!, mobile: String): SmsReponse
   fetchOrCreateNeedleChatRoom(userId: ID!): NeedleChatRoom!
-  unreadMessages(userId: String!): UnReadMessage
+  unreadMessages(userId: String!, client: String = "APP"): UnReadMessage
   outreachs(period: String, startDay: Date): [Outreach]
   professionalLogin(
     username: String!
@@ -238,6 +239,15 @@ type Mutation {
     actualSenderId: ID
     nosy: Boolean
   ): NeedleTextMessage!
+  sendNeedleBubbleChatMessage(
+    userId: String!
+    chatRoomId: ID!
+    text: String!
+    sourceType: String
+    taskType: String
+    actualSenderId: ID
+    nosy: Boolean
+  ): NeedleBubbleMessage!
   updateLastSeenAt(userId: String!, chatRoomId: ID!): Boolean!
   sendMobileVerificationCode(mobile: String!): Int!
   sendMobileVerificationCodeForWeb(mobile: String!): Int!
@@ -493,6 +503,24 @@ type Mutation {
     quantizationAt: Boolean
     note: String
   ): Boolean
+  # 更新问答状态
+  updateQAStatus(
+    qaId: ID!
+    approved: Int!
+    approvedUser: String!
+    approvedUserId: ID!
+  ): Boolean
+  # 问答审核通过，并推送给天津
+  updateQAtoAI(
+    qaId: ID!
+    q: String!
+    a: String!
+    approvedUser: String!
+    approvedUserId: ID!
+  ): Boolean
+  # 修改患者信息
+  updatePatientProfile(patientId: ID!, profile: ProfileInput!): Boolean
+  updateBloodGlucoses(bgId: ID!, dataStatus: String, mTime: String): Boolean
 }
 
 type Subscription {

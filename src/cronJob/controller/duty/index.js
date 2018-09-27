@@ -1,6 +1,6 @@
-import moment from 'moment'
+import moment from 'dayjs' // The moment ALWAYS overwrite original object！fuck moment！
 import {ObjectID} from 'mongodb'
-import {get, omit, last, difference, pullAt} from 'lodash'
+import {omit, last, difference, pullAt} from 'lodash'
 import {sendTxt} from '../../../common'
 import {
   getAllCdes,
@@ -10,41 +10,57 @@ import {
   saveHistory,
   getHistories,
   isReply,
-  updateHistrty
+  updateHistrty,
+  getAdjectives
 } from '../../services/duty'
 
-const isHoliday = () => {
+let {HOLIDAY_SEND, LEADER_MOBILE1, LEADER_MOBILE2} = process.env
+
+const isHoliday = (date) => {
   // 2018年节假日
   const jrdate_2018 = [
-    moment('2018-01-01').startOf('day'),
-    moment('2018-02-15').startOf('day'),
-    moment('2018-02-16').startOf('day'),
-    moment('2018-02-17').startOf('day'),
-    moment('2018-02-18').startOf('day'),
-    moment('2018-02-19').startOf('day'),
-    moment('2018-02-20').startOf('day'),
-    moment('2018-02-21').startOf('day'),
-    moment('2018-06-18').startOf('day'),
-    moment('2018-09-24').startOf('day'),
-    moment('2018-10-01').startOf('day'),
-    moment('2018-10-02').startOf('day'),
-    moment('2018-10-03').startOf('day'),
-    moment('2018-10-04').startOf('day'),
-    moment('2018-10-05').startOf('day')
+    '2018-09-24',
+    '2018-10-01',
+    '2018-10-02',
+    '2018-10-03',
+    '2018-10-04',
+    '2018-10-05',
+    '2018-12-31',
+    '2019-01-01',
+    '2019-02-04',
+    '2019-02-05',
+    '2019-02-06',
+    '2019-02-07',
+    '2019-02-08',
+    '2019-04-05',
+    '2019-04-29',
+    '2019-04-30',
+    '2019-05-01',
+    '2019-06-07',
+    '2019-09-13',
+    '2019-10-01',
+    '2019-10-02',
+    '2019-10-03',
+    '2019-10-04',
+    '2019-10-07'
   ]
   // 2018年调休日
   const txr_2018 = [
-    moment('2018-02-11').startOf('day'),
-    moment('2018-02-24').startOf('day'),
-    moment('2018-04-08').startOf('day'),
-    moment('2018-04-28').startOf('day'),
-    moment('2018-09-29').startOf('day'),
-    moment('2018-09-30').startOf('day')
+    '2018-09-29',
+    '2018-09-30',
+    '2018-12-29',
+    '2019-02-02',
+    '2019-02-03',
+    '2019-04-27',
+    '2019-04-28',
+    '2019-09-29',
+    '2019-10-12'
   ]
-  const dayOfWeek = moment()
-    .add(1, 'd')
-    .dayOfWeek;
-  if (jrdate_2018.indexOf(moment().add(1, 'd').startOf('day')) > -1 || (txr_2018.indexOf(moment().add(1, 'd').startOf('day')) < 0 && (dayOfWeek === 0 || dayOfWeek === 6))) {
+  const dateAdd1d = date.add(1, 'd');
+
+  const dayOfWeek = dateAdd1d.day();
+  console.log('isHoliday', date.format('YYYY-MM-DD'), 'date add 1d', dateAdd1d.format('YYYY-MM-DD'), dayOfWeek, 'jrindex', jrdate_2018.indexOf(dateAdd1d.startOf('day').format('YYYY-MM-DD')), 'txrindex', txr_2018.indexOf(dateAdd1d.startOf('day').format('YYYY-MM-DD')));
+  if (jrdate_2018.indexOf(dateAdd1d.startOf('day').format('YYYY-MM-DD')) > -1 || (txr_2018.indexOf(dateAdd1d.startOf('day').format('YYYY-MM-DD')) < 0 && (dayOfWeek === 0 || dayOfWeek === 6))) {
     console.log('------------------------ is holiday ------------------------');
     return true
   } else {
@@ -54,7 +70,7 @@ const isHoliday = () => {
 
 }
 
-const checkDutyCde = async(cdes) => {
+const checkDutyCde = async(cdes, date) => {
   let dutyCdes = [];
   for (const key in cdes) {
     if (cdes.hasOwnProperty(key)) {
@@ -68,14 +84,14 @@ const checkDutyCde = async(cdes) => {
         const endTime = periodSpliter[1] === '无限'
           ? moment('2999-12-31').endOf('day')
           : moment(periodSpliter[1]).endOf('day');
-        console.log(periodSpliter, startTime, endTime)
-        if (moment().add(1, 'd').isBefore(startTime)) {
+        console.log(periodSpliter, startTime.format('YYYY-MM-DD'), endTime)
+        if (date.add(1, 'd').isBefore(startTime)) {
           dutyCdes.push(cde);
-          console.log('isBefore', startTime, cde);
+          console.log('isBefore', startTime.format('YYYY-MM-DD'), cde);
         }
-        if (moment().add(1, 'd').isAfter(endTime)) {
+        if (date.add(1, 'd').isAfter(endTime)) {
           dutyCdes.push(cde);
-          console.log('isAfter', endTime, cde);
+          console.log('isAfter', endTime.format('YYYY-MM-DD'), cde);
           // Todo 删除 Period
         }
       } else {
@@ -135,10 +151,10 @@ const generateNewDutyQueue = async(currentDutyCdes, todayDutyCdes) => {
   return newArr
 }
 
-export const saveDutyQueue = async() => {
+export const saveDutyQueue = async(date) => {
   // 查询所有照护师
   const cdes = await getAllCdes();
-  const todayDutyCdes = await checkDutyCde(cdes);
+  const todayDutyCdes = await checkDutyCde(cdes, date);
   const cdedutys = await getCdeDutys()
   let _id = new ObjectID().toHexString();
   if (cdedutys.length) {
@@ -194,109 +210,146 @@ export const getNextDutyCdes = async() => {
   return pulledCdes
 }
 
-export const sendDutyMessage = async() => {
-  await saveDutyQueue();
+export const sendDutyMessage = async(testDate) => {
+  let date = moment();
+  if (testDate) {
+    date = moment(testDate)
+  }
+  if (HOLIDAY_SEND === 'true' && !isHoliday(date)) {
+    return;
+  }
+
+  await saveDutyQueue(date);
   const cdes = await getNextDutyCdes();
-  if (isHoliday()) {
-    for (const key in cdes) {
-      if (cdes.hasOwnProperty(key)) {
-        const cde = cdes[key];
-        const option = {
-          mobile: cde.phoneNumber,
-          templateId: 'SMS_145501348',
-          params: {
-            adjective: '可爱',
-            name: cde.nickname,
-            date: moment()
-              .add(1, 'd')
-              .format('YYYY年MM月DD日')
-          }
+  // 初始化形容词
+  const adjs = await getAdjectives();
+  for (const key in cdes) {
+    if (cdes.hasOwnProperty(key)) {
+      const cde = cdes[key];
+      const option = {
+        mobile: cde.phoneNumber,
+        templateId: 'SMS_145501348',
+        params: {
+          adjective: adjs.randomElement(),
+          name: cde.nickname,
+          date: date
+            .add(1, 'd')
+            .format('YYYY年MM月DD日')
         }
-        await sendTxt(option);
-        await saveHistory(cde);
       }
+      await sendTxt(option);
+      await saveHistory(cde, date);
     }
   }
   return 'OK'
 }
 
-export const verifyNotify = async() => {
-  if (isHoliday()) {
-    // 查询今天创建的历史
-    let todaySchedules = await getHistories();
-    // 今天尚未确认的任务
-    let unConfirmed = todaySchedules.filter(t => {
-      return !t.confirmed
-    });
-    // 查询是否有确认短信
-    for (let i = 0; i < unConfirmed.length; i++) {
-      const objisReply = await isReply(unConfirmed[i].mobile);
-      if (objisReply) {
-        // 更新schedule
-        unConfirmed[i].confirmed = true;
-        unConfirmed[i].sendVerifyConfirm = true;
-        const updateRst = await updateHistrty(unConfirmed[i]);
-        console.log(updateRst);
-        // 回了确认短信，发短信给于水清和王燕妮
-        // Todo修改模板
-        await sendTxt({
-          mobile: '15620536989',
-          templateId: 'SMS_128635142',
-          params: {
-            name: unConfirmed[i].name,
-            hospital: '',
-            time: unConfirmed[i].date
-          }
-        });
-      }
+export const verifyNotify = async(testDate) => {
+  let date = moment();
+  if (testDate) {
+    date = moment(testDate)
+  }
+  if (HOLIDAY_SEND === 'true' && !isHoliday(date)) {
+    return;
+  }
+  // 查询今天创建的历史
+  let todaySchedules = await getHistories();
+  // 今天尚未确认的任务
+  let unConfirmed = todaySchedules.filter(t => {
+    return !t.confirmed
+  });
+  console.log('今天的短信历史——>', todaySchedules);
+  console.log('未确认——>', unConfirmed);
+  // 查询是否有确认短信
+  for (let i = 0; i < unConfirmed.length; i++) {
+    const objisReply = await isReply(unConfirmed[i].mobile);
+    if (objisReply) {
+      // 更新schedule
+      unConfirmed[i].confirmed = true;
+      unConfirmed[i].sendVerifyConfirm = true;
+      const updateRst = await updateHistrty(unConfirmed[i]);
+      console.log(updateRst);
+      // 回了确认短信，发短信给于水清和王燕妮
+      // Todo修改模板
+      await sendTxt({
+        mobile: LEADER_MOBILE1,
+        templateId: 'SMS_128635142',
+        params: {
+          name: unConfirmed[i].name,
+          hospital: '',
+          time: unConfirmed[i].date
+        }
+      });
+      await sendTxt({
+        mobile: LEADER_MOBILE2,
+        templateId: 'SMS_128635142',
+        params: {
+          name: unConfirmed[i].name,
+          hospital: '',
+          time: unConfirmed[i].date
+        }
+      });
     }
   }
 }
 
-export const reNotify = async() => {
-  if (isHoliday()) {
-    // 查询今天创建的历史
-    let todaySchedules = await getHistories();
-    // 今天尚未确认的任务
-    let unConfirmed = todaySchedules.filter(t => {
-      return !t.confirmed
-    });
-    for (let i = 0; i < unConfirmed.length; i++) {
-      let objisReply = await isReply(unConfirmed[i].mobile); // 是否回复了短信
-      if (!objisReply) {
-        // 发给当事人
-        await sendTxt({
-          mobile: unConfirmed[i].mobile,
-          templateId: 'SMS_145501348',
-          params: {
-            adjective: '可爱',
-            name: unConfirmed[i].nickname,
-            date: moment()
-              .add(1, 'd')
-              .format('YYYY年MM月DD日')
-          }
-        });
-        // 发给于水清
-        await sendTxt({
-          mobile: '15620536989',
-          templateId: 'SMS_128635144',
-          params: {
-            name: unConfirmed[i].name,
-            time: unConfirmed[i].date,
-            phone: unConfirmed[i].mobile
-          }
-        });
-        // 发给燕妮
-        await sendTxt({
-          mobile: '15620536989',
-          templateId: 'SMS_128635144',
-          params: {
-            name: unConfirmed[i].name,
-            time: unConfirmed[i].date,
-            phone: unConfirmed[i].mobile
-          }
-        });
-      }
+export const reNotify = async(testDate) => {
+  let date = moment();
+  if (testDate) {
+    date = moment(testDate)
+  }
+  if (HOLIDAY_SEND === 'true' && !isHoliday(date)) {
+    return;
+  }
+  // 查询今天创建的历史
+  let todaySchedules = await getHistories();
+  // 今天尚未确认的任务
+  let unConfirmed = todaySchedules.filter(t => {
+    return !t.confirmed
+  });
+  console.log('今天的短信历史——>', todaySchedules);
+  console.log('未确认——>', unConfirmed);
+  // 初始化形容词
+  const adjs = await getAdjectives();
+  for (let i = 0; i < unConfirmed.length; i++) {
+    let objisReply = await isReply(unConfirmed[i].mobile); // 是否回复了短信
+    if (!objisReply) {
+      // 发给当事人
+      await sendTxt({
+        mobile: unConfirmed[i].mobile,
+        templateId: 'SMS_145501348',
+        params: {
+          adjective: adjs.randomElement(),
+          name: unConfirmed[i].nickname,
+          date: date
+            .add(1, 'd')
+            .format('YYYY年MM月DD日')
+        }
+      });
+      // 发给于水清
+      await sendTxt({
+        mobile: LEADER_MOBILE1,
+        templateId: 'SMS_128635144',
+        params: {
+          name: unConfirmed[i].name,
+          time: unConfirmed[i].date,
+          phone: unConfirmed[i].mobile
+        }
+      });
+      // 发给燕妮
+      await sendTxt({
+        mobile: LEADER_MOBILE1,
+        templateId: 'SMS_128635144',
+        params: {
+          name: unConfirmed[i].name,
+          time: unConfirmed[i].date,
+          phone: unConfirmed[i].mobile
+        }
+      });
     }
   }
+}
+// HackArray
+Array.prototype.randomElement = function () {
+  return this[Math.floor(Math.random() * this.length)]
 }

@@ -16,11 +16,15 @@ export const setDelayJob = (id, job, sec) => {
   jobs[id] = setTimeout(() => {
     job()
     delDelayJob(id)
-  }, sec * 1000).toString()
+  }, sec * 1000)
 }
 
 export const resetJobs = () => {
-  Object.keys(jobs).forEach(delDelayJob)
+  Object
+    .keys(jobs)
+    .forEach(delDelayJob)
 }
 
-export const getAllJobs = () => ({ ...jobs })
+export const getAllJobs = () => ({
+  ...jobs
+})

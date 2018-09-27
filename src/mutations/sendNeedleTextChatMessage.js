@@ -33,6 +33,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     messagesPatientReplyFlag,
     actualSenderId,
     nosy,
+    messageType,
   } = args
 
   const userObjectId = ObjectId.createFromHexString(userId)
@@ -129,13 +130,6 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     if (p.userId === participant.userId && !sourceTypeRegex.test(sourceType)) {
       return { ...p, lastSeenAt: new Date(), unreadCount: 0 }
     } else if (p.userId !== participant.userId) {
-      if (
-        p.role !== '患者' &&
-        sourceType &&
-        !sourceTypesProCare.includes(sourceType) &&
-        !messagesPatientReplyFlag
-      )
-        return p
       return { ...p, unreadCount: (p.unreadCount || 0) + 1 }
     }
     return p

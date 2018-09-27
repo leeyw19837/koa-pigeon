@@ -33,6 +33,7 @@ const getCursor = (food, time) => {
     },
     patientId: food.patientId,
     measurementTime: dietTime,
+    dataStatus: 'ACTIVE',
   }
   return cursor
 }

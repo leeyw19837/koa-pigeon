@@ -14,6 +14,7 @@ export const getPairingBgRecord = async ({
     .find({
       patientId,
       measurementTime: pairedMealsPeriod,
+      dataStatus: 'ACTIVE',
       measuredAt: {
         $gte: moment(measuredAt).startOf('day')._d,
         $lt: moment(measuredAt).endOf('day')._d,
