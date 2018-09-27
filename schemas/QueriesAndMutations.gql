@@ -159,6 +159,7 @@ type Query {
   cdeDutyAdjective: [String]
   cdeDutyAdjective: [String]
   cdeDutyPeopleperDay: Int!
+  fetchChatSnapshots(qaId: ID!): QAAddition
 }
 
 type Mutation {
