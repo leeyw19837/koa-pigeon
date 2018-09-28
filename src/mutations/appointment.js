@@ -24,6 +24,19 @@ export const updateAppointmentInfos = async (_, params, context) => {
       $set: $setObj,
     },
   )
+  await db.collection('users').update(
+    {
+      _id: ObjectID.createFromHexString(patientId)
+    },
+    {
+      $set: {
+        nickname,
+        username: mobile,
+        source,
+        updatedAt: new Date(),
+      },
+    },
+  )
   return true
 }
 
@@ -67,17 +80,73 @@ export const deletePatientAppointment = async (_, params, context) => {
       patientId,
     },
   )
+  await db.collection('users').update(
+    {
+      _id: ObjectID.createFromHexString(patientId)
+    },
+    {
+      $set: {
+        patientState: 'REMOVED',
+        updatedAt: new Date(),
+      },
+    },
+  )
   return true
 }
 
 export const addPatientAppointment = async (_, params, context) => {
-  console.log('addPatientAppointment',params)
-  // await db.collection('appointments').deleteOne(
-  //   {
-  //     patientId,
-  //   },
-  // )
-  context.response.set('effect-types', 'PatientList')
+  // console.log('addPatientAppointment',params)
+  const {
+    institutionId,
+    nickname,
+    source,
+    mobile,
+  } = params
+
+  const existedUser = await db.collection('users').findOne({username: {$regex: mobile}})
+  const isExisted = !!existedUser
+  if (
+    isExisted &&
+    ['POTENTIAL', 'REMOVED'].indexOf(existedUser.patientState) === -1
+  ) {
+    return { mobile: 'duplicate' }
+  }
+
+  const username = mobile
+  const currentUser = existedUser
+  let patientId
+  if (!currentUser) {
+    patientId = new ObjectID()
+    await db.collection('users').insert({
+      _id:patientId,
+      nickname,
+      username,
+      createdAt:new Date(),
+      source,
+      patientState:'NEEDS_APPOINTMENT',
+    })
+  } else if (
+    currentUser.patientState === 'POTENTIAL' ||
+    currentUser.patientState === 'REMOVED'
+  ) {
+    patientId = currentUser._id
+    await db.collection('users').update(
+      {
+        _id: currentUser._id,
+      },
+      {
+        $set: {
+          nickname,
+          source,
+          patientState: 'NEEDS_APPOINTMENT',
+          institutionId,
+          updatedAt: new Date(),
+        },
+      },
+    )
+  }
+  await db.collection('appointments').insert({...params, patientId: patientId.toString()})
+  context.response.set('effect-types', 'PatientList,PatientDetail')
   return true
 }
 

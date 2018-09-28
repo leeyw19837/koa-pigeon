@@ -487,7 +487,6 @@ type Mutation {
   ): Boolean
   # 新增待预约信息
   addPatientAppointment(
-    patientId: ID
     institutionId: String
     nickname: String
     expectedTime: Date
