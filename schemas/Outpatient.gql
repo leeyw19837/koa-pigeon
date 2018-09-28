@@ -27,8 +27,7 @@ type Outpatient {
   _id: ID
   outpatientDate: String!
   dayOfWeek: String!
-  outpatientStartTime: String!
-  outpatientEndTime: String!
+  outpatientPeriod: String!
   doctorName: String!
   hospitalName: String!
   location: String!
@@ -38,6 +37,7 @@ type Outpatient {
   note: String
   report: OutpatientReport
   patientIds: [ID!]
+  appointmentsId: [ID]
   dutyEmployees: [OutpatientDutyEmployee!]
   createdAt: Date
   updatedAt: Date

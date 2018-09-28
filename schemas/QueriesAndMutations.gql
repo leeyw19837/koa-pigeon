@@ -117,7 +117,7 @@ type Query {
     monthStr: String
     healthCareTeamId: ID
   ): [DailyAppointment!]
-  dailyOutpatients(healthCareTeamId: ID): [DailyOutpatients!]
+  dailyOutpatients(healthCareTeamId: [ID]): [DailyOutpatients!]
   outpatient(id: ID): Outpatient
   certifiedDiabetesEducator(
     cdeId: ID
@@ -483,9 +483,7 @@ type Mutation {
     quantizationAt: Boolean
   ): Boolean
   # 删除待预约信息
-  deletePatientAppointment(
-    patientId: ID
-  ): Boolean
+  deletePatientAppointment(patientId: ID): Boolean
   # 新增待预约信息
   addPatientAppointment(
     patientId: ID
