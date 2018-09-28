@@ -1,4 +1,4 @@
-import { first } from 'lodash'
+import { first, sortBy } from 'lodash'
 import { maybeCreateFromHexString } from '../utils'
 import { ObjectId } from 'mongodb'
 import { whoAmI } from '../modules/chat'
@@ -121,5 +121,71 @@ export const NeedleChatRoom = {
         nickname: processingSession.educatorName,
       }
     }
+  },
+
+  async nearbyMessages(chatRoom, args, { getDb }) {
+    const db = await getDb()
+    const chatRoomId = chatRoom._id
+    const msgId = chatRoom.msgId
+    // 查询当前消息
+    const msg = await db.collection('needleChatMessages').findOne({
+      _id: msgId,
+    })
+    // 当前消息所属的session
+    const currentSession = await db.collection('sessions').findOne({
+      chatRoomId,
+      createdAt: {
+        $lte: msg.createdAt,
+      },
+      endAt: {
+        $gte: msg.createdAt,
+      },
+    })
+
+    const timeSorted = []
+    if (currentSession) {
+      timeSorted.push(currentSession.createdAt, currentSession.endAt)
+      // 前一个session
+      const previewSession = await db
+        .collection('sessions')
+        .findOne({
+          chatRoomId,
+          endAt: {
+            $lte: currentSession.createdAt,
+          },
+        })
+        .sort({ endAt: -1 })
+      if (previewSession) {
+        timeSorted.push(previewSession.createdAt, previewSession.endAt)
+      }
+      // 后一个session
+      const nextSession = await db
+        .collection('sessions')
+        .findOne({
+          chatRoomId,
+          createdAt: {
+            $gte: currentSession.endAt,
+          },
+        })
+        .sort({ createdAt: 1 })
+      if (nextSession) {
+        timeSorted.push(nextSession.createdAt, nextSession.endAt)
+      }
+    }
+    // 取最大和最小时间范围
+    const result = sortBy(timeSorted)
+    let messages = []
+    if (result.length > 0) {
+      messages = await db
+        .collection('needleChatMessages')
+        .find({
+          createdAt: {
+            $gte: result[0],
+            $lte: result[result.length - 1],
+          },
+        })
+        .toArray()
+    }
+    return messages
   },
 }

@@ -5,6 +5,7 @@ type HealthcareProfessional {
   avatar: String
   roles: String
   jwt: String
+  healthCareTeamId: [String]
   healthCareTeams: [HealthCareTeam]
   certifiedDiabetesEducator: CertifiedDiabetesEducator
   planToAppointPatients: CdeSpecifiedAppointments

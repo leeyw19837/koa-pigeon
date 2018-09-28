@@ -27,6 +27,7 @@ type QAAddition {
   approvedUser: String
   createdAt: Date!
   approvedAt: Date
+  chatRoom: NeedleChatRoom
 }
 
 type QAListReponse {

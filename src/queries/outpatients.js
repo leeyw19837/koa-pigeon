@@ -3,12 +3,14 @@ const moment = require('moment')
 
 export const dailyOutpatients = async (_, args, context) => {
   const db = await context.getDb()
-  const { healthCareTeamId } = args
+  const { healthCareTeamId = ['healthCareTeam1'] } = args
   const $match = {
     // hospitalId: { $ne: null },
   }
   if (healthCareTeamId && healthCareTeamId !== 'null') {
-    $match.hospitalId = healthCareTeamId
+    $match.healthCareTeamId = {
+      $in: healthCareTeamId,
+    }
   }
   const result = await db
     .collection('outpatients')
@@ -17,12 +19,15 @@ export const dailyOutpatients = async (_, args, context) => {
         $match,
       },
       {
-        $sort: { outpatientDate: 1, outpatientStartTime: 1 },
+        $sort: { outpatientDate: 1, outpatientPeriod: 1 },
       },
       {
         $group: {
           _id: {
-            $dateToString: { format: '%Y-%m-%d', date: '$outpatientDate' },
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: { $add: ['$outpatientDate', 8 * 3600000] },
+            },
           },
           outpatients: {
             $push: '$$ROOT',
