@@ -134,46 +134,56 @@ export const NeedleChatRoom = {
     // 当前消息所属的session
     const currentSession = await db.collection('sessions').findOne({
       chatRoomId,
-      createdAt: {
+      startAt: {
         $lte: msg.createdAt,
       },
       endAt: {
         $gte: msg.createdAt,
       },
     })
+    console.log(currentSession)
 
     const timeSorted = []
     if (currentSession) {
-      timeSorted.push(currentSession.createdAt, currentSession.endAt)
+      timeSorted.push(currentSession.startAt, currentSession.endAt)
       // 前一个session
-      const previewSession = await db
+      let previewSession = await db
         .collection('sessions')
-        .findOne({
+        .find({
           chatRoomId,
           endAt: {
-            $lte: currentSession.createdAt,
+            $lte: currentSession.startAt,
           },
         })
         .sort({ endAt: -1 })
-      if (previewSession) {
-        timeSorted.push(previewSession.createdAt, previewSession.endAt)
+        .limit(1)
+        .toArray()
+      console.log(previewSession)
+      if (previewSession && previewSession.length === 1) {
+        previewSession = previewSession[0]
+        timeSorted.push(previewSession.startAt, previewSession.endAt)
       }
       // 后一个session
-      const nextSession = await db
+      let nextSession = await db
         .collection('sessions')
-        .findOne({
+        .find({
           chatRoomId,
-          createdAt: {
+          startAt: {
             $gte: currentSession.endAt,
           },
         })
-        .sort({ createdAt: 1 })
-      if (nextSession) {
-        timeSorted.push(nextSession.createdAt, nextSession.endAt)
+        .sort({ startAt: 1 })
+        .limit(1)
+        .toArray()
+      console.log(nextSession)
+      if (nextSession && nextSession.length === 1) {
+        nextSession = nextSession[0]
+        timeSorted.push(nextSession.startAt, nextSession.endAt)
       }
     }
     // 取最大和最小时间范围
     const result = sortBy(timeSorted)
+    console.log(result)
     let messages = []
     if (result.length > 0) {
       messages = await db
@@ -183,6 +193,7 @@ export const NeedleChatRoom = {
             $gte: result[0],
             $lte: result[result.length - 1],
           },
+          chatRoomId,
         })
         .toArray()
     }
