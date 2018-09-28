@@ -6,9 +6,6 @@ export const updateInterventionTaskState = async (_, args, { getDb }) => {
   const { _id, state } = args
 
   const task = await db.collection('interventionTask').findOne({ _id })
-  if (task.type !== 'FOOD_CIRCLE') {
-    throw new Error('only the food circle task could be ignore')
-  }
 
   if (state !== task.state) {
     const result = await db.collection('interventionTask').update(
