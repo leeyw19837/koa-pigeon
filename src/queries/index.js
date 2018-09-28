@@ -61,6 +61,7 @@ import * as cdeDutyPeopleperDay from './cdeDutyPeopleperDay'
 //AI
 import * as queryAIContentTypes from './queryAIContentTypes'
 import * as getQAList from './getQAList'
+import * as fetchChatSnapshots from './fetchChatSnapshots'
 
 const queries = {
   ...bloodGlucoseMeasurements,
@@ -117,6 +118,7 @@ const queries = {
   ...cdeDutyAdjective,
   ...cdeDutyPeopleperDay,
   ...getQAList,
+  ...fetchChatSnapshots,
 }
 
 const queriesWithAuthandLog = {}
