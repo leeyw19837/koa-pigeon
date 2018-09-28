@@ -181,7 +181,7 @@ export const NeedleChatRoom = {
     }
     // 取最大和最小时间范围
     const result = sortBy(timeSorted)
-    console.log(`Session匹配区间：`)
+    // console.log(`Session匹配区间：`)
     console.log(result)
     let messages = []
     if (result.length > 0) {
