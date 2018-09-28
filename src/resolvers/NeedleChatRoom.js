@@ -141,7 +141,6 @@ export const NeedleChatRoom = {
         $gte: msg.createdAt,
       },
     })
-    console.log(currentSession)
 
     const timeSorted = []
     if (currentSession) {
@@ -158,7 +157,6 @@ export const NeedleChatRoom = {
         .sort({ endAt: -1 })
         .limit(1)
         .toArray()
-      console.log(previewSession)
       if (previewSession && previewSession.length === 1) {
         previewSession = previewSession[0]
         timeSorted.push(previewSession.startAt, previewSession.endAt)
@@ -175,7 +173,7 @@ export const NeedleChatRoom = {
         .sort({ startAt: 1 })
         .limit(1)
         .toArray()
-      console.log(nextSession)
+
       if (nextSession && nextSession.length === 1) {
         nextSession = nextSession[0]
         timeSorted.push(nextSession.startAt, nextSession.endAt)
@@ -183,7 +181,6 @@ export const NeedleChatRoom = {
     }
     // 取最大和最小时间范围
     const result = sortBy(timeSorted)
-    console.log(result)
     let messages = []
     if (result.length > 0) {
       messages = await db
