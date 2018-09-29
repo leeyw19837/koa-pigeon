@@ -199,3 +199,30 @@ export const modelRetrain = async (sentence, norm) => {
     return false
   }
 }
+
+export const addQA = async (q, a) => {
+  try {
+    const route = '/question'
+    const method = 'post'
+    const options = {
+      method,
+      uri: `${host}${route}`,
+      body: {
+        q,
+        a,
+      },
+      json: true,
+    }
+    const res = await request(options)
+    if (res && res.code && res.code.toString() === '200') {
+      return true
+    }
+    console.error('create new qa interface error(Tianjin): ')
+    console.error(res)
+    return false
+  } catch (e) {
+    console.error('create new qa interface error(Tianjin): ')
+    console.error(res)
+    return false
+  }
+}

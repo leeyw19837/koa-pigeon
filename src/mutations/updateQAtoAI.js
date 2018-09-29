@@ -1,3 +1,4 @@
+import { addQA } from '../modules/AI'
 export const updateQAtoAI = async (_, args, context) => {
   const { getDb } = context
   const db = await getDb()
@@ -20,6 +21,7 @@ export const updateQAtoAI = async (_, args, context) => {
   )
 
   // Push new QA to Tianjin guys
+  await addQA(q, a)
   context.response.set('effect-types', 'QAAddition')
   return true
 }
