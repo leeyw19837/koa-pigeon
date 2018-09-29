@@ -132,19 +132,25 @@ export const NeedleChatRoom = {
       _id: msgId,
     })
     // 当前消息所属的session
-    const currentSession = await db.collection('sessions').findOne({
-      chatRoomId,
-      startAt: {
-        $lte: msg.createdAt,
-      },
-      endAt: {
-        $gte: msg.createdAt,
-      },
-    })
+    let currentSession = await db
+      .collection('sessions')
+      .find({
+        chatRoomId,
+        startAt: {
+          $lte: msg.createdAt,
+        },
+      })
+      .sort({ startAt: -1 })
+      .limit(1)
+      .toArray()
 
     const timeSorted = []
-    if (currentSession) {
-      timeSorted.push(currentSession.startAt, currentSession.endAt)
+    if (currentSession && currentSession.length > 0) {
+      currentSession = currentSession[0]
+      timeSorted.push(
+        currentSession.startAt,
+        currentSession.endAt || new Date(),
+      )
       // 前一个session
       let previewSession = await db
         .collection('sessions')
@@ -159,7 +165,10 @@ export const NeedleChatRoom = {
         .toArray()
       if (previewSession && previewSession.length === 1) {
         previewSession = previewSession[0]
-        timeSorted.push(previewSession.startAt, previewSession.endAt)
+        timeSorted.push(
+          previewSession.startAt,
+          previewSession.endAt || new Date(),
+        )
       }
       // 后一个session
       let nextSession = await db
@@ -176,7 +185,7 @@ export const NeedleChatRoom = {
 
       if (nextSession && nextSession.length === 1) {
         nextSession = nextSession[0]
-        timeSorted.push(nextSession.startAt, nextSession.endAt)
+        timeSorted.push(nextSession.startAt, nextSession.endAt || new Date())
       }
     }
     // 取最大和最小时间范围
