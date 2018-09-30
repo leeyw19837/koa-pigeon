@@ -1,3 +1,23 @@
+input AppointmentInput {
+  _id: ID!
+  patientId: ID!
+  source: String
+  appointmentTime: Date
+  type: String
+  nickname: String
+  hisNumber: String
+  mobile: String
+  confirmStatus: String
+  note: String
+  blood: Boolean
+  footAt: Boolean
+  eyeGroundAt: Boolean
+  insulinAt: Boolean
+  nutritionAt: Boolean
+  healthTech: Boolean
+  quantizationAt: Boolean
+}
+
 type Appointment {
   _id: ID
   source: String
@@ -35,4 +55,9 @@ type DailyAppointment {
 type TeamAppointments {
   healthCareTeam: HealthCareTeam
   count: Int!
+}
+
+extend type Mutation {
+  # 更新已预约的信息
+  updateAppointmentById(appointment: AppointmentInput!): Boolean
 }

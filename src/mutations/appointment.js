@@ -1,5 +1,5 @@
 import freshId from 'fresh-id'
-import {ObjectID} from "mongodb";
+import { ObjectID } from 'mongodb'
 const moment = require('moment')
 
 export const addAppointment = async (_, args, context) => {
@@ -14,7 +14,7 @@ export const updateAppointmentInfos = async (_, params, context) => {
     mobile,
     source,
     expectedTime,
-    note
+    note,
   }
   await db.collection('appointments').update(
     {
@@ -26,7 +26,7 @@ export const updateAppointmentInfos = async (_, params, context) => {
   )
   await db.collection('users').update(
     {
-      _id: ObjectID.createFromHexString(patientId)
+      _id: ObjectID.createFromHexString(patientId),
     },
     {
       $set: {
@@ -50,7 +50,7 @@ export const updateAppointmentDetailInfos = async (_, params, context) => {
     insulinAt,
     nutritionAt,
     healthTech,
-    quantizationAt
+    quantizationAt,
   } = params
   const $setObj = {
     hisNumber,
@@ -60,7 +60,7 @@ export const updateAppointmentDetailInfos = async (_, params, context) => {
     insulinAt,
     nutritionAt,
     healthTech,
-    quantizationAt
+    quantizationAt,
   }
   await db.collection('appointments').update(
     {
@@ -75,14 +75,12 @@ export const updateAppointmentDetailInfos = async (_, params, context) => {
 
 export const deletePatientAppointment = async (_, params, context) => {
   const { patientId } = params
-  await db.collection('appointments').deleteOne(
-    {
-      patientId,
-    },
-  )
+  await db.collection('appointments').deleteOne({
+    patientId,
+  })
   await db.collection('users').update(
     {
-      _id: ObjectID.createFromHexString(patientId)
+      _id: ObjectID.createFromHexString(patientId),
     },
     {
       $set: {
@@ -96,14 +94,11 @@ export const deletePatientAppointment = async (_, params, context) => {
 
 export const addPatientAppointment = async (_, params, context) => {
   // console.log('addPatientAppointment',params)
-  const {
-    institutionId,
-    nickname,
-    source,
-    mobile,
-  } = params
+  const { institutionId, nickname, source, mobile } = params
 
-  const existedUser = await db.collection('users').findOne({username: {$regex: mobile}})
+  const existedUser = await db
+    .collection('users')
+    .findOne({ username: { $regex: mobile } })
   const isExisted = !!existedUser
   if (
     isExisted &&
@@ -118,12 +113,12 @@ export const addPatientAppointment = async (_, params, context) => {
   if (!currentUser) {
     patientId = new ObjectID()
     await db.collection('users').insert({
-      _id:patientId,
+      _id: patientId,
       nickname,
       username,
-      createdAt:new Date(),
+      createdAt: new Date(),
       source,
-      patientState:'NEEDS_APPOINTMENT',
+      patientState: 'NEEDS_APPOINTMENT',
     })
   } else if (
     currentUser.patientState === 'POTENTIAL' ||
@@ -145,8 +140,101 @@ export const addPatientAppointment = async (_, params, context) => {
       },
     )
   }
-  await db.collection('appointments').insert({...params, patientId: patientId.toString()})
+  await db
+    .collection('appointments')
+    .insert({ ...params, patientId: patientId.toString() })
   context.response.set('effect-types', 'PatientList,PatientDetail')
   return true
 }
 
+const syncInfo = async ({ patientId, key, value }) => {
+  if (value === '') return
+  const setKey = key === 'mobile' ? 'username' : key
+  const $setObj = {
+    [setKey]: value,
+    updatedAt: new Date(),
+  }
+  await db
+    .collection('appointments')
+    .update({ patientId }, { $set: $setObj }, { multi: true })
+  await db
+    .collection('treatmentState')
+    .update({ patientId }, { $set: $setObj }, { multi: true })
+
+  await db.collection('users').update(
+    {
+      _id: ObjectID.createFromHexString(patientId),
+    },
+    { $set: $setObj },
+  )
+}
+
+const syncMobile = async ({ patientId, mobile }) => {}
+
+export const updateAppointmentById = async (_, { appointment }, context) => {
+  const { _id, patientId, nickname, mobile } = appointment
+  const dbAppointment = await db.collection('appointments').findOne({ _id })
+  if (!dbAppointment) {
+    throw new Error('Appointment _id is not existed!')
+  }
+  if (appointment.nickname !== dbAppointment.nickname) {
+    await syncInfo({
+      patientId,
+      key: 'nickname',
+      value: nickname,
+    })
+  }
+  if (appointment.mobile !== dbAppointment.mobile) {
+    const user = await db.collection('users').findOne({ username: mobile })
+    if (user) {
+      return 'duplicate'
+    }
+    await syncInfo({
+      patientId,
+      key: 'mobile',
+      value: mobile,
+    })
+  }
+  const { treatmentStateId } = dbAppointment
+  await db.collection('appointments').update(
+    {
+      _id,
+    },
+    {
+      $set: {
+        ...appointment,
+        updatedAt: new Date(),
+      },
+    },
+  )
+
+  const syncToTreatments = ['note', 'hisNumber', 'source']
+  const checkItems = [
+    'blood',
+    'footAt',
+    'eyeGroundAt',
+    'insulinAt',
+    'nutritionAt',
+    'healthTech',
+    'quantizationAt',
+  ]
+  const treatmentObj = {}
+  checkItems.forEach(o => {
+    treatmentObj[o] = appointment[o] ? false : null
+  })
+  syncToTreatments.forEach(o => {
+    treatmentObj[o] = appointment[o]
+  })
+  await db.collection('treatmentState').update(
+    {
+      _id: treatmentStateId,
+    },
+    {
+      $set: {
+        ...treatmentObj,
+        updatedAt: new Date(),
+      },
+    },
+  )
+  return ''
+}
