@@ -151,7 +151,7 @@ const generateNewDutyQueue = async(currentDutyCdes, todayDutyCdes) => {
   return newArr
 }
 
-export const saveDutyQueue = async(date) => {
+export const saveDutyQueue = async(date = moment()) => {
   // 查询所有照护师
   const cdes = await getAllCdes();
   const todayDutyCdes = await checkDutyCde(cdes, date);
