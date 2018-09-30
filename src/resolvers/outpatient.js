@@ -16,7 +16,6 @@ export const Outpatient = {
   },
   appointments: async outpatient => {
     const { appointmentsId } = outpatient
-    console.log('appointmentsId', appointmentsId)
     return await db
       .collection('appointments')
       .find({
