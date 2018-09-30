@@ -9,7 +9,7 @@ export const mealsPeriodTextMap = {
 
 export const isLessFour = value => value < 4 * 18
 
-export const isAboveSeven = bloodGlucoseValue => bloodGlucoseValue >= 7 * 18
+export const isAboveSeven = bloodGlucoseValue => bloodGlucoseValue > 7 * 18
 
 export const isAfterMeal = value => /AFTER/g.test(value)
 
@@ -17,7 +17,7 @@ export const isBigFluctuation = (meala, mealb) => {
   if (meala.measurementTime === mealb.measurementTime) return false
   const beforeMeal = isAfterMeal(meala.measurementTime) ? mealb : meala
   const afterMeal = isAfterMeal(meala.measurementTime) ? meala : mealb
-  return afterMeal.bloodGlucoseValue - beforeMeal.bloodGlucoseValue >= 3.5 * 18
+  return afterMeal.bloodGlucoseValue - beforeMeal.bloodGlucoseValue > 3.5 * 18
 }
 
 export const isMealRecord = measurementTime =>
