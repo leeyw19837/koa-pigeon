@@ -42,4 +42,5 @@ type Outpatient {
   createdAt: Date
   updatedAt: Date
   patientsCount: Int!
+  appointments: [Appointment!]
 }

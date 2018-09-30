@@ -49,5 +49,5 @@ export const dailyOutpatients = async (_, args, context) => {
 
 export const outpatient = async (_, { id }, context) => {
   const db = await context.getDb()
-  return await db.collection('outpatients').findOne({ _id: ObjectId(id) })
+  return await db.collection('outpatients').findOne({ _id: id })
 }

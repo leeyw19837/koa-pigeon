@@ -14,4 +14,17 @@ export const Outpatient = {
     }
     return nickname
   },
+  appointments: async outpatient => {
+    const { appointmentsId } = outpatient
+    console.log('appointmentsId', appointmentsId)
+    return await db
+      .collection('appointments')
+      .find({
+        _id: { $in: appointmentsId },
+      })
+      .sort({
+        createdAt: -1,
+      })
+      .toArray()
+  },
 }
