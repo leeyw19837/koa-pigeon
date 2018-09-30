@@ -18,11 +18,7 @@ export const confirmContent = [
 export const getAllCdes = async() => {
   const cdes = await db
     .collection('certifiedDiabetesEducators')
-    .find({
-      patientPercent: {
-        $exists: true
-      }
-    })
+    .find({})
     .toArray()
   return cdes
 }

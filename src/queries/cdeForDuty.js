@@ -5,11 +5,7 @@ export const cdeForDuty = async(_, args, {getDb}) => {
   const db = await getDb()
   const cdes = await db
     .collection('certifiedDiabetesEducators')
-    .find({
-      patientPercent: {
-        $exists: true
-      }
-    })
+    .find({})
     .toArray()
 
   console.log('*******', cdes)
