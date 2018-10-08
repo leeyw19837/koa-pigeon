@@ -1,4 +1,4 @@
-import freshId from 'fresh-id'
+import pick from 'lodash/pick'
 import { ObjectID } from 'mongodb'
 const moment = require('moment')
 
@@ -494,4 +494,100 @@ export const updateAppointmentByPropName = async (_, params, context) => {
       )
       break
   }
+}
+
+/**
+ * 更新 待预约 至 预约
+ * @param _
+ * @param params
+ * @param context
+ * @returns {Promise<void>}
+ */
+export const updateOutpatientStates = async (_, params, context) => {
+  const { patientId, appointmentTime, outpatientId } = params
+  const dbAppointment = await db
+    .collection('appointments')
+    .findOne({ patientId })
+  if (!dbAppointment) {
+    throw new Error('Appointment patientId does not exist in DB!')
+  }
+
+  // 第一步：向treatmentState中插入一条数据（从预约表中颉取）
+  const immutableFields = pick(dbAppointment, [
+    'source',
+    'status',
+    'nickname',
+    'mobile',
+    'note',
+    'patientId',
+    'hisNumber'
+  ])
+
+  const { blood, nutritionAt, footAt, eyeGroundAt, quantizationAt, insulinAt, healthTech, institutionId } = dbAppointment
+  const institution = await db
+    .collection('healthCareTeams')
+    .findOne({ institutionId })
+  const treatmentStateId = new ObjectID().toString()
+  await db.collection('treatmentState').insert({
+    _id: treatmentStateId,
+    ...immutableFields,
+    appointmentTime,
+    checkIn: false,
+    type: 'first',
+    createdAt: new Date(),
+    blood: blood ? false : (blood !== null ? false: null),
+    sendBlood: blood ? false : (blood !== null ? false: null),
+    nutritionAt: nutritionAt ? false : (nutritionAt !== null ? false: null),
+    footAt: footAt ? false : (footAt !== null ? false: null),
+    eyeGroundAt: eyeGroundAt ? false : (eyeGroundAt !== null ? false: null),
+    quantizationAt: quantizationAt ? false : (quantizationAt !== null ? false: null),
+    insulinAt: insulinAt ? false : (insulinAt !== null ? false: null),
+    healthTech: healthTech ? false : (healthTech !== null ? false: null),
+    diagnosis: false,
+    print: false,
+    healthCareTeamId: institution._id,
+  })
+
+  // 第二步：更新 user 表中 patientState 为 HAS_APPOINTMENT
+  const existedUser = await db
+    .collection('users')
+    .findOne({ patientId })
+  if (!existedUser) {
+    throw new Error('Users patientId does not exist in DB!')
+  }
+  await db.collection('users').update(
+    {
+    patientId,
+  },{
+      patientState:'HAS_APPOINTMENT',
+  })
+
+  // 第三步：更新 appointment 表中 type 为 'first'，增加 appointmentTime， 增加 treatmentStateId
+  await db.collection('appointments').update(
+    {
+      patientId,
+    },{
+      type:'first',
+      appointmentTime,
+      treatmentStateId
+    })
+
+  // 第四步：更新 outPatients 表中对应该 outpatientId 的记录，﻿patientsId 和﻿appointmentsId 分别加入一条当前预约记录
+  const existedOutPatient = await db
+    .collection('outPatients')
+    .findOne({ _id: outpatientId })
+  if (!existedOutPatient) {
+    throw new Error('outPatients outpatientId does not exist in DB!')
+  }
+  const newPatientIds = existedOutPatient.patientsId
+  const newAppointmentIds = existedOutPatient.appointmentsId
+  await db.collection('outPatients').update(
+    {
+      _id: outpatientId,
+    },{
+      patientsId: newPatientIds.push(patientId),
+      appointmentsId: newAppointmentIds.push(dbAppointment._id),
+    })
+
+  return true
 }

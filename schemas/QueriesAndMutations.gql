@@ -501,6 +501,11 @@ type Mutation {
     quantizationAt: Boolean
     note: String
   ): Boolean
+  updateOutpatientStates(
+    patientId: ID
+    appointmentTime: Date
+    outpatientId: ID
+  ): Boolean
   # 更新问答状态
   updateQAStatus(
     qaId: ID!

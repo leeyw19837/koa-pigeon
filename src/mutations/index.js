@@ -46,6 +46,7 @@ import * as updateCdeDutyAdjective from './updateCdeDutyAdjective'
 import * as updateQAStatus from './updateQAStatus'
 import * as updateQAtoAI from './updateQAtoAI'
 import * as patient from './patient'
+import * as updateOutpatientStates from './appointment'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -102,6 +103,7 @@ const mutations = {
   ...updateQAtoAI,
   ...patient,
   ...bloodGlucoese,
+  ...updateOutpatientStates,
 }
 
 const mutationsWithAuthandLog = {}
