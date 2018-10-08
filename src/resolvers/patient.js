@@ -197,6 +197,24 @@ export const Patient = {
       .limit(limit)
       .toArray()
   },
+  bloodGlucosesByTime: async (patient, args, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const cursor = {
+      patientId,
+      dataStatus: 'ACTIVE',
+    }
+    if (args.selectTime) {
+      Object.assign(cursor, {
+        measuredAt: args.selectTime,
+      })
+    }
+    return await db
+      .collection('bloodGlucoses')
+      .find(cursor)
+      .sort({ measuredAt: -1 })
+      .toArray()
+  },
   cdeInfo: async (patient, _, { getDb }) => {
     const db = await getDb()
     if (patient.cdeId) {
