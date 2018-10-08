@@ -60,4 +60,11 @@ type TeamAppointments {
 extend type Mutation {
   # 更新已预约的信息
   updateAppointmentById(appointment: AppointmentInput!): Boolean
+  # 更新某一个预约属性
+  updateAppointmentByPropName(
+    propKey: String!
+    propValue: String!
+    appointmentId: ID!
+    toOutpatientId: ID
+  ): Boolean
 }
