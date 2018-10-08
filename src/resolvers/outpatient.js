@@ -26,4 +26,18 @@ export const Outpatient = {
       })
       .toArray()
   },
+  availableAppointmentDates: async outpatient => {
+    const { healthCareTeamId } = outpatient
+    return await db
+      .collection('outpatients')
+      .find({
+        healthCareTeamId,
+        state: 'WAITING',
+        outpatientDate: { $gt: new Date() },
+      })
+      .sort({
+        outpatientDate: 1,
+      })
+      .toArray()
+  },
 }

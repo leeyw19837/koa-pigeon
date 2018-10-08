@@ -312,7 +312,6 @@ const changeAppointmentInOutpatient = async ({
       },
     },
   )
-
   await db.collection('outpatients').update(
     {
       _id: toOutpatientId,
@@ -358,7 +357,7 @@ const handleAppointmentTimeChange = async ({
     .findOne({ _id: treatmentStateId })
   // 第一步
   if (type && type === 'quarter') {
-    const { preYearApTime } = Users.findOne({
+    const { preYearApTime } = await db.collection('users').findOne({
       _id: ObjectID.createFromHexString(patientId),
     })
     const changeToYear = moment(propValue).isAfter(
@@ -466,7 +465,7 @@ const handleAppointmentTimeChange = async ({
  * @param {*} context
  */
 export const updateAppointmentByPropName = async (_, params, context) => {
-  const { propKey, propValue, appointmentId } = params
+  const { propKey, propValue, appointmentId, toOutpatientId } = params
   const dbAppointment = await db
     .collection('appointments')
     .findOne({ _id: appointmentId })
@@ -478,7 +477,12 @@ export const updateAppointmentByPropName = async (_, params, context) => {
       await handleConfirmStatusChange(params)
       break
     case 'appointmentTime':
-      await handleAppointmentTimeChange(params)
+      await handleAppointmentTimeChange({
+        propValue: moment(propValue).startOf('day')._d,
+        appointmentId,
+        appointment: dbAppointment,
+        toOutpatientId,
+      })
       break
     default:
       await db.collection('appointments').update(
