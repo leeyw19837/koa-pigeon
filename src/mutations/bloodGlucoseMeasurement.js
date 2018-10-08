@@ -269,6 +269,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
       pubsub.publish('warningAdded', { warningAdded: warning })
     }
   }
+  context.response.set('effect-types', 'saveBloodGlucoseMeasurementNew')
   return !!retVal.result.ok
     ? retVal.insertedId
     : null
