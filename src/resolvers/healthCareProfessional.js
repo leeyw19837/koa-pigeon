@@ -18,6 +18,8 @@ export const HealthcareProfessional = {
   },
   planToAppointPatients: async (professional, _, { getDb }) => {
     const db = await getDb()
+
+    // 1 查询照护师负责的医院
     const healthCareTeams = await db
       .collection('healthCareTeams')
       .find({})
@@ -26,6 +28,8 @@ export const HealthcareProfessional = {
     let responsibleHealthCareTeams = []
     responsibleHCTIds.forEach(i=>responsibleHealthCareTeams.push(healthCareTeams.find(j=>i===j._id)))
     const responsibleHCTInstitutionIds = responsibleHealthCareTeams.map(i=>i.institutionId)
+
+    // 2 查询照护师负责的医院下的所有待预约患者
     const planToAppointRecordsDb = await db
       .collection('appointments')
       .find({ appointmentTime:{$exists:0}, expectedTime:{$exists:true}, institutionId: {$in: responsibleHCTInstitutionIds}})

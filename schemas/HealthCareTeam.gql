@@ -2,8 +2,10 @@ type HealthCareTeam {
   _id: ID
   name: String!
   institutionName: String
+  workDay: [Int]
   institution: Institution!
   healthCareProfessionals: [HealthcareProfessional]
+  availableAppointmentDates: [Outpatient]
 }
 
 extend type Query {

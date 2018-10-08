@@ -1,4 +1,4 @@
-
+import moment from 'moment'
 
 export const HealthCareTeam = {
   institution: async (careTeam, _, { getDb }) => {
@@ -20,5 +20,15 @@ export const HealthCareTeam = {
       }).toArray()
     // console.log(doctors, '@doctors')
     return doctors
+  },
+  availableAppointmentDates : async (careTeam, _, { getDb }) => {
+    const db = await getDb()
+    const availableAppointmentDates = await db
+      .collection('outpatients')
+      .find({state:'WAITING', hospitalId:careTeam.institutionId, outpatientDate:{$gte: new Date()}})
+      .sort({outpatientDate:-1})
+      .toArray()
+    // console.log(availableAppointmentDates, '@availableAppointmentDates')
+    return availableAppointmentDates
   }
 }
