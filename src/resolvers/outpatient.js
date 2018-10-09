@@ -1,4 +1,5 @@
 import { ObjectID } from 'mongodb'
+import moment from 'moment'
 
 export const Outpatient = {
   patientsCount: async outpatient => {
@@ -28,16 +29,21 @@ export const Outpatient = {
   },
   availableAppointmentDates: async outpatient => {
     const { healthCareTeamId } = outpatient
-    return await db
+    const result = await db
       .collection('outpatients')
       .find({
         healthCareTeamId,
         state: 'WAITING',
-        outpatientDate: { $gt: new Date() },
+        outpatientDate: {
+          $gt: moment()
+            .subtract(1, 'days')
+            .endOf('day')._d,
+        },
       })
       .sort({
         outpatientDate: 1,
       })
       .toArray()
+    return result
   },
 }
