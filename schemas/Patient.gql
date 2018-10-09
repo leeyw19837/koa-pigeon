@@ -73,3 +73,16 @@ input ProfileInput {
   weight: Int
   username: String
 }
+
+input PatientFilter {
+  cdeId: ID
+  # part of nickname
+  namePattern: String
+  # first letter of nickname
+  initials: String
+}
+
+type PatientPagination {
+  patients: [Patient!]
+  total: Int!
+}

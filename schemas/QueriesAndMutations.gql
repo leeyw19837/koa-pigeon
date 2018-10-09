@@ -33,6 +33,7 @@ type Query {
   # Users
   patient(patientId: ID, telephone: String, platform: String): Patient
   patients(cdeId: ID): [Patient]
+  # do not use this API anymore, the one next to it is much better
   patientsHasCDE(
     nosy: Boolean
     cdeId: ID
@@ -40,6 +41,8 @@ type Query {
     limit: Int
     nameFilter: String
   ): [Patient]
+  # this is the much better one
+  getSomePatients(filter: PatientFilter, batch: BatchInfo): PatientPagination
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]
@@ -156,7 +159,6 @@ type Query {
   #   queryType: String
   # ): Achievement
   getSessions(chatRoomId: ID): [Session]
-  cdeDutyAdjective: [String]
   cdeDutyAdjective: [String]
   cdeDutyPeopleperDay: Int!
   fetchChatSnapshots(qaId: ID!): QAAddition

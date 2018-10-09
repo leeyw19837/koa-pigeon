@@ -3,3 +3,8 @@ enum Operation {
   UPDATED
   REMOVED
 }
+
+input BatchInfo {
+  startIndex: Int!
+  stopIndex: Int!
+}

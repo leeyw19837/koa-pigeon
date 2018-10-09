@@ -6,6 +6,46 @@ import moment from 'moment'
 import axios from 'axios'
 import { getMeasureFeedback } from '../cronJob/controller/getMeasureFeedback'
 
+const getCondition = ({ filter }) => {
+  const { namePattern, cdeId, initials } = filter
+  const condition = {
+    patientState: { $nin: ['REMOVED'] },
+    cdeId: { $exists: 1 },
+    roles: { $exists: 0 },
+  }
+  if (namePattern) {
+    condition.nickname = { $regex: namePattern }
+  }
+
+  // TODO
+  // if(initials) {
+  //   condition.initials = { $regex: `/^${initials}/`}
+  // }
+
+  if (cdeId) condition.cdeId = cdeId
+  return condition
+}
+export const PatientPagination = {
+  total: async (pp, _, { getDb }) => {
+    const db = await getDb()
+    const condition = getCondition(pp)
+
+    return await db.collection('users').count(condition)
+  },
+  patients: async (pp, _, { getDb }) => {
+    const db = await getDb()
+    const condition = getCondition(pp)
+    const { startIndex, stopIndex } = pp.batch
+    return await db
+      .collection('users')
+      .find(condition)
+      .sort({ nickname: 1 }) // change to pinyinFullname after add field pinyinFullname
+      .skip(startIndex)
+      .limit(stopIndex - startIndex + 1)
+      .toArray()
+  },
+}
+
 export const Patient = {
   footAssessmentPhotos: async (patient, _, { getDb }) => {
     const db = await getDb()

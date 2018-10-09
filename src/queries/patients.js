@@ -58,6 +58,8 @@ export const patientsHasCDE = async (
     .toArray()
 }
 
+export const getSomePatients = async (_, args) => args
+
 export const patientsByStatus = async (_, args, { getDb }) => {
   const db = await getDb()
   return db
