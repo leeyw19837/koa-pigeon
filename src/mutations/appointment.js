@@ -16,6 +16,17 @@ export const updateAppointmentInfos = async (_, params, context) => {
     expectedTime,
     note,
   }
+  const existedUser = await db
+    .collection('users')
+    .findOne({ username: { $regex: mobile } })
+  const isExisted = !!existedUser
+  if (
+    isExisted
+    && existedUser._id.toString() !== patientId
+    && ['POTENTIAL', 'REMOVED'].indexOf(existedUser.patientState) === -1
+  ) {
+    throw new Error('mobile_duplicated')
+  }
   await db.collection('appointments').update(
     {
       patientId,
@@ -104,8 +115,6 @@ export const addPatientAppointment = async (_, params, context) => {
     isExisted &&
     ['POTENTIAL', 'REMOVED'].indexOf(existedUser.patientState) === -1
   ) {
-    console.log('enter error')
-    // return { error: 'mobile duplicated' }
     throw new Error('mobile_duplicated')
   }
 
@@ -591,7 +600,8 @@ export const updateOutpatientStates = async (_, params, context) => {
       $set:{
         type:'first',
         appointmentTime,
-        treatmentStateId
+        treatmentStateId,
+        healthCareTeamId: institution._id,
       }
     })
 
