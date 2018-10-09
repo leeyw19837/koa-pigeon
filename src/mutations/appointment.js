@@ -104,7 +104,9 @@ export const addPatientAppointment = async (_, params, context) => {
     isExisted &&
     ['POTENTIAL', 'REMOVED'].indexOf(existedUser.patientState) === -1
   ) {
-    return { mobile: 'duplicate' }
+    console.log('enter error')
+    // return { error: 'mobile duplicated' }
+    throw new Error('mobile_duplicated')
   }
 
   const username = mobile
