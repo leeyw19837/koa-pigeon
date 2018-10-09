@@ -142,7 +142,11 @@ export const addPatientAppointment = async (_, params, context) => {
   }
   await db
     .collection('appointments')
-    .insert({ ...params, patientId: patientId.toString() })
+    .insert({
+      _id: new ObjectID().toString(),
+      patientId: patientId.toString(),
+      ...params,
+    })
   context.response.set('effect-types', 'PatientList,PatientDetail')
   return true
 }
@@ -555,43 +559,56 @@ export const updateOutpatientStates = async (_, params, context) => {
   // 第二步：更新 user 表中 patientState 为 HAS_APPOINTMENT
   const existedUser = await db
     .collection('users')
-    .findOne({ patientId })
+    .findOne({ _id: ObjectID.createFromHexString(patientId) })
   if (!existedUser) {
-    throw new Error('Users patientId does not exist in DB!')
+    await db.collection('users').insert({
+      _id: new ObjectID(),
+      nickname: dbAppointment.nickname,
+      username: dbAppointment.mobile,
+      createdAt: new Date(),
+      healthCareTeamId: institution._id,
+      patientState: 'HAS_APPOINTMENT',
+      source: dbAppointment.source,
+    })
+  } else {
+    await db.collection('users').update(
+      {
+        _id: ObjectID.createFromHexString(patientId),
+      },{
+        $set:{
+          patientState:'HAS_APPOINTMENT',
+        }
+      })
   }
-  await db.collection('users').update(
-    {
-    patientId,
-  },{
-      patientState:'HAS_APPOINTMENT',
-  })
 
   // 第三步：更新 appointment 表中 type 为 'first'，增加 appointmentTime， 增加 treatmentStateId
   await db.collection('appointments').update(
     {
       patientId,
     },{
-      type:'first',
-      appointmentTime,
-      treatmentStateId
+      $set:{
+        type:'first',
+        appointmentTime,
+        treatmentStateId
+      }
     })
 
   // 第四步：更新 outPatients 表中对应该 outpatientId 的记录，﻿patientsId 和﻿appointmentsId 分别加入一条当前预约记录
   const existedOutPatient = await db
-    .collection('outPatients')
+    .collection('outpatients')
     .findOne({ _id: outpatientId })
   if (!existedOutPatient) {
     throw new Error('outPatients outpatientId does not exist in DB!')
   }
-  const newPatientIds = existedOutPatient.patientsId
-  const newAppointmentIds = existedOutPatient.appointmentsId
-  await db.collection('outPatients').update(
+  await db.collection('outpatients').update(
     {
       _id: outpatientId,
     },{
-      patientsId: newPatientIds.push(patientId),
-      appointmentsId: newAppointmentIds.push(dbAppointment._id),
+      $push:{
+        patientsId: patientId,
+        appointmentsId: dbAppointment._id,
+      }
     })
-
+  context.response.set('effect-types', 'PatientList,PatientDetail')
   return true
 }
