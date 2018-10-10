@@ -36,6 +36,7 @@
     "co-wechat-oauth": "^2.0.1",
     "crypto": "^1.0.1",
     "dayjs": "^1.7.5",
+    "elasticsearch": "^15.1.1",
     "fresh-id": "^1.1.0",
     "graphql": "^0.11.7",
     "graphql-request": "^1.8.2",
@@ -61,7 +62,9 @@
     "request-promise": "^4.2.2",
     "righteous-raven": "^1.0.5",
     "subscriptions-transport-ws": "^0.9.15",
-    "tenpay": "^2.1.9"
+    "tenpay": "^2.1.9",
+    "winston": "^3.1.0",
+    "winston-elasticsearch": "^0.7.5"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

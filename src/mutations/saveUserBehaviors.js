@@ -1,5 +1,6 @@
 import get from 'lodash/get'
 import { ObjectID } from 'mongodb'
+import { logger } from '../lib/logger';
 
 export const saveUserBehaviors = async (_, args, context) => {
   const db = await context.getDb()
@@ -11,13 +12,13 @@ export const saveUserBehaviors = async (_, args, context) => {
     .collection('users')
     .findOne({ _id: ObjectID.createFromHexString(patientId) })
   if (!user) {
-    throw new Error("You don't exist")
+    throw new Error( `User: ${patientId} does not exist`)
   }
 
   const frId = new ObjectID()
   if (eventName === 'OPEN_APP') {
     const { deviceContext } = args
-    await db.collection('userBehaviors').insert({
+    const behaviour = {
       _id: String(frId),
       patientId,
       eventName,
@@ -25,16 +26,20 @@ export const saveUserBehaviors = async (_, args, context) => {
       sessionId,
       deviceContext,
       occurredAt,
-    })
+    }
+    await db.collection('userBehaviors').insert(behaviour)
+    logger.log({level: 'info', message: 'Added user behaviour', tag: 'user-behaviour', meta: behaviour })
     return true
   }
-  await db.collection('userBehaviors').insert({
+  const behaviour = {
     _id: String(frId),
     patientId,
     eventName,
     eventNumber,
     sessionId,
     occurredAt,
-  })
+  }
+  await db.collection('userBehaviors').insert(behaviour)
+  logger.log({level: 'info', message: 'Added user behaviour', tag: 'user-behaviour', meta: behaviour })
   return true
 }
