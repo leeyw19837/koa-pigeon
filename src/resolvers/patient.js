@@ -7,7 +7,7 @@ import axios from 'axios'
 import { getMeasureFeedback } from '../cronJob/controller/getMeasureFeedback'
 
 const getCondition = ({ filter }) => {
-  const { namePattern, cdeId, initials } = filter
+  const { namePattern, cdeId } = filter
   const condition = {
     patientState: { $nin: ['REMOVED'] },
     cdeId: { $exists: 1 },
@@ -16,11 +16,6 @@ const getCondition = ({ filter }) => {
   if (namePattern) {
     condition.nickname = { $regex: namePattern }
   }
-
-  // TODO
-  // if(initials) {
-  //   condition.initials = { $regex: `/^${initials}/`}
-  // }
 
   if (cdeId) condition.cdeId = cdeId
   return condition
@@ -35,7 +30,7 @@ export const PatientPagination = {
   patients: async (pp, _, { getDb }) => {
     const db = await getDb()
     const condition = getCondition(pp)
-    const { startIndex, stopIndex } = pp.batch
+    const { startIndex, stopIndex } = pp.slice
     return await db
       .collection('users')
       .find(condition)
