@@ -55,7 +55,7 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
 
 export const unreadMessages = async (_, args, context) => {
   const db = await context.getDb()
-  const { userId } = args
+  const { userId, client } = args
   const userObjectId = ObjectId.createFromHexString(userId)
   const user = await db.collection('users').findOne({ _id: userObjectId })
 

@@ -1,21 +1,15 @@
 import freshId from 'fresh-id'
-import { ObjectId } from 'mongodb'
 import { pubsub } from '../pubsub'
-import { pushChatNotification } from '../mipush'
-import { ObjectID } from 'mongodb'
-import { sessionFeeder } from '../modules/chat'
 
 export const sendNeedleBubbleChatMessage = async (_, args, { getDb }) => {
   const db = getDb === undefined ? global.db : await getDb()
 
   const {
-    userId,
     chatRoomId,
     text,
     sourceType,
     taskType,
     taskId,
-    desc,
   } = args
 
   let chatRoom = await db
@@ -36,7 +30,6 @@ export const sendNeedleBubbleChatMessage = async (_, args, { getDb }) => {
     sourceType,
     taskType,
     taskId,
-    desc,
   }
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)

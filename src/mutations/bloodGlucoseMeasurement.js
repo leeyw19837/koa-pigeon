@@ -8,6 +8,7 @@ import {
   deleteDelayEvent,
   queryDelayEvent,
 } from '../redisCron/controller'
+import map from 'lodash/map'
 import { DigestiveStateLookup } from '../utils/i18n'
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
 import { insertChat } from '../utils/insertNeedleChatMessage'
@@ -173,20 +174,34 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
     })
 
     //聊天页面插入task气泡
-    const taskTextMap = {
-      AFTER_MEALS_HIGH: '餐后高血糖',
-      EMPTY_STOMACH_HIGH: '空腹高血糖',
-      FLUCTUATION: '大波动',
-      LOW_BLOOD_GLUCOSE: '低血糖',
+    const TIME_PERIOD_MAP = {
+      BEFORE_BREAKFAST: '早餐前',
+      AFTER_BREAKFAST: '早餐后',
+      BEFORE_LUNCH: '午餐前',
+      AFTER_LUNCH: '午餐后',
+      BEFORE_DINNER: '晚餐前',
+      AFTER_DINNER: '晚餐后',
+      BEFORE_SLEEPING: '睡前',
+      MIDNIGHT: '凌晨',
+      RANDOM: '随机',
     }
-    const { _id, patientId, type, desc } = task
+    const summaryOfMeasurements = map(
+      task.measurementRecords,
+      ({ measurementTime, bloodGlucoseValue }) => {
+        console.log(measurementTime, bloodGlucoseValue)
+        const timePeriod = TIME_PERIOD_MAP[measurementTime] || measurementTime
+        const transformedBG = (bloodGlucoseValue / 18).toFixed(1)
+        return `${timePeriod} ${transformedBG}`
+      },
+    ).join('; ')
+    const textContent = `${summaryOfMeasurements}`
+    const { _id, patientId, type } = task
     const sendArgs = {
       taskId: _id,
       patientId,
-      textContent: taskTextMap[type],
+      textContent,
       sourceType: 'FROM_SYSTEM',
       taskType: type,
-      desc,
     }
     await insertChat(_, sendArgs, context)
   }
