@@ -67,4 +67,6 @@ extend type Mutation {
     appointmentId: ID!
     toOutpatientId: ID
   ): String
+  moveAppointmentOut(appointmentId: ID!, outpatientId: ID!): String
+  deleteAdditionAppointment(appointmentId: ID!, outpatientId: ID!): String
 }

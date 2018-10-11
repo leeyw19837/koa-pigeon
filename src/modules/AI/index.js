@@ -1,4 +1,5 @@
 import request from 'request-promise'
+import randomColor from 'randomcolor'
 import { get, orderBy } from 'lodash'
 const host = process.env.AI_HOST
 const modelTrainHost = process.env.AI_RETRAIN_HOST
@@ -7,12 +8,12 @@ const rd = (lower, upper) => {
   return Math.floor(Math.random() * (upper - lower + 1)) + lower
 }
 
-const randomColor = () => {
-  const r = rd(0, 256),
-    g = rd(0, 256),
-    b = rd(0, 256)
-  return `rgb(${r}, ${g}, ${b})`
-}
+// const randomColor = () => {
+//   const r = rd(0, 256),
+//     g = rd(0, 256),
+//     b = rd(0, 256)
+//   return `rgb(${r}, ${g}, ${b})`
+// }
 
 export const colorful = opt => {
   switch (opt) {
@@ -29,7 +30,14 @@ export const colorful = opt => {
     case '其它':
       return { color: '#F5F5F5', sortId: 50000 }
     default:
-      return { color: randomColor(), sortId: rd(40000, 49999) }
+      return {
+        color: randomColor({
+          luminosity: 'light',
+          hue: 'random',
+          format: 'rgba',
+        }),
+        sortId: rd(40000, 49999),
+      }
   }
 }
 /**

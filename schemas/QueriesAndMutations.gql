@@ -42,7 +42,10 @@ type Query {
     nameFilter: String
   ): [Patient]
   # this is the much better one
-  getSomePatients(filter: PatientFilter, batch: BatchInfo): PatientPagination
+  getSomePatients(
+    filter: InputPatientFilter
+    slice: InputSliceInfo
+  ): PatientPagination
   patientsByStatus(status: String!): [Patient]
   healthCareProfessional(id: ID!): HealthcareProfessional
   healthCareProfessionals: [HealthcareProfessional]

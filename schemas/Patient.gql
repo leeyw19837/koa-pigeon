@@ -39,7 +39,7 @@ type Patient {
   tempFilter: Boolean
   lastHbAlc: String
   bloodGlucoses(startAt: Date, endAt: Date, limit: Int): [BloodGlucoseRecord]
-  bloodGlucosesByTime(selectTime:Date): [BloodGlucoseRecord]
+  bloodGlucosesByTime(selectTime: Date): [BloodGlucoseRecord]
   cdeInfo: CertifiedDiabetesEducator
   doctorInfo: User
   # 模组完成度
@@ -74,15 +74,21 @@ input ProfileInput {
   username: String
 }
 
-input PatientFilter {
+input InputPatientFilter {
   cdeId: ID
   # part of nickname
   namePattern: String
-  # first letter of nickname
-  initials: String
+}
+
+type PatientFilter {
+  cdeId: ID
+  # part of nickname
+  namePattern: String
 }
 
 type PatientPagination {
+  filter: PatientFilter
+  slice: SliceInfo
   patients: [Patient!]
   total: Int!
 }

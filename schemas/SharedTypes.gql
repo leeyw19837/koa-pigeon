@@ -4,7 +4,12 @@ enum Operation {
   REMOVED
 }
 
-input BatchInfo {
+input InputSliceInfo {
+  startIndex: Int!
+  stopIndex: Int!
+}
+
+type SliceInfo {
   startIndex: Int!
   stopIndex: Int!
 }
