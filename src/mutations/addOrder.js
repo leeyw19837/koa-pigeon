@@ -4,6 +4,7 @@ import { wechatPayServices } from '../wechatPay'
 import * as orderServices from '../modules/order'
 import { convertTime } from '../wechatPay/utils'
 import { findGoodById } from '../modules/goods/index'
+import { logger } from '../lib/logger';
 
 export const addOrder = async (_, args, context) => {
   const db = await context.getDb()
@@ -54,7 +55,7 @@ export const createPayOrder = async (_, args, context) => {
     },
     getDb,
   })
-  console.log(result, '@@@@@result')
+  logger.log({level: 'info', message: 'create pre order', tag: 'wechat-pay', meta: result })
   return result
 }
 
@@ -73,7 +74,7 @@ export const createPrepayForWechat = async (_, args, context) => {
     orderId,
     patientId,
   })
-  console.log(result)
+  logger.log({level: 'info', message: 'create pre order', tag: 'wechat-pay', meta: result })
   return result
 }
 
@@ -113,5 +114,7 @@ export const updateOrder = async (_, args, context) => {
     orderId,
     setData,
   })
+
+  logger.log({level: 'info', message: 'update order status', tag: 'wechat-pay', meta: args })
   return data.nModified === 1
 }
