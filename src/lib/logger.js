@@ -4,9 +4,10 @@ import elasticsearch  from 'elasticsearch'
 const { combine, timestamp, label, prettyPrint } = format
 
 const client = new elasticsearch.Client({
-  host: '172.16.0.15:9200',
-  log: 'trace',
+  host: process.env.ELASTIC_HOST || '172.16.0.15:9200',
 })
+
+const transportConfig = process.env.ELASTIC_ENABLED ? [new ElasticWinston({client})] : [new transports.Console()]
 
 export const logger = createLogger({
   format: combine(
@@ -14,6 +15,7 @@ export const logger = createLogger({
     timestamp(),
     prettyPrint()
   ),
-  transports: [new transports.Console(), new ElasticWinston({client})]
+  transports: transportConfig
 })
+
 
