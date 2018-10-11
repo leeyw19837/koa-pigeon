@@ -21,9 +21,9 @@ export const updateAppointmentInfos = async (_, params, context) => {
     .findOne({ username: { $regex: mobile } })
   const isExisted = !!existedUser
   if (
-    isExisted
-    && existedUser._id.toString() !== patientId
-    && ['POTENTIAL', 'REMOVED'].indexOf(existedUser.patientState) === -1
+    isExisted &&
+    existedUser._id.toString() !== patientId &&
+    ['POTENTIAL', 'REMOVED'].indexOf(existedUser.patientState) === -1
   ) {
     throw new Error('mobile_duplicated')
   }
@@ -151,13 +151,11 @@ export const addPatientAppointment = async (_, params, context) => {
       },
     )
   }
-  await db
-    .collection('appointments')
-    .insert({
-      _id: new ObjectID().toString(),
-      patientId: patientId.toString(),
-      ...params,
-    })
+  await db.collection('appointments').insert({
+    _id: new ObjectID().toString(),
+    patientId: patientId.toString(),
+    ...params,
+  })
   context.response.set('effect-types', 'PatientList,PatientDetail')
   return true
 }
@@ -165,8 +163,12 @@ export const addPatientAppointment = async (_, params, context) => {
 const syncInfo = async ({ patientId, key, value }) => {
   if (value === '') return
   const setKey = key === 'mobile' ? 'username' : key
-  const $setObj = {
+  const $userObj = {
     [setKey]: value,
+    updatedAt: new Date(),
+  }
+  const $setObj = {
+    [key]: value,
     updatedAt: new Date(),
   }
   await db
@@ -180,11 +182,10 @@ const syncInfo = async ({ patientId, key, value }) => {
     {
       _id: ObjectID.createFromHexString(patientId),
     },
-    { $set: $setObj },
+    { $set: $userObj },
   )
 }
 
-const syncMobile = async ({ patientId, mobile }) => {}
 /**
  * 基于预约id 更新预约
  * 只不过参数是整个预约
@@ -198,14 +199,7 @@ export const updateAppointmentById = async (_, { appointment }, context) => {
   if (!dbAppointment) {
     throw new Error('Appointment _id is not existed!')
   }
-  if (appointment.nickname !== dbAppointment.nickname) {
-    await syncInfo({
-      patientId,
-      key: 'nickname',
-      value: nickname,
-    })
-  }
-  if (appointment.mobile !== dbAppointment.mobile) {
+  if (mobile !== dbAppointment.mobile) {
     const user = await db.collection('users').findOne({ username: mobile })
     if (user) {
       return 'duplicate'
@@ -216,6 +210,15 @@ export const updateAppointmentById = async (_, { appointment }, context) => {
       value: mobile,
     })
   }
+
+  if (appointment.nickname !== dbAppointment.nickname) {
+    await syncInfo({
+      patientId,
+      key: 'nickname',
+      value: nickname,
+    })
+  }
+
   const { treatmentStateId } = dbAppointment
   await db.collection('appointments').update(
     {
@@ -257,7 +260,7 @@ export const updateAppointmentById = async (_, { appointment }, context) => {
       },
     },
   )
-  return ''
+  return 'OK'
 }
 
 /**
@@ -539,10 +542,19 @@ export const updateOutpatientStates = async (_, params, context) => {
     'mobile',
     'note',
     'patientId',
-    'hisNumber'
+    'hisNumber',
   ])
 
-  const { blood, nutritionAt, footAt, eyeGroundAt, quantizationAt, insulinAt, healthTech, institutionId } = dbAppointment
+  const {
+    blood,
+    nutritionAt,
+    footAt,
+    eyeGroundAt,
+    quantizationAt,
+    insulinAt,
+    healthTech,
+    institutionId,
+  } = dbAppointment
   const institution = await db
     .collection('healthCareTeams')
     .findOne({ institutionId })
@@ -554,14 +566,18 @@ export const updateOutpatientStates = async (_, params, context) => {
     checkIn: false,
     type: 'first',
     createdAt: new Date(),
-    blood: blood ? false : (blood !== null ? false: null),
-    sendBlood: blood ? false : (blood !== null ? false: null),
-    nutritionAt: nutritionAt ? false : (nutritionAt !== null ? false: null),
-    footAt: footAt ? false : (footAt !== null ? false: null),
-    eyeGroundAt: eyeGroundAt ? false : (eyeGroundAt !== null ? false: null),
-    quantizationAt: quantizationAt ? false : (quantizationAt !== null ? false: null),
-    insulinAt: insulinAt ? false : (insulinAt !== null ? false: null),
-    healthTech: healthTech ? false : (healthTech !== null ? false: null),
+    blood: blood ? false : blood !== null ? false : null,
+    sendBlood: blood ? false : blood !== null ? false : null,
+    nutritionAt: nutritionAt ? false : nutritionAt !== null ? false : null,
+    footAt: footAt ? false : footAt !== null ? false : null,
+    eyeGroundAt: eyeGroundAt ? false : eyeGroundAt !== null ? false : null,
+    quantizationAt: quantizationAt
+      ? false
+      : quantizationAt !== null
+        ? false
+        : null,
+    insulinAt: insulinAt ? false : insulinAt !== null ? false : null,
+    healthTech: healthTech ? false : healthTech !== null ? false : null,
     diagnosis: false,
     print: false,
     healthCareTeamId: institution._id,
@@ -585,25 +601,29 @@ export const updateOutpatientStates = async (_, params, context) => {
     await db.collection('users').update(
       {
         _id: ObjectID.createFromHexString(patientId),
-      },{
-        $set:{
-          patientState:'HAS_APPOINTMENT',
-        }
-      })
+      },
+      {
+        $set: {
+          patientState: 'HAS_APPOINTMENT',
+        },
+      },
+    )
   }
 
   // 第三步：更新 appointment 表中 type 为 'first'，增加 appointmentTime， 增加 treatmentStateId
   await db.collection('appointments').update(
     {
       patientId,
-    },{
-      $set:{
-        type:'first',
+    },
+    {
+      $set: {
+        type: 'first',
         appointmentTime,
         treatmentStateId,
         healthCareTeamId: institution._id,
-      }
-    })
+      },
+    },
+  )
 
   // 第四步：更新 outPatients 表中对应该 outpatientId 的记录，﻿patientsId 和﻿appointmentsId 分别加入一条当前预约记录
   const existedOutPatient = await db
@@ -615,12 +635,14 @@ export const updateOutpatientStates = async (_, params, context) => {
   await db.collection('outpatients').update(
     {
       _id: outpatientId,
-    },{
-      $push:{
+    },
+    {
+      $push: {
         patientsId: patientId,
         appointmentsId: dbAppointment._id,
-      }
-    })
+      },
+    },
+  )
   context.response.set('effect-types', 'PatientList,PatientDetail')
   return true
 }
