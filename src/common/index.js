@@ -1,4 +1,4 @@
-
+import 'pinyin4js'
 import { send } from 'righteous-raven'
 
 export * from './formatBgValue'
