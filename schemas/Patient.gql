@@ -72,6 +72,7 @@ input ProfileInput {
   height: Int
   weight: Int
   username: String
+  remarks:String
 }
 
 input InputPatientFilter {
