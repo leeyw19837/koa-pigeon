@@ -532,7 +532,7 @@ type Mutation {
 }
 
 type Subscription {
-  chatMessageAdded(chatRoomId: ID): NeedleChatMessage!
+  chatMessageAdded(chatRoomId: ID, client: String): NeedleChatMessage!
   chatRoomDynamics(userId: ID, nosy: Boolean, chatRoomId: ID): NeedleChatRoom!
   warningAdded: Warning
   interventionTaskDynamics(
