@@ -41,8 +41,6 @@ export const PatientPagination = {
       .find(condition)
       .sort({
         'pinyinName.initial': 1,
-        'pinyinName.short': 1,
-        'pinyinName.full': 1,
       })
       .skip(startIndex)
       .limit(stopIndex - startIndex + 1)
