@@ -6,9 +6,20 @@ export const chatMessageAdded = {
   subscribe: withFilter(
     () => pubsub.asyncIterator('chatMessageAdded'),
     (payload, variables) => {
+      console.log('payload = ',payload,'variables = ',variables)
       const chatRoomId = get(payload, 'chatMessageAdded.chatRoomId')
-      if (!variables.chatRoomId) return true
-      return variables.chatRoomId === chatRoomId
+      const messageType = get(payload, 'chatMessageAdded.messageType')
+      const client = get(variables, 'client')
+      console.log('client',client)
+      if (messageType === 'BUBBLE' && client !== 'WEB'){
+        return false
+      } else {
+        if (!variables.chatRoomId) {
+          return true
+        } else {
+          return variables.chatRoomId === chatRoomId
+        }
+      }
     },
   ),
 }

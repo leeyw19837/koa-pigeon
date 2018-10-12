@@ -268,6 +268,16 @@ export const updateAppointmentById = async (_, { appointment }, context) => {
  * @param {*} param0
  */
 const handleConfirmStatusChange = async ({ propValue, appointmentId }) => {
+  await db.collection('appointments').update(
+    { _id: appointmentId },
+    {
+      $set: {
+        confirmStatus: propValue,
+        updatedAt: new Date(),
+      },
+    },
+  )
+
   if (propValue !== 'manualConfirm') return
   const cardMeasssge = await db
     .collection('needleChatMessages')
@@ -296,16 +306,6 @@ const handleConfirmStatusChange = async ({ propValue, appointmentId }) => {
       },
     )
   }
-
-  await db.collection('appointments').update(
-    { _id: appointmentId },
-    {
-      $set: {
-        confirmStatus: propValue,
-        updatedAt: new Date(),
-      },
-    },
-  )
 }
 
 const changeAppointmentInOutpatient = async ({
@@ -645,4 +645,88 @@ export const updateOutpatientStates = async (_, params, context) => {
   )
   context.response.set('effect-types', 'PatientList,PatientDetail')
   return true
+}
+
+/**
+ * 初诊的预约是可以被移出【已预约】变成待预约
+ * @param {*} _
+ * @param {*} param1
+ */
+export const moveAppointmentOut = async (
+  _,
+  { appointmentId, outpatientId },
+) => {
+  const appointment = await db
+    .collection('appointments')
+    .findOne({ _id: appointmentId })
+
+  if (!appointment) {
+    throw new Error(`${appointmentId} Appointment _id is not existed!`)
+  }
+  const { treatmentStateId, appointmentTime, patientId } = appointment
+
+  await db.collection('appointments').update(
+    { _id: appointmentId },
+    {
+      $unset: { appointmentTime: '', treatmentStateId: '' },
+    },
+  )
+
+  await db
+    .collection('users')
+    .update(
+      { _id: ObjectID.createFromHexString(patientId) },
+      { $set: { patientState: 'NEEDS_APPOINTMENT', updatedAt: new Date() } },
+    )
+
+  await db.collection('outpatients').update(
+    { _id: outpatientId },
+    {
+      $pull: { appointmentsId: appointmentId, patientsId: patientId },
+      $set: { updatedAt: new Date() },
+    },
+  )
+
+  // 如果移出的时候是当天的话，需要把treatmentState设置为 delete
+  if (moment().isSame(appointmentTime, 'day')) {
+    await db
+      .collection('treatmentState')
+      .update(
+        { _id: treatmentStateId },
+        { $set: { status: 'delete', updatedAt: new Date() } },
+      )
+  } else {
+    await db.collection('treatmentState').remove({ _id: treatmentStateId })
+  }
+  return ''
+}
+
+/**
+ * 删除加诊
+ * @param {*} _
+ * @param {*} param1
+ */
+export const deleteAdditionAppointment = async (
+  _,
+  { appointmentId, outpatientId },
+) => {
+  const appointment = await db
+    .collection('appointments')
+    .findOne({ _id: appointmentId })
+
+  if (!appointment) {
+    throw new Error(`${appointmentId} Appointment _id is not existed!`)
+  }
+  const { treatmentStateId, patientId } = appointment
+
+  await db.collection('appointments').remove({ _id: appointmentId })
+  await db.collection('treatmentState').remove({ _id: treatmentStateId })
+  await db.collection('outpatients').update(
+    { _id: outpatientId },
+    {
+      $pull: { appointmentsId: appointmentId, patientsId: patientId },
+      $set: { updatedAt: new Date() },
+    },
+  )
+  return ''
 }

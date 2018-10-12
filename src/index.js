@@ -39,13 +39,13 @@ let {
   JWT_SECRET,
   AUTH
 } = process.env
-if (!PORT) 
+if (!PORT)
   PORT = '3080'
-if (!NODE_ENV) 
+if (!NODE_ENV)
   NODE_ENV = 'development'
-if (!SECRET) 
+if (!SECRET)
   SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
-if (!AUTH) 
+if (!AUTH)
   AUTH = 'FALSE';
 
 (async() => {

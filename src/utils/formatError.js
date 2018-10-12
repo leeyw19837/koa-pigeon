@@ -1,7 +1,6 @@
+import { logger } from '../lib/logger'
+
 export const formatError = error => {
-  console.error(`---- Error (${new Date()}:`)
-  console.error(JSON.stringify(error))
-  console.error(error.message)
-  console.error('----')
+  logger.log({level: 'error', message: error.message, status: error.status })
   return error.message
 }

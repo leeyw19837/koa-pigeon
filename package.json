@@ -36,6 +36,7 @@
     "co-wechat-oauth": "^2.0.1",
     "crypto": "^1.0.1",
     "dayjs": "^1.7.5",
+    "elasticsearch": "^15.1.1",
     "fresh-id": "^1.1.0",
     "graphql": "^0.11.7",
     "graphql-request": "^1.8.2",
@@ -56,12 +57,15 @@
     "moment": "^2.22.2",
     "mongodb": "^3.1.6",
     "mongodb-auto-reconnect": "^0.0.1",
+    "randomcolor": "^0.5.3",
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "righteous-raven": "^1.0.5",
     "subscriptions-transport-ws": "^0.9.15",
-    "tenpay": "^2.1.9"
+    "tenpay": "^2.1.9",
+    "winston": "^3.1.0",
+    "winston-elasticsearch": "^0.7.5"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
