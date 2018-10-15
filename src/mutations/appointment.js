@@ -129,7 +129,7 @@ export const addPatientAppointment = async (_, params, context) => {
   let patientId
   if (!currentUser) {
     patientId = new ObjectID()
-    
+
     await db.collection('users').insert({
       _id: patientId,
       nickname,
@@ -740,22 +740,25 @@ export const deleteAdditionAppointment = async (
   return ''
 }
 
-const getPinyinUsername = (name) => {
+const getPinyinUsername = name => {
   const clearName = name.trim()
+  const pinyinFull = PinyinHelper.convertToPinyinString(
+    clearName,
+    '',
+    PinyinFormat.WITHOUT_TONE,
+  )
+  let initial = pinyinFull[0]
+  if (!/[A-Za-z]/.test(init)) {
+    initial = '~'
+  }
   const pinyin = {
-    full: PinyinHelper.convertToPinyinString(
-      clearName,
-      "",
-      PinyinFormat.WITHOUT_TONE
-    ),
+    full: pinyinFull,
     short: PinyinHelper.convertToPinyinString(
       clearName,
-      "",
-      PinyinFormat.FIRST_LETTER
+      '',
+      PinyinFormat.FIRST_LETTER,
     ),
-    initial: PinyinHelper.getShortPinyin(
-      clearName[0]
-    )
-  };
+    initial,
+  }
   return pinyin
 }
