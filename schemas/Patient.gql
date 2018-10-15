@@ -87,9 +87,15 @@ type PatientFilter {
   namePattern: String
 }
 
+type NameCatalog {
+  letter: String!
+  index: Int!
+}
+
 type PatientPagination {
   filter: PatientFilter
   slice: SliceInfo
   patients: [Patient!]
+  catalog: [NameCatalog!]
   total: Int!
 }

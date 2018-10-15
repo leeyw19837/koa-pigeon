@@ -14,7 +14,12 @@ const getCondition = ({ filter }) => {
     roles: { $exists: 0 },
   }
   if (namePattern) {
-    condition.nickname = { $regex: namePattern }
+    const reg = { $regex: namePattern }
+    condition.$or = [
+      { nickname: reg },
+      { 'pinyinName.full': reg },
+      { 'pinyinName.short': reg },
+    ]
   }
 
   if (cdeId) condition.cdeId = cdeId
@@ -34,10 +39,35 @@ export const PatientPagination = {
     return await db
       .collection('users')
       .find(condition)
-      .sort({ nickname: 1 }) // change to pinyinFullname after add field pinyinFullname
+      .sort({
+        'pinyinName.initial': 1,
+      })
       .skip(startIndex)
       .limit(stopIndex - startIndex + 1)
       .toArray()
+  },
+  catalog: async (pp, _, { getDb }) => {
+    const db = await getDb()
+    const condition = getCondition(pp)
+    const data = await db
+      .collection('users')
+      .aggregate([
+        { $match: condition },
+        { $group: { _id: '$pinyinName.initial', count: { $sum: 1 } } },
+        { $sort: { _id: 1 } },
+      ])
+      .toArray()
+    return data.reduce(
+      ({ index, result }, curr) => {
+        const newResult = [...result, { letter: curr._id.toUpperCase(), index }]
+        const nextIndex = index + curr.count
+        return {
+          index: nextIndex,
+          result: newResult,
+        }
+      },
+      { index: 0, result: [] },
+    ).result
   },
 }
 

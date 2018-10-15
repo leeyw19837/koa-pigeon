@@ -1,4 +1,5 @@
 import pick from 'lodash/pick'
+import 'pinyin4js'
 import { ObjectID } from 'mongodb'
 const moment = require('moment')
 
@@ -35,6 +36,8 @@ export const updateAppointmentInfos = async (_, params, context) => {
       $set: $setObj,
     },
   )
+
+  const pinyinName = getPinyinUsername(nickname)
   await db.collection('users').update(
     {
       _id: ObjectID.createFromHexString(patientId),
@@ -45,6 +48,7 @@ export const updateAppointmentInfos = async (_, params, context) => {
         username: mobile,
         source,
         updatedAt: new Date(),
+        pinyinName,
       },
     },
   )
@@ -120,9 +124,12 @@ export const addPatientAppointment = async (_, params, context) => {
 
   const username = mobile
   const currentUser = existedUser
+  const pinyinName = getPinyinUsername(nickname)
+
   let patientId
   if (!currentUser) {
     patientId = new ObjectID()
+
     await db.collection('users').insert({
       _id: patientId,
       nickname,
@@ -130,6 +137,7 @@ export const addPatientAppointment = async (_, params, context) => {
       createdAt: new Date(),
       source,
       patientState: 'NEEDS_APPOINTMENT',
+      pinyinName,
     })
   } else if (
     currentUser.patientState === 'POTENTIAL' ||
@@ -147,6 +155,7 @@ export const addPatientAppointment = async (_, params, context) => {
           patientState: 'NEEDS_APPOINTMENT',
           institutionId,
           updatedAt: new Date(),
+          pinyinName,
         },
       },
     )
@@ -729,4 +738,27 @@ export const deleteAdditionAppointment = async (
     },
   )
   return ''
+}
+
+const getPinyinUsername = name => {
+  const clearName = name.trim()
+  const pinyinFull = PinyinHelper.convertToPinyinString(
+    clearName,
+    '',
+    PinyinFormat.WITHOUT_TONE,
+  )
+  let initial = pinyinFull[0]
+  if (!/[A-Za-z]/.test(init)) {
+    initial = '~'
+  }
+  const pinyin = {
+    full: pinyinFull,
+    short: PinyinHelper.convertToPinyinString(
+      clearName,
+      '',
+      PinyinFormat.FIRST_LETTER,
+    ),
+    initial,
+  }
+  return pinyin
 }
