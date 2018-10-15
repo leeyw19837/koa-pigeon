@@ -23,6 +23,10 @@ type Comments {
   replyToCommentId: ID
   # 回复的人的Name
   replyName: String
+   # 圈子患者所属照护师的Id
+  belongCdeId: ID
+  # 圈子患者所属照护师的Name
+  belongCdeName: String
   # 点赞
   createdAt: Date
 }
