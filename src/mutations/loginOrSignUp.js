@@ -104,6 +104,7 @@ export const loginOrSignUp = async(_, args, context) => {
       diabetesType: existingPatient.diabetesType,
       startOfIllness: existingPatient.startOfIllness,
       targetWeight: existingPatient.targetWeight,
+      healthCareTeamId: existingPatient.healthCareTeamId[0] || '',
       mobile: existingPatient
         .username
         .replace('@ijk.com', ''),
