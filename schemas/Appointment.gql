@@ -57,6 +57,17 @@ type TeamAppointments {
   count: Int!
 }
 
+type AdditionInfo {
+  flag: String
+  outpatientId: String
+  additions: [Appointment]
+  nextAppointment: Appointment
+}
+
+extend type Query {
+  getAdditionInfo(patientId: ID!, appointmentTime: Date): AdditionInfo
+}
+
 extend type Mutation {
   # 更新已预约的信息
   updateAppointmentById(appointment: AppointmentInput!): String
