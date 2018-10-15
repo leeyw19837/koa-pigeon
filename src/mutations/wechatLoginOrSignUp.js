@@ -31,9 +31,17 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
       exp
     }, JWT_SECRET)
     console.log('JWT', JWT)
+    const isWechat = existingPatient.wechatInfo
     return {
       patientId: existingPatient._id,
-      avatar: existingPatient.avatar,
+      avatar: existingPatient.avatar
+        ? existingPatient.avatar
+        : isWechat
+          ? existingPatient.wechatInfo.headimgurl
+          : existingPatient.gender === 'male'
+            ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+            : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
+      // existingPatient.avatar,
       nickname: existingPatient.nickname,
       patientState: existingPatient.patientState,
       birthday: existingPatient.dateOfBirth,
