@@ -32,7 +32,7 @@ type Query {
   glucoseMeasurementTimeOfDay: [DataPointNumberNumberStdDev!]!
   # Users
   patient(patientId: ID, telephone: String, platform: String): Patient
-  patients(cdeId: ID): [Patient]
+  patients(cdeId: ID, healthCareTeamId: ID): [Patient]
   # do not use this API anymore, the one next to it is much better
   patientsHasCDE(
     nosy: Boolean
