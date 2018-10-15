@@ -5,7 +5,7 @@ import { saveFoodComments } from './foodComments'
 import freshId from 'fresh-id'
 import some from 'lodash/some'
 import moment from 'moment'
-import { insertChat } from '../utils/insertNeedleChatMessage'
+import { insertChat, insertFoodMessagesIntoChat } from '../utils/insertNeedleChatMessage'
 
 const dietMap = {
   BREAKFAST: '早餐',
@@ -24,6 +24,7 @@ export const saveFoodContents = async (_, args, context) => {
     circleImageBase64,
     measurementTime,
     measuredAt,
+    foodUploadSourceType,
   } = args
 
   const imageUrls = []
@@ -34,8 +35,9 @@ export const saveFoodContents = async (_, args, context) => {
     imageUrls.push(imageUrl)
   }
   const now = new Date()
+  const foodCircleId = freshId()
   const foods = {
-    _id: freshId(),
+    _id: foodCircleId,
     patientId,
     circleContet: circleContent,
     circleImages: imageUrls,
@@ -78,6 +80,16 @@ export const saveFoodContents = async (_, args, context) => {
     taskType: 'FOOD_CIRCLE',
   }
   await insertChat(_, sendArgs, context)
+
+  //app端聊天页面插入饮食卡片
+  await insertFoodMessagesIntoChat(_, {
+    patientId,
+    senderId: patientId,
+    shouldQueryTotalScore: false,
+    foodCircleId,
+    sourceType: foodUploadSourceType
+  }, context)
+
   return true
 }
 
@@ -134,6 +146,14 @@ export const updateFoodScore = async (_, args, context) => {
       badgeCreatedAt,
       _senderRole: 'cde'
     })
+    //app端聊天页面插入饮食卡片
+    await insertFoodMessagesIntoChat(_, {
+      patientId: foodRecord.patientId,
+      senderId: 'cde',
+      shouldQueryTotalScore: true,
+      foodCircleId: _id,
+      sourceType: 'FROM_WEB_CDE_SCORES_ONLY'
+    }, context)
   }
   context.response.set('effect-types', 'Foods')
   return success

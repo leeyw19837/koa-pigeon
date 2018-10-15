@@ -407,6 +407,7 @@ type Mutation {
     circleImageBase64: [String]
     measurementTime: String!
     measuredAt: Date!
+    foodUploadSourceType: String
     commentContent: CommentInput
   ): Boolean
   checkAlipayOrder(out_trade_no: String!): AliPayOrder

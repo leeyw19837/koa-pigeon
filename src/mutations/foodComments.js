@@ -2,7 +2,7 @@ import freshId from 'fresh-id'
 import moment from 'moment'
 import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
-// import { insertChat } from '../utils/insertNeedleChatMessage'
+import {insertFoodMessagesIntoChat} from '../utils/insertNeedleChatMessage'
 
 export const addFoodComments = async (_, args, context) => {
   const db = await context.getDb()
@@ -83,8 +83,8 @@ export const deleteFoodComments = async (_, args, context) => {
   return false
 }
 
-export const saveFoodComments = async (_, args, { getDb }) => {
-  const db = await getDb()
+export const saveFoodComments = async (_, args, context) => {
+  const db = await context.getDb()
   const commentId = freshId()
   const { foodCircleId, authorId } = args.comment
   // console.log('---saveFoodComments---',args)
@@ -130,5 +130,14 @@ export const saveFoodComments = async (_, args, { getDb }) => {
     badgeCreatedAt,
     _senderRole: author.roles,
   })
+
+  //app端聊天页面插入饮食卡片
+  await insertFoodMessagesIntoChat(_, {
+    patientId,
+    senderId: authorId,
+    shouldQueryTotalScore: true,
+    foodCircleId,
+    sourceType: 'FROM_WEB_CDE_SCORES_AND_COMMENTS'
+  }, context)
   return !!resultComments.result.ok && !!resultBadgeRecords.result.ok
 }

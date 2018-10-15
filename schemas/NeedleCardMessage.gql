@@ -21,6 +21,7 @@ enum CardContentType {
   # 预约类型
   APPOINTMENT
   KNOWLEDGE
+  FOOD
 }
 
 enum CardContentSourceType {
@@ -46,6 +47,8 @@ type CardContent {
   toUserId: String
   # 三天门诊需要此字段
   beforeCardStatus: CardContentStatus
+  # 饮食卡片所需字段
+  foodCircleId: String
 }
 
 type NeedleCardMessage implements NeedleChatMessage {
