@@ -12,7 +12,6 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
   const token = await client.getAccessToken(wechatCode)
   const accessToken = get(token, 'data.access_token')
   const openid = get(token, 'data.openid')
-
   const existingPatient = await db
     .collection('users')
     .findOne({wechatOpenId: openid})
@@ -55,6 +54,7 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
       diabetesType: existingPatient.diabetesType,
       startOfIllness: existingPatient.startOfIllness,
       targetWeight: existingPatient.targetWeight,
+      healthCareTeamId: existingPatient.healthCareTeamId[0] || '',
       username: existingPatient
         .username
         .replace('@ijk.com', ''),
