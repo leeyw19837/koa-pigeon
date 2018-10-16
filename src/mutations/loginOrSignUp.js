@@ -1,6 +1,9 @@
 import {GraphQLError} from 'graphql/error'
 import {verify} from 'righteous-raven'
 import jsonwebtoken from 'jsonwebtoken'
+const OAuth = require('co-wechat-oauth')
+const {APP_ID, APP_SECRET} = process.env
+const client = new OAuth(APP_ID, APP_SECRET)
 
 import {generateJwt, createNewPatient} from '../utils'
 
@@ -56,12 +59,15 @@ export const loginOrSignUp = async(_, args, context) => {
     })
   if (existingPatient) {
     if (wechatOpenId && !existingPatient.wechatOpenId) {
+      // 把头像放这里
+      const wechatInfo = await client.getUser(wechatOpenId)
       await db
         .collection('users')
         .update({
           _id: existingPatient._id
         }, {
           $set: {
+            avatar: wechatInfo.headimgurl,
             wechatOpenId,
             updatedAt: new Date(),
             isUseNeedle: true
@@ -128,8 +134,11 @@ export const loginOrSignUp = async(_, args, context) => {
     patientState: 'POTENTIAL',
     isUseNeedle: true
   }
-  if (wechatOpenId) 
+  if (wechatOpenId) {
     patientInfo.wechatOpenId = wechatOpenId
+    const wechatInfo = await client.getUser(wechatOpenId)
+    patientInfo.avatar = wechatInfo.headimgurl
+  }
 
   const response = await db
     .collection('users')
