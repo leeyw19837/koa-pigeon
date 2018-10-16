@@ -88,7 +88,7 @@ export const saveFoodComments = async (_, args, context) => {
   const commentId = freshId()
   const { foodCircleId, authorId } = args.comment
   const foods = await db.collection('foods').findOne({ _id: foodCircleId })
-  const userId = await foods && foods.patientId
+  const userId = foods && foods.patientId
   const user = await db.collection('users').findOne({ _id: ObjectID(userId) })
   const cdeId = user && user.cdeId
   const cdeInfo = await db.collection('certifiedDiabetesEducators').findOne({ _id: cdeId })
@@ -98,7 +98,7 @@ export const saveFoodComments = async (_, args, context) => {
     createdAt: new Date(),
   }
   if (cdeInfo) {
-    condition.belongCdeId = cdeInfo._id
+    condition.belongCdeId = cdeInfo.userId
     condition.belongCdeName = cdeInfo.nickname
   }
   const resultComments = await db.collection('comments').insert(condition)
