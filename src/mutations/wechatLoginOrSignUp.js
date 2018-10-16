@@ -31,6 +31,19 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
     }, JWT_SECRET)
     console.log('JWT', JWT)
     const isWechat = existingPatient.wechatInfo
+    // 头像
+    if (!existingPatient.avatar) {
+      await db
+        .collection('users')
+        .update({
+          _id: existingPatient._id
+        }, {
+          $set: {
+            avatar: wechatInfo.headimgurl,
+            updatedAt: new Date()
+          }
+        },)
+    }
     return {
       patientId: existingPatient._id,
       avatar: existingPatient.avatar
