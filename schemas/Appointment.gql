@@ -62,6 +62,8 @@ type AdditionInfo {
   outpatientId: String
   additions: [Appointment]
   nextAppointment: Appointment
+  mgtOutpatientId: ID
+  mgtAppointmentTime: Date
 }
 
 extend type Query {
@@ -85,11 +87,13 @@ extend type Mutation {
     outpatientId: ID!
     additionIds: [ID]
     appointmentTime: Date!
+    # 可用的规律复诊的门诊Id
     mgtOutpatientId: ID
+    # 可用的规律复诊的门诊时间
     mgtAppointmentTime: Date
   ): String
   moveQuarterReplaceAddition(
-    patientId: ID!
+    appointmentId: ID!
     outpatientId: ID!
     additionIds: [ID]
     appointmentTime: Date!
