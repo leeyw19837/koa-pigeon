@@ -31,3 +31,14 @@ export const getFoodRecords = async (_, args, context) => {
     .toArray()
   return foods
 }
+
+export const getSpecifiedFoodRecord = async (_, args, context) => {
+  const db = await context.getDb()
+  const {
+    foodCircleId
+  } = args
+  let food = await db
+    .collection('foods')
+    .findOne({_id: foodCircleId})
+  return food
+}

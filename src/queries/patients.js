@@ -19,13 +19,18 @@ export const patient = async (_, args, { getDb }) => {
   return null
 }
 
-export const patients = async (_, { cdeId }, { getDb }) => {
+export const patients = async (_, { cdeId, healthCareTeamId }, { getDb }) => {
   const db = await getDb()
   const condition = {
     patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
     roles: { $exists: 0 },
   }
   if (cdeId) condition.cdeId = cdeId
+
+  if (healthCareTeamId) {
+    condition.healthCareTeamId = healthCareTeamId
+    condition.patientState = 'ACTIVE'
+  }
 
   return await db
     .collection('users')
