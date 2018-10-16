@@ -773,7 +773,7 @@ const removeOtherAdditions = async appointmentIds => {
       isOutPatient: false,
     })
     .toArray()
-  if (additions.length) return
+  if (!additions.length) return
   const patientId = additions[0].patientId
   const additionIds = additions.map(o => o._id)
   const treatmentIds = additions.map(o => o.treatmentStateId)
@@ -794,6 +794,9 @@ const removeOtherAdditions = async appointmentIds => {
         updatedAt: new Date(),
       },
     },
+    {
+      multi: true,
+    },
   )
 }
 
@@ -810,7 +813,7 @@ const getLatestCheckInAppointment = async patientId => {
     })
     .limit(1)
     .toArray()
-  if (latestCheckInAp[0]) {
+  if (!latestCheckInAp[0]) {
     throw new Error(`此患者不符合加诊情况: ${patientId}`)
   }
   return latestCheckInAp[0]
@@ -857,7 +860,7 @@ const getDefaultAppointment = async patientId => {
 
 export const createAddition = async (
   _,
-  { patientId, outpatientId, additionIds, appointmentTime },
+  { patientId, outpatientId, additionIds = [], appointmentTime },
 ) => {
   const { defaultAp, defaultTr } = await getDefaultAppointment(patientId)
   const treatmentState = {
@@ -900,7 +903,7 @@ export const createAddition = async (
 
 export const moveQuarterReplaceAddition = async (
   _,
-  { appointmentId, outpatientId, additionIds, appointmentTime },
+  { appointmentId, outpatientId, additionIds = [], appointmentTime },
 ) => {
   const appointment = await db
     .collection('appointments')
@@ -923,7 +926,7 @@ export const moveQuarterReplaceAddition = async (
     .collection('treatmentState')
     .update({ _id: treatmentStateId }, setObj)
 
-  const getSetObj = (type, appointmentId, patientId) => {
+  const getSetObj = type => {
     const key = type === 'add' ? '$push' : '$pull'
     return {
       [key]: {
@@ -967,7 +970,7 @@ export const createQuarterReplaceAddition = async (
   {
     patientId,
     outpatientId,
-    additionIds,
+    additionIds = [],
     appointmentTime,
     mgtOutpatientId,
     mgtAppointmentTime,
@@ -1002,6 +1005,9 @@ export const createQuarterReplaceAddition = async (
     _id: new ObjectID().toString(),
     ...defaultTr,
     ...getChecks(type, true),
+    blood: false,
+    healthTech: false,
+    app: false,
     type,
     appointmentTime: actualApTime,
   }
@@ -1009,6 +1015,8 @@ export const createQuarterReplaceAddition = async (
     _id: new ObjectID().toString(),
     ...defaultAp,
     type,
+    blood: true,
+    healthTech: true,
     ...getChecks(type),
     appointmentTime: actualApTime,
     treatmentStateId: treatmentState._id,

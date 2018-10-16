@@ -222,40 +222,7 @@ const getOutpatientInValue = async ({
       },
     })
     .toArray()
-  return ops.length ? ops[0]._id : null
-}
-
-const getBtns = ({ additions, type }) => {
-  const defaultBtns = additions.length
-    ? [
-        {
-          key: 'clear_addition',
-          label: '创建加诊并且清除其他加诊',
-        },
-        {
-          key: 'direct',
-          label: '创建加诊',
-        },
-      ]
-    : [
-        {
-          key: 'direct',
-          label: '创建加诊',
-        },
-      ]
-  const btns = defaultBtns
-  if (type === 'QRA') {
-    btns.unshift({
-      key: 'move_quarter',
-      label: '移动该复诊至此日',
-    })
-  } else if (type === 'CQRA') {
-    btns.unshift({
-      key: 'create_quarter',
-      label: '创建复诊',
-    })
-  }
-  return btns
+  return ops.length ? ops[0] : {}
 }
 
 export const getAdditionInfo = async (_, { patientId, appointmentTime }) => {
@@ -268,12 +235,13 @@ export const getAdditionInfo = async (_, { patientId, appointmentTime }) => {
   } = await getAvailableAppointment({ patientId, appointmentTime })
   const result = { flag, additions, nextAppointment }
   if (flag === 'DIRECT_CQ') {
-    const opId = await getOutpatientInValue({
+    const { _id, outpatientDate } = await getOutpatientInValue({
       patientId,
       circleStartAt,
       circleEndAt,
     })
-    result.outpatientId = opId
+    result.mgtOutpatientId = _id
+    result.mgtAppointmentTime = outpatientDate
   }
   return result
 }
