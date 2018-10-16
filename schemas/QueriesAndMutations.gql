@@ -144,6 +144,7 @@ type Query {
   getTaskSoapCorpus: [TaskSoapCorpus!]
 
   getFoodRecords(patientId: ID, cdeId: ID): [Foods]
+  getSpecifiedFoodRecord(foodCircleId: String): Foods
   getTaskSoap(taskId: ID): TaskSoap
   getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
   getGoods(goodId: ID, goodType: String): Goods
