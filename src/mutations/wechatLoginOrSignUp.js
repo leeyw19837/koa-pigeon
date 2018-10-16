@@ -31,6 +31,8 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
     }, JWT_SECRET)
     console.log('JWT', JWT)
     const isWechat = existingPatient.wechatInfo
+    console.log('exist--->', openid)
+    const wechatInfo = await client.getUser(openid)
     // 头像
     if (!existingPatient.avatar) {
       await db
@@ -67,7 +69,9 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
       diabetesType: existingPatient.diabetesType,
       startOfIllness: existingPatient.startOfIllness,
       targetWeight: existingPatient.targetWeight,
-      healthCareTeamId: existingPatient.healthCareTeamId ? existingPatient.healthCareTeamId[0] : '',
+      healthCareTeamId: existingPatient.healthCareTeamId
+        ? existingPatient.healthCareTeamId[0]
+        : '',
       username: existingPatient
         .username
         .replace('@ijk.com', ''),
