@@ -51,9 +51,11 @@ export const sharedNeedleChatMessageResolvers = {
                   .wechatInfo
                   .headimgurl
                   .replace('http://', 'https://')
-                : '' : user.gender === 'male'
+                : user.gender === 'male'
                   ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-                  : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
+                  : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png' : user.gender === 'male'
+                    ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+                    : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
       }
     }
     return {_id: '', nickname: '', avatar: ''}

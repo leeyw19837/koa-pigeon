@@ -565,7 +565,9 @@ export const Patient = {
             .wechatInfo
             .headimgurl
             .replace('http://', 'https://')
-          : ''
+          : patient.gender === 'male'
+            ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+            : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
         : patient.gender === 'male'
           ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
           : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
