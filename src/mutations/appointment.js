@@ -1,4 +1,5 @@
 import pick from 'lodash/pick'
+import omit from 'lodash/omit'
 import 'pinyin4js'
 import { ObjectID } from 'mongodb'
 const moment = require('moment')
@@ -761,4 +762,293 @@ const getPinyinUsername = name => {
     initial,
   }
   return pinyin
+}
+
+const removeOtherAdditions = async appointmentIds => {
+  const additions = await db
+    .collection('appointments')
+    .find({
+      _id: { $in: appointmentIds },
+      type: 'addition',
+      isOutPatient: false,
+    })
+    .toArray()
+  if (!additions.length) return
+  const patientId = additions[0].patientId
+  const additionIds = additions.map(o => o._id)
+  const treatmentIds = additions.map(o => o.treatmentStateId)
+
+  await db.collection('appointments').remove({ _id: { $in: additionIds } })
+  await db.collection('treatmentState').remove({ _id: { $in: treatmentIds } })
+
+  await db.collection('outpatients').update(
+    {
+      appointmentsId: { $in: additionIds },
+    },
+    {
+      $pull: {
+        appointmentsId: { $in: additionIds },
+        patientsId: patientId,
+      },
+      $set: {
+        updatedAt: new Date(),
+      },
+    },
+    {
+      multi: true,
+    },
+  )
+}
+
+const getLatestCheckInAppointment = async patientId => {
+  const latestCheckInAp = await db
+    .collection('appointments')
+    .find({
+      patientId,
+      isOutPatient: true,
+      type: { $ne: 'addition' },
+    })
+    .sort({
+      appointmentTime: -1,
+    })
+    .limit(1)
+    .toArray()
+  if (!latestCheckInAp[0]) {
+    throw new Error(`此患者不符合加诊情况: ${patientId}`)
+  }
+  return latestCheckInAp[0]
+}
+
+const getDefaultAppointment = async patientId => {
+  const user =
+    (await db
+      .collection('users')
+      .findOne({ _id: ObjectID.createFromHexString(patientId) })) || {}
+  const latestCheckInAp = await getLatestCheckInAppointment(patientId)
+  const pickKeys = [
+    'patientId',
+    'nickname',
+    'source',
+    'isTelephoneFollowUp',
+    'hisNumber',
+    'note',
+    'healthCareTeamId',
+    'insulinAt',
+  ]
+  const defaultOption = {
+    mobile: user.username || latestCheckInAp.mobile,
+    ...pick(latestCheckInAp, pickKeys),
+    status: 1,
+    isOutPatient: false,
+    createdAt: new Date(),
+  }
+  return {
+    defaultAp: defaultOption,
+    defaultTr: {
+      ...omit(defaultOption, [
+        'isTelephoneFollowUp',
+        'status',
+        'isOutPatient',
+        'insulinAt',
+      ]),
+      checkIn: false,
+      diagnosis: false,
+      print: false,
+    },
+  }
+}
+
+export const createAddition = async (
+  _,
+  { patientId, outpatientId, additionIds = [], appointmentTime },
+) => {
+  const { defaultAp, defaultTr } = await getDefaultAppointment(patientId)
+  const treatmentState = {
+    _id: new ObjectID().toString(),
+    ...defaultTr,
+    type: 'addition',
+    appointmentTime,
+  }
+  const appointment = {
+    _id: new ObjectID().toString(),
+    ...omit(defaultAp, 'insulinAt'),
+    type: 'addition',
+    appointmentTime,
+    treatmentStateId: treatmentState._id,
+  }
+
+  await db.collection('appointments').insertOne(appointment)
+
+  await db.collection('treatmentState').insertOne(treatmentState)
+
+  await db.collection('outpatients').update(
+    {
+      _id: outpatientId,
+    },
+    {
+      $push: {
+        appointmentsId: appointment._id,
+        patientsId: patientId,
+      },
+      $set: {
+        updatedAt: new Date(),
+      },
+    },
+  )
+  if (additionIds.length) {
+    await removeOtherAdditions(additionIds)
+  }
+  return 'OK'
+}
+
+export const moveQuarterReplaceAddition = async (
+  _,
+  { appointmentId, outpatientId, additionIds = [], appointmentTime },
+) => {
+  const appointment = await db
+    .collection('appointments')
+    .findOne({ _id: appointmentId })
+
+  if (!appointment) {
+    throw new Error(`${appointmentId} Appointment _id is not existed!`)
+  }
+  const { treatmentStateId, patientId } = appointment
+  const setObj = {
+    $set: {
+      appointmentTime,
+      updatedAt: new Date(),
+    },
+  }
+
+  await db.collection('appointments').update({ _id: appointmentId }, setObj)
+
+  await db
+    .collection('treatmentState')
+    .update({ _id: treatmentStateId }, setObj)
+
+  const getSetObj = type => {
+    const key = type === 'add' ? '$push' : '$pull'
+    return {
+      [key]: {
+        appointmentsId: appointmentId,
+        patientsId: patientId,
+      },
+      $set: {
+        updatedAt: new Date(),
+      },
+    }
+  }
+
+  await db
+    .collection('outpatients')
+    .update({ appointmentsId: appointmentId }, getSetObj())
+
+  await db
+    .collection('outpatients')
+    .update({ _id: outpatientId }, getSetObj('add'))
+
+  if (additionIds.length) {
+    await removeOtherAdditions(additionIds)
+  }
+  return 'OK'
+}
+
+const getPreYearTime = async patientId => {
+  const user =
+    (await db
+      .collection('users')
+      .findOne({ _id: ObjectID.createFromHexString(patientId) })) || {}
+  const firstAp =
+    (await db
+      .collection('appointments')
+      .findOne({ patientId, type: 'first' })) || {}
+  return user.preYearApTime || firstAp.appointmentTime
+}
+
+export const createQuarterReplaceAddition = async (
+  _,
+  {
+    patientId,
+    outpatientId,
+    additionIds = [],
+    appointmentTime,
+    mgtOutpatientId,
+    mgtAppointmentTime,
+  },
+) => {
+  const actualApTime = mgtOutpatientId ? mgtAppointmentTime : appointmentTime
+
+  const preYearApTime = await getPreYearTime(patientId)
+
+  const maxYearApTime = moment(preYearApTime).add(7 * 56, 'days', '_d')
+  const minYearApTime = moment(preYearApTime).add(7 * 48, 'days', '_d')
+  const type = moment(actualApTime).isBetween(minYearApTime, maxYearApTime)
+    ? 'year'
+    : 'quarter'
+
+  const { defaultAp, defaultTr } = await getDefaultAppointment(patientId)
+  const yearCheckProps = [
+    'footAt',
+    'eyeGroundAt',
+    'quantizationAt',
+    'healthTech',
+  ]
+  const getChecks = (type, isTr) => {
+    let result = {}
+    if (type === 'year')
+      return yearCheckProps.forEach(o => {
+        result[o] = isTr ? false : true
+      })
+    return result
+  }
+  const treatmentState = {
+    _id: new ObjectID().toString(),
+    ...defaultTr,
+    ...getChecks(type, true),
+    blood: false,
+    healthTech: false,
+    app: false,
+    type,
+    appointmentTime: actualApTime,
+  }
+  const appointment = {
+    _id: new ObjectID().toString(),
+    ...defaultAp,
+    type,
+    blood: true,
+    healthTech: true,
+    ...getChecks(type),
+    appointmentTime: actualApTime,
+    treatmentStateId: treatmentState._id,
+  }
+
+  await db.collection('appointments').insertOne(appointment)
+
+  await db.collection('treatmentState').insertOne(treatmentState)
+
+  await db.collection('outpatients').update(
+    {
+      _id: mgtOutpatientId || outpatientId,
+    },
+    {
+      $push: {
+        appointmentsId: appointment._id,
+        patientsId: patientId,
+      },
+      $set: {
+        updatedAt: new Date(),
+      },
+    },
+  )
+  if (mgtOutpatientId) {
+    await createAddition(null, {
+      patientId,
+      outpatientId,
+      additionIds,
+      appointmentTime,
+    })
+  } else if (additionIds.length) {
+    await removeOtherAdditions(additionIds)
+  }
+  return 'OK'
 }

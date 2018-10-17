@@ -56,12 +56,17 @@ export const loginOrSignUp = async(_, args, context) => {
     })
   if (existingPatient) {
     if (wechatOpenId && !existingPatient.wechatOpenId) {
+      // 把头像放这里
+      const wechatInfo = await db
+        .collection('wechats')
+        .findOne({openid: wechatOpenId});
       await db
         .collection('users')
         .update({
           _id: existingPatient._id
         }, {
           $set: {
+            avatar: wechatInfo.headimgurl,
             wechatOpenId,
             updatedAt: new Date(),
             isUseNeedle: true
@@ -98,7 +103,10 @@ export const loginOrSignUp = async(_, args, context) => {
       avatar: existingPatient.avatar
         ? existingPatient.avatar
         : isWechat
-          ? existingPatient.wechatInfo.headimgurl
+          ? existingPatient
+            .wechatInfo
+            .headimgurl
+            .replace('http://', 'https://')
           : existingPatient.gender === 'male'
             ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
             : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
@@ -111,6 +119,7 @@ export const loginOrSignUp = async(_, args, context) => {
       diabetesType: existingPatient.diabetesType,
       startOfIllness: existingPatient.startOfIllness,
       targetWeight: existingPatient.targetWeight,
+      healthCareTeamId: existingPatient.healthCareTeamId ? existingPatient.healthCareTeamId[0] : '',
       mobile: existingPatient
         .username
         .replace('@ijk.com', ''),
@@ -124,8 +133,13 @@ export const loginOrSignUp = async(_, args, context) => {
     patientState: 'POTENTIAL',
     isUseNeedle: true
   }
-  if (wechatOpenId) 
+  if (wechatOpenId) {
     patientInfo.wechatOpenId = wechatOpenId
+    const wechatInfo = await db
+      .collection('wechats')
+      .findOne({openid: wechatOpenId});
+    patientInfo.avatar = wechatInfo.headimgurl
+  }
 
   const response = await db
     .collection('users')

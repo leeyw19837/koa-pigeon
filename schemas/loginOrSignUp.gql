@@ -15,6 +15,7 @@ type LoginOrSignUpResponse {
   targetWeight: String
   mobile: String
   JWT:String
+  healthCareTeamId: String
 }
 
 extend type Mutation {

@@ -2,7 +2,7 @@ import freshId from 'fresh-id'
 import moment from 'moment'
 import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
-import {insertFoodMessagesIntoChat} from '../utils/insertNeedleChatMessage'
+import { insertFoodMessagesIntoChat } from '../utils/insertNeedleChatMessage'
 
 export const addFoodComments = async (_, args, context) => {
   const db = await context.getDb()
@@ -87,12 +87,21 @@ export const saveFoodComments = async (_, args, context) => {
   const db = await context.getDb()
   const commentId = freshId()
   const { foodCircleId, authorId } = args.comment
-  // console.log('---saveFoodComments---',args)
-  const resultComments = await db.collection('comments').insert({
+  const foods = await db.collection('foods').findOne({ _id: foodCircleId })
+  const userId = foods && foods.patientId
+  const user = await db.collection('users').findOne({ _id: ObjectID(userId) })
+  const cdeId = user && user.cdeId
+  const cdeInfo = await db.collection('certifiedDiabetesEducators').findOne({ _id: cdeId })
+  const condition = {
     ...args.comment,
     _id: commentId,
     createdAt: new Date(),
-  })
+  }
+  if (cdeInfo) {
+    condition.belongCdeId = cdeInfo.userId
+    condition.belongCdeName = cdeInfo.nickname
+  }
+  const resultComments = await db.collection('comments').insert(condition)
 
   const relatedFoods = await db
     .collection('foods')

@@ -12,7 +12,6 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
   const token = await client.getAccessToken(wechatCode)
   const accessToken = get(token, 'data.access_token')
   const openid = get(token, 'data.openid')
-
   const existingPatient = await db
     .collection('users')
     .findOne({wechatOpenId: openid})
@@ -32,12 +31,30 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
     }, JWT_SECRET)
     console.log('JWT', JWT)
     const isWechat = existingPatient.wechatInfo
+    console.log('exist--->', openid)
+    const wechatInfo = await client.getUser(openid)
+    // 头像
+    if (!existingPatient.avatar) {
+      await db
+        .collection('users')
+        .update({
+          _id: existingPatient._id
+        }, {
+          $set: {
+            avatar: wechatInfo.headimgurl,
+            updatedAt: new Date()
+          }
+        },)
+    }
     return {
       patientId: existingPatient._id,
       avatar: existingPatient.avatar
         ? existingPatient.avatar
         : isWechat
-          ? existingPatient.wechatInfo.headimgurl
+          ? existingPatient
+            .wechatInfo
+            .headimgurl
+            .replace('http://', 'https://')
           : existingPatient.gender === 'male'
             ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
             : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
@@ -52,6 +69,9 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
       diabetesType: existingPatient.diabetesType,
       startOfIllness: existingPatient.startOfIllness,
       targetWeight: existingPatient.targetWeight,
+      healthCareTeamId: existingPatient.healthCareTeamId
+        ? existingPatient.healthCareTeamId[0]
+        : '',
       username: existingPatient
         .username
         .replace('@ijk.com', ''),
