@@ -749,7 +749,7 @@ const getPinyinUsername = name => {
     PinyinFormat.WITHOUT_TONE,
   )
   let initial = pinyinFull[0]
-  if (!/[A-Za-z]/.test(init)) {
+  if (!/[A-Za-z]/.test(initial)) {
     initial = '~'
   }
   const pinyin = {
