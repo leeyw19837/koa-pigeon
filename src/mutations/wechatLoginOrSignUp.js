@@ -1,4 +1,4 @@
-import {get} from 'lodash'
+import {get, isEmpty} from 'lodash'
 const OAuth = require('co-wechat-oauth')
 import jsonwebtoken from 'jsonwebtoken'
 
@@ -30,7 +30,7 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
       exp
     }, JWT_SECRET)
     console.log('JWT', JWT)
-    const isWechat = existingPatient.wechatInfo
+    const isWechat = !isEmpty(existingPatient.wechatInfo)
     console.log('exist--->', openid)
     const wechatInfo = await client.getUser(openid)
     // 头像
@@ -57,8 +57,8 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
               .headimgurl
               .replace('http://', 'https://')
             : '' : existingPatient.gender === 'male'
-              ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-              : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
+              ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+              : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
       // existingPatient.avatar,
       nickname: existingPatient.nickname,
       patientState: existingPatient.patientState,
