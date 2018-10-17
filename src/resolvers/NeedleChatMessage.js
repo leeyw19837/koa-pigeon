@@ -45,13 +45,14 @@ export const sharedNeedleChatMessageResolvers = {
           : isPro
             ? 'https://prod.gtzh.51ijk.com/imgs/app/avatars/doctor.png'
             : isWechat
-              ? user
-                .wechatInfo
-                .headimgurl
-                .replace('http://', 'https://')
-              : user.gender === 'male'
-                ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-                : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
+              ? user.wechatInfo.headimgurl
+                ? user
+                  .wechatInfo
+                  .headimgurl
+                  .replace('http://', 'https://')
+                : '' : user.gender === 'male'
+                  ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+                  : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
       }
     }
     return {_id: '', nickname: '', avatar: ''}

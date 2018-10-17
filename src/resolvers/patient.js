@@ -560,10 +560,12 @@ export const Patient = {
     const avatar = patient.avatar
       ? patient.avatar
       : isWechat
-        ? patient
-          .wechatInfo
-          .headimgurl
-          .replace('http://', 'https://')
+        ? patient.wechatInfo.headimgurl
+          ? patient
+            .wechatInfo
+            .headimgurl
+            .replace('http://', 'https://')
+          : ''
         : patient.gender === 'male'
           ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
           : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'

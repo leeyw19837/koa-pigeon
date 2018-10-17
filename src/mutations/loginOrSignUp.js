@@ -103,13 +103,14 @@ export const loginOrSignUp = async(_, args, context) => {
       avatar: existingPatient.avatar
         ? existingPatient.avatar
         : isWechat
-          ? existingPatient
-            .wechatInfo
-            .headimgurl
-            .replace('http://', 'https://')
-          : existingPatient.gender === 'male'
-            ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-            : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
+          ? existingPatient.wechatInfo.headimgurl
+            ? existingPatient
+              .wechatInfo
+              .headimgurl
+              .replace('http://', 'https://')
+            : '' : existingPatient.gender === 'male'
+              ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+              : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
       nickname: existingPatient.nickname,
       patientState: existingPatient.patientState,
       birthday: existingPatient.dateOfBirth,
@@ -119,7 +120,9 @@ export const loginOrSignUp = async(_, args, context) => {
       diabetesType: existingPatient.diabetesType,
       startOfIllness: existingPatient.startOfIllness,
       targetWeight: existingPatient.targetWeight,
-      healthCareTeamId: existingPatient.healthCareTeamId ? existingPatient.healthCareTeamId[0] : '',
+      healthCareTeamId: existingPatient.healthCareTeamId
+        ? existingPatient.healthCareTeamId[0]
+        : '',
       mobile: existingPatient
         .username
         .replace('@ijk.com', ''),

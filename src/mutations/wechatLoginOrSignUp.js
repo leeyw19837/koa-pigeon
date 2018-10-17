@@ -51,13 +51,14 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
       avatar: existingPatient.avatar
         ? existingPatient.avatar
         : isWechat
-          ? existingPatient
-            .wechatInfo
-            .headimgurl
-            .replace('http://', 'https://')
-          : existingPatient.gender === 'male'
-            ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-            : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
+          ? existingPatient.wechatInfo.headimgurl
+            ? existingPatient
+              .wechatInfo
+              .headimgurl
+              .replace('http://', 'https://')
+            : '' : existingPatient.gender === 'male'
+              ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+              : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
       // existingPatient.avatar,
       nickname: existingPatient.nickname,
       patientState: existingPatient.patientState,
