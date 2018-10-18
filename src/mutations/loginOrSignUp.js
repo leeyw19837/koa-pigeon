@@ -1,6 +1,7 @@
 import {GraphQLError} from 'graphql/error'
 import {verify} from 'righteous-raven'
 import jsonwebtoken from 'jsonwebtoken'
+import {isEmpty} from 'lodash'
 
 import {generateJwt, createNewPatient} from '../utils'
 
@@ -96,7 +97,7 @@ export const loginOrSignUp = async(_, args, context) => {
       exp
     }, JWT_SECRET)
     // console.log('JWT', JWT)
-    const isWechat = existingPatient.wechatInfo
+    const isWechat = !isEmpty(existingPatient.wechatInfo)
     return {
       patientId: existingPatient._id,
       didCreateNewPatient: false,
@@ -108,9 +109,11 @@ export const loginOrSignUp = async(_, args, context) => {
               .wechatInfo
               .headimgurl
               .replace('http://', 'https://')
-            : '' : existingPatient.gender === 'male'
-              ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-              : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
+            : existingPatient.gender === 'male'
+              ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+              : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png' : existingPatient.gender === 'male'
+                ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+                : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
       nickname: existingPatient.nickname,
       patientState: existingPatient.patientState,
       birthday: existingPatient.dateOfBirth,

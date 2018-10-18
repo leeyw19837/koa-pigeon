@@ -556,7 +556,7 @@ export const Patient = {
     return bonusPoints
   },
   avatar: async(patient, _, {getDb}) => {
-    const isWechat = patient.wechatInfo
+    const isWechat = !isEmpty(patient.wechatInfo)
     const avatar = patient.avatar
       ? patient.avatar
       : isWechat
@@ -565,10 +565,12 @@ export const Patient = {
             .wechatInfo
             .headimgurl
             .replace('http://', 'https://')
-          : ''
+          : patient.gender === 'male'
+            ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+            : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
         : patient.gender === 'male'
-          ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-          : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
+          ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+          : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
     return avatar;
   },
   healthInformation: async(patient, _, {getDb}) => {

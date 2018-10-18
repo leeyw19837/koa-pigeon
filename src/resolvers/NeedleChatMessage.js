@@ -1,4 +1,5 @@
 import {maybeCreateFromHexString} from '../utils'
+import {isEmpty} from 'lodash'
 
 export const NeedleChatMessage = {
   __resolveType(obj, context, info) {
@@ -37,7 +38,7 @@ export const sharedNeedleChatMessageResolvers = {
       })
     if (user) {
       const isPro = !!user.roles
-      const isWechat = user.wechatInfo
+      const isWechat = !isEmpty(user.wechatInfo)
       return {
         ...user,
         avatar: user.avatar
@@ -50,9 +51,11 @@ export const sharedNeedleChatMessageResolvers = {
                   .wechatInfo
                   .headimgurl
                   .replace('http://', 'https://')
-                : '' : user.gender === 'male'
-                  ? 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-                  : 'http://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
+                : user.gender === 'male'
+                  ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+                  : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png' : user.gender === 'male'
+                    ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+                    : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
       }
     }
     return {_id: '', nickname: '', avatar: ''}

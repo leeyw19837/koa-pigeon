@@ -18,6 +18,7 @@ type Patient {
   createdAt: Date
   preYearApTime: Date
   patientState: String
+  archivedReason: String
   district: String
   caseRecords(limit: Int): [CaseRecord]
   remarks: String
