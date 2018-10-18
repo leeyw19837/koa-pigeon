@@ -9,6 +9,7 @@ import {
   checkProps,
   getNextOutPatient,
   getModuleForOutpatient,
+  getPersonalOutpatients,
 } from './data'
 
 import { getClinLabResult, getSpecialData, isBetween } from './utils'
@@ -155,19 +156,22 @@ const searchPersonalDataInOutpatient = async ({
   })
   const existedPersonalPids = existedPersonalOps.map(o => o.patientId)
   const needCreatePatientIds = checkInPatientIds.filter(
-    o => existedPersonalPids.indexOf(o.patientId) === -1,
+    o => existedPersonalPids.indexOf(o) === -1,
   )
+  let personalOutpatientsId = []
+  if (needCreatePatientIds.length) {
+    const cacheData = await cacheAllData(needCreatePatientIds)
+    const allPersonalOps = matchInfosForPatient({
+      checkInPatientIds: needCreatePatientIds,
+      cacheData,
+      outpatient,
+    })
+    const result = await db
+      .collection('personalOutpatients')
+      .insert(allPersonalOps)
+    personalOutpatientsId = allPersonalOps.map(o => o._id)
+  }
 
-  const cacheData = await cacheAllData(needCreatePatientIds)
-  const allPersonalOps = matchInfosForPatient({
-    checkInPatientIds: needCreatePatientIds,
-    cacheData,
-    outpatient,
-  })
-  const result = await db
-    .collection('personalOutpatients')
-    .insert(allPersonalOps)
-  const personalOutpatientsId = allPersonalOps.map(o => o._id)
   await db.collection('outpatients').update(
     {
       _id,
@@ -175,10 +179,12 @@ const searchPersonalDataInOutpatient = async ({
     {
       $set: {
         state: 'COMPLETED',
-        personalOutpatientsId,
         patientsId: checkInPatientIds,
         appointmentsId: checkInApIds,
         updatedAt: new Date(),
+      },
+      $push: {
+        personalOutpatientsId: { $each: personalOutpatientsId },
       },
     },
   )
