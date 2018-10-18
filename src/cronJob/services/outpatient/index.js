@@ -105,13 +105,14 @@ const matchInfosForPatient = ({ checkInPatientIds, cacheData, outpatient }) => {
       patientId,
     }
     checkProps.forEach(propItem => {
-      const { dataKey, dateProperty, opKey, isDelay, isWho } = propItem
+      const { dataKey, dateProperty, opKey, isDelay, isWho, status } = propItem
       const data = cacheData[dataKey]
       const records = getSpecialData(defaultParam, {
         dateProperty,
         data,
         isDelay,
         isWho,
+        status,
       })
       if (records.length) {
         personalOp[opKey] =
@@ -120,9 +121,9 @@ const matchInfosForPatient = ({ checkInPatientIds, cacheData, outpatient }) => {
       const appointment = cacheData.appointments.length
         ? cacheData.appointments.filter(o => o.patientId === patientId)[0]
         : {}
-      const status = appointment.type
+      const apStatus = appointment.type
       const pClinicalResults = getClinLabResult(
-        status,
+        apStatus,
         outpatientDate,
         cacheData.clinicalLabResults,
         patientId,
@@ -130,7 +131,7 @@ const matchInfosForPatient = ({ checkInPatientIds, cacheData, outpatient }) => {
       if (pClinicalResults.length) {
         personalOp.clinicalResultIds = pClinicalResults.map(o => o._id)
       }
-      personalOp.status = status
+      personalOp.status = apStatus
     })
     personalOpInstances.push(personalOp)
   })
@@ -147,10 +148,19 @@ const searchPersonalDataInOutpatient = async ({
   checkInPatientIds,
   checkInApIds,
 }) => {
-  const { patientsId, _id } = outpatient
-  const cacheData = await cacheAllData(checkInPatientIds)
+  const { _id } = outpatient
+  const existedPersonalOps = await getPersonalOutpatients({
+    outpatientId: _id,
+    appointmentsId: checkInApIds,
+  })
+  const existedPersonalPids = existedPersonalOps.map(o => o.patientId)
+  const needCreatePatientIds = checkInPatientIds.filter(
+    o => existedPersonalPids.indexOf(o.patientId) === -1,
+  )
+
+  const cacheData = await cacheAllData(needCreatePatientIds)
   const allPersonalOps = matchInfosForPatient({
-    checkInPatientIds,
+    checkInPatientIds: needCreatePatientIds,
     cacheData,
     outpatient,
   })

@@ -15,6 +15,7 @@ export const checkProps = [
     dataKey: 'treatmentState',
     dateProperty: 'appointmentTime',
     opKey: 'treatmentStateId',
+    status: 'delete',
   },
   {
     dataKey: 'footAssessment',
@@ -161,4 +162,17 @@ export const getNextOutPatient = async ({
     .limit(1)
     .toArray()
   return nextOp.length ? nextOp[0] : null
+}
+
+export const getPersonalOutpatients = async ({
+  outpatientId,
+  appointmentsId,
+}) => {
+  return await db
+    .collection('personalOutpatients')
+    .find({
+      outpatientId,
+      appointmentId: { $in: appointmentsId },
+    })
+    .toArray()
 }
