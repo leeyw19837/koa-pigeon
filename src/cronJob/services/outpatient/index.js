@@ -229,20 +229,36 @@ const createOutpatientInstance = async ({
 }
 
 /**
+ * 幂等操作
+ * @param {*} appointments
+ * @param {*} opInstances
+ */
+const getNeedCreatedAppointments = (appointments, opInstances) =>
+  appointments.filter(
+    ap =>
+      !opInstances.filter(op => op.appointmentsId.indexOf(ap._id) !== -1)
+        .length,
+  )
+
+/**
  * 当天建完病历的人，生成了下次预约，目前老院内的还无法处理建预约并且挂钩门诊实例
  *
  * 因此需要手动创建门诊实例
  */
 const createNextTreatmentOp = async ({ outpatient, checkInPatientIds }) => {
   const { healthCareTeamId, outpatientModuleId } = outpatient
-  const appointments = await getAppointments({
-    isTodayCreated: true,
-    checkInPatientIds,
-  })
   const opInstances = await getCurrentOutpatients({
     isFurther: true,
     outpatientModuleId,
   })
+  const todayAppointments = await getAppointments({
+    isTodayCreated: true,
+    checkInPatientIds,
+  })
+  const appointments = getNeedCreatedAppointments(
+    todayAppointments,
+    opInstances,
+  )
   const needUpdateOp = []
   const needAddOp = []
   if (appointments.length) {
