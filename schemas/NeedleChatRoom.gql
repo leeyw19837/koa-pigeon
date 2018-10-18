@@ -15,3 +15,22 @@ type NeedleChatRoom {
   responder: HealthcareProfessional
   nearbyMessages: [NeedleChatMessage]
 }
+
+input InputChatRoomFilter {
+  nosy: Boolean
+  cdeId: ID
+  onlyUnread: Boolean
+}
+
+type ChatRoomFilter {
+  nosy: Boolean
+  cdeId: ID
+  onlyUnread: Boolean
+}
+
+type ChatRoomPagination {
+  filter: ChatRoomFilter
+  slice: SliceInfo
+  chatrooms: [NeedleChatRoom!]
+  total: Int!
+}

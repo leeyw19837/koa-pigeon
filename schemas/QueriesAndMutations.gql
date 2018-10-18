@@ -148,6 +148,7 @@ type Query {
   getTaskSoap(taskId: ID): TaskSoap
   getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
   getGoods(goodId: ID, goodType: String): Goods
+  # 不要再继续使用这个API，用getSomeChatRooms代替
   getChatrooms(
     nosy: Boolean
     cdeId: ID
@@ -155,6 +156,11 @@ type Query {
     limit: Int
     chatRoomId: ID
   ): [NeedleChatRoom!]
+  # 对，用这个
+  getSomeChatRooms(
+    filter: InputChatRoomFilter
+    slice: InputSliceInfo
+  ): ChatRoomPagination
   queryAIContentTypes: [AIContentTypeOption]
   getUnreadFoodBadges(patientId: ID): [BadgeRecords]
   # achievement(

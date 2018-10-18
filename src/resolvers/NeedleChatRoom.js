@@ -4,6 +4,66 @@ import { ObjectId } from 'mongodb'
 import { whoAmI } from '../modules/chat'
 import { qa } from '../modules/AI'
 
+const getCondition = async (filter, db) => {
+  const { nosy, cdeId, onlyUnread } = filter
+  if (!nosy && !cdeId) {
+    return
+  }
+  const patientFilter = { patientState: { $nin: ['REMOVED', 'ARCHIVED'] } }
+
+  if (!nosy && cdeId) {
+    patientFilter.cdeId = cdeId
+  }
+
+  let patientsIds = await db
+    .collection('users')
+    .find(patientFilter, { _id: 1 })
+    .toArray()
+  patientsIds = patientsIds.map(p => p._id.toString())
+
+  let condition = {
+    participants: {
+      $elemMatch: { userId: { $in: patientsIds }, role: '患者' },
+    },
+  }
+  if (onlyUnread) {
+    condition = {
+      $and: [
+        condition,
+        {
+          participants: {
+            $elemMatch: { role: '医助', unreadCount: { $gt: 0 } },
+          },
+        },
+      ],
+    }
+  }
+  return condition
+}
+export const ChatRoomPagination = {
+  async chatrooms({ filter, slice }, _, { getDb }) {
+    const db = await getDb()
+    const { startIndex, stopIndex } = slice
+    const condition = await getCondition(filter, db)
+    if (!condition) return
+    const chatrooms = await db
+      .collection('needleChatRooms')
+      .find(condition)
+      .sort({ lastMessageSendAt: -1 })
+      .skip(startIndex)
+      .limit(stopIndex - startIndex + 1)
+      .toArray()
+    return chatrooms
+  },
+  async total({ filter }, _, { getDb }) {
+    const db = await getDb()
+    const condition = await getCondition(filter, db)
+    if (!condition) return 0
+    const total = await db.collection('needleChatRooms').count(condition)
+    return total
+  },
+}
+
 export const NeedleChatRoom = {
   async participants(needleChatRoom, _, { getDb }) {
     const db = await getDb()

@@ -137,3 +137,5 @@ export const getChatrooms = async (
     .toArray()
   return chatrooms
 }
+
+export const getSomeChatRooms = async (_, args) => args
