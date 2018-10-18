@@ -37,18 +37,18 @@ export const updateLastSeenAt = async (_, args, { getDb }) => {
 export const withdrawMessage = async (_, args, { getDb }) => {
   const db = await getDb()
   const { messageId, userId } = args
-  console.log('==============')
   const message = await db
     .collection('needleChatMessages')
     .findOne({ _id: messageId })
   if (!message) return
-  const isMessageSender = userId === message.senderId
+  const isMessageSender =
+    userId === message.senderId || userId === message.actualSenderId
   if (!isMessageSender) {
     throw new Error('您只能撤回自己发送的消息')
   }
 
-  const isOverTime = moment().diff(moment(message.createdAt), 'mins') > 2
-  if (!isOverTime) {
+  const isOverTime = moment().diff(moment(message.createdAt), 'm') > 2
+  if (isOverTime) {
     throw new Error('消息已发出超过两分钟')
   }
   await db
