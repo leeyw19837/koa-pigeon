@@ -21,3 +21,20 @@ export const chatMessageAdded = {
     },
   ),
 }
+
+export const chatMessageUpdated = {
+  subscribe: withFilter(
+    () => pubsub.asyncIterator('chatMessageUpdated'),
+    (payload, variables) => {
+      const chatRoomId = get(payload, 'chatMessageUpdated.chatRoomId')
+
+      // const client = get(variables, 'client')
+
+      if (!variables.chatRoomId) {
+        return true
+      } else {
+        return variables.chatRoomId === chatRoomId
+      }
+    },
+  ),
+}

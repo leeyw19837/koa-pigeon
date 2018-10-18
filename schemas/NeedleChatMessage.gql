@@ -7,3 +7,7 @@ interface NeedleChatMessage {
   sourceType: String
   actualSender: User
 }
+
+enum MessageStatus {
+  WITHDRAWN
+}

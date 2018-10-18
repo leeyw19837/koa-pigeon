@@ -537,10 +537,13 @@ type Mutation {
   # 修改患者信息
   updatePatientProfile(patientId: ID!, profile: ProfileInput!): Boolean
   updateBloodGlucoses(bgId: ID!, dataStatus: String, mTime: String): Boolean
+  # 撤回消息
+  withdrawMessage(messageId: ID!, userId: ID!): Boolean
 }
 
 type Subscription {
   chatMessageAdded(chatRoomId: ID, client: String): NeedleChatMessage!
+  chatMessageUpdated(chatRoomId: ID, client: String): NeedleChatMessage!
   chatRoomDynamics(userId: ID, nosy: Boolean, chatRoomId: ID): NeedleChatRoom!
   warningAdded: Warning
   interventionTaskDynamics(

@@ -7,4 +7,5 @@ type NeedleAudioMessage implements NeedleChatMessage {
   needleChatRoom: NeedleChatRoom!
   sourceType: String
   actualSender: User
+  status: MessageStatus
 }
