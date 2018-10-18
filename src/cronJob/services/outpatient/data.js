@@ -62,7 +62,7 @@ export const getCurrentOutpatients = async ({
   const startAt = moment().startOf('day')._d
   const endAt = moment().endOf('day')._d
   let cursor = {
-    state: 'WAITING',
+    // state: 'WAITING', 为了幂等操作
     outpatientDate: {
       $gte: startAt,
       $lt: endAt,
