@@ -5,7 +5,10 @@ export const isBetween = (baseTime, date, isDelay) => {
   const endAt = moment(baseTime)
     .add(isDelay ? 10 : 0, 'days')
     .endOf('day')._d
-  return moment(date).isBetween(startAt, endAt) || startAt === date
+  return (
+    moment(date).isBetween(startAt, endAt) ||
+    moment(baseTime).isSame(date, 'day')
+  )
 }
 
 /**
@@ -16,7 +19,7 @@ export const isBetween = (baseTime, date, isDelay) => {
  */
 export const getSpecialData = (defaultParam, extraObj) => {
   const { outpatientDate, patientId } = defaultParam
-  const { dateProperty, data, isDelay, isWho } = extraObj
+  const { dateProperty, data, isDelay, isWho, status } = extraObj
   if (!data) {
     console.log(dateProperty)
   }
@@ -24,6 +27,7 @@ export const getSpecialData = (defaultParam, extraObj) => {
   return data.filter(
     o =>
       o[key] === patientId &&
+      (!status || status !== 'delete') &&
       isBetween(outpatientDate, o[dateProperty], isDelay),
   )
 }
