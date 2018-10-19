@@ -6,6 +6,8 @@ interface NeedleChatMessage {
   needleChatRoom: NeedleChatRoom!
   sourceType: String
   actualSender: User
+  status: MessageStatus
+  editor: User
 }
 
 enum MessageStatus {

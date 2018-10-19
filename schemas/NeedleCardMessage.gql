@@ -60,5 +60,6 @@ type NeedleCardMessage implements NeedleChatMessage {
   needleChatRoom: NeedleChatRoom!
   sourceType: String
   actualSender: User
+  status: MessageStatus
   editor: User
 }
