@@ -51,7 +51,6 @@ export const changeUsername = async (_, args, context) => {
         },
         {
           $set: {
-            // patientId: old._id.toString(),
             patientState: 'REMOVED',
           },
         },
@@ -63,7 +62,6 @@ export const changeUsername = async (_, args, context) => {
         },
         {
           $set: {
-            // patientId: old._id.toString(),
             status: 'delete',
           },
         },
