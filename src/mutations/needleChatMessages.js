@@ -53,9 +53,16 @@ export const withdrawMessage = async (_, args, { getDb }) => {
   }
   await db
     .collection('needleChatMessages')
-    .update({ _id: messageId }, { $set: { status: 'WITHDRAWN' } })
+    .update(
+      { _id: messageId },
+      { $set: { status: 'WITHDRAWN', withdrawUserId: userId } },
+    )
   pubsub.publish('chatMessageUpdated', {
-    chatMessageUpdated: { ...message, status: 'WITHDRAWN' },
+    chatMessageUpdated: {
+      ...message,
+      status: 'WITHDRAWN',
+      withdrawUserId: userId,
+    },
   })
 
   return true

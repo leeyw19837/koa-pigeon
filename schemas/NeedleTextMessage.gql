@@ -12,4 +12,5 @@ type NeedleTextMessage implements NeedleChatMessage {
   options: [AIContentTypeOption]
   intelligentQA: IntelligentQA
   status: MessageStatus
+  withdrawUser: User
 }
