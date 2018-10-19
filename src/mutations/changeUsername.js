@@ -18,31 +18,68 @@ export const changeUsername = async (_, args, context) => {
     username: newUsername,
   }
   if (newNum) {
-    if (newNum.patientState === 'ACTIVE') {
+    if (
+      newNum.patientState === 'ACTIVE' ||
+      newNum.patientState === 'HAS_APPOINTMENT'
+    ) {
       return false
     } else {
       if (!old.wechatInfo && newNum.wechatInfo) {
         updateObi.wechatInfo = newNum.wechatInfo
       }
       await db
-        .collection('bloodglucoses')
+        .collection('bloodGlucoses')
         .find({
-          author: newNum._id.toString(),
+          patientId: newNum._id.toString(),
         })
         .forEach(function(bg) {
-          db.collection('bloodglucoses').update(
+          db.collection('bloodGlucoses').update(
             {
               _id: bg._id,
             },
             {
               $set: {
-                author: old._id.toString(),
+                patientId: old._id.toString(),
               },
             },
             { multi: true },
           )
         })
-      await db.collection('users').remove({ username: newUsername })
+      await db.collection('appointments').update(
+        {
+          patientId: newNum._id.toString(),
+        },
+        {
+          $set: {
+            patientState: 'REMOVED',
+          },
+        },
+        { multi: true },
+      )
+      await db.collection('treatmentState').update(
+        {
+          patientId: newNum._id.toString(),
+        },
+        {
+          $set: {
+            status: 'delete',
+          },
+        },
+        { multi: true },
+      )
+      const removeUsername =
+        newUsername.split('').join('-') + '@hadChangeUserName'
+      await db.collection('users').update(
+        {
+          _id: newNum._id,
+        },
+        {
+          $set: {
+            patientState: 'REMOVED',
+            username: removeUsername,
+          },
+        },
+      )
     }
   }
   const newResult = await db.collection('users').update(
