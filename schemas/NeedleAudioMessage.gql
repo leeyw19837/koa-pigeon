@@ -8,5 +8,5 @@ type NeedleAudioMessage implements NeedleChatMessage {
   sourceType: String
   actualSender: User
   status: MessageStatus
-  withdrawUser: User
+  editor: User
 }

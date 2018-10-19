@@ -11,4 +11,5 @@ type NeedleBubbleMessage implements NeedleChatMessage {
   actualSender: User
   taskType: String
   taskId: String
+  editor: User
 }

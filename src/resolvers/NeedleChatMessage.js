@@ -70,16 +70,13 @@ export const sharedNeedleChatMessageResolvers = {
       .collection('needleChatRooms')
       .findOne({ _id: needleChatMessage.chatRoomId })
   },
-}
-
-export const sharedCouldWithdrawMessageResolvers = {
-  async withdrawUser(needleChatMessage, _, { getDb }) {
+  async editor(needleChatMessage, _, { getDb }) {
     const db = await getDb()
-    if (!needleChatMessage.withdrawUserId) return null
-    const userId = maybeCreateFromHexString(needleChatMessage.withdrawUserId)
+    if (!needleChatMessage.editorId) return null
+    const userId = maybeCreateFromHexString(needleChatMessage.editorId)
     return await db.collection('users').findOne({
       _id: {
-        $in: [userId, needleChatMessage.withdrawUserId],
+        $in: [userId, needleChatMessage.editorId],
       },
     })
   },

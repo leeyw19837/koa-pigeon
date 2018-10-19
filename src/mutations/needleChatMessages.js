@@ -55,13 +55,13 @@ export const withdrawMessage = async (_, args, { getDb }) => {
     .collection('needleChatMessages')
     .update(
       { _id: messageId },
-      { $set: { status: 'WITHDRAWN', withdrawUserId: userId } },
+      { $set: { status: 'WITHDRAWN', editorId: userId } },
     )
   pubsub.publish('chatMessageUpdated', {
     chatMessageUpdated: {
       ...message,
       status: 'WITHDRAWN',
-      withdrawUserId: userId,
+      editorId: userId,
     },
   })
 

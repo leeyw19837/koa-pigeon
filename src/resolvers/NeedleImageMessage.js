@@ -1,9 +1,5 @@
-import {
-  sharedNeedleChatMessageResolvers,
-  sharedCouldWithdrawMessageResolvers,
-} from './NeedleChatMessage'
+import { sharedNeedleChatMessageResolvers } from './NeedleChatMessage'
 
 export const NeedleImageMessage = {
   ...sharedNeedleChatMessageResolvers,
-  ...sharedCouldWithdrawMessageResolvers,
 }
