@@ -78,7 +78,7 @@ export const changeUsername = async (_, args, context) => {
         {
           $set: {
             patientState: 'REMOVED',
-            username: newUsername,
+            username: removeUsername,
           },
         },
       )
