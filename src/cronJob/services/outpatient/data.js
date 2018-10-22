@@ -5,6 +5,7 @@ export const checkProps = [
     dataKey: 'appointments',
     dateProperty: 'appointmentTime',
     opKey: 'appointmentId',
+    patientState: 'ARCHIVED',
   },
   {
     dataKey: 'caseRecord',
