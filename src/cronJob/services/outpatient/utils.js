@@ -19,7 +19,7 @@ export const isBetween = (baseTime, date, isDelay) => {
  */
 export const getSpecialData = (defaultParam, extraObj) => {
   const { outpatientDate, patientId } = defaultParam
-  const { dateProperty, data, isDelay, isWho, status } = extraObj
+  const { dateProperty, data, isDelay, isWho, status, patientState } = extraObj
   if (!data) {
     console.log(dateProperty)
   }
@@ -27,7 +27,8 @@ export const getSpecialData = (defaultParam, extraObj) => {
   return data.filter(
     o =>
       o[key] === patientId &&
-      (!status || status !== 'delete') &&
+      (!status || o.status !== status) &&
+      (!patientState || o.patientState !== patientState) &&
       isBetween(outpatientDate, o[dateProperty], isDelay),
   )
 }

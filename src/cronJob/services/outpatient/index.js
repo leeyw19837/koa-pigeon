@@ -106,7 +106,15 @@ const matchInfosForPatient = ({ checkInPatientIds, cacheData, outpatient }) => {
       patientId,
     }
     checkProps.forEach(propItem => {
-      const { dataKey, dateProperty, opKey, isDelay, isWho, status } = propItem
+      const {
+        dataKey,
+        dateProperty,
+        opKey,
+        isDelay,
+        isWho,
+        status,
+        patientState,
+      } = propItem
       const data = cacheData[dataKey]
       const records = getSpecialData(defaultParam, {
         dateProperty,
@@ -114,6 +122,7 @@ const matchInfosForPatient = ({ checkInPatientIds, cacheData, outpatient }) => {
         isDelay,
         isWho,
         status,
+        patientState,
       })
       if (records.length) {
         personalOp[opKey] =
