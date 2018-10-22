@@ -74,6 +74,7 @@ export const unreadMessages = async (_, args, context) => {
         chatRoomId: needleChatRoomId,
         senderId: { $ne: userId },
         createdAt: { $gt: lastSeenAt },
+        status: { $ne: 'WITHDRAWN' },
       }
       if (client === 'APP') {
         condition.messageType = { $ne: 'BUBBLE' }
