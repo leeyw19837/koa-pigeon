@@ -615,6 +615,7 @@ export const updateOutpatientStates = async (_, params, context) => {
       {
         $set: {
           patientState: 'HAS_APPOINTMENT',
+          healthCareTeamId: institution._id,
         },
       },
     )
@@ -653,7 +654,7 @@ export const updateOutpatientStates = async (_, params, context) => {
       },
     },
   )
-  context.response.set('effect-types', 'PatientList,PatientDetail')
+  // context.response.set('effect-types', 'PatientList,PatientDetail')
   return true
 }
 
