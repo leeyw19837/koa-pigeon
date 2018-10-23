@@ -7,21 +7,18 @@ export const updatePatientProfile = async (_, args, context) => {
   const db = await context.getDb()
   const { patientId, profile } = args
 
+  const { username, ...restSetter } = profile
   if (!isEmpty(profile)) {
     await db.collection('users').update(
       { _id: ObjectId(patientId) },
       {
-        $set: profile,
+        $set: restSetter,
       },
     )
   }
 
-  if (profile.username) {
-    await changeUsername(
-      _,
-      { patientId, newUsername: profile.username },
-      context,
-    )
+  if (username) {
+    await changeUsername(_, { patientId, newUsername: username }, context)
   }
 
   if (profile.nickname) {
