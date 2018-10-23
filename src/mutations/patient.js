@@ -6,17 +6,6 @@ import { changeUsername } from './changeUsername'
 export const updatePatientProfile = async (_, args, context) => {
   const db = await context.getDb()
   const { patientId, profile } = args
-  // const username = get(profile, 'username')
-  // if (username) {
-  //   const userInfo = await db.collection('users')
-  //     .findOne({
-  //       _id: { $ne: ObjectId(patientId) },
-  //       username,
-  //     })
-  //   if (userInfo) {
-  //     throw new Error('手机号已存在！')
-  //   }
-  // }
 
   if (!isEmpty(profile)) {
     await db.collection('users').update(
