@@ -8,7 +8,7 @@ export const updatePatientProfile = async (_, args, context) => {
   const { patientId, profile } = args
 
   const { username, ...restSetter } = profile
-  if (!isEmpty(profile)) {
+  if (!isEmpty(restSetter)) {
     await db.collection('users').update(
       { _id: ObjectId(patientId) },
       {
