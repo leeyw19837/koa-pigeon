@@ -69,6 +69,7 @@ export const changeUsername = async (_, args, context) => {
       )
       const removeUsername =
         newUsername.split('').join('-') + '@hadChangeUserName'
+      console.log('.removeUsername', removeUsername)
       await db.collection('users').update(
         {
           _id: newNum._id,

@@ -25,7 +25,7 @@ export const HealthCareTeam = {
     const db = await getDb()
     const availableAppointmentDates = await db
       .collection('outpatients')
-      .find({state:'WAITING', hospitalId:careTeam.institutionId, outpatientDate:{$gte: new Date()}})
+      .find({state:'WAITING', hospitalId:careTeam.institutionId, outpatientDate:{$gte: moment().startOf('day').toDate()}})
       .sort({outpatientDate:1})
       .toArray()
     // console.log(availableAppointmentDates, '@availableAppointmentDates')
