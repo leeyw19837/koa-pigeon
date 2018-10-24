@@ -139,6 +139,7 @@ export const addPatientAppointment = async (_, params, context) => {
       source,
       patientState: 'NEEDS_APPOINTMENT',
       pinyinName,
+      institutionId,
     })
   } else if (
     currentUser.patientState === 'POTENTIAL' ||
