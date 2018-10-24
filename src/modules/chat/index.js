@@ -177,7 +177,16 @@ export const correctSessions = async db => {
       const { startAt } = nextSession[0]
       await db
         .collection('sessions')
-        .update({ _id }, { $set: { endAt: startAt, finishReason: 'timeout' } })
+        .update(
+          { _id },
+          {
+            $set: {
+              endAt: startAt,
+              finishReason: 'timeout',
+              info: 'correct when reboot',
+            },
+          },
+        )
     } else {
       const jobId = `session_${chatRoomId}`
       setDelayJob(jobId, () => finishSession(db, chatRoomId, 'timeout'), delay)
