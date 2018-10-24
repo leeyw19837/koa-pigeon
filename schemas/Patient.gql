@@ -60,6 +60,7 @@ type Patient {
   # 用户基本信息（Needle/健康模块/基本信息）
   healthInformation: HealthInformation
   predictionA1c: String
+  availableAppointmentDates:[Outpatient!]
 }
 
 enum Gender {
