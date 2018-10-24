@@ -7,23 +7,15 @@ export const updatePatientProfile = async (_, args, context) => {
   const db = await context.getDb()
   const { patientId, profile } = args
 
-  if (!isEmpty(profile)) {
+  const { username, ...restSetter } = profile
+  if (!isEmpty(restSetter)) {
     await db.collection('users').update(
       { _id: ObjectId(patientId) },
       {
-        $set: profile,
+        $set: restSetter,
       },
     )
   }
-
-  if (profile.username) {
-    await changeUsername(
-      _,
-      { patientId, newUsername: profile.username },
-      context,
-    )
-  }
-
   if (profile.nickname) {
     await db
       .collection('appointments')
@@ -32,5 +24,17 @@ export const updatePatientProfile = async (_, args, context) => {
       .collection('treatmentState')
       .update({ patientId }, { $set: { nickname: profile.nickname } })
   }
+
+  if (username) {
+    const succ = await changeUsername(
+      _,
+      { patientId, newUsername: username },
+      context,
+    )
+    if (!succ) {
+      throw new Error('手机号已被其他用户使用！')
+    }
+  }
+
   return true
 }
