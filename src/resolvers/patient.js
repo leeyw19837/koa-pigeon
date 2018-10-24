@@ -1,13 +1,13 @@
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import reduce from 'lodash/reduce'
-import {maybeCreateFromHexString} from '../utils/maybeCreateFromHexString'
+import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
 import moment from 'moment'
 import axios from 'axios'
-import {getMeasureFeedback} from '../cronJob/controller/getMeasureFeedback'
+import { getMeasureFeedback } from '../cronJob/controller/getMeasureFeedback'
 
-const getCondition = ({filter}) => {
-  const {namePattern, cdeId} = filter
+const getCondition = ({ filter }) => {
+  const { namePattern, cdeId } = filter
   const condition = {
     patientState: {
       $nin: ['REMOVED']
@@ -34,12 +34,12 @@ const getCondition = ({filter}) => {
     ]
   }
 
-  if (cdeId) 
+  if (cdeId)
     condition.cdeId = cdeId
   return condition
 }
 export const PatientPagination = {
-  total: async(pp, _, {getDb}) => {
+  total: async (pp, _, { getDb }) => {
     const db = await getDb()
     const condition = getCondition(pp)
 
@@ -47,19 +47,19 @@ export const PatientPagination = {
       .collection('users')
       .count(condition)
   },
-  patients: async(pp, _, {getDb}) => {
+  patients: async (pp, _, { getDb }) => {
     const db = await getDb()
     const condition = getCondition(pp)
-    const {startIndex, stopIndex} = pp.slice
+    const { startIndex, stopIndex } = pp.slice
     return await db
       .collection('users')
       .find(condition)
-      .sort({'pinyinName.initial': 1})
+      .sort({ 'pinyinName.initial': 1 })
       .skip(startIndex)
       .limit(stopIndex - startIndex + 1)
       .toArray()
   },
-  catalog: async(pp, _, {getDb}) => {
+  catalog: async (pp, _, { getDb }) => {
     const db = await getDb()
     const condition = getCondition(pp)
     const data = await db
@@ -94,16 +94,16 @@ export const PatientPagination = {
         }
       ]
       const nextIndex = index + curr.count
-      return {index: nextIndex, result: newResult}
+      return { index: nextIndex, result: newResult }
     }, {
-      index: 0,
-      result: []
-    },).result
+        index: 0,
+        result: []
+      }).result
   }
 }
 
 export const Patient = {
-  footAssessmentPhotos: async(patient, _, {getDb}) => {
+  footAssessmentPhotos: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('photos')
@@ -115,13 +115,13 @@ export const Patient = {
       })
       .toArray()
   },
-  needleChatRoom: async(patient, _, {getDb}) => {
+  needleChatRoom: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('needleChatRooms')
-      .findOne({_id: patient.needleChatRoomId})
+      .findOne({ _id: patient.needleChatRoomId })
   },
-  closestAppointment: async(patient, _, {getDb}) => {
+  closestAppointment: async (patient, _, { getDb }) => {
     const db = await getDb()
     const endOfToday = moment()
       .endOf('day')
@@ -136,11 +136,11 @@ export const Patient = {
           $gt: endOfToday
         }
       })
-      .sort({appointmentTime: 1})
+      .sort({ appointmentTime: 1 })
       .toArray()
     return result[0] || null
   },
-  communications: async(patient, _, {getDb}) => {
+  communications: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('communication')
@@ -149,12 +149,12 @@ export const Patient = {
           ._id
           .toString()
       })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .toArray()
   },
-  caseRecords: async(patient, {
+  caseRecords: async (patient, {
     limit = 0
-  }, {getDb}) => {
+  }, { getDb }) => {
     const db = await getDb()
     return db
       .collection('caseRecord')
@@ -163,11 +163,11 @@ export const Patient = {
           ._id
           .toString()
       })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .limit(limit)
       .toArray()
   },
-  soaps: async(patient, _, {getDb}) => {
+  soaps: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('soap')
@@ -176,10 +176,10 @@ export const Patient = {
           ._id
           .toString()
       })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .toArray()
   },
-  outHospitalSoaps: async(patient, _, {getDb}) => {
+  outHospitalSoaps: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('outHospitalSoap')
@@ -188,20 +188,20 @@ export const Patient = {
           ._id
           .toString()
       })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .toArray()
   },
-  healthCareTeam: async(patient, _, {getDb}) => {
+  healthCareTeam: async (patient, _, { getDb }) => {
     const db = await getDb()
     if (patient.healthCareTeamId && patient.healthCareTeamId.length > 0) {
       return db
         .collection('healthCareTeams')
-        .find({_id: patient.healthCareTeamId[0]})
+        .find({ _id: patient.healthCareTeamId[0] })
         .toArray()
     }
     return []
   },
-  appointments: async(patient, _, {getDb}) => {
+  appointments: async (patient, _, { getDb }) => {
     const db = await getDb()
     return db
       .collection('appointments')
@@ -210,10 +210,10 @@ export const Patient = {
           ._id
           .toString()
       })
-      .sort({appointmentTime: 1})
+      .sort({ appointmentTime: 1 })
       .toArray()
   },
-  lastAppointment: async(patient, _, {getDb}) => {
+  lastAppointment: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('appointments')
@@ -222,11 +222,11 @@ export const Patient = {
           ._id
           .toString()
       })
-      .sort({appointmentTime: -1})
+      .sort({ appointmentTime: -1 })
       .toArray()
     return result[0] || null
   },
-  lastCheckAppointment: async(patient, _, {getDb}) => {
+  lastCheckAppointment: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('appointments')
@@ -239,11 +239,11 @@ export const Patient = {
           $nin: ['addition']
         }
       })
-      .sort({appointmentTime: -1})
+      .sort({ appointmentTime: -1 })
       .toArray()
     return result[0] || null
   },
-  useIGluco: async(patient, _, {getDb}) => {
+  useIGluco: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('bloodGlucoses')
@@ -255,20 +255,20 @@ export const Patient = {
       })
     return !!result
   },
-  useNeedle: async(patient, _, {getDb}) => {
+  useNeedle: async (patient, _, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
       .toString()
     const bgDataFromNeedle = await db
       .collection('bloodGlucoses')
-      .findOne({patientId, bloodGlucoseDataSource: 'NEEDLE_BG1'})
+      .findOne({ patientId, bloodGlucoseDataSource: 'NEEDLE_BG1' })
     const anyBehaviors = await db
       .collection('userBehaviors')
-      .findOne({patientId})
+      .findOne({ patientId })
     return !!(bgDataFromNeedle || anyBehaviors)
   },
-  useSPT: async(patient, _, {getDb}) => {
+  useSPT: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('bloodGlucoses')
@@ -280,7 +280,7 @@ export const Patient = {
       })
     return !!result
   },
-  usePublicNumber: async(patient, _, {getDb}) => {
+  usePublicNumber: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('users')
@@ -290,7 +290,7 @@ export const Patient = {
       .toArray()
     return !!get(result[0], 'wechatTag')
   },
-  lastHbAlc: async(patient, _, {getDb}) => {
+  lastHbAlc: async (patient, _, { getDb }) => {
     const db = await getDb()
     const result = await db
       .collection('clinicalLabResults')
@@ -299,14 +299,14 @@ export const Patient = {
           ._id
           .toString()
       })
-      .sort({testDate: -1})
+      .sort({ testDate: -1 })
       .toArray()
     if (result.length > 0) {
       return result[0].glycatedHemoglobin
     }
     return null
   },
-  bloodGlucoses: async(patient, args, {getDb}) => {
+  bloodGlucoses: async (patient, args, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
@@ -327,11 +327,11 @@ export const Patient = {
     return await db
       .collection('bloodGlucoses')
       .find(cursor)
-      .sort({measuredAt: -1})
+      .sort({ measuredAt: -1 })
       .limit(limit)
       .toArray()
   },
-  bloodGlucosesByTime: async(patient, args, {getDb}) => {
+  bloodGlucosesByTime: async (patient, args, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
@@ -341,15 +341,15 @@ export const Patient = {
       dataStatus: 'ACTIVE'
     }
     if (args.selectTime) {
-      Object.assign(cursor, {measuredAt: args.selectTime})
+      Object.assign(cursor, { measuredAt: args.selectTime })
     }
     return await db
       .collection('bloodGlucoses')
       .find(cursor)
-      .sort({measuredAt: -1})
+      .sort({ measuredAt: -1 })
       .toArray()
   },
-  cdeInfo: async(patient, _, {getDb}) => {
+  cdeInfo: async (patient, _, { getDb }) => {
     const db = await getDb()
     if (patient.cdeId) {
       const result = await db
@@ -365,53 +365,53 @@ export const Patient = {
       return null
     }
   },
-  doctorInfo: async(patient, _, {getDb}) => {
+  doctorInfo: async (patient, _, { getDb }) => {
     const db = await getDb()
     if (patient.doctorId) {
       const result = await db
         .collection('users')
-        .find({_id: patient.doctorId})
+        .find({ _id: patient.doctorId })
         .toArray()
       return result[0] || null
     } else {
       return null
     }
   },
-  MCR: async(patient, _, {getDb}) => {
+  MCR: async (patient, _, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
       .toString()
     const bloodGlucoses = await db
       .collection('bloodGlucoses')
-      .find({patientId})
+      .find({ patientId })
       .toArray()
     const module = await db
       .collection('measureModules')
-      .find({patientId})
-      .sort({createdAt: -1})
+      .find({ patientId })
+      .sort({ createdAt: -1 })
       .limit(1)
       .toArray()
 
-    if (isEmpty(bloodGlucoses) || isEmpty(module)) 
+    if (isEmpty(bloodGlucoses) || isEmpty(module))
       return 0
     const bgMeasureModule = await db
       .collection('bgMeasureModule')
-      .findOne({type: module[0].type})
+      .findOne({ type: module[0].type })
 
-    const {actualMeasure, notCompletedMeasure} = getMeasureFeedback({bloodGlucoses, patientId, bgMeasureModule})
-    const {pairing, count} = reduce(actualMeasure, (sum, m) => {
+    const { actualMeasure, notCompletedMeasure } = getMeasureFeedback({ bloodGlucoses, patientId, bgMeasureModule })
+    const { pairing, count } = reduce(actualMeasure, (sum, m) => {
       return {
         pairing: sum.pairing + m.pairing,
         count: sum.count + m.count
       }
     }, {
-      pairing: 0,
-      count: 0
-    },)
+        pairing: 0,
+        count: 0
+      })
     return Math.round((pairing * 100) / (pairing + count))
   },
-  clinicalLabResults: async(patient, _, {getDb}) => {
+  clinicalLabResults: async (patient, _, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
@@ -424,12 +424,12 @@ export const Patient = {
           $exists: 1
         }
       })
-      .sort({testDate: -1})
+      .sort({ testDate: -1 })
       .limit(3)
       .toArray()
     return results
   },
-  yearServiceOrder: async(patient, _, {getDb}) => {
+  yearServiceOrder: async (patient, _, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
@@ -443,25 +443,25 @@ export const Patient = {
           $gte: new Date()
         }
       })
-      .sort({serviceEndAt: -1})
+      .sort({ serviceEndAt: -1 })
       .toArray()
     return orders.length
       ? orders[0]
       : null
   },
-  yearServiceStatus: async(patient, {
+  yearServiceStatus: async (patient, {
     platform = 'android'
-  }, {getDb}) => {
+  }, { getDb }) => {
     const db = await getDb()
     const control = await db
       .collection('controls')
-      .find({platform, type: 'YEAR_SERVICE'})
+      .find({ platform, type: 'YEAR_SERVICE' })
       .toArray()
     return control.length
       ? control[0].status === 'ACTIVE'
       : false
   },
-  achievements: async(patient, args, {getDb}) => {
+  achievements: async (patient, args, { getDb }) => {
     const db = await getDb()
     const achievements = await db
       .collection('achievements')
@@ -470,13 +470,13 @@ export const Patient = {
           $ne: 'INACTIVE'
         }
       })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .toArray()
     return achievements
   },
-  achievementRecords: async(patient, {
+  achievementRecords: async (patient, {
     achievementId
-  }, {getDb}) => {
+  }, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
@@ -490,13 +490,13 @@ export const Patient = {
     const achievements = await db
       .collection('achievementRecords')
       .find(cursor)
-      .sort({achieveAt: -1})
+      .sort({ achieveAt: -1 })
       .toArray()
     return achievements
   },
-  achievementResult: async(patient, {
+  achievementResult: async (patient, {
     achievementId
-  }, {getDb}) => {
+  }, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
@@ -508,7 +508,7 @@ export const Patient = {
           $ne: 'INACTIVE'
         }
       })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .toArray()
 
     const cursor = {
@@ -520,9 +520,9 @@ export const Patient = {
     const achievementRecords = await db
       .collection('achievementRecords')
       .find(cursor)
-      .sort({achieveAt: -1})
+      .sort({ achieveAt: -1 })
       .toArray()
-    return {achievements, achievementRecords}
+    return { achievements, achievementRecords }
   },
   achievementShownRecords: async patient => {
     const patientId = patient
@@ -538,7 +538,7 @@ export const Patient = {
       .toArray()
     return achievements
   },
-  bonusPoints: async(patient, _, {getDb}) => {
+  bonusPoints: async (patient, _, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
@@ -551,11 +551,11 @@ export const Patient = {
           $gt: new Date()
         }
       })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .toArray()
     return bonusPoints
   },
-  avatar: async(patient, _, {getDb}) => {
+  avatar: async (patient, _, { getDb }) => {
     const isWechat = !isEmpty(patient.wechatInfo)
     const avatar = patient.avatar
       ? patient.avatar
@@ -573,7 +573,7 @@ export const Patient = {
           : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
     return avatar;
   },
-  healthInformation: async(patient, _, {getDb}) => {
+  healthInformation: async (patient, _, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
@@ -582,7 +582,7 @@ export const Patient = {
     if (patient.healthCareTeamId) {
       hospital = await db
         .collection('healthCareTeams')
-        .findOne({_id: patient.healthCareTeamId[0]})
+        .findOne({ _id: patient.healthCareTeamId[0] })
     }
     const patientBriefInformation = {}
     patientBriefInformation.avatar = patient.avatar
@@ -592,7 +592,7 @@ export const Patient = {
     patientBriefInformation.gender = patient.gender === 'male'
       ? '男'
       : '女'
-    patientBriefInformation.age = moment(new Date()).diff(patient.dateOfBirth, 'years',)
+    patientBriefInformation.age = moment(new Date()).diff(patient.dateOfBirth, 'years')
     patientBriefInformation.hospital = hospital.institutionName
     patientBriefInformation.doctor = patient.doctor
       ? patient.doctor
@@ -607,24 +607,24 @@ export const Patient = {
       : '--'
     return patientBriefInformation
   },
-  selfTestSchemes: async(patient, _, {getDb}) => {
+  selfTestSchemes: async (patient, _, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
       .toString()
     const module = await db
       .collection('measureModules')
-      .find({patientId})
-      .sort({createdAt: -1})
+      .find({ patientId })
+      .sort({ createdAt: -1 })
       .limit(1)
       .toArray()
 
     // console.log('module',module)
-    if (isEmpty(module)) 
+    if (isEmpty(module))
       return null
     const bgMeasureModule = await db
       .collection('bgMeasureModule')
-      .findOne({type: module[0].type})
+      .findOne({ type: module[0].type })
 
     // console.log('bgMeasureModule',bgMeasureModule)
 
@@ -637,15 +637,15 @@ export const Patient = {
 
     return selfTestSchemes
   },
-  sugarControlGoals: async(patient, _, {getDb}) => {
+  sugarControlGoals: async (patient, _, { getDb }) => {
     const db = await getDb()
     const patientId = patient
       ._id
       .toString()
     const caseRecord = await db
       .collection('caseRecord')
-      .find({patientId})
-      .sort({createdAt: -1})
+      .find({ patientId })
+      .sort({ createdAt: -1 })
       .limit(1)
       .toArray()
 
@@ -674,5 +674,29 @@ export const Patient = {
     }
     console.log(a1c)
     return a1c
-  }
+  },
+
+  availableAppointmentDates: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    let result = []
+    if (patient.healthCareTeamId && patient.healthCareTeamId.length > 0) {
+      result = await db
+        .collection('outpatients')
+        .find({
+          healthCareTeamId: patient.healthCareTeamId[0],
+          state: 'WAITING',
+          outpatientDate: {
+            $gt: moment()
+              .subtract(1, 'days')
+              .endOf('day')._d,
+          },
+        })
+        .sort({
+          outpatientDate: 1,
+        })
+        .toArray()
+    }
+    return result
+  },
+
 }
