@@ -604,7 +604,7 @@ export const updateOutpatientStates = async (_, params, context) => {
       nickname: dbAppointment.nickname,
       username: dbAppointment.mobile,
       createdAt: new Date(),
-      healthCareTeamId: institution._id,
+      healthCareTeamId: [institution._id],
       patientState: 'HAS_APPOINTMENT',
       source: dbAppointment.source,
     })
@@ -616,7 +616,7 @@ export const updateOutpatientStates = async (_, params, context) => {
       {
         $set: {
           patientState: 'HAS_APPOINTMENT',
-          healthCareTeamId: institution._id,
+          healthCareTeamId: [institution._id],
         },
       },
     )
