@@ -542,7 +542,7 @@ type Mutation {
   withdrawMessage(messageId: ID!, userId: ID!): Boolean
 
   setArchived(patientId: ID!,archivedReason:String):Boolean
-  unsetArchived(patientId:ID!,mgtOutpatientId:ID,mgtAppointmentTime:Date):Boolean
+  unsetArchived(patientId:ID!,outpatientId:ID,appointmentTime:Date):Boolean
 }
 
 type Subscription {

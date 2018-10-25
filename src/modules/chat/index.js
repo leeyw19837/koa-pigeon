@@ -30,26 +30,37 @@ export const whoAmI = async (userId, nosy, participants, db) => {
 
 const delay = 15 * 60
 export const finishSession = async (db, chatRoomId, finishReason) => {
-  await db.collection('sessions').update(
-    {
+  let latestSession = await db
+    .collection('sessions')
+    .find({
       chatRoomId,
-      endAt: null,
+    })
+    .sort({ startAt: -1 })
+    .limit(1)
+    .toArray()
+  latestSession = first(latestSession)
+  if (!latestSession || latestSession.endAt) {
+    // 最后一个会话如果不是未结束的，中止
+    console.log('no processing session matched')
+    return
+  }
+  const now = new Date()
+  const setter = { endAt: now, finishReason }
+  const rst = await db.collection('sessions').update(
+    {
+      _id: latestSession._id,
     },
     {
-      $set: { endAt: new Date(), finishReason },
+      $set: setter,
     },
   )
-  const sessions = await db
-    .collection('sessions')
-    .find({ chatRoomId })
-    .sort({ endAt: -1 })
-    .toArray()
-  if (sessions.length) {
-    pubsub.publish('sessionDynamics', {
-      ...sessions[0],
-      _operation: 'UPDATED',
-    })
-  }
+  if (!rst.result.ok) return
+
+  pubsub.publish('sessionDynamics', {
+    ...latestSession,
+    ...setter,
+    _operation: 'UPDATED',
+  })
 
   delDelayJob(`session_${chatRoomId}`)
   const room = await db.collection('needleChatRooms').findOne({
@@ -60,7 +71,7 @@ export const finishSession = async (db, chatRoomId, finishReason) => {
     if (p.role === '患者' || finishReason === 'timeout') return p
     return {
       ...p,
-      lastSeenAt: new Date(),
+      lastSeenAt: now,
       unreadCount: 0,
     }
   })
@@ -175,9 +186,16 @@ export const correctSessions = async db => {
       .toArray()
     if (nextSession.length) {
       const { startAt } = nextSession[0]
-      await db
-        .collection('sessions')
-        .update({ _id }, { $set: { endAt: startAt, finishReason: 'timeout' } })
+      await db.collection('sessions').update(
+        { _id },
+        {
+          $set: {
+            endAt: startAt,
+            finishReason: 'timeout',
+            info: 'correct when reboot',
+          },
+        },
+      )
     } else {
       const jobId = `session_${chatRoomId}`
       setDelayJob(jobId, () => finishSession(db, chatRoomId, 'timeout'), delay)

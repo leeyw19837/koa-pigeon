@@ -1,30 +1,30 @@
-const jobs = {}
+const jobs = new Map()
 
 export const delDelayJob = id => {
-  clearTimeout(jobs[id])
-  delete jobs[id]
+  if (isJobExists(id)) {
+    clearTimeout(jobs.get(id).timeout)
+    jobs.delete(id)
+  }
 }
 
 export const isJobExists = id => {
-  return !!jobs[id]
+  return jobs.has(id)
 }
 
 export const setDelayJob = (id, job, sec) => {
-  if (isJobExists(id)) {
-    delDelayJob(id)
-  }
-  jobs[id] = setTimeout(() => {
+  delDelayJob(id)
+  const timeout = setTimeout(() => {
     job()
     delDelayJob(id)
   }, sec * 1000)
+  const startAt = new Date()
+  jobs.set(id, { timeout, startAt, delay: sec })
 }
 
 export const resetJobs = () => {
-  Object
-    .keys(jobs)
-    .forEach(delDelayJob)
+  jobs.forEach((job, id) => {
+    delDelayJob(id)
+  })
 }
 
-export const getAllJobs = () => ({
-  ...jobs
-})
+export const getAllJobs = () => jobs

@@ -86,7 +86,7 @@ export const setArchived = async (_, params, context) => {
 }
 
 export const unsetArchived = async (_, params, context) => {
-  const { patientId, mgtOutpatientId, mgtAppointmentTime } = params
+  const { patientId, outpatientId, appointmentTime } = params
 
   const userObjectId = ObjectId.createFromHexString(patientId)
   const patient = await db
@@ -107,7 +107,7 @@ export const unsetArchived = async (_, params, context) => {
         }
       })
 
-  await createQuarterReplaceAddition(null, { patientId, mgtOutpatientId, mgtAppointmentTime })
+  await createQuarterReplaceAddition(null, { patientId, outpatientId, appointmentTime })
 
   context
     .response
