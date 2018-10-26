@@ -73,7 +73,7 @@ export const sendCardMassText = async ctx => {
     .collection('users')
     .find({
       'deviceContext.appVersion': {
-        $in: ["1.6.3.4", "1.6.3.5", "1.6.4.1", "1.6.4.3"]
+        $in: ["1.6.3.4", "1.6.3.5", "1.6.4.1", "1.6.4.3", "1.6.5.1"]
       },
       patientState: 'ACTIVE'
     })
@@ -102,22 +102,22 @@ export const sendCardMassText = async ctx => {
         _id: new ObjectID().toString(),
         messageType: 'CARD',
         "content": {
-          "title": "无糖食品可以放心食用吗",
+          "title": "如何判断运动量是否合适",
           "type": "KNOWLEDGE",
           "body": [
             {
               "key": "id",
-              "value": "5ba370206222bd97e848a163"
+              "value": "5bd196af9116c9a0cc4c139e"
             }, {
               "key": "title",
-              "value": "无糖食品可以放心食用吗"
+              "value": "如何判断运动量是否合适"
             }, {
               "key": "content",
-              "value": "随着食品工业的逐渐发展，无糖食品逐渐进入大家的视野。现在市面上很多标榜着无糖的食品，我们真的可以放心食用吗？无糖食品是什么？孩子给我买的无糖食品我可以吃吗？商场" +
-                  "卖的无糖可乐可以喝吗，甜蜜素是什么？下面我们来探讨下这些问题。"
+              "value": "之前的话题里咱们讲过怎么运动能达到降糖效果，但是最近有糖友在后台向我们提问：“我应该运动多长时间才能达到降糖效果”；“运动种类那么多哪种更利于降糖”；“运动时间" +
+                  "长，有时会感觉到饥饿，这种情况可以补糖吗”等等。我们将部分糖友的问题整理了出来，下面我们用简洁明了的对话形式告诉大家这些问题的答案。"
             }, {
               "key": "avatar",
-              "value": "http://paper-king.ks3-cn-beijing.ksyun.com/workwechat1537437051844.png"
+              "value": "https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540462127389.png"
             }, {
               "key": "type",
               "value": "VIDEO"
