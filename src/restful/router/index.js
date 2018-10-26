@@ -2,15 +2,15 @@ const Router = require('koa-router')
 const restfulRouter = new Router()
 import dayjs from 'dayjs'
 import template from 'lodash/template'
-import { uploadFileByType } from '../fileUpload/index'
-import { wechatPayment, payNotify } from '../../wechatPay'
-import { aliPayNotify } from '../../alipay/nofity'
-import { syncMessageFromOtherSide } from '../syncMessage/index'
+import {uploadFileByType} from '../fileUpload/index'
+import {wechatPayment, payNotify} from '../../wechatPay'
+import {aliPayNotify} from '../../alipay/nofity'
+import {syncMessageFromOtherSide} from '../syncMessage/index'
 
-import { sendMassText, sendCardMassText } from '../massText'
+import {sendMassText, sendCardMassText} from '../massText'
 
-import { callAppointmentById, aiCallNotify } from '../../modules/AI/call'
-import { getAllJobs } from '../../modules/delayJob'
+import {callAppointmentById, aiCallNotify} from '../../modules/AI/call'
+import {getAllJobs} from '../../modules/delayJob'
 
 restfulRouter.post('/uploadFile', async ctx => {
   const result = await uploadFileByType(ctx)
@@ -26,18 +26,13 @@ restfulRouter.post('/sendMassText', async ctx => {
 })
 
 // restfulRouter.get('/sendCardMassText', async ctx => {   const result = await
-// sendCardMassText(ctx)   ctx.body = result })
+//  sendCardMassText(ctx);   ctx.body = result })
 
 restfulRouter.post('/syncMessage', async ctx => {
-  const { header, ip, body } = ctx.request
+  const {header, ip, body} = ctx.request
   console.log('============== syncMessage start =============from ip:' + ip)
-  const { username, content, sourceType } = body || {}
-  if (
-    header.authorization != '4Z21FjF' ||
-    !username ||
-    !content ||
-    !sourceType
-  ) {
+  const {username, content, sourceType} = body || {}
+  if (header.authorization != '4Z21FjF' || !username || !content || !sourceType) {
     return ctx.throw(401, '密码错误或参数不正确')
   }
   console.log(syncMessageFromOtherSide, '@syncMessage')
@@ -47,8 +42,8 @@ restfulRouter.post('/syncMessage', async ctx => {
 })
 
 restfulRouter.post('/aiCallTest', async ctx => {
-  const { appointmentId, cdeId, period } = ctx.request.body
-  await callAppointmentById({ appointmentId, cdeId, period })
+  const {appointmentId, cdeId, period} = ctx.request.body
+  await callAppointmentById({appointmentId, cdeId, period})
   ctx.body = 'OK'
 })
 
@@ -85,12 +80,17 @@ restfulRouter.get('/delayjobs', async ctx => {
   </script>`
   const rows = []
   const now = new Date()
-  jobs.forEach(({ startAt, delay }, id) => {
+  jobs.forEach(({
+    startAt,
+    delay
+  }, id) => {
     const timeleft = delay - dayjs(now).diff(startAt, 's')
-    rows.push(row({ id, timeleft }))
+    rows.push(row({id, timeleft}))
   })
 
-  ctx.body = style + table({ rows: rows.join('\n') })
+  ctx.body = style + table({
+    rows: rows.join('\n')
+  })
 })
 
 export default restfulRouter
