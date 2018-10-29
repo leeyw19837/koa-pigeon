@@ -11,7 +11,6 @@ const AI_CALL_HOST =
 
 export const aiCall = bodyData =>
   new Promise((resolve, reject) => {
-    console.log('aicall')
     const options = {
       method: 'POST',
       uri: `${AI_CALL_HOST}/createJob`,
@@ -20,7 +19,6 @@ export const aiCall = bodyData =>
     }
     request(options)
       .then(({ data }) => {
-        console.log(data, '@data')
         if (data.voiceCode) {
           resolve(true)
         } else {
@@ -28,42 +26,33 @@ export const aiCall = bodyData =>
         }
       })
       .catch(e => {
-        console.log(e, '~~~~~')
         reject(false)
       })
   })
 
 export const updateAiJob = async ({ jobId, flag }) => {
-  await db.collection('aiCalls').update(
-    { _id: jobId },
-    {
-      $set: {
-        status: flag ? 'dialing' : 'fail',
-        updatedAt: new Date(),
-      },
-    },
-  )
+  const $setObj = {
+    status: flag ? 'dialing' : 'fail',
+    updatedAt: new Date(),
+  }
+  if (!flag) {
+    $setObj.failReason = 'AI电话未拨通！'
+  }
+
+  await db.collection('aiCalls').update({ _id: jobId }, { $set: $setObj })
 }
 
 export const aiCallNotify = async (data = {}) => {
   const { talkInfo, state, callMark } = data
-  const info = state
-    ? talkInfo
-    : {
-        recordTime: new Date(),
-        ask: '',
-        answer: '电话无人接听, 占线, 或者拒接！',
-      }
-  await db.collection('aiCalls').update(
-    { _id: callMark },
-    {
-      $set: {
-        status: state ? 'success' : 'fail',
-        talkInfo: info,
-        updatedAt: new Date(),
-      },
-    },
-  )
+  const $setObj = {
+    status: state ? 'success' : 'fail',
+    talkInfo: talkInfo || [],
+    updatedAt: new Date(),
+  }
+  if (!state) {
+    $setObj.failReason = 'AI电话无人接听, 占线, 或者拒接！'
+  }
+  await db.collection('aiCalls').update({ _id: callMark }, { $set: $setObj })
   emitter.emit('finish.job', callMark)
 }
 

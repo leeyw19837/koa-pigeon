@@ -1,11 +1,25 @@
+type AICallTalkInfo {
+  recordTime: String
+  ask: String
+  answer: String
+}
+
 type AICall {
   _id: ID!
   appointmentId: ID
   patientId: ID
   appointmentTime: Date
   status: String
+  failReason: String
+  callAt: Date
+  talkInfo: [AICallTalkInfo]
 }
 
 extend type Mutation {
   addAiCall(appointmentId: ID!, cdeId: ID, period: String): String
+}
+
+extend type Query {
+  getAiCallStatus(appointmentId: ID!): AICall
+  getAiCallRecords(appointmentId: ID!): [AICall]
 }
