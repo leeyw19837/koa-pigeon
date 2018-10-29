@@ -1,0 +1,11 @@
+type AICall {
+  _id: ID!
+  appointmentId: ID
+  patientId: ID
+  appointmentTime: Date
+  status: String
+}
+
+extend type Mutation {
+  addAiCall(appointmentId: ID!, cdeId: ID, period: String): String
+}
