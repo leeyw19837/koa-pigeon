@@ -16,4 +16,5 @@ type Goods {
   details: [goodDetail]
   publishAt: Date
   createdAt: Date
+  priceNotes: [String]
 }
