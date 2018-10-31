@@ -61,6 +61,7 @@ type Patient {
   healthInformation: HealthInformation
   predictionA1c: String
   availableAppointmentDates:[Outpatient!]
+  hospitalCde: HospitalCde
   membershipInformation : MembershipInformation
 }
 
@@ -112,6 +113,13 @@ type PatientFilter {
 type NameCatalog {
   letter: String!
   index: Int!
+}
+
+type HospitalCde {
+  cdeName: String
+  cdeAvatar: String
+  hospitalCdeName: String
+  hospitalCdeAvatar: String
 }
 
 type PatientPagination {
