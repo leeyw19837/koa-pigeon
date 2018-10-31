@@ -9,8 +9,8 @@ import { syncMessageFromOtherSide } from '../syncMessage/index'
 
 import { sendMassText, sendCardMassText } from '../massText'
 
-import { callAppointmentById, aiCallNotify } from '../../modules/AI/call'
 import { getAllJobs } from '../../modules/delayJob'
+import { aiCallNotify } from '../../modules/AI/call/api'
 
 restfulRouter.post('/uploadFile', async ctx => {
   const result = await uploadFileByType(ctx)
@@ -26,7 +26,7 @@ restfulRouter.post('/sendMassText', async ctx => {
 })
 
 // restfulRouter.get('/sendCardMassText', async ctx => {   const result = await
-// sendCardMassText(ctx)   ctx.body = result })
+//  sendCardMassText(ctx);   ctx.body = result })
 
 restfulRouter.post('/syncMessage', async ctx => {
   const { header, ip, body } = ctx.request
@@ -46,11 +46,11 @@ restfulRouter.post('/syncMessage', async ctx => {
   console.log('============== syncMessage end =============from ip:' + ip)
 })
 
-restfulRouter.post('/aiCallTest', async ctx => {
-  const { appointmentId, cdeId, period } = ctx.request.body
-  await callAppointmentById({ appointmentId, cdeId, period })
-  ctx.body = 'OK'
-})
+// restfulRouter.post('/aiCallTest', async ctx => {
+//   const { appointmentId, cdeId, period } = ctx.request.body
+//   await callAppointmentById({ appointmentId, cdeId, period })
+//   ctx.body = 'OK'
+// })
 
 restfulRouter.post('/ai-call-notify', async ctx => {
   console.log(ctx.request, ctx.request.body, '~~~test')
@@ -90,7 +90,11 @@ restfulRouter.get('/delayjobs', async ctx => {
     rows.push(row({ id, timeleft }))
   })
 
-  ctx.body = style + table({ rows: rows.join('\n') })
+  ctx.body =
+    style +
+    table({
+      rows: rows.join('\n'),
+    })
 })
 
 export default restfulRouter

@@ -624,4 +624,74 @@ export const Patient = {
     }
     return result
   },
+
+  hospitalCde: (patient, _) => {
+    let cdeInfo = {
+      cdeName: '',
+      cdeAvatar: '',
+      hospitalCdeName: '',
+      hospitalCdeAvatar: '',
+    }
+    if (patient.healthCareTeamId && patient.healthCareTeamId.length > 0) {
+      const healthCareTeamId = patient.healthCareTeamId[0]
+      switch (healthCareTeamId) {
+        case 'healthCareTeam1':
+          cdeInfo.cdeName = '齐晓静照护师'
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589116693.png'
+          cdeInfo.hospitalCdeName = '刘红利照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540878916517.png'
+          break
+        case 'healthCareTeam2':
+          cdeInfo.cdeName = '马贝照护师'
+          cdeInfo.cdeAvatar =
+            'http://paper-king.ks3-cn-beijing.ksyun.com/workwechat1533719891829.png'
+          cdeInfo.hospitalCdeName = '刘诗雯照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540881599519.png'
+          break
+        case 'healthCareTeam3':
+          cdeInfo.cdeName = '毛蓓照护师'
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589150797.png'
+          cdeInfo.hospitalCdeName = '张昳涵照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540880803450.png'
+          break
+        case 'healthCareTeam5':
+          cdeInfo.cdeName = '户艳丽照护师'
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589073621.png'
+          cdeInfo.hospitalCdeName = '张爱思照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'http://paper-king.ks3-cn-beijing.ksyun.com/workwechat1534215612480.png'
+          break
+        case 'healthCareTeam6':
+          cdeInfo.cdeName = '周晓露照护师'
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589220936.png'
+          cdeInfo.hospitalCdeName = '白丹丹照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540881357489.png'
+          break
+        case 'healthCareTeam7':
+          cdeInfo.cdeName = '周晓露照护师'
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589220936.png'
+          cdeInfo.hospitalCdeName = '白丹丹照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540881357489.png'
+          break
+        default:
+          cdeInfo.cdeName = ''
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589220936.png'
+          cdeInfo.hospitalCdeName = ''
+          cdeInfo.hospitalCdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589116693.png'
+      }
+    }
+    return cdeInfo
+  },
 }
