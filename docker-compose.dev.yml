@@ -35,6 +35,8 @@ services:
       - HOLIDAY_SEND=true
       - LEADER_MOBILE1=15620536989
       - LEADER_MOBILE2=15620536989
+      - TOKEN_EXP=10m
+      - TOKEN_EXP_FOR_NEW=2m
   redis:
     build:
       context: .

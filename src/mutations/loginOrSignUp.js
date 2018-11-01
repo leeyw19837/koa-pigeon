@@ -5,7 +5,14 @@ import {isEmpty} from 'lodash'
 
 import {generateJwt, createNewPatient} from '../utils'
 
-const {RIGHTEOUS_RAVEN_URL, RIGHTEOUS_RAVEN_ID, RIGHTEOUS_RAVEN_KEY, JWT_SECRET} = process.env
+const {
+  RIGHTEOUS_RAVEN_URL,
+  RIGHTEOUS_RAVEN_ID,
+  RIGHTEOUS_RAVEN_KEY,
+  JWT_SECRET,
+  TOKEN_EXP,
+  TOKEN_EXP_FOR_NEW
+} = process.env
 export const updatePatientDemographics = async(_, args, context) => {
   const db = await context.getDb()
   const {mobile, birthday, height, weight, gender} = args
@@ -85,17 +92,15 @@ export const loginOrSignUp = async(_, args, context) => {
           }
         },)
     }
-    let exp = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7);
+    let exp = TOKEN_EXP_FOR_NEW;
     if (existingPatient.patientState === 'ACTIVE') {
-      exp = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365); // 1 year
+      exp = TOKEN_EXP; // 1 year
     }
 
     //JWT签名 console.log('准备为用户进行JWT签名：', existingPatient)
     const JWT = jsonwebtoken.sign({
-      user: existingPatient,
-      // 设置 token 过期时间
-      exp
-    }, JWT_SECRET)
+      user: existingPatient
+    }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_NEW})
     // console.log('JWT', JWT)
     const isWechat = !isEmpty(existingPatient.wechatInfo)
     return {
@@ -153,10 +158,8 @@ export const loginOrSignUp = async(_, args, context) => {
   const newPatient = response.ops[0]
   //JWT签名 console.log('准备为新用户进行JWT签名：', newPatient)
   const JWT = jsonwebtoken.sign({
-    user: newPatient,
-    // 设置 token 过期时间
-    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7)
-  }, JWT_SECRET)
+    user: newPatient
+  }, JWT_SECRET, {expiresIn: exp})
   // console.log('JWT', JWT)
   return {
     patientId: newPatient._id,
