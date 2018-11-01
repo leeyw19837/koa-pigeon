@@ -10,7 +10,7 @@ const getCondition = ({ filter }) => {
   const { namePattern, cdeId } = filter
   const condition = {
     patientState: {
-      $nin: ['REMOVED'],
+      $nin: ['REMOVED', 'POTENTIAL'],
     },
     roles: {
       $exists: 0,
