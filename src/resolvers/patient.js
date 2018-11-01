@@ -10,32 +10,30 @@ const getCondition = ({ filter }) => {
   const { namePattern, cdeId } = filter
   const condition = {
     patientState: {
-      $nin: ['REMOVED']
-    },
-    cdeId: {
-      $exists: 1
+      $nin: ['REMOVED'],
     },
     roles: {
-      $exists: 0
-    }
+      $exists: 0,
+    },
   }
   if (namePattern) {
     const reg = {
-      $regex: namePattern
+      $regex: namePattern,
     }
     condition.$or = [
       {
-        nickname: reg
-      }, {
-        'pinyinName.full': reg
-      }, {
-        'pinyinName.short': reg
-      }
+        nickname: reg,
+      },
+      {
+        'pinyinName.full': reg,
+      },
+      {
+        'pinyinName.short': reg,
+      },
     ]
   }
 
-  if (cdeId)
-    condition.cdeId = cdeId
+  if (cdeId) condition.cdeId = cdeId
   return condition
 }
 export const PatientPagination = {
@@ -43,9 +41,7 @@ export const PatientPagination = {
     const db = await getDb()
     const condition = getCondition(pp)
 
-    return await db
-      .collection('users')
-      .count(condition)
+    return await db.collection('users').count(condition)
   },
   patients: async (pp, _, { getDb }) => {
     const db = await getDb()
@@ -66,40 +62,41 @@ export const PatientPagination = {
       .collection('users')
       .aggregate([
         {
-          $match: condition
-        }, {
+          $match: condition,
+        },
+        {
           $group: {
             _id: '$pinyinName.initial',
             count: {
-              $sum: 1
-            }
-          }
-        }, {
+              $sum: 1,
+            },
+          },
+        },
+        {
           $sort: {
-            _id: 1
-          }
-        }
+            _id: 1,
+          },
+        },
       ])
       .toArray()
-    return data.reduce(({
-      index,
-      result
-    }, curr) => {
-      const newResult = [
-        ...result, {
-          letter: curr
-            ._id
-            .toUpperCase(),
-          index
-        }
-      ]
-      const nextIndex = index + curr.count
-      return { index: nextIndex, result: newResult }
-    }, {
+    return data.reduce(
+      ({ index, result }, curr) => {
+        const newResult = [
+          ...result,
+          {
+            letter: curr._id.toUpperCase(),
+            index,
+          },
+        ]
+        const nextIndex = index + curr.count
+        return { index: nextIndex, result: newResult }
+      },
+      {
         index: 0,
-        result: []
-      }).result
-  }
+        result: [],
+      },
+    ).result
+  },
 }
 
 export const Patient = {
@@ -108,10 +105,8 @@ export const Patient = {
     return db
       .collection('photos')
       .find({
-        patientId: patient
-          ._id
-          .toString(),
-        owner: 'footAssessment'
+        patientId: patient._id.toString(),
+        owner: 'footAssessment',
       })
       .toArray()
   },
@@ -123,18 +118,14 @@ export const Patient = {
   },
   closestAppointment: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const endOfToday = moment()
-      .endOf('day')
-      ._d
+    const endOfToday = moment().endOf('day')._d
     const result = await db
       .collection('appointments')
       .find({
-        patientId: patient
-          ._id
-          .toString(),
+        patientId: patient._id.toString(),
         appointmentTime: {
-          $gt: endOfToday
-        }
+          $gt: endOfToday,
+        },
       })
       .sort({ appointmentTime: 1 })
       .toArray()
@@ -145,23 +136,17 @@ export const Patient = {
     return db
       .collection('communication')
       .find({
-        patientId: patient
-          ._id
-          .toString()
+        patientId: patient._id.toString(),
       })
       .sort({ createdAt: -1 })
       .toArray()
   },
-  caseRecords: async (patient, {
-    limit = 0
-  }, { getDb }) => {
+  caseRecords: async (patient, { limit = 0 }, { getDb }) => {
     const db = await getDb()
     return db
       .collection('caseRecord')
       .find({
-        patientId: patient
-          ._id
-          .toString()
+        patientId: patient._id.toString(),
       })
       .sort({ createdAt: -1 })
       .limit(limit)
@@ -172,9 +157,7 @@ export const Patient = {
     return db
       .collection('soap')
       .find({
-        patientId: patient
-          ._id
-          .toString()
+        patientId: patient._id.toString(),
       })
       .sort({ createdAt: -1 })
       .toArray()
@@ -184,9 +167,7 @@ export const Patient = {
     return db
       .collection('outHospitalSoap')
       .find({
-        patientId: patient
-          ._id
-          .toString()
+        patientId: patient._id.toString(),
       })
       .sort({ createdAt: -1 })
       .toArray()
@@ -206,9 +187,7 @@ export const Patient = {
     return db
       .collection('appointments')
       .find({
-        patientId: patient
-          ._id
-          .toString()
+        patientId: patient._id.toString(),
       })
       .sort({ appointmentTime: 1 })
       .toArray()
@@ -218,9 +197,7 @@ export const Patient = {
     const result = await db
       .collection('appointments')
       .find({
-        patientId: patient
-          ._id
-          .toString()
+        patientId: patient._id.toString(),
       })
       .sort({ appointmentTime: -1 })
       .toArray()
@@ -231,13 +208,11 @@ export const Patient = {
     const result = await db
       .collection('appointments')
       .find({
-        patientId: patient
-          ._id
-          .toString(),
+        patientId: patient._id.toString(),
         isOutPatient: true,
         type: {
-          $nin: ['addition']
-        }
+          $nin: ['addition'],
+        },
       })
       .sort({ appointmentTime: -1 })
       .toArray()
@@ -245,21 +220,15 @@ export const Patient = {
   },
   useIGluco: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const result = await db
-      .collection('bloodGlucoses')
-      .findOne({
-        patientId: patient
-          ._id
-          .toString(),
-        bloodGlucoseDataSource: 'IGLUCO_ICLUCO'
-      })
+    const result = await db.collection('bloodGlucoses').findOne({
+      patientId: patient._id.toString(),
+      bloodGlucoseDataSource: 'IGLUCO_ICLUCO',
+    })
     return !!result
   },
   useNeedle: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const bgDataFromNeedle = await db
       .collection('bloodGlucoses')
       .findOne({ patientId, bloodGlucoseDataSource: 'NEEDLE_BG1' })
@@ -270,14 +239,10 @@ export const Patient = {
   },
   useSPT: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const result = await db
-      .collection('bloodGlucoses')
-      .findOne({
-        patientId: patient
-          ._id
-          .toString(),
-        bloodGlucoseDataSource: 'SPT_SPT'
-      })
+    const result = await db.collection('bloodGlucoses').findOne({
+      patientId: patient._id.toString(),
+      bloodGlucoseDataSource: 'SPT_SPT',
+    })
     return !!result
   },
   usePublicNumber: async (patient, _, { getDb }) => {
@@ -285,7 +250,7 @@ export const Patient = {
     const result = await db
       .collection('users')
       .find({
-        _id: maybeCreateFromHexString(patient._id)
+        _id: maybeCreateFromHexString(patient._id),
       })
       .toArray()
     return !!get(result[0], 'wechatTag')
@@ -295,9 +260,7 @@ export const Patient = {
     const result = await db
       .collection('clinicalLabResults')
       .find({
-        patientId: patient
-          ._id
-          .toString()
+        patientId: patient._id.toString(),
       })
       .sort({ testDate: -1 })
       .toArray()
@@ -308,19 +271,17 @@ export const Patient = {
   },
   bloodGlucoses: async (patient, args, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const cursor = {
       patientId,
-      dataStatus: 'ACTIVE'
+      dataStatus: 'ACTIVE',
     }
     if (args.startAt && args.endAt) {
       Object.assign(cursor, {
         measuredAt: {
           $gt: args.startAt,
-          $lt: args.endAt
-        }
+          $lt: args.endAt,
+        },
       })
     }
     const limit = args.limit || 0
@@ -333,12 +294,10 @@ export const Patient = {
   },
   bloodGlucosesByTime: async (patient, args, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const cursor = {
       patientId,
-      dataStatus: 'ACTIVE'
+      dataStatus: 'ACTIVE',
     }
     if (args.selectTime) {
       Object.assign(cursor, { measuredAt: args.selectTime })
@@ -355,9 +314,7 @@ export const Patient = {
       const result = await db
         .collection('certifiedDiabetesEducators')
         .find({
-          _id: patient
-            .cdeId
-            .toString()
+          _id: patient.cdeId.toString(),
         })
         .toArray()
       return result[0] || null
@@ -379,9 +336,7 @@ export const Patient = {
   },
   MCR: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const bloodGlucoses = await db
       .collection('bloodGlucoses')
       .find({ patientId })
@@ -393,36 +348,41 @@ export const Patient = {
       .limit(1)
       .toArray()
 
-    if (isEmpty(bloodGlucoses) || isEmpty(module))
-      return 0
+    if (isEmpty(bloodGlucoses) || isEmpty(module)) return 0
     const bgMeasureModule = await db
       .collection('bgMeasureModule')
       .findOne({ type: module[0].type })
 
-    const { actualMeasure, notCompletedMeasure } = getMeasureFeedback({ bloodGlucoses, patientId, bgMeasureModule })
-    const { pairing, count } = reduce(actualMeasure, (sum, m) => {
-      return {
-        pairing: sum.pairing + m.pairing,
-        count: sum.count + m.count
-      }
-    }, {
+    const { actualMeasure, notCompletedMeasure } = getMeasureFeedback({
+      bloodGlucoses,
+      patientId,
+      bgMeasureModule,
+    })
+    const { pairing, count } = reduce(
+      actualMeasure,
+      (sum, m) => {
+        return {
+          pairing: sum.pairing + m.pairing,
+          count: sum.count + m.count,
+        }
+      },
+      {
         pairing: 0,
-        count: 0
-      })
+        count: 0,
+      },
+    )
     return Math.round((pairing * 100) / (pairing + count))
   },
   clinicalLabResults: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const results = await db
       .collection('clinicalLabResults')
       .find({
         patientId,
         glycatedHemoglobin: {
-          $exists: 1
-        }
+          $exists: 1,
+        },
       })
       .sort({ testDate: -1 })
       .limit(3)
@@ -431,35 +391,27 @@ export const Patient = {
   },
   yearServiceOrder: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const orders = await db
       .collection('orders')
       .find({
         patientId,
         orderStatus: 'SUCCESS',
         serviceEndAt: {
-          $gte: new Date()
-        }
+          $gte: new Date(),
+        },
       })
       .sort({ serviceEndAt: -1 })
       .toArray()
-    return orders.length
-      ? orders[0]
-      : null
+    return orders.length ? orders[0] : null
   },
-  yearServiceStatus: async (patient, {
-    platform = 'android'
-  }, { getDb }) => {
+  yearServiceStatus: async (patient, { platform = 'android' }, { getDb }) => {
     const db = await getDb()
     const control = await db
       .collection('controls')
       .find({ platform, type: 'YEAR_SERVICE' })
       .toArray()
-    return control.length
-      ? control[0].status === 'ACTIVE'
-      : false
+    return control.length ? control[0].status === 'ACTIVE' : false
   },
   achievements: async (patient, args, { getDb }) => {
     const db = await getDb()
@@ -467,22 +419,18 @@ export const Patient = {
       .collection('achievements')
       .find({
         status: {
-          $ne: 'INACTIVE'
-        }
+          $ne: 'INACTIVE',
+        },
       })
       .sort({ createdAt: -1 })
       .toArray()
     return achievements
   },
-  achievementRecords: async (patient, {
-    achievementId
-  }, { getDb }) => {
+  achievementRecords: async (patient, { achievementId }, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const cursor = {
-      patientId
+      patientId,
     }
     if (achievementId) {
       cursor._id = achievementId
@@ -494,25 +442,21 @@ export const Patient = {
       .toArray()
     return achievements
   },
-  achievementResult: async (patient, {
-    achievementId
-  }, { getDb }) => {
+  achievementResult: async (patient, { achievementId }, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const achievements = await db
       .collection('achievements')
       .find({
         status: {
-          $ne: 'INACTIVE'
-        }
+          $ne: 'INACTIVE',
+        },
       })
       .sort({ createdAt: -1 })
       .toArray()
 
     const cursor = {
-      patientId
+      patientId,
     }
     if (achievementId) {
       cursor._id = achievementId
@@ -525,12 +469,10 @@ export const Patient = {
     return { achievements, achievementRecords }
   },
   achievementShownRecords: async patient => {
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const cursor = {
       patientId,
-      isShown: false
+      isShown: false,
     }
     const achievements = await db
       .collection('achievementRecords')
@@ -540,16 +482,14 @@ export const Patient = {
   },
   bonusPoints: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const bonusPoints = await db
       .collection('bonusPoints')
       .find({
         patientId,
         expireAt: {
-          $gt: new Date()
-        }
+          $gt: new Date(),
+        },
       })
       .sort({ createdAt: -1 })
       .toArray()
@@ -561,23 +501,18 @@ export const Patient = {
       ? patient.avatar
       : isWechat
         ? patient.wechatInfo.headimgurl
-          ? patient
-            .wechatInfo
-            .headimgurl
-            .replace('http://', 'https://')
+          ? patient.wechatInfo.headimgurl.replace('http://', 'https://')
           : patient.gender === 'male'
             ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
             : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
         : patient.gender === 'male'
           ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
           : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
-    return avatar;
+    return avatar
   },
   healthInformation: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     let hospital = '无照护组'
     if (patient.healthCareTeamId) {
       hospital = await db
@@ -585,33 +520,26 @@ export const Patient = {
         .findOne({ _id: patient.healthCareTeamId[0] })
     }
     const patientBriefInformation = {}
-    patientBriefInformation.avatar = patient.avatar
-      ? patient.avatar
-      : 'empty'
+    patientBriefInformation.avatar = patient.avatar ? patient.avatar : 'empty'
     patientBriefInformation.nickname = patient.nickname
-    patientBriefInformation.gender = patient.gender === 'male'
-      ? '男'
-      : '女'
-    patientBriefInformation.age = moment(new Date()).diff(patient.dateOfBirth, 'years')
+    patientBriefInformation.gender = patient.gender === 'male' ? '男' : '女'
+    patientBriefInformation.age = moment(new Date()).diff(
+      patient.dateOfBirth,
+      'years',
+    )
     patientBriefInformation.hospital = hospital.institutionName
-    patientBriefInformation.doctor = patient.doctor
-      ? patient.doctor
-      : '--'
+    patientBriefInformation.doctor = patient.doctor ? patient.doctor : '--'
     patientBriefInformation.diabetesType = patient.diabetesType
       ? patient.diabetesType
       : '--'
     patientBriefInformation.courseOfDisease = patient.startOfIllness
-      ? moment().get('year') - patient
-        .startOfIllness
-        .split('/')[0]
+      ? moment().get('year') - patient.startOfIllness.split('/')[0]
       : '--'
     return patientBriefInformation
   },
   selfTestSchemes: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const module = await db
       .collection('measureModules')
       .find({ patientId })
@@ -620,8 +548,7 @@ export const Patient = {
       .toArray()
 
     // console.log('module',module)
-    if (isEmpty(module))
-      return null
+    if (isEmpty(module)) return null
     const bgMeasureModule = await db
       .collection('bgMeasureModule')
       .findOne({ type: module[0].type })
@@ -639,9 +566,7 @@ export const Patient = {
   },
   sugarControlGoals: async (patient, _, { getDb }) => {
     const db = await getDb()
-    const patientId = patient
-      ._id
-      .toString()
+    const patientId = patient._id.toString()
     const caseRecord = await db
       .collection('caseRecord')
       .find({ patientId })
@@ -661,9 +586,10 @@ export const Patient = {
     let a1c = ''
     try {
       const formData = {
-        userId: patient._id
+        userId: patient._id,
       }
-      axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+      axios.defaults.headers.post['Content-Type'] =
+        'application/x-www-form-urlencoded'
       const result = await axios.post(A1C_URL, formData)
       a1c = get(result, 'data.result.prediction[0].a1cValue', null)
     } catch (e) {
@@ -699,4 +625,73 @@ export const Patient = {
     return result
   },
 
+  hospitalCde: (patient, _) => {
+    let cdeInfo = {
+      cdeName: '',
+      cdeAvatar: '',
+      hospitalCdeName: '',
+      hospitalCdeAvatar: '',
+    }
+    if (patient.healthCareTeamId && patient.healthCareTeamId.length > 0) {
+      const healthCareTeamId = patient.healthCareTeamId[0]
+      switch (healthCareTeamId) {
+        case 'healthCareTeam1':
+          cdeInfo.cdeName = '齐晓静照护师'
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589116693.png'
+          cdeInfo.hospitalCdeName = '刘红利照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540878916517.png'
+          break
+        case 'healthCareTeam2':
+          cdeInfo.cdeName = '马贝照护师'
+          cdeInfo.cdeAvatar =
+            'http://paper-king.ks3-cn-beijing.ksyun.com/workwechat1533719891829.png'
+          cdeInfo.hospitalCdeName = '刘诗雯照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540881599519.png'
+          break
+        case 'healthCareTeam3':
+          cdeInfo.cdeName = '毛蓓照护师'
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589150797.png'
+          cdeInfo.hospitalCdeName = '张昳涵照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540880803450.png'
+          break
+        case 'healthCareTeam5':
+          cdeInfo.cdeName = '户艳丽照护师'
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589073621.png'
+          cdeInfo.hospitalCdeName = '张爱思照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'http://paper-king.ks3-cn-beijing.ksyun.com/workwechat1534215612480.png'
+          break
+        case 'healthCareTeam6':
+          cdeInfo.cdeName = '周晓露照护师'
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589220936.png'
+          cdeInfo.hospitalCdeName = '白丹丹照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540881357489.png'
+          break
+        case 'healthCareTeam7':
+          cdeInfo.cdeName = '周晓露照护师'
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589220936.png'
+          cdeInfo.hospitalCdeName = '白丹丹照护师'
+          cdeInfo.hospitalCdeAvatar =
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540881357489.png'
+          break
+        default:
+          cdeInfo.cdeName = ''
+          cdeInfo.cdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589220936.png'
+          cdeInfo.hospitalCdeName = ''
+          cdeInfo.hospitalCdeAvatar =
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589116693.png'
+      }
+    }
+    return cdeInfo
+  },
 }

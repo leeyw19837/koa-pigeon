@@ -109,7 +109,7 @@ export const deletePatientAppointment = async (_, params, context) => {
 }
 
 export const addPatientAppointment = async (_, params, context) => {
-  // console.log('addPatientAppointment',params)
+  console.log('addPatientAppointment',params)
   const { institutionId, nickname, source, mobile } = params
 
   const existedUser = await db
@@ -166,6 +166,8 @@ export const addPatientAppointment = async (_, params, context) => {
     _id: new ObjectID().toString(),
     patientId: patientId.toString(),
     ...params,
+    createdAt: new Date(),
+    isOutPatient: false,
   })
   context.response.set('effect-types', 'PatientList,PatientDetail')
   return true

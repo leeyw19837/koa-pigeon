@@ -49,6 +49,7 @@ import * as patient from './patient'
 import * as updateOutpatientStates from './appointment'
 import * as setArchived from './setArchived'
 import * as unsetArchived from './setArchived'
+import * as aiCall from './aiCall'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -108,6 +109,7 @@ const mutations = {
   ...updateOutpatientStates,
   ...setArchived,
   ...unsetArchived,
+  ...aiCall,
 }
 
 const mutationsWithAuthandLog = {}
