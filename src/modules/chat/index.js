@@ -30,6 +30,34 @@ export const whoAmI = async (userId, nosy, participants, db) => {
 
 const delay = 15 * 60
 export const finishSession = async (db, chatRoomId, finishReason) => {
+  const now = new Date()
+  if (finishReason !== 'timeout') {
+    const room = await db.collection('needleChatRooms').findOne({
+      _id: chatRoomId,
+    })
+    let { participants } = room
+    participants = participants.map(p => {
+      if (p.role === '患者') return p
+      return {
+        ...p,
+        lastSeenAt: now,
+        unreadCount: 0,
+      }
+    })
+    await db.collection('needleChatRooms').update(
+      { _id: chatRoomId },
+      {
+        $set: {
+          participants,
+        },
+      },
+    )
+    pubsub.publish('chatRoomDynamics', {
+      ...room,
+      participants,
+    })
+  }
+
   let latestSession = await db
     .collection('sessions')
     .find({
@@ -44,7 +72,7 @@ export const finishSession = async (db, chatRoomId, finishReason) => {
     console.log('no processing session matched')
     return
   }
-  const now = new Date()
+
   const setter = { endAt: now, finishReason }
   const rst = await db.collection('sessions').update(
     {
@@ -63,30 +91,6 @@ export const finishSession = async (db, chatRoomId, finishReason) => {
   })
 
   delDelayJob(`session_${chatRoomId}`)
-  const room = await db.collection('needleChatRooms').findOne({
-    _id: chatRoomId,
-  })
-  let { participants } = room
-  participants = participants.map(p => {
-    if (p.role === '患者' || finishReason === 'timeout') return p
-    return {
-      ...p,
-      lastSeenAt: now,
-      unreadCount: 0,
-    }
-  })
-  await db.collection('needleChatRooms').update(
-    { _id: chatRoomId },
-    {
-      $set: {
-        participants,
-      },
-    },
-  )
-  pubsub.publish('chatRoomDynamics', {
-    ...room,
-    participants,
-  })
 }
 
 export const sessionFeeder = async (message, db) => {
