@@ -1,4 +1,4 @@
-import { ObjectID } from 'mongodb'
+import { ObjectId, ObjectID } from 'mongodb'
 import { findGoodById } from '../goods/index'
 
 export const findOrderById = async ({ orderId }) => {
@@ -53,5 +53,21 @@ export const updateOrder = async ({ orderId, setData }) => {
     },
   )
   const result = await db.collection('orders').findOne({ orderId })
+  return result
+}
+
+export const updateUserCollectionOrderFields = async ({ patientId, membershipInformation }) => {
+  console.log('updateUserCollectionOrderFields called!', patientId, membershipInformation)
+  const result = await db.collection('users').update(
+    {
+      _id: ObjectId.createFromHexString(patientId),
+    },
+    {
+      $set: {
+        membershipInformation,
+        updatedAt: new Date(),
+      },
+    },
+  )
   return result
 }
