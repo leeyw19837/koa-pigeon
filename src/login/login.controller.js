@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import jsonwebtoken from 'jsonwebtoken'
 const omit = require('lodash/omit')
 
-const {JWT_SECRET} = process.env;
+const {JWT_SECRET, TOKEN_EXP_FOR_API} = process.env;
 
 class LoginController {
 
@@ -36,10 +36,8 @@ class LoginController {
           user: user.userInfo,
           // 生成 token 返回给客户端
           token: jsonwebtoken.sign({
-            user: omit(user, 'password'),
-            // 设置 token 过期时间
-            exp: Math.floor(Date.now() / 1000) + (60 * 60), // 60 seconds * 60 minutes = 1 hour
-          }, JWT_SECRET)
+            user: omit(user, 'password')
+          }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_API})
         }
       } else {
         ctx.status = 401
