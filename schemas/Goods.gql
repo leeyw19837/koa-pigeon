@@ -16,5 +16,8 @@ type Goods {
   details: [goodDetail]
   publishAt: Date
   createdAt: Date
+  # 金额备注（每种产品的金额备注说明）
   priceNotes: [String]
+  # 续费金额（目前只有连续包季用到该字段）
+  renewalAmount : Float
 }
