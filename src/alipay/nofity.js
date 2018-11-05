@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { createPayHistory } from '../wechatPay/payHistories'
-import { findOrderById, updateOrder } from '../modules/order'
+import {findOrderById, updateOrder, updateUserCollectionOrderFields} from '../modules/order'
 import { strip, convertTime } from '../wechatPay/utils'
 import { makeNotifyResponseMethod } from '../alipay/pay_alipay'
 
@@ -15,7 +15,7 @@ export const aliPayNotify = async (ctx) => {
   const time_end = moment(gmt_payment).format('YYYYMMDDHHmmss')
   const order = await findOrderById({ orderId: out_trade_no, payWay: 'ALIPAY' })
   if (order) {
-    const { orderStatus, totalPrice, patientId } = order
+    const { orderStatus, totalPrice, patientId, goodsType } = order
     if (orderStatus !== 'SUCCESS') {
       let setOrderObj = {}
       if (+total_amount !== strip(totalPrice)) {
@@ -38,6 +38,14 @@ export const aliPayNotify = async (ctx) => {
       await updateOrder({
         orderId: out_trade_no,
         setData: setOrderObj,
+      })
+      await updateUserCollectionOrderFields({
+        patientId,
+        membershipInformation:{
+          type: goodsType,
+          serviceEndTime: moment(convertTime(time_end)).add(1, 'years')._d,
+          methodOfPayment: 'ALIPAY',
+        }
       })
       await createPayHistory({
         patientId,

@@ -15,7 +15,7 @@ export const logandAuthForApp = (requestType, funcName, func) => async(rootValue
   if (funcName !== 'saveFoodContents') {
     console.log(`${requestType}: Calling ${funcName} with args ${JSON.stringify(args)}`,)
   }
-  if (['loginOrSignUp', 'wechatLoginOrSignUp', 'professionalLoginForWechat', 'professionalLoginForMobile'].indexOf(funcName) == -1) {
+  if (['loginOrSignUp', 'wechatLoginOrSignUp', 'professionalLoginForWechat', 'professionalLoginForMobile', 'sendMobileVerificationCode'].indexOf(funcName) == -1) {
     if (!ctx.userInfo) {
       if (AUTH === 'TRUE') 
         throw new GraphQLError('AuthenticationError');
