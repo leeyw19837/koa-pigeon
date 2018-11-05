@@ -62,11 +62,41 @@ type Patient {
   predictionA1c: String
   availableAppointmentDates:[Outpatient!]
   hospitalCde: HospitalCde
+  membershipInformation : MembershipInformation
+}
+
+type MembershipInformation {
+  # 会员类型（买的什么会员产品）
+  type: MembershipType
+  # 会员到期时间
+  serviceEndTime: Date
+  # 最近一次支付方式
+  methodOfPayment: MethodOfPayment
 }
 
 enum Gender {
   male
   female
+}
+
+# 会员类型枚举（买的什么会员产品）
+enum MembershipType {
+   # 包年服务（线上服务+试纸）
+   YEAR_SERVICE
+   # 包年服务（线上服务）
+   YEARLY_SERVICE_SERVICE_ONLY
+   # 包季服务（线上服务）
+   QUARTERLY_SERVICE_SERVICE_ONLY
+   # 连续包季服务（线上服务）
+   CONTINUOUS_QUARTERLY_SERVICE_SERVICE_ONLY
+}
+
+# 会员支付方式
+enum MethodOfPayment {
+    # 支付宝
+    ALIPAY
+    # 微信支付
+    WECHAT
 }
 
 input ProfileInput {

@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { createPayHistory } from './payHistories'
-import { findOrderById, updateOrder } from '../modules/order'
+import { findOrderById, updateOrder, updateUserCollectionOrderFields } from '../modules/order'
 import { strip, convertTime } from './utils'
 
 export const payNotify = async (ctx, next) => {
@@ -10,7 +10,7 @@ export const payNotify = async (ctx, next) => {
   console.log(info, order, '@result')
   let replyResult = ''
   if (order) {
-    const { orderStatus, totalPrice, patientId } = order
+    const { orderStatus, totalPrice, patientId, goodsType} = order
     if (orderStatus !== 'SUCCESS') {
       let setOrderObj = {}
       if (+total_fee !== strip(totalPrice * 100)) {
@@ -30,6 +30,14 @@ export const payNotify = async (ctx, next) => {
       await updateOrder({
         orderId: out_trade_no,
         setData: setOrderObj,
+      })
+      await updateUserCollectionOrderFields({
+        patientId,
+        membershipInformation:{
+          type: goodsType,
+          serviceEndTime: moment(convertTime(time_end)).add(1, 'years')._d,
+          methodOfPayment: 'WECHAT',
+        }
       })
       await createPayHistory({
         patientId,

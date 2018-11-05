@@ -86,7 +86,7 @@ export const checkPayOrderStatus = async (_, args, context) => {
   })
   const { returnCode, trade_state, errCode, time_end, transaction_id } = result
   const tradeOrder = await orderServices.findOrderById({ orderId })
-  const { orderStatus } = tradeOrder
+  const { orderStatus, patientId, goodsType } = tradeOrder
   if (orderStatus !== trade_state) {
     let setData = {
       orderStatus: trade_state,
@@ -99,6 +99,18 @@ export const checkPayOrderStatus = async (_, args, context) => {
     await orderServices.updateOrder({
       orderId,
       setData,
+    })
+  }
+  // 如果确实支付成功，则更新用户表中的 membershipInformation 字段
+  console.log('=========wechat trade_state=======', trade_state)
+  if (trade_state === 'SUCCESS') {
+    await orderServices.updateUserCollectionOrderFields({
+      patientId,
+      membershipInformation:{
+        type: goodsType,
+        serviceEndTime: moment(convertTime(time_end)).add(1, 'years')._d,
+        methodOfPayment: 'WECHAT',
+      }
     })
   }
   return {
