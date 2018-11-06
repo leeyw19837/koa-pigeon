@@ -5,6 +5,7 @@ import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
 import { whoAmI, sessionFeeder } from '../modules/chat'
 import { categories, classify, qa } from '../modules/AI'
+import { handleReplySms } from '../resolvers/handleReplySms'
 
 const sourceTypeGroup = [
   'LG',
@@ -62,6 +63,14 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     .findOne({ _id: { $in: [userId, userObjectId] } }, { roles: 1 })
   const isAssistant = sender.roles === '医助'
   const isPatient = !sender.roles
+
+  if (isAssistant) {
+    const patientParticipants = chatRoom.participants.find(user => {
+      return user.role === '患者'
+    })
+    await handleReplySms(chatRoomId, patientParticipants)
+  }
+
   let chatMessageCount = await db
     .collection('needleChatMessages')
     .find({ senderId: userId })
