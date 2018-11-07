@@ -19,11 +19,14 @@ export const handleReplySms = async (chatRoomId, patientParticipants) => {
   const sourceType = messageArray[0].sourceType
 
   if (sourceType === 'SMS' || sourceType === 'WECHAT') {
-    if (moment().diff(patient.sendMsgTimeAt, 'days') > 7) {
+    if (
+      !patient.sendMsgTimeAt ||
+      moment().diff(patient.sendMsgTimeAt, 'days') > 7
+    ) {
       //   console.log('++++++++++++++aaaaaaaa', patient.username)
       await sendTxt({
         mobile: patient.username,
-        // mobile: '18510086234',
+        // mobile: '18612201226',
         templateId: 'SMS_150181050',
         params: {
           sourceType: sourceType === 'SMS' ? '短信' : '微信公众号',
