@@ -20,9 +20,9 @@ export const handleReplySms = async (chatRoomId, patientParticipants) => {
 
   if (sourceType === 'SMS' || sourceType === 'WECHAT') {
     if (moment().diff(patient.sendMsgTimeAt, 'days') > 7) {
-      //   console.log('++++++++++++++aaaaaaaa', patient.mobile)
+      //   console.log('++++++++++++++aaaaaaaa', patient.username)
       await sendTxt({
-        mobile: patient.mobile,
+        mobile: patient.username,
         // mobile: '18510086234',
         templateId: 'SMS_150181050',
         params: {
