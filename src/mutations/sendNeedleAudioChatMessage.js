@@ -1,10 +1,12 @@
 import freshId from 'fresh-id'
+import { ObjectId } from 'mongodb'
 import { uploadFile } from '../utils/ks3'
 import { pubsub } from '../pubsub'
 
 import { pushChatNotification } from '../mipush'
 import { ObjectID } from 'mongodb'
 import { whoAmI, sessionFeeder } from '../modules/chat'
+import { handleReplySms } from '../resolvers/handleReplySms'
 
 export const sendNeedleAudioChatMessage = async (_, args, context) => {
   const db = await context.getDb()
@@ -16,6 +18,8 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
     actualSenderId,
     nosy,
   } = args
+
+  const userObjectId = ObjectId.createFromHexString(userId)
 
   let chatRoom = await db
     .collection('needleChatRooms')
@@ -36,6 +40,19 @@ export const sendNeedleAudioChatMessage = async (_, args, context) => {
     chatRoom.participants,
     db,
   )
+
+  const sender = await db
+    .collection('users')
+    .findOne({ _id: { $in: [userId, userObjectId] } }, { roles: 1 })
+  const isAssistant = sender.roles === '医助'
+
+  if (isAssistant) {
+    const patientParticipants = chatRoom.participants.find(user => {
+      return user.role === '患者'
+    })
+    await handleReplySms(chatRoomId, patientParticipants)
+  }
+
   const audioUrlKey = `${userId}${Date.now()}`
   const audioUrl = await uploadFile(audioUrlKey, base64EncodedAudioData)
 
