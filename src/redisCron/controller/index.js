@@ -98,7 +98,8 @@ sub.on('pmessage', async (pattern, channel, message) => {
           userId: '66728d10dc75bc6a43052036',
           chatRoomId,
           text,
-          sourceType: 'AM2H_1',
+          sourceType: 'FROM_FOREST',
+          contentCode: 'AM2H_1',
         }
         console.log('sendArgs', sendArgs)
         const sendResult = await sendNeedleTextChatMessage(null, sendArgs, {})

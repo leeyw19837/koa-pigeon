@@ -30,7 +30,7 @@ export const changeChatCardStatus = async (_, args, context) => {
 
   const measurement = await bloodMeasurementPlans(_, args, context)
   const measurePercent = getContent(measurement, operationType)
-  const { textContent, sourceType } = getTextContent(
+  const { textContent, sourceType, contentCode } = getTextContent(
     measurePercent,
     operationType,
     dateType,
@@ -62,7 +62,7 @@ export const changeChatCardStatus = async (_, args, context) => {
         .update(
           { _id: recordId },
           { $set: { confirmStatus: 'APPDoubleConfirm' } },
-      )
+        )
     } else if (operationType == 'CHANGE_DATE') {
       status = 'POSTPONING'
       userId = patientId
@@ -84,7 +84,8 @@ export const changeChatCardStatus = async (_, args, context) => {
     userId: userId,
     chatRoomId: chatRoomId,
     text: textContent,
-    sourceType: sourceType,
+    sourceType,
+    contentCode,
   }
   const updateResult = await sendNeedleTextChatMessage(_, sendArgs, context)
   return !!updateResult
@@ -98,7 +99,7 @@ const getTextContent = (
   outpatientTime,
 ) => {
   let textContent = ''
-  let sourceType = 'BOP_1'
+  let contentCode = 'BOP_1'
   let endTime = moment(outpatientTime).format('YYYY-MM-DD')
   let diffTime = moment(endTime).diff(moment(), 'days') + 1
   if (dateType == 'BEFORE_SEVEN_DAYS') {
@@ -110,42 +111,42 @@ const getTextContent = (
     //7天卡片
     if (dateType == 'BEFORE_SEVEN_DAYS') {
       if (measurePercent == 0) {
-        sourceType = 'BOP_3'
+        contentCode = 'BOP_3'
         textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您近7天的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您抓紧测量`
       } else if (measurePercent < 0.5) {
-        sourceType = 'BOP_2'
+        contentCode = 'BOP_2'
         textContent = `还有${diffTime}天您就要来就诊了，您近7天还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，请您继续完善`
       } else {
-        sourceType = 'BOP_1'
+        contentCode = 'BOP_1'
         textContent = `还有${diffTime}天您就要来就诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
       }
       //3天卡片
     } else {
       if (measurePercent == 0) {
-        sourceType = 'BOP_12'
+        contentCode = 'BOP_12'
         textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您最近的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会按照血糖监测方案进行测量`
       } else if (measurePercent < 0.5) {
-        sourceType = 'BOP_11'
+        contentCode = 'BOP_11'
         textContent = `还有${diffTime}天您就要来就诊了，您最近还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会继续完善`
       } else {
-        sourceType = 'BOP_10'
+        contentCode = 'BOP_10'
         textContent = `还有${diffTime}天您要来就诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
       }
     }
     //改期
   } else if (operationType == 'CHANGE_DATE') {
-    sourceType = 'BOP_13'
+    contentCode = 'BOP_13'
     textContent = `照护师您好，我要改期`
     //知道了
   } else if (operationType == 'KNOWN') {
     if (measurePercent == 0) {
-      sourceType = 'BOP_6'
+      contentCode = 'BOP_6'
       textContent = `还有${diffTime}天您就要来就诊了，但我们还没有收到您最近的血糖监测数据，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会按照血糖监测方案进行测量`
     } else if (measurePercent < 0.5) {
-      sourceType = 'BOP_5'
+      contentCode = 'BOP_5'
       textContent = `还有${diffTime}天您就要来就诊了，您最近还没有按照医生给您的血糖监测方案进行监测，医生有可能无法对您的情况作更全面的判断和针对性的指导，您还有3天机会继续完善`
     } else {
-      sourceType = 'BOP_4'
+      contentCode = 'BOP_4'
       textContent = `还有${diffTime}天您要来就诊了，您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
     }
     //不确定
@@ -153,20 +154,20 @@ const getTextContent = (
     //7天卡片
     if (dateType == 'BEFORE_SEVEN_DAYS') {
       if (measurePercent == 0) {
-        sourceType = 'BOP_9'
+        contentCode = 'BOP_9'
         textContent = `我们将会在开诊前3天再与您确认参加情况。我们还没有收到您近7天的血糖监测数据，医生无法对您的情况作更全面的判断和针对性的指导，请您抓紧测量`
       } else if (measurePercent < 0.5) {
-        sourceType = 'BOP_8'
+        contentCode = 'BOP_8'
         textContent = `我们将会在开诊前3天再与您确认参加情况。由于您近7天还没有按照医生给您的血糖监测方案进行监测，医生无法对您的情况作更全面的判断和针对性的指导，请您继续完善`
       } else {
-        sourceType = 'BOP_7'
+        contentCode = 'BOP_7'
         textContent = `我们将会在开诊前3天再与您确认参加情况。您监测的不错，请继续保持监测，门诊期间医生会根据您的测量结果给您针对性的指导`
       }
       //3天卡片无不确定按钮
     } else {
     }
   }
-  return { sourceType, textContent }
+  return { sourceType: 'FROM_FOREST', textContent, contentCode }
 }
 
 //根据测量结果，算出各种模组的测量完成比率

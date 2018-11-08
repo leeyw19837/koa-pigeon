@@ -1,0 +1,48 @@
+# This should bring up a docker container with a volume mapped to dist folder
+# then the command should ensure the dist folder is kept up to date on changes maybe nodemon
+version: '3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - yarn:/root/.cache/yarn
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    ports:
+      - '3080:3080'
+    links:
+      - redis
+    command: yarn watchAndRun
+    environment:
+      - MONGO_URL=mongodb://172.16.0.181:27017/paper-king
+      # - MONGO_URL=mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@mongodev.ihealthcn.com:27017,mongodev.ihealthcn.com:27018,mongodev.ihealthcn.com:27019,mongodev1.ihealthcn.com:27017,mongodev2.ihealthcn.com:27018,mongodev3.ihealthcn.com:27019/paper-king-developing?replicaSet=rs
+      # - MONGO_URL=mongodb://paperKingByiHealth:djsdF3fQa@120.131.8.26:27017,120.131.8.27:27017,120.131.8.46:27017,mongoprod1.ihealthcn.com:27017,mongoprod2.ihealthcn.com:27017,mongoprod3.ihealthcn.com:27017/paper-king?replicaSet=iHealthMongo
+      - MONGO_RAVEN_URL=mongodb://sa:Nu29Yips@mongoprod1.ihealthcn.com:27017,mongoprod2.ihealthcn.com:27017,mongoprod3.ihealthcn.com:27017/righteous-raven?replicaSet=iHealthMongo&authSource=admin
+      - SECRET=8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo
+      - JWT_SECRET=tctocFi4FLDZtLcbwmxgRJmUj3RHCWwK
+      - AUTH=TRUE
+      - PORT=3080
+      - NODE_ENV=development
+      - RIGHTEOUS_RAVEN_URL=https://raven.ihealthlabs.com.cn
+      - RIGHTEOUS_RAVEN_ID=hwX6aOr1
+      - RIGHTEOUS_RAVEN_KEY=af3da1c0-5cd9-11e7-8401-fb7c0283f83d
+      - APP_ID=wx915efa8b538a4df4
+      - APP_SECRET=d7be675b1fa83094a446087a90cf4f76
+      - AI_HOST=http://172.31.48.39:7011
+      - AI_RETRAIN_HOST=http://172.31.48.39:7016
+      - AI=true
+      - HOLIDAY_SEND=true
+      - LEADER_MOBILE1=15620536989
+      - LEADER_MOBILE2=15620536989
+      - TOKEN_EXP=10m
+      - TOKEN_EXP_FOR_NEW=2m
+      - TOKEN_EXP_FOR_API=1m
+  redis:
+    build:
+      context: .
+      dockerfile: Dockerfile-redis
+
+volumes:
+  ? yarn

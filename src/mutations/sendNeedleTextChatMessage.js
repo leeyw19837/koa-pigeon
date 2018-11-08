@@ -30,6 +30,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     chatRoomId,
     text,
     sourceType,
+    contentCode,
     bgRecordId,
     messagesPatientReplyFlag,
     actualSenderId,
@@ -86,6 +87,9 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
     sourceType: sourceType || sourceTypeMap,
+  }
+  if (contentCode) {
+    newChatMessage.contentCode = contentCode
   }
   if (nosy && actualSenderId) {
     newChatMessage.actualSenderId = actualSenderId
