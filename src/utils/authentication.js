@@ -27,6 +27,7 @@ export const logandAuthForApp = (requestType, funcName, func) => async (
       'professionalLoginForMobile',
       'sendMobileVerificationCode',
       'sendMobileVerificationCodeForWeb',
+      'professionalLogin',
     ].indexOf(funcName) == -1
   ) {
     if (!ctx.userInfo) {

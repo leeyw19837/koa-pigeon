@@ -10,7 +10,7 @@ const {
   RIGHTEOUS_RAVEN_ID,
   RIGHTEOUS_RAVEN_KEY,
 } = process.env
-export const professionalLogin = async (_, args, { getDb }) => {
+export const professionalLogin = async (_, args, { getDb, jwtsign }) => {
   const db = await getDb()
 
   // const clientCodename = context.state.clientCodename
@@ -24,7 +24,7 @@ export const professionalLogin = async (_, args, { getDb }) => {
     throw new Error('用户不存在！')
   }
 
-  return existingDoctor
+  return { ...existingDoctor, jwt: jwtsign({ _id: existingDoctor._id }) }
 }
 export const professionalLoginForWechat = async (
   _,
