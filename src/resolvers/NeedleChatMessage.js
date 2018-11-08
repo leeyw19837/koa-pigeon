@@ -56,11 +56,12 @@ export const sharedNeedleChatMessageResolvers = {
   },
   async actualSender(needleChatMessage, _, { getDb }) {
     const db = await getDb()
-    if (!needleChatMessage.actualSenderId) return null
-    const userId = maybeCreateFromHexString(needleChatMessage.actualSenderId)
+    let actualSenderId = needleChatMessage.actualSenderId
+    if (!actualSenderId) actualSenderId = needleChatMessage.senderId
+    const userId = maybeCreateFromHexString(actualSenderId)
     return await db.collection('users').findOne({
       _id: {
-        $in: [userId, needleChatMessage.actualSenderId],
+        $in: [userId, actualSenderId],
       },
     })
   },
