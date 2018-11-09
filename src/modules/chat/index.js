@@ -18,7 +18,7 @@ export const whoAmI = async (userId, nosy, participants, db) => {
       const user = await db
         .collection('users')
         .findOne({ _id: { $in: [userId, maybeCreateFromHexString(userId)] } })
-      if (user && user.roles === '医助') {
+      if (userId === 'system' || (user && user.roles === '医助')) {
         me = participants.find(user => {
           return user.role === '医助'
         })
@@ -107,9 +107,14 @@ export const sessionFeeder = async (message, db) => {
   let jobExists = isJobExists(jobId)
   const now = new Date()
   const actualId = actualSenderId || senderId
-  const actualSender = await db
-    .collection('users')
-    .findOne({ _id: { $in: [actualId, maybeCreateFromHexString(actualId)] } })
+  const actualSender =
+    actualId === 'system'
+      ? actualId
+      : await db
+          .collection('users')
+          .findOne({
+            _id: { $in: [actualId, maybeCreateFromHexString(actualId)] },
+          })
 
   if (jobExists) {
     let processingSession = await db
@@ -145,7 +150,7 @@ export const sessionFeeder = async (message, db) => {
     setDelayJob(jobId, () => finishSession(db, chatRoomId, 'timeout'), delay)
   } else {
     let initiator = null
-    if (!actualSender.roles) {
+    if (actualSender !== 'system' && !actualSender.roles) {
       initiator = 'PATIENT'
     } else if (actualSender.roles === '医助' && sourceType === 'FROM_CDE') {
       initiator = 'ASSISTANT'

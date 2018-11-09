@@ -3,13 +3,24 @@ import { sendNeedleTextChatMessage } from '../../mutations/sendNeedleTextChatMes
 
 const findPatientByUsername = async ({ username, sourceType }) => {
   const cursor = { needleChatRoomId: { $exists: true } }
-  if (sourceType === 'SMS') {
-    cursor.username = username
-  } else if (sourceType === 'WECHAT') {
+  if (sourceType === 'WECHAT') {
     cursor['wechatInfo.openid'] = username
+  } else {
+    cursor.username = username
   }
   const user = await db.collection('users').findOne(cursor)
   return user
+}
+
+const findAssistantInChatroom = async ({ needleChatRoomId }) => {
+  const room = await db
+    .collection('needleChatRooms')
+    .findOne({ _id: needleChatRoomId })
+  if (!room) return
+
+  const assistant = room.participants.find(p => p.role === '医助')
+  if (!assistant) return
+  return assistant.userId
 }
 
 const insertEvent = async body => {
@@ -30,14 +41,20 @@ export const syncMessageFromOtherSide = async ({
   if (user) {
     const { _id, needleChatRoomId } = user
     const patientId = _id.toString()
+
     const args = {
       userId: patientId,
       chatRoomId: needleChatRoomId,
       text: content,
       sourceType,
     }
+    if (sourceType === 'FROM_RAVEN') {
+      const assistantId = await findAssistantInChatroom({ needleChatRoomId })
+      args.userId = assistantId
+      args.actualSenderId = 'system'
+    }
     await sendNeedleTextChatMessage(null, args, {})
-  } else {
+  } else if (sourceType !== 'FROM_RAVEN') {
     await insertEvent({
       username,
       content,

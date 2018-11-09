@@ -1,6 +1,25 @@
 import { maybeCreateFromHexString } from '../utils'
 import { isEmpty } from 'lodash'
 
+const specialSenderMap = new Map([
+  [
+    'FROM_FOREST',
+    {
+      nickname: '照护森林',
+      avatar:
+        'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1541669820407.png',
+    },
+  ],
+  [
+    'FROM_RAVEN',
+    {
+      nickname: '短信系统',
+      avatar:
+        'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1541670208966.png',
+    },
+  ],
+])
+
 export const NeedleChatMessage = {
   __resolveType(obj, context, info) {
     if (obj.messageType === 'TEXT') {
@@ -58,6 +77,13 @@ export const sharedNeedleChatMessageResolvers = {
     const db = await getDb()
     let actualSenderId = needleChatMessage.actualSenderId
     if (!actualSenderId) actualSenderId = needleChatMessage.senderId
+    if (
+      actualSenderId === 'system' &&
+      specialSenderMap.has(needleChatMessage.sourceType)
+    ) {
+      const specialSender = specialSenderMap.get(needleChatMessage.sourceType)
+      return { _id: 'system', ...specialSender }
+    }
     const userId = maybeCreateFromHexString(actualSenderId)
     return await db.collection('users').findOne({
       _id: {
