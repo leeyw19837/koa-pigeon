@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb'
+import get from 'lodash/get'
 import { sendTxt } from '../common'
 import moment from 'moment'
 
@@ -16,7 +17,7 @@ export const handleReplySms = async (chatRoomId, patientParticipants) => {
     .toArray()
   //   console.log('=======isAssistant', messageArray[0])
 
-  const sourceType = messageArray[0].sourceType
+  const sourceType = get(messageArray[0], 'sourceType')
 
   if (sourceType === 'SMS' || sourceType === 'WECHAT') {
     if (
