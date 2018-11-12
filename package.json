@@ -11,7 +11,8 @@
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
     "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
     "archive": "tar czf pigeon.tar.gz dist/ node_modules/ schemas/",
-    "test": "jest"
+    "test": "jest",
+    "y": "npm i --no-package-lock"
   },
   "config": {
     "mongo_url": "MONGO_URL=mongodb://paperKingDevelopingByiHealth:d3Wrg40dE@mongodev.ihealthcn.com:27017,mongodev.ihealthcn.com:27018,mongodev.ihealthcn.com:27019,mongodev1.ihealthcn.com:27017,mongodev2.ihealthcn.com:27018,mongodev3.ihealthcn.com:27019/paper-king-developing?replicaSet=rs"
