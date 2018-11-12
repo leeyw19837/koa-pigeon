@@ -1,21 +1,21 @@
 import Koa from 'koa'
 import Router from 'koa-router'
 import convert from 'koa-convert'
-import { graphqlKoa } from 'apollo-server-koa'
+import {graphqlKoa} from 'apollo-server-koa'
 import fs from 'fs'
-import { makeExecutableSchema } from 'graphql-tools'
+import {makeExecutableSchema} from 'graphql-tools'
 import cors from 'koa-cors'
 import bodyParser from 'koa-bodyparser'
-import { execute, subscribe } from 'graphql'
-import { createServer } from 'http'
-import { sign } from 'jsonwebtoken'
+import {execute, subscribe} from 'graphql'
+import {createServer} from 'http'
+import {sign} from 'jsonwebtoken'
 import koajwt from 'koa-jwt'
 
 import constructGetDb from 'mongodb-auto-reconnect'
-import { SubscriptionServer } from 'subscriptions-transport-ws'
+import {SubscriptionServer} from 'subscriptions-transport-ws'
 
 import cronJobRouter from './cronJob/router'
-import { Auth, queryAnalyzer } from './middlewares'
+import {Auth, queryAnalyzer} from './middlewares'
 import miniProgramRouter from './miniProgram/router'
 import Mutation from './mutations'
 import Query from './queries'
@@ -26,11 +26,11 @@ import * as Subscription from './subscriptions'
 
 import LoginController from './login/login.controller'
 
-import { Date, formatError } from './utils'
+import {Date, formatError} from './utils'
 import restfulApi from './restful/router'
-import { correctSessions } from './modules/chat'
+import {correctSessions} from './modules/chat'
 
-import { registerAiCalls } from './modules/AI/call'
+import {registerAiCalls} from './modules/AI/call'
 
 const EventEmitter = require('events')
 
@@ -43,29 +43,31 @@ let {
   MONGO_RAVEN_URL,
   SECRET,
   JWT_SECRET,
-  AUTH,
+  AUTH
 } = process.env
-if (!PORT) PORT = '3080'
-if (!NODE_ENV) NODE_ENV = 'development'
-if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
-if (!AUTH) AUTH = 'FALSE'
-;(async () => {
+if (!PORT) 
+  PORT = '3080'
+if (!NODE_ENV) 
+  NODE_ENV = 'development'
+if (!SECRET) 
+  SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
+if (!AUTH) 
+  AUTH = 'FALSE';
+
+(async() => {
   const resolverMap = {
     ...resolvers,
     Subscription,
     Query,
     Mutation,
-    Date,
+    Date
   }
 
   const schemasText = fs
     .readdirSync('./schemas/')
     .map(fileName => fs.readFileSync(`./schemas/${fileName}`, 'utf-8'))
 
-  const schema = makeExecutableSchema({
-    resolvers: resolverMap,
-    typeDefs: schemasText,
-  })
+  const schema = makeExecutableSchema({resolvers: resolverMap, typeDefs: schemasText})
 
   const app = new Koa()
   // if (NODE_ENV === 'production') {   app.use(morgan('combined')) } else {
@@ -74,15 +76,15 @@ if (!AUTH) AUTH = 'FALSE'
   // })
 
   app.use(convert(cors()))
-  app.use(
-    bodyParser({
-      jsonLimit: '30mb',
-      enableTypes: ['json', 'form', 'text'],
-      extendTypes: {
-        text: ['text/xml', 'application/xml'],
-      },
-    }),
-  )
+  app.use(bodyParser({
+    jsonLimit: '30mb',
+    enableTypes: [
+      'json', 'form', 'text'
+    ],
+    extendTypes: {
+      text: ['text/xml', 'application/xml']
+    }
+  }),)
   if (MONGO_URL === undefined) {
     console.error('Run with `yarn docker:dev`!')
     process.exit(-1)
@@ -94,8 +96,8 @@ if (!AUTH) AUTH = 'FALSE'
     getDb,
     jwtsign: payload => {
       console.log(payload, 'payload')
-      return sign(payload, JWT_SECRET, { expiresIn: '7 day' })
-    },
+      return sign(payload, JWT_SECRET, {expiresIn: '7 day'})
+    }
   }
   global.db = await getDb()
   global.ravenDb = await getRavenDb()
@@ -121,63 +123,66 @@ if (!AUTH) AUTH = 'FALSE'
   router.post('/login', LoginController.login)
   router.post('/register', LoginController.register)
 
-  router.use(
-    queryAnalyzer({
-      appendTo: 'BODY',
-      ignores: ['ID', 'String', 'Date', 'Int', 'Boolean', 'Float'],
-    }),
-  ) // 需要打开graphql服务的tracing
+  router.use(queryAnalyzer({
+    appendTo: 'BODY',
+    ignores: [
+      'ID',
+      'String',
+      'Date',
+      'Int',
+      'Boolean',
+      'Float'
+    ]
+  }),) // 需要打开graphql服务的tracing
 
+  // pigeon 认证思路：restful和graphql单独认证，graphql认证,解析authorization将user添加到context中
+  // 然后再所有的query和mutation中增加了前置去认证context中是否包含user，不包含抛出认证错误
+  // graphql认证逻辑和为graphql认证增加context.user：middlewares/UserAuthorization
+  // query和mutation的前置：utils/authentication
   router.use(Auth(JWT_SECRET))
 
-  router.all(
-    `/${SECRET}`,
-    convert(
-      graphqlKoa(ctx => ({
-        context: {
-          ...ctx,
-          ...context,
-        },
-        schema,
-        formatError,
-        tracing: true, // 中间件QueryAnalyzer需要依赖tracing的内容
-      })),
-    ),
-  )
+  // restful认证 先调用login登录（systemUsers表）登陆后带token请求 login：login/login.controller
+  // restful认证校验逻辑：utils/authorization login后默认无roles字段，需要手动添加roles字段
+  router.all(`/${SECRET}`, convert(graphqlKoa(ctx => ({
+    context: {
+      ...ctx,
+      ...context
+    },
+    schema,
+    formatError,
+    tracing: true, // 中间件QueryAnalyzer需要依赖tracing的内容
+  })),),)
 
-  app.use(router.routes()).use(router.allowedMethods())
+  app
+    .use(router.routes())
+    .use(router.allowedMethods())
   if (AUTH === 'TRUE') {
-    app.use(
-      koajwt({ secret: JWT_SECRET }).unless({
-        path: [
-          /^\/public/,
-          '/healthcheck',
-          '/login',
-          '/register',
-          /\/api*/,
-          /\/wx-mini*/,
-          `/${SECRET}`,
-          /\/feedback*/,
-        ],
-      }),
-    )
+    app.use(koajwt({secret: JWT_SECRET}).unless({
+      path: [
+        /^\/public/,
+        '/healthcheck',
+        '/login',
+        '/register',
+        /\/api*/,
+        /\/wx-mini*/,
+        `/${SECRET}`,
+        /\/feedback*/
+      ]
+    }),)
   }
 
   const ws = createServer(app.callback())
   ws.listen(PORT, () => {
     console.log(`Apollo Server is now running on http://localhost:${PORT}`)
-    new SubscriptionServer(
-      {
-        execute,
-        subscribe,
-        schema,
-        onConnect: () => context,
-      },
-      {
-        server: ws,
-        path: '/feedback',
-      },
-    )
+    new SubscriptionServer({
+      execute,
+      subscribe,
+      schema,
+      onConnect: () => context
+    }, {
+      server: ws,
+      path: '/feedback'
+    },)
   })
   console.log(`Running at ${PORT}/${SECRET}; Node env: ${NODE_ENV}`)
   correctSessions(await getDb())

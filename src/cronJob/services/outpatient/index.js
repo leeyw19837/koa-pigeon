@@ -294,11 +294,12 @@ const createNextTreatmentOp = async ({ outpatient, checkInPatientIds }) => {
       const opInstance = opInstances.filter(o =>
         moment(o.outpatientDate).isSame(dateKey, 'day'),
       )[0]
+      const appointmentsWithDateKey = result[dateKey]
       if (opInstance) {
-        const dateApIds = result[dateKey].map(o => o._id)
+        const dateApIds = appointmentsWithDateKey.map(o => o._id)
         const { appointmentsId } = opInstance
         const actualApIds = difference(dateApIds, appointmentsId)
-        const actualPatientIds = result[dateKey]
+        const actualPatientIds = appointmentsWithDateKey
           .filter(o => actualApIds.indexOf(o._id) !== -1)
           .map(o => o.patientId)
         if (actualApIds.length) {
@@ -312,7 +313,7 @@ const createNextTreatmentOp = async ({ outpatient, checkInPatientIds }) => {
         const patientInstance = await createOutpatientInstance({
           dateKey,
           hctId: healthCareTeamId,
-          appointments,
+          appointments: appointmentsWithDateKey,
           outpatientModuleId,
         })
         needAddOp.push(patientInstance)
