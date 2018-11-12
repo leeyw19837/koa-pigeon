@@ -39,9 +39,32 @@ export const syncMessageFromOtherSide = async ({
 }) => {
   const user = await findPatientByUsername({ username, sourceType })
   if (user) {
-    const { _id, needleChatRoomId } = user
+    let { _id, needleChatRoomId } = user
     const patientId = _id.toString()
-
+    if (!needleChatRoomId) {
+      needleChatRoomId = freshId()
+      await db.collection('needleChatRooms').inert({
+        _id: needleChatRoomId,
+        participants: [
+          {
+            userId: patientId,
+            role: user.roles || '患者',
+            lastSeenAt: new Date(),
+            unreadCount: 0,
+          },
+          {
+            userId: '66728d10dc75bc6a43052036',
+            role: '医助',
+            lastSeenAt: new Date(),
+            unreadCount: 0,
+          },
+        ],
+        lastMessageSendAt: new Date('2000-01-01'),
+      })
+      await db
+        .collection('users')
+        .update({ _id }, { $set: { needleChatRoomId } })
+    }
     const args = {
       userId: patientId,
       chatRoomId: needleChatRoomId,
@@ -50,6 +73,7 @@ export const syncMessageFromOtherSide = async ({
     }
     if (sourceType === 'FROM_RAVEN') {
       const assistantId = await findAssistantInChatroom({ needleChatRoomId })
+      if (!assistantId) return
       args.userId = assistantId
       args.actualSenderId = 'system'
     }
