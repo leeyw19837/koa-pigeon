@@ -84,7 +84,7 @@ cronJob.post('/assign-patient-to-cde', async ctx => {
   console.log(
     '============== assign-patient-to-cde start =============from ip:' + ip,
   )
-  if (header.authorization != '4Z21FjF') {
+  if (!authorization(ctx)) {
     return ctx.throw(401, '密码错误或参数不正确')
   }
   await assignPatientToCde()
