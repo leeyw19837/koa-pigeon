@@ -1,6 +1,5 @@
 import pick from 'lodash/pick'
 import omit from 'lodash/omit'
-import 'pinyin4js'
 import { ObjectID } from 'mongodb'
 const moment = require('moment')
 
@@ -109,7 +108,7 @@ export const deletePatientAppointment = async (_, params, context) => {
 }
 
 export const addPatientAppointment = async (_, params, context) => {
-  console.log('addPatientAppointment',params)
+  console.log('addPatientAppointment', params)
   const { institutionId, nickname, source, mobile } = params
 
   const existedUser = await db
