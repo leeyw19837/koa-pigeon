@@ -25,17 +25,24 @@ const sourceTypesProCare = ['FROM_CDE', 'FROM_PATIENT', 'SMS', 'WECHAT']
 export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   const db = getDb === undefined ? global.db : await getDb()
 
-  const {
+  let {
     userId,
     chatRoomId,
     text,
     sourceType,
+    contentCode,
     bgRecordId,
     messagesPatientReplyFlag,
     actualSenderId,
     nosy,
     messageType,
   } = args
+
+  // 待APP升级按新的规则sourceType和contentCode过来以后，可以移除这个if块
+  if (/_\d+$/.test(sourceType)) {
+    contentCode = sourceType
+    sourceType = 'FROM_FOREST'
+  }
 
   const userObjectId = ObjectId.createFromHexString(userId)
 
@@ -86,6 +93,9 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     createdAt: new Date(),
     chatRoomId: chatRoom._id,
     sourceType: sourceType || sourceTypeMap,
+  }
+  if (contentCode) {
+    newChatMessage.contentCode = contentCode
   }
   if (nosy && actualSenderId) {
     newChatMessage.actualSenderId = actualSenderId
