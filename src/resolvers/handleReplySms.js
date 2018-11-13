@@ -17,7 +17,11 @@ export const handleReplySms = async (chatRoomId, patientParticipants) => {
     .toArray()
   //   console.log('=======isAssistant', messageArray[0])
 
+<<<<<<< HEAD
   const sourceType = get(messageArray[0], 'sourceType')
+=======
+  const sourceType = get(messageArray, '0.sourceType')
+>>>>>>> story-1000645
 
   if (sourceType === 'SMS' || sourceType === 'WECHAT') {
     if (
