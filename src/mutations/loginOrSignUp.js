@@ -172,7 +172,7 @@ export const loginOrSignUp = async (_, args, context) => {
       user: newPatient,
     },
     JWT_SECRET,
-    { expiresIn: exp },
+    { expiresIn: TOKEN_EXP_FOR_NEW },
   )
   // console.log('JWT', JWT)
   return {
