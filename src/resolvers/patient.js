@@ -695,3 +695,4 @@ export const Patient = {
     return cdeInfo
   },
 }
+

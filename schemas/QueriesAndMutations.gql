@@ -382,6 +382,11 @@ type Mutation {
     deviceContext: DeviceContextInput
     occurredAt: Date
   ): Boolean
+  # 更新【重新申请加入照护组】状态
+  updateUserArchiveState(
+    patientId: ID!
+    reapplyStatus: String
+  ): Boolean
   addAppointment: Boolean
   changeChatCardStatus(
     messageId: ID!
