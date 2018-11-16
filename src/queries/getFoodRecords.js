@@ -14,8 +14,7 @@ export const getFoodRecords = async (_, args, context) => {
     const patientIds = await db
       .collection('users')
       .find({
-        cdeId,
-        patientState: 'ACTIVE'
+        cdeId
       })
       .map(patient => patient._id.toString())
     cursor.patientId = {

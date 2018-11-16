@@ -1,4 +1,5 @@
 import freshId from 'fresh-id'
+import { ObjectId } from 'mongodb'
 import moment from 'moment'
 import map from 'lodash/map'
 import {
@@ -36,6 +37,8 @@ const assembleTaskDesc = (measuerments,createdAt) => {
 }
 
 export const taskGen = async (measurement, getPairingMethod) => {
+  const userInfo = await db.collection('users').findOne({ _id: ObjectId(measurement.patientId) })
+  if (userInfo.patientState && userInfo.patientState === 'ARCHIVED') return null
   const { bloodGlucoseValue, measurementTime, measuredAt } = measurement
   const now = new Date(Date.now()) // 这样取当前时间虽然看起来比较怪，但是不要改
   if (!moment(now).isSame(moment(measuredAt), 'day')) return null
