@@ -547,7 +547,7 @@ type Mutation {
   # 撤回消息
   withdrawMessage(messageId: ID!, userId: ID!): Boolean
 
-  setArchived(patientId: ID!,archivedReason:String):Boolean
+  setArchived(patientId: ID!,archivedReason:String ,archivedInfo:ArchivedInfoMutation!):Boolean
   unsetArchived(patientId:ID!,outpatientId:ID,appointmentTime:Date):Boolean
 }
 

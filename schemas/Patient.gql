@@ -77,12 +77,23 @@ type MembershipInformation {
 }
 
 type ArchivedInfos {
-  # 归档类型
-  archivedType: ArchivedType
-  # 归档原因
-  archivedReason : String
-  # 归档时间
-  archivedDate : [Date]
+   # 归档类型
+   archivedType: ArchivedType
+   # 归档二级类型
+   archivedSubType: [String]
+   # 补充说明
+   archivedReason : String
+   # 归档时间
+   archivedDate : [Date]
+}
+
+input ArchivedInfoMutation {
+    # 归档类型
+    archivedType: ArchivedType
+    # 归档二级类型
+    archivedSubType: [String]
+    # 补充说明
+    archivedReason : String
 }
 
 enum ArchivedType {
@@ -96,6 +107,8 @@ enum ArchivedType {
   QUIT_VOLUNTARILY
   # 潞河MMC患者
   MMC_PATIENTS
+  # 反归档
+  UNARCHIVED
 }
 
 enum ReapplyStatus {
