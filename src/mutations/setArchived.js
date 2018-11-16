@@ -18,7 +18,7 @@ export const setArchived = async (_, params, context) => {
   const appointments = await db.collection('appointments').find({patientId: patientId, isOutPatient: false}).toArray()
   const user = await db.collection('users').findOne({_id: userObjectId})
   const archivedInfos = get(user, "archivedInfos", [])
-  archivedInfos.unshift({...archivedInfo, "archivedDate": [new Date()]})
+  archivedInfos.unshift({...archivedInfo, archivedDate: [new Date()]})
   await db
     .collection('users')
     .update({
@@ -114,6 +114,15 @@ export const unsetArchived = async (_, params, context) => {
     throw new Error('Patient is not existed!')
   }
 
+  const archivedInfos = get(patient, "archivedInfos", [])
+
+  const archivedInfo = {
+    archivedType: 'UNARCHIVED',
+    archivedSubType: [],
+    archivedReason: "",
+    archivedDate: [new Date()]
+  }
+  archivedInfos.unshift(archivedInfo)
   await db
     .collection('users')
     .update({
@@ -121,6 +130,7 @@ export const unsetArchived = async (_, params, context) => {
     }, {
       $set: {
         patientState: 'ACTIVE',
+        archivedInfos,
       }
     })
 
