@@ -65,6 +65,7 @@ type Patient {
   membershipInformation : MembershipInformation
   archivedInfos: [ArchivedInfos]
   reapplyStatus: ReapplyStatus
+  chatRoomInfos: BasicChatRoomInfos
 }
 
 type MembershipInformation {
@@ -94,6 +95,17 @@ input ArchivedInfoMutation {
     archivedSubType: [String]
     # 补充说明
     archivedReason : String
+}
+
+type BasicChatRoomInfos {
+   _id: ID
+   participants: [Participants]
+   lastSeenAt: Date
+}
+
+type Participants {
+   userId: ID
+   role: String
 }
 
 enum ArchivedType {

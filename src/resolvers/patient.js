@@ -694,5 +694,20 @@ export const Patient = {
     }
     return cdeInfo
   },
+
+  chatRoomInfos: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const chatRoom = await db
+      .collection('needleChatRooms')
+      .find({ 'participants.userId' : patientId })
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .toArray()
+    if (chatRoom && chatRoom.length > 0) {
+      return chatRoom[0]
+    }
+    return null
+  }
 }
 
