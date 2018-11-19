@@ -98,7 +98,7 @@ export const setArchived = async (_, params, context) => {
 
   context
     .response
-    .set('effect-types', 'setArchived')
+    .set('effect-types', 'Patient')
   return true
 }
 
@@ -138,6 +138,6 @@ export const unsetArchived = async (_, params, context) => {
 
   context
     .response
-    .set('effect-types', 'unsetArchived')
+    .set('effect-types', 'Patient')
   return true
 }
