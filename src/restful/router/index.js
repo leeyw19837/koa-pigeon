@@ -25,8 +25,10 @@ restfulRouter.post('/sendMassText', async ctx => {
   ctx.body = result
 })
 
-// restfulRouter.get('/sendCardMassText', async ctx => {   const result = await
-//  sendCardMassText(ctx);   ctx.body = result })
+restfulRouter.post('/sendCardMassText', async ctx => {
+  const result = await sendCardMassText(ctx)
+  ctx.body = result
+})
 
 restfulRouter.post('/syncMessage', async ctx => {
   const { header, ip, body } = ctx.request
