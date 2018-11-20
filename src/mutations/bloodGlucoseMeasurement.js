@@ -158,9 +158,13 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
   const retVal = await db.collection('bloodGlucoses').insertOne(objectToWrite)
   const userId = ObjectID.createFromHexString(patientId)
 
+  console.log('11111++++++++retVal', retVal)
+  console.log('22222++++++++userId', userId)
+
   const patient = await db.collection('users').findOne({ _id: userId })
-  console.log('aaaa++++++++patient', patient.latestBG.measuredAt)
+
   if (moment(measuredAt).isAfter(patient.latestBG.measuredAt)) {
+    console.log('aaaa++++++++patient', patient.latestBG.measuredAt)
     await db.collection('users').update(
       { _id: userId },
       {
