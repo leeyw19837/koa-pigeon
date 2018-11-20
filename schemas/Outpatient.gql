@@ -44,5 +44,6 @@ type Outpatient {
   updatedAt: Date
   patientsCount: Int!
   appointments: [Appointment!]
+  treatmentStates: [TreatmentState!]
   availableAppointmentDates: [Outpatient!]
 }

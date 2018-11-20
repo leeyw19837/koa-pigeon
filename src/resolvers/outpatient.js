@@ -21,6 +21,7 @@ export const Outpatient = {
       .collection('appointments')
       .find({
         _id: { $in: appointmentsId },
+        patientState: { $nin: ['ARCHIVED', 'REMOVED'] },
       })
       .sort({
         createdAt: -1,
@@ -45,5 +46,24 @@ export const Outpatient = {
       })
       .toArray()
     return result
+  },
+  treatmentStates: async outpatient => {
+    const { appointmentsId } = outpatient
+    const treatmentIds = await db
+      .collection('appointments')
+      .distinct('treatmentStateId', {
+        _id: { $in: appointmentsId },
+      })
+    console.log(treatmentIds, '@treatmentIds')
+    return await db
+      .collection('treatmentState')
+      .find({
+        _id: { $in: treatmentIds },
+        patientState: { $nin: ['ARCHIVED', 'REMOVED'] },
+      })
+      .sort({
+        createdAt: -1,
+      })
+      .toArray()
   },
 }

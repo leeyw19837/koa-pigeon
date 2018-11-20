@@ -1,27 +1,78 @@
+type TreatmentBodyCheck {
+  HP: Int
+  LP: Int
+  pulse: Int
+  height: Float
+  weight: Float
+  # 腰围
+  waist: Float
+  # 臀围
+  hip: Float
+  # 餐前血糖(AC)
+  ac: Float
+  # 餐后血糖(PC)
+  pc: Float
+  # 随机血糖
+  randomBloodGlucose: Float
+}
 type TreatmentState {
   _id: ID!
   patient: Patient!
   footAt: Boolean
   footBloodAt: Boolean
   checkIn: Boolean
+
+  # 以上是Yang给足评App用的
+  appointmentTime: Date
+  orderNumber: Int
+  type: String
+  nickname: String
+  hisNumber: String
+  note: String
+  blood: Boolean
+  testBlood: Boolean
+  nutritionAt: Boolean
+  insulinAt: Boolean
+  eyeGroundAt: Boolean
+  quantizationAt: Boolean
+  diagnosis: Boolean
+  healthTech: Boolean
+  print: Boolean
+  app: Boolean
+  bodyCheck: TreatmentBodyCheck
 }
 
-type TreatmentStateRecord{
+type TreatmentStateRecord {
   _id: ID!
   healthCareTeam: HealthCareTeam
-  appointmentTime:Date
-  type:String
-  checkIn:Boolean
-  blood:Boolean
+  appointmentTime: Date
+  type: String
+  checkIn: Boolean
+  blood: Boolean
   footAt: Boolean
-  eyeGroundAt:Boolean
-  insulinAt:Boolean
-  nutritionAt:Boolean
-  quantizationAt:Boolean
-  diagnosis:Boolean
+  eyeGroundAt: Boolean
+  insulinAt: Boolean
+  nutritionAt: Boolean
+  quantizationAt: Boolean
+  diagnosis: Boolean
 }
 
-type TreatmentStateApp{
-  nextRecord:TreatmentStateRecord
-  historyRecords:[TreatmentStateRecord]
+type TreatmentStateApp {
+  nextRecord: TreatmentStateRecord
+  historyRecords: [TreatmentStateRecord]
+}
+
+type UpdateTreatmentResult {
+  status: String
+  tip: String
+}
+
+extend type Mutation {
+  # 更新已预约的信息
+  mutateTreatmentCheckboxs(
+    propName: String!
+    propValue: Boolean!
+    treatmentId: ID!
+    outpatientId: ID!
+  ): UpdateTreatmentResult
 }
