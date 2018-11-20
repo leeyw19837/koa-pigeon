@@ -26,6 +26,7 @@ export const setArchived = async (_, params, context) => {
     }, {
       $set: {
         patientState: 'ARCHIVED',
+        reapplyStatus: 'NOT_APPLIED',
         archivedReason: archivedReason,
         archivedInfos
       }
@@ -130,6 +131,7 @@ export const unsetArchived = async (_, params, context) => {
     }, {
       $set: {
         patientState: 'ACTIVE',
+        reapplyStatus: 'NOT_APPLIED',
         archivedInfos,
       }
     })
