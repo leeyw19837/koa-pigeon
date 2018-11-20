@@ -382,6 +382,11 @@ type Mutation {
     deviceContext: DeviceContextInput
     occurredAt: Date
   ): Boolean
+  # 更新【重新申请加入照护组】状态
+  updateUserArchiveState(
+    patientId: ID!
+    reapplyStatus: String
+  ): Boolean
   addAppointment: Boolean
   changeChatCardStatus(
     messageId: ID!
@@ -542,7 +547,7 @@ type Mutation {
   # 撤回消息
   withdrawMessage(messageId: ID!, userId: ID!): Boolean
 
-  setArchived(patientId: ID!,archivedReason:String):Boolean
+  setArchived(patientId: ID!,archivedReason:String ,archivedInfo:ArchivedInfoMutation!):Boolean
   unsetArchived(patientId:ID!,outpatientId:ID,appointmentTime:Date):Boolean
 }
 

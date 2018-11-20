@@ -63,6 +63,9 @@ type Patient {
   availableAppointmentDates:[Outpatient!]
   hospitalCde: HospitalCde
   membershipInformation : MembershipInformation
+  archivedInfos: [ArchivedInfos]
+  reapplyStatus: ReapplyStatus
+  chatRoomInfos: BasicChatRoomInfos
 }
 
 type MembershipInformation {
@@ -72,6 +75,63 @@ type MembershipInformation {
   serviceEndTime: Date
   # 最近一次支付方式
   methodOfPayment: MethodOfPayment
+}
+
+type ArchivedInfos {
+   # 归档类型
+   archivedType: ArchivedType
+   # 归档二级类型
+   archivedSubType: [String]
+   # 补充说明
+   archivedReason : String
+   # 归档时间
+   archivedDate : [Date]
+}
+
+input ArchivedInfoMutation {
+    # 归档类型
+    archivedType: ArchivedType
+    # 归档二级类型
+    archivedSubType: [String]
+    # 补充说明
+    archivedReason : String
+}
+
+type BasicChatRoomInfos {
+   _id: ID
+   participants: [Participants]
+   lastSeenAt: Date
+}
+
+type Participants {
+   userId: ID
+   role: String
+}
+
+enum ArchivedType {
+  # 直接关闭问医生窗口
+  INVALID_PATIENTS
+  # 电话联系不上
+  PHONECALL_UNAVAILABLE
+  # 多次爽约
+  BREAK_APPOINTMENTS
+  # 患者自动退出
+  QUIT_VOLUNTARILY
+  # 潞河MMC患者
+  MMC_PATIENTS
+  # 反归档
+  UNARCHIVED
+}
+
+enum ReapplyStatus {
+   # 已申请
+   APPLIED
+   # 挂起
+   PENDING
+   # 未申请
+   NOT_APPLIED
+   # 被取消
+   CANCELLED
 }
 
 enum Gender {

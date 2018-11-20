@@ -25,17 +25,24 @@ const sourceTypesProCare = ['FROM_CDE', 'FROM_PATIENT', 'SMS', 'WECHAT']
 export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   const db = getDb === undefined ? global.db : await getDb()
 
-  const {
+  let {
     userId,
     chatRoomId,
     text,
     sourceType,
+    contentCode,
     bgRecordId,
     messagesPatientReplyFlag,
     actualSenderId,
     nosy,
     messageType,
   } = args
+
+  // 待APP升级按新的规则sourceType和contentCode过来以后，可以移除这个if块
+  if (/_\d+$/.test(sourceType)) {
+    contentCode = sourceType
+    sourceType = 'FROM_FOREST'
+  }
 
   const userObjectId = ObjectId.createFromHexString(userId)
 
@@ -87,7 +94,10 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     chatRoomId: chatRoom._id,
     sourceType: sourceType || sourceTypeMap,
   }
-  if (nosy && actualSenderId) {
+  if (contentCode) {
+    newChatMessage.contentCode = contentCode
+  }
+  if (actualSenderId) {
     newChatMessage.actualSenderId = actualSenderId
   }
   if (bgRecordId) {
@@ -98,7 +108,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     newChatMessage.messagesPatientReplyFlag = messagesPatientReplyFlag
   }
 
-  if (process.env.AI === 'true' && participant.role === '患者') {
+  if (process.env.AI === 'true' && participant && participant.role === '患者') {
     // messaged by patient, do AI interface call.
     newChatMessage.contentType = await classify(newChatMessage.text)
     newChatMessage.approved = false
@@ -107,7 +117,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   await db.collection('needleChatMessages').insertOne(newChatMessage)
   await sessionFeeder(newChatMessage, db)
   newChatMessage.options = []
-  if (process.env.AI === 'true' && participant.role === '患者') {
+  if (process.env.AI === 'true' && participant && participant.role === '患者') {
     newChatMessage.options = await categories()
     newChatMessage.intelligentQA = await qa(newChatMessage.text)
     // console.log(JSON.stringify(newChatMessage.intelligentQA))

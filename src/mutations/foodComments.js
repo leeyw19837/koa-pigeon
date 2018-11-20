@@ -44,19 +44,22 @@ export const addFoodComments = async (_, args, context) => {
       desc: `${moment(now).format('MM-DD HH:mm')} 写了一条新的评论`,
       patientId: authorId,
     }
-    await db.collection('interventionTask').insert(newTask)
-    const relatedFoods = await db
-      .collection('foods')
-      .findOne({ _id: foodCircleId })
-    pubsub.publish('interventionTaskDynamics', {
-      ...newTask,
-      _operation: 'ADDED',
-    })
-    pubsub.publish('foodDynamics', {
-      ...relatedFoods,
-      _operation: 'UPDATED',
-      _senderRole: author.roles,
-    })
+    const userInfo = await db.collection('users').findOne({ _id: ObjectId(patientId) })
+    if (userInfo.patientState && userInfo.patientState !== 'ARCHIVED'){
+      await db.collection('interventionTask').insert(newTask)
+      const relatedFoods = await db
+        .collection('foods')
+        .findOne({ _id: foodCircleId })
+      pubsub.publish('interventionTaskDynamics', {
+        ...newTask,
+        _operation: 'ADDED',
+      })
+      pubsub.publish('foodDynamics', {
+        ...relatedFoods,
+        _operation: 'UPDATED',
+        _senderRole: author.roles,
+      })
+    }
   }
 
   //聊天页面插入task气泡

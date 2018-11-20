@@ -9,6 +9,9 @@ export const updatePatientProfile = async (_, args, context) => {
 
   const { username, ...restSetter } = profile
   if (!isEmpty(restSetter)) {
+    if (restSetter.nickname) {
+      restSetter.pinyinName = getPinyinUsername(restSetter.nickname)
+    }
     await db.collection('users').update(
       { _id: ObjectId(patientId) },
       {
@@ -38,3 +41,38 @@ export const updatePatientProfile = async (_, args, context) => {
 
   return true
 }
+
+const getPinyinUsername = name => {
+  const clearName = name.trim()
+  const pinyinFull = PinyinHelper.convertToPinyinString(
+    clearName,
+    '',
+    PinyinFormat.WITHOUT_TONE,
+  )
+  let initial = pinyinFull[0]
+  if (!/[A-Za-z]/.test(initial)) {
+    initial = '~'
+  }
+  const pinyin = {
+    full: pinyinFull,
+    short: PinyinHelper.convertToPinyinString(
+      clearName,
+      '',
+      PinyinFormat.FIRST_LETTER,
+    ),
+    initial,
+  }
+  return pinyin
+}
+
+// archiveApplyStatus
+export const updateUserArchiveState = async (_, args, context) => {
+  const db = await context.getDb()
+  const { patientId, reapplyStatus } = args
+  await db.collection('users').update(
+    { _id: ObjectId(patientId) },
+    { $set: {reapplyStatus}}
+  )
+  return true
+}
+
