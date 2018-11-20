@@ -66,6 +66,7 @@ type Patient {
   archivedInfos: [ArchivedInfos]
   reapplyStatus: ReapplyStatus
   chatRoomInfos: BasicChatRoomInfos
+  BG1NotUseReason: [BG1NotUseReason]!
 }
 
 type MembershipInformation {

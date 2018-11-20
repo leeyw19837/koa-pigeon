@@ -66,7 +66,8 @@ export const PatientPagination = {
   total: async (pp, _, { getDb }) => {
     const db = await getDb()
     const condition = await getCondition(pp, db)
-    return await db.collection('users').count(condition)
+    // return await db.collection('users').count(condition)
+    return 0
   },
   patients: async (pp, _, { getDb }) => {
     const db = await getDb()
@@ -725,7 +726,7 @@ export const Patient = {
     const patientId = patient._id.toString()
     const chatRoom = await db
       .collection('needleChatRooms')
-      .find({ 'participants.userId' : patientId })
+      .find({ 'participants.userId': patientId })
       .sort({ createdAt: -1 })
       .limit(1)
       .toArray()
@@ -733,6 +734,22 @@ export const Patient = {
       return chatRoom[0]
     }
     return null
+  },
+
+  BG1NotUseReason: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    console.log('patientId--->', patientId)
+    let result = []
+    if (patientId) {
+      result = await db
+        .collection('BG1NotUseReason')
+        .find({ patientId })
+        .sort({ createdAt: -1 })
+        .toArray()
+    }
+    console.log('result-->', result)
+    return result
   }
 }
 
