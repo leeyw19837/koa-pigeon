@@ -1,0 +1,27 @@
+
+type BG1NotUseReason {
+  _id: ID!
+  patientId: ID!
+  # 是否使用BG1
+  isUseBG1: Boolean!
+  # 是否领取BG1
+  isGotBG1: Boolean
+  # 不使用BG1的原因
+  reason: String
+  # 是否门诊对比
+  isOutpatientCompare: String
+  # 门诊对比结果
+  compareResult: String
+  # 静脉血值
+  bloodValue: String
+  # BG1测量值
+  BG1Value: String
+  # 以后是否使用BG1
+  isContinueUse: String
+  # 处理人的Id
+  operatorId: ID
+  # 处理人的名称
+  operatorName: String
+  # 处理人的时间
+  operateTime: Date
+}
