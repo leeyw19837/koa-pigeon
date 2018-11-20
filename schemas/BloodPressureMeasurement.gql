@@ -1,0 +1,37 @@
+type BloodPressureMeasurement {
+  _id: ID!
+  patientId: ID!
+  # 收缩压 Measures the pressure in your blood vessels when your heart beats.
+  systolic: Int!
+  # 舒张压 Measures the pressure in your blood vessels when your heart rests between beats.
+  diastolic: Int!
+  heartRate: Int!
+  # The address of the device that was used to take the measurement.
+  measurementDeviceAddress: String!
+  # 测量时间
+  measuredAt: Date
+  manualAddition: Boolean
+}
+
+extend type Query {
+  getPressureHistory(patientId: String!): [BloodPressureMeasurement]
+}
+
+
+extend type Mutation {
+  uploadBloodPressureMeasurement(
+    patientId: ID!
+    # 收缩压 Measures the pressure in your blood vessels when your heart beats.
+    systolic: Int!
+    # 舒张压 Measures the pressure in your blood vessels when your heart rests between beats.
+    diastolic: Int!
+    # 脉搏
+    heartRate: Int!
+    # The address of the device that was used to take the measurement.
+    measurementDeviceAddress: String!
+    # 测量时间
+    measuredAt: Date
+    manualAddition: Boolean
+  ): BloodPressureMeasurement!
+  removeBloodPressureMeasurement(_id: ID!): Boolean!
+}

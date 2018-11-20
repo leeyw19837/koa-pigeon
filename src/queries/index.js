@@ -18,6 +18,7 @@ import * as treatmentPlan from './treatmentPlan'
 import * as treatmentState from './treatmentState'
 import * as treatmentStateApp from './treatmentStateApp'
 import * as treatmentStates from './treatmentStates'
+import * as getPressureHistory from './getPressureHistoy'
 
 import { logQueryOrMutation } from '../utils'
 import * as evaluate from './evaluate'
@@ -121,6 +122,7 @@ const queries = {
   ...getQAList,
   ...fetchChatSnapshots,
   ...aiCall,
+  ...getPressureHistory,
 }
 
 const queriesWithAuthandLog = {}
