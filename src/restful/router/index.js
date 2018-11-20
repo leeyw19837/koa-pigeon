@@ -7,7 +7,11 @@ import { wechatPayment, payNotify } from '../../wechatPay'
 import { aliPayNotify } from '../../alipay/nofity'
 import { syncMessageFromOtherSide } from '../syncMessage/index'
 
-import { sendMassText, sendCardMassText } from '../massText'
+import {
+  sendMassText,
+  sendCardMassText,
+  sendKnowledgeToMiPush,
+} from '../massText'
 
 import { getAllJobs } from '../../modules/delayJob'
 import { aiCallNotify } from '../../modules/AI/call/api'
@@ -27,6 +31,11 @@ restfulRouter.post('/sendMassText', async ctx => {
 
 restfulRouter.post('/sendCardMassText', async ctx => {
   const result = await sendCardMassText(ctx)
+  ctx.body = result
+})
+
+restfulRouter.post('/sendKnowledgeToMiPush', async ctx => {
+  const result = await sendKnowledgeToMiPush(ctx)
   ctx.body = result
 })
 

@@ -87,10 +87,9 @@ export const sendCardMassText = async ctx => {
     })
     .toArray()
 
-  console.log('要推送的人数-->', users.length)
+  console.log(`发送聊天卡片 ->${users.length}人，${title}`)
   const massTextMessages = []
   const patientIds = users.map(o => o._id.toString())
-  const mipushAlias = []
   const chatRooms = await db
     .collection('needleChatRooms')
     .find({
@@ -133,11 +132,10 @@ export const sendCardMassText = async ctx => {
   }
   users.forEach(user => {
     const patientId = user._id.toString()
-    const chatRoom = chatRooms.filter(o =>
+    const chatRoom = chatRooms.find(o =>
       find(o.participants, item => item.userId === patientId),
-    )[0]
+    )
     if (chatRoom) {
-      mipushAlias.push(patientId)
       const message = {
         ...messageTemplate,
         _id: new ObjectID().toString(),
@@ -161,16 +159,30 @@ export const sendCardMassText = async ctx => {
       .collection('needleChatMessages')
       .insert(massTextMessages)
     if (insertResult.result.ok === 1) {
-      await multiSendMiPushForAlias(
-        mipushAlias,
-        'TEXT',
-        '',
-        '',
-        massTextMessages[0].text,
-      )
       pubChatMessages(massTextMessages)
     }
   }
-  console.log('推送成功', massTextMessages.length)
+
+  console.log(`成功发送聊天卡片 ->${massTextMessages.length}人，${title}`)
+  return 'ok'
+}
+
+export const sendKnowledgeToMiPush = async ctx => {
+  const { title, content } = ctx.request.body
+  const users = await db
+    .collection('users')
+    .find({
+      'deviceContext.appVersion': {
+        $gte: '1.6.3.4',
+      },
+      patientState: 'ACTIVE',
+    })
+    .toArray()
+
+  console.log(`发送小米推送 ->${users.length}人，${title}`)
+  const patientIds = users.map(o => o._id.toString())
+
+  await multiSendMiPushForAlias(patientIds, 'TEXT', title, content, '')
+  console.log('推送结束', title)
   return 'ok'
 }
