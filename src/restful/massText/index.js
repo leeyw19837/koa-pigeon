@@ -76,7 +76,7 @@ export const sendMassText = async ctx => {
 }
 
 export const sendCardMassText = async ctx => {
-  const { id, title, content, avatar, type } = ctx.request.body
+  const { id, title, desc, avatar, type } = ctx.request.body
   const users = await db
     .collection('users')
     .find({
@@ -114,7 +114,7 @@ export const sendCardMassText = async ctx => {
         },
         {
           key: 'content',
-          value: content,
+          value: desc,
         },
         {
           key: 'avatar',
@@ -172,7 +172,7 @@ export const sendKnowledgeToMiPush = async ctx => {
   if (env !== 'production') {
     return 'only production allow to send mipush'
   }
-  const { title, content } = ctx.request.body
+  const { title, desc } = ctx.request.body
   const users = await db
     .collection('users')
     .find({
@@ -186,7 +186,7 @@ export const sendKnowledgeToMiPush = async ctx => {
   console.log(`发送小米推送 ->${users.length}人，${title}`)
   const patientIds = users.map(o => o._id.toString())
 
-  await multiSendMiPushForAlias(patientIds, 'TEXT', title, content, '')
+  await multiSendMiPushForAlias(patientIds, 'TEXT', title, desc, '')
   console.log('推送结束', title)
   return 'ok'
 }
