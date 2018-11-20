@@ -13,6 +13,7 @@ export const blogs = async (_, args, context) => {
       type
       avatar
       content
+      desc
       author
       publishedAt
       videoSources

@@ -76,21 +76,20 @@ export const sendMassText = async ctx => {
 }
 
 export const sendCardMassText = async ctx => {
-  const { text, healthCareTeamIds } = ctx.request.body
+  const { id, title, content, avatar, type } = ctx.request.body
   const users = await db
     .collection('users')
     .find({
       'deviceContext.appVersion': {
-        $in: ['1.6.3.4', '1.6.3.5', '1.6.4.1', '1.6.4.3', '1.6.5.1', '1.6.6.1'],
+        $gte: '1.6.3.4',
       },
       patientState: 'ACTIVE',
     })
     .toArray()
 
-  console.log('要推送的人数-->', users.length)
+  console.log(`发送聊天卡片 ->${users.length}人，${title}`)
   const massTextMessages = []
   const patientIds = users.map(o => o._id.toString())
-  const mipushAlias = []
   const chatRooms = await db
     .collection('needleChatRooms')
     .find({
@@ -99,50 +98,52 @@ export const sendCardMassText = async ctx => {
       },
     })
     .toArray()
+  const messageTemplate = {
+    messageType: 'CARD',
+    content: {
+      title,
+      type: 'KNOWLEDGE',
+      body: [
+        {
+          key: 'id',
+          value: id,
+        },
+        {
+          key: 'title',
+          value: title,
+        },
+        {
+          key: 'content',
+          value: content,
+        },
+        {
+          key: 'avatar',
+          value: avatar,
+        },
+        {
+          key: 'type',
+          value: type,
+        },
+      ],
+    },
+    senderId: 'system',
+    sourceType: 'FROM_SYSTEM',
+    createdAt: new Date(),
+  }
   users.forEach(user => {
     const patientId = user._id.toString()
-    const chatRoom = chatRooms.filter(o =>
+    const chatRoom = chatRooms.find(o =>
       find(o.participants, item => item.userId === patientId),
-    )[0]
+    )
     if (chatRoom) {
-      mipushAlias.push(patientId)
       const message = {
+        ...messageTemplate,
         _id: new ObjectID().toString(),
-        messageType: 'CARD',
         content: {
-          title: '如何判断运动量是否合适',
-          type: 'KNOWLEDGE',
-          body: [
-            {
-              key: 'id',
-              value: '5bd196af9116c9a0cc4c139e',
-            },
-            {
-              key: 'title',
-              value: '如何判断运动量是否合适',
-            },
-            {
-              key: 'content',
-              value:
-                '之前的话题里咱们讲过怎么运动能达到降糖效果，但是最近有糖友在后台向我们提问：“我应该运动多长时间才能达到降糖效果”；“运动种类那么多哪种更利于降糖”；“运动时间' +
-                '长，有时会感觉到饥饿，这种情况可以补糖吗”等等。我们将部分糖友的问题整理了出来，下面我们用简洁明了的对话形式告诉大家这些问题的答案。',
-            },
-            {
-              key: 'avatar',
-              value:
-                'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540462127389.png',
-            },
-            {
-              key: 'type',
-              value: 'VIDEO',
-            },
-          ],
+          ...messageTemplate.content,
           toUserId: patientId,
         },
-        senderId: 'system',
         chatRoomId: chatRoom._id,
-        sourceType: 'FROM_SYSTEM',
-        createdAt: new Date(),
       }
       massTextMessages.push(message)
     }
@@ -158,16 +159,34 @@ export const sendCardMassText = async ctx => {
       .collection('needleChatMessages')
       .insert(massTextMessages)
     if (insertResult.result.ok === 1) {
-      await multiSendMiPushForAlias(
-        mipushAlias,
-        'TEXT',
-        '',
-        '',
-        massTextMessages[0].text,
-      )
       pubChatMessages(massTextMessages)
     }
   }
-  console.log('推送成功', massTextMessages.length)
+
+  console.log(`成功发送聊天卡片 ->${massTextMessages.length}人，${title}`)
+  return 'ok'
+}
+
+export const sendKnowledgeToMiPush = async ctx => {
+  const env = process.env.NODE_ENV
+  if (env !== 'production') {
+    return 'only production allow to send mipush'
+  }
+  const { title, content } = ctx.request.body
+  const users = await db
+    .collection('users')
+    .find({
+      'deviceContext.appVersion': {
+        $gte: '1.6.3.4',
+      },
+      patientState: 'ACTIVE',
+    })
+    .toArray()
+
+  console.log(`发送小米推送 ->${users.length}人，${title}`)
+  const patientIds = users.map(o => o._id.toString())
+
+  await multiSendMiPushForAlias(patientIds, 'TEXT', title, content, '')
+  console.log('推送结束', title)
   return 'ok'
 }
