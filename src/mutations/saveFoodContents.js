@@ -59,27 +59,29 @@ export const saveFoodContents = async (_, args, context) => {
     desc: `${moment(now).format('MM-DD HH:mm')} ${foods.latestState}`,
     patientId: patientId,
   }
-  await db.collection('interventionTask').insert(newTask)
-  pubsub.publish('interventionTaskDynamics', {
-    ...newTask,
-    _operation: 'ADDED',
-  })
+  const userInfo = await db.collection('users').findOne({ _id: ObjectId(patientId) })
+  if (userInfo.patientState && userInfo.patientState !== 'ARCHIVED') {
+    await db.collection('interventionTask').insert(newTask)
+    pubsub.publish('interventionTaskDynamics', {
+      ...newTask,
+      _operation: 'ADDED',
+    })
+    //聊天页面插入task气泡
+    const textContent = `上传了${dietMap[measurementTime]}`
+    const sendArgs = {
+      taskId,
+      patientId,
+      textContent,
+      sourceType: 'FROM_SYSTEM',
+      taskType: 'FOOD_CIRCLE',
+    }
+    await insertChat(_, sendArgs, context)
+  }
 
   pubsub.publish('foodDynamics', {
     ...foods,
     _operation: 'ADDED',
   })
-
-  //聊天页面插入task气泡
-  const textContent = `上传了${dietMap[measurementTime]}`
-  const sendArgs = {
-    taskId,
-    patientId,
-    textContent,
-    sourceType: 'FROM_SYSTEM',
-    taskType: 'FOOD_CIRCLE',
-  }
-  await insertChat(_, sendArgs, context)
 
   //app端聊天页面插入饮食卡片
   await insertFoodMessagesIntoChat(_, {

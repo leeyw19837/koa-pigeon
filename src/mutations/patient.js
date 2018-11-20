@@ -64,3 +64,15 @@ const getPinyinUsername = name => {
   }
   return pinyin
 }
+
+// archiveApplyStatus
+export const updateUserArchiveState = async (_, args, context) => {
+  const db = await context.getDb()
+  const { patientId, reapplyStatus } = args
+  await db.collection('users').update(
+    { _id: ObjectId(patientId) },
+    { $set: {reapplyStatus}}
+  )
+  return true
+}
+

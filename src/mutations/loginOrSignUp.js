@@ -175,6 +175,7 @@ export const loginOrSignUp = async (_, args, context) => {
     { expiresIn: TOKEN_EXP_FOR_NEW },
   )
   // console.log('JWT', JWT)
+
   return {
     patientId: newPatient._id,
     didCreateNewPatient: true,

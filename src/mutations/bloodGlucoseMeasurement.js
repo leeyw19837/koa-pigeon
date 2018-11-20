@@ -22,7 +22,7 @@ export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
     digestiveState,
     measurementDeviceModel,
     measuredAt,
-    deviceContext
+    deviceContext,
   } = args
 
   const newFormat = {
@@ -31,19 +31,17 @@ export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
     digestiveState,
     measurementDeviceModel,
     measuredAt,
-    deviceContext
+    deviceContext,
   }
   const dinnerSituation = Object.entries(DigestiveStateLookup).find(
     ([key, value]) => value === digestiveState,
   )[0]
   const convertGlucoseTypeToUSString = value => {
-    if (!value)
-      return ''
+    if (!value) return ''
     return `${Math.round(value * 18)}`
   }
   let bgValue = ''
-  if (bloodGlucose.unit.toLowerCase() === 'mg/dl')
-    bgValue = bloodGlucose.value
+  if (bloodGlucose.unit.toLowerCase() === 'mg/dl') bgValue = bloodGlucose.value
 
   if (bloodGlucose.unit.toLowerCase() === 'mmol/l')
     bgValue = convertGlucoseTypeToUSString(bloodGlucose.value)
@@ -71,42 +69,36 @@ export const saveBloodGlucoseMeasurement = async (_, args, { getDb }) => {
   const nickname = user.nickname
   if (user.healthCareTeamId && user.healthCareTeamId.length > 0) {
     if (parseFloat(bgValue) >= 18 * 10) {
-      await db
-        .collection('warnings')
-        .insertOne({
-          bloodglucoseId: rz._id, // 关联的测量记录
-          bgValue, // 本次记录的血糖值，转换后
-          warningType: 'HIGH_GLUCOSE', // 预备以后有别的警告记录种类
-          dinnerSituation,
-          patientId,
-          nickname,
-          gender: user.gender, // 'male/female',
-          dateOfBirth: user.dateOfBirth,
-          mobile,
-          createdAt: new Date(),
-          healthCareTeamId: user.healthCareTeamId[0]
-        })
+      await db.collection('warnings').insertOne({
+        bloodglucoseId: rz._id, // 关联的测量记录
+        bgValue, // 本次记录的血糖值，转换后
+        warningType: 'HIGH_GLUCOSE', // 预备以后有别的警告记录种类
+        dinnerSituation,
+        patientId,
+        nickname,
+        gender: user.gender, // 'male/female',
+        dateOfBirth: user.dateOfBirth,
+        mobile,
+        createdAt: new Date(),
+        healthCareTeamId: user.healthCareTeamId[0],
+      })
     } else if (parseFloat(bgValue) < 18 * 4) {
-      await db
-        .collection('warnings')
-        .insertOne({
-          bloodglucoseId: rz._id, // 关联的测量记录
-          bgValue, // 本次记录的血糖值，转换后
-          warningType: 'LOW_GLUCOSE', // 预备以后有别的警告记录种类
-          dinnerSituation,
-          patientId,
-          nickname,
-          gender: user.gender, // 'male/female',
-          dateOfBirth: user.dateOfBirth,
-          mobile,
-          createdAt: new Date(),
-          healthCareTeamId: user.healthCareTeamId[0]
-        })
+      await db.collection('warnings').insertOne({
+        bloodglucoseId: rz._id, // 关联的测量记录
+        bgValue, // 本次记录的血糖值，转换后
+        warningType: 'LOW_GLUCOSE', // 预备以后有别的警告记录种类
+        dinnerSituation,
+        patientId,
+        nickname,
+        gender: user.gender, // 'male/female',
+        dateOfBirth: user.dateOfBirth,
+        mobile,
+        createdAt: new Date(),
+        healthCareTeamId: user.healthCareTeamId[0],
+      })
     }
   }
-  return !!retVal.result.ok
-    ? retVal.insertedId
-    : null
+  return !!retVal.result.ok ? retVal.insertedId : null
 }
 export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
   const db = await context.getDb()
@@ -117,7 +109,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
     patientId,
     measurementTime,
     deviceInformation,
-    measuredAt = new Date()
+    measuredAt = new Date(),
   } = args
   const measureTimeChinese = [
     '早餐前',
@@ -127,7 +119,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
     '晚餐前',
     '晚餐后',
     '睡前',
-    '凌晨'
+    '凌晨',
   ]
   const measureTimeEng = [
     'BEFORE_BREAKFAST',
@@ -137,7 +129,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
     'BEFORE_DINNER',
     'AFTER_DINNER',
     'BEFORE_SLEEPING',
-    'MIDNIGHT'
+    'MIDNIGHT',
   ]
   const objFirst = {
     bloodGlucoseValue,
@@ -146,7 +138,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
     patientId,
     measurementTime,
     deviceInformation,
-    measuredAt
+    measuredAt,
   }
   const frId = new ObjectID()
   const objSecond = {
@@ -156,7 +148,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
     labels: [],
     dataStatus: 'ACTIVE',
     createdAt: measuredAt,
-    updatedAt: measuredAt
+    updatedAt: measuredAt,
   }
 
   const objectToWrite = {
@@ -164,6 +156,23 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
     ...objSecond,
   }
   const retVal = await db.collection('bloodGlucoses').insertOne(objectToWrite)
+  const userId = ObjectID.createFromHexString(patientId)
+
+  const patient = await db.collection('users').findOne({ _id: userId })
+
+  if (moment(measuredAt).isAfter(patient.latestBG.measuredAt)) {
+    await db.collection('users').update(
+      { _id: userId },
+      {
+        $set: {
+          'latestBG._id': retVal.ops[0]._id,
+          'latestBG.bloodGlucoseValue': bloodGlucoseValue,
+          'latestBG.measuredAt': measuredAt,
+        },
+      },
+    )
+  }
+
   // 生成干预任务
   const task = await taskGen(objectToWrite)
   if (task) {
@@ -240,19 +249,18 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
     },
   })
   if ('NEEDLE_BG1' === bloodGlucoseDataSource && user && !user.isUseBg1) {
-    await db
-      .collection('users')
-      .update({
-        _id: user._id
-      }, {
-          $set: {
-            isUseBg1: true
-          }
-        })
+    await db.collection('users').update(
+      {
+        _id: user._id,
+      },
+      {
+        $set: {
+          isUseBg1: true,
+        },
+      },
+    )
   }
-  const mobile = user
-    .username
-    .replace('@ijk.com', '')
+  const mobile = user.username.replace('@ijk.com', '')
   const nickname = user.nickname
   if (user.healthCareTeamId && user.healthCareTeamId.length > 0) {
     const isTooDamnHigh = parseFloat(bloodGlucoseValue) >= 18 * 10
@@ -261,7 +269,8 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
       const warning = {
         bloodglucoseId: rz._id, // 关联的测量记录
         bgValue: bloodGlucoseValue, // 本次记录的血糖值，转换后
-        dinnerSituation: measureTimeChinese[measureTimeEng.indexOf(measurementTime)],
+        dinnerSituation:
+          measureTimeChinese[measureTimeEng.indexOf(measurementTime)],
         patientId,
         nickname,
         gender: user.gender, // 'male/female',
@@ -269,7 +278,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
         mobile,
         createdAt: new Date(),
         healthCareTeamId: user.healthCareTeamId[0],
-        warningType: ''
+        warningType: '',
       }
       if (isTooDamnHigh) {
         // console.log('high', bloodGlucoseValue)
@@ -278,16 +287,12 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
         // console.log('low', bloodGlucoseValue)
         warning.warningType = 'LOW_GLUCOSE'
       }
-      await db
-        .collection('warnings')
-        .insertOne(warning)
+      await db.collection('warnings').insertOne(warning)
       pubsub.publish('warningAdded', { warningAdded: warning })
     }
   }
   context.response.set('effect-types', 'saveBloodGlucoseMeasurementNew')
-  return !!retVal.result.ok
-    ? retVal.insertedId
-    : null
+  return !!retVal.result.ok ? retVal.insertedId : null
 }
 
 export const updateRemarkOfBloodglucoses = async (_, args, { getDb }) => {
