@@ -1,5 +1,6 @@
 import { ObjectID } from 'mongodb'
 import find from 'lodash/find'
+import isEmpty from 'lodash/isEmpty'
 
 // 如果有其他检查项已做的话，不能取消签到
 const canBeCancel = treatmentState => {
@@ -77,7 +78,7 @@ const operateUser = async ({
 }) => {
   const defaultSet = {
     latestTSID: treatmentId,
-    updateAt: new Date(),
+    updatedAt: new Date(),
   }
   if (treatmentType === 'first') {
     defaultSet.patientState = value ? 'ACTIVE' : 'HAS_APPOINTMENT'
@@ -96,33 +97,12 @@ const operateUser = async ({
 }
 
 const operateCheckIn = async ({
-  outpatientId,
   treatment,
   appointmentId,
   value,
   treatmentType,
 }) => {
   const { patientId, type, _id } = treatment
-  console.log(treatment._id, '~~')
-  let count = 0
-  if (value) {
-    count = (await getCheckInCounts(outpatientId)) + 1
-  }
-  const condition = value
-    ? {
-        $set: {
-          checkIn: value,
-          orderNumber: count,
-          updateAt: new Date(),
-        },
-      }
-    : {
-        $unset: {
-          orderNumber: '',
-        },
-        $set: { checkIn: false },
-      }
-  await db.collection('treatmentState').update({ _id }, condition)
   await db
     .collection('appointments')
     .update({ _id: appointmentId }, { $set: { isOutPatient: value } })
@@ -144,6 +124,27 @@ export const mutateTreatmentCheckboxs = async (_, args, context) => {
     throw new Error(tip)
   }
   const { type, _id } = appointment
+
+  const timingKey = `timing.${propName}`
+
+  const setObj = {
+    [propName]: propValue,
+    updatedAt: new Date(),
+  }
+  const unSetObj = {}
+  if (propValue) {
+    setObj[timingKey] = new Date()
+    if (propName === 'checkIn')
+      setObj.orderNumber = (await getCheckInCounts(outpatientId)) + 1
+  } else {
+    unSetObj[timingKey] = ''
+    if (propName === 'checkIn') unSetObj.orderNumber = ''
+  }
+
+  const condition = isEmpty(unSetObj)
+    ? { $set: setObj }
+    : { $set: setObj, $unset: unSetObj }
+
   if (propName === 'checkIn') {
     if (!canBeCancel(treatmentState) && !propValue) {
       return {
@@ -152,7 +153,6 @@ export const mutateTreatmentCheckboxs = async (_, args, context) => {
       }
     } else {
       await operateCheckIn({
-        outpatientId,
         treatment: treatmentState,
         appointmentId: _id,
         value: propValue,
@@ -160,16 +160,11 @@ export const mutateTreatmentCheckboxs = async (_, args, context) => {
       })
     }
   }
-
-  const timingKey = `timing.${propName}`
-  const timeCondition = propValue
-    ? { $set: { [timingKey]: new Date() } }
-    : { $unset: { [timingKey]: '' } }
-
-  await db
-    .collection('treatmentState')
-    .update({ _id: treatmentId }, timeCondition)
-
+  // 当抽血的变为true的时候，需要添加验血字段
+  if (propName === 'blood') {
+    setObj.testBlood = propValue ? false : null
+  }
+  await db.collection('treatmentState').update({ _id: treatmentId }, condition)
   return {
     status: 'success',
   }
