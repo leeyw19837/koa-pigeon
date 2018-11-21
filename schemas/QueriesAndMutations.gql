@@ -549,6 +549,20 @@ type Mutation {
 
   setArchived(patientId: ID!,archivedReason:String ,archivedInfo:ArchivedInfoMutation!):Boolean
   unsetArchived(patientId:ID!,outpatientId:ID,appointmentTime:Date):Boolean
+   # 添加BG1未使用原因
+  addBG1NotUseReason(
+    patientId: ID!
+    isUseBG1: Boolean!
+    isGotBG1: Boolean
+    reason: String
+    isOutpatientCompare: String
+    compareResult: String
+    bloodValue: String
+    BG1Value: String
+    isContinueUse: String
+    operatorId: ID
+    operatorName: String
+  ): Boolean
 }
 
 type Subscription {
