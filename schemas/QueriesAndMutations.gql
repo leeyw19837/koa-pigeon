@@ -173,6 +173,10 @@ type Query {
   cdeDutyAdjective: [String]
   cdeDutyPeopleperDay: Int!
   fetchChatSnapshots(qaId: ID!): QAAddition
+  getTakeMedicineList(
+    healthCareTeamId: ID
+    outpatientDate: String
+  ): [TakeMedicinePeople]
 }
 
 type Mutation {
@@ -383,10 +387,7 @@ type Mutation {
     occurredAt: Date
   ): Boolean
   # 更新【重新申请加入照护组】状态
-  updateUserArchiveState(
-    patientId: ID!
-    reapplyStatus: String
-  ): Boolean
+  updateUserArchiveState(patientId: ID!, reapplyStatus: String): Boolean
   addAppointment: Boolean
   changeChatCardStatus(
     messageId: ID!
@@ -549,8 +550,17 @@ type Mutation {
   # 撤回消息
   withdrawMessage(messageId: ID!, userId: ID!): Boolean
 
-  setArchived(patientId: ID!,archivedReason:String ,archivedInfo:ArchivedInfoMutation!):Boolean
-  unsetArchived(patientId:ID!,outpatientId:ID,appointmentTime:Date):Boolean
+  setArchived(
+    patientId: ID!
+    archivedReason: String
+    archivedInfo: ArchivedInfoMutation!
+  ): Boolean
+  unsetArchived(
+    patientId: ID!
+    outpatientId: ID
+    appointmentTime: Date
+  ): Boolean
+  addTakeMedicinePatient(nickname: [String]!): Boolean
 }
 
 type Subscription {

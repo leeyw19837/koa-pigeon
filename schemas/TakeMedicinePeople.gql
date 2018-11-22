@@ -1,0 +1,4 @@
+type TakeMedicinePeople {
+  patientId: ID!
+  nickname(patientId: ID): String
+}
