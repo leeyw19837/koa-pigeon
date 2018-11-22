@@ -160,7 +160,11 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
 
   const patient = await db.collection('users').findOne({ _id: userId })
 
-  if (moment(measuredAt).isAfter(patient.latestBG.measuredAt)) {
+  if (
+    (patient.latestBG &&
+      moment(measuredAt).isAfter(patient.latestBG.measuredAt)) ||
+    !patient.latestBG
+  ) {
     await db.collection('users').update(
       { _id: userId },
       {
