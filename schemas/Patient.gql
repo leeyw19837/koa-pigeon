@@ -60,12 +60,13 @@ type Patient {
   # 用户基本信息（Needle/健康模块/基本信息）
   healthInformation: HealthInformation
   predictionA1c: String
-  availableAppointmentDates:[Outpatient!]
+  availableAppointmentDates: [Outpatient!]
   hospitalCde: HospitalCde
-  membershipInformation : MembershipInformation
+  membershipInformation: MembershipInformation
   archivedInfos: [ArchivedInfos]
   reapplyStatus: ReapplyStatus
   chatRoomInfos: BasicChatRoomInfos
+  BG1NotUseReason: [BG1NotUseReason]!
 }
 
 type MembershipInformation {
@@ -78,34 +79,34 @@ type MembershipInformation {
 }
 
 type ArchivedInfos {
-   # 归档类型
-   archivedType: ArchivedType
-   # 归档二级类型
-   archivedSubType: [String]
-   # 补充说明
-   archivedReason : String
-   # 归档时间
-   archivedDate : [Date]
+  # 归档类型
+  archivedType: ArchivedType
+  # 归档二级类型
+  archivedSubType: [String]
+  # 补充说明
+  archivedReason: String
+  # 归档时间
+  archivedDate: [Date]
 }
 
 input ArchivedInfoMutation {
-    # 归档类型
-    archivedType: ArchivedType
-    # 归档二级类型
-    archivedSubType: [String]
-    # 补充说明
-    archivedReason : String
+  # 归档类型
+  archivedType: ArchivedType
+  # 归档二级类型
+  archivedSubType: [String]
+  # 补充说明
+  archivedReason: String
 }
 
 type BasicChatRoomInfos {
-   _id: ID
-   participants: [Participants]
-   lastSeenAt: Date
+  _id: ID
+  participants: [Participants]
+  lastSeenAt: Date
 }
 
 type Participants {
-   userId: ID
-   role: String
+  userId: ID
+  role: String
 }
 
 enum ArchivedType {
@@ -124,14 +125,14 @@ enum ArchivedType {
 }
 
 enum ReapplyStatus {
-   # 已申请
-   APPLIED
-   # 挂起
-   PENDING
-   # 未申请
-   NOT_APPLIED
-   # 被取消
-   CANCELLED
+  # 已申请
+  APPLIED
+  # 挂起
+  PENDING
+  # 未申请
+  NOT_APPLIED
+  # 被取消
+  CANCELLED
 }
 
 enum Gender {
@@ -141,22 +142,22 @@ enum Gender {
 
 # 会员类型枚举（买的什么会员产品）
 enum MembershipType {
-   # 包年服务（线上服务+试纸）
-   YEAR_SERVICE
-   # 包年服务（线上服务）
-   YEARLY_SERVICE_SERVICE_ONLY
-   # 包季服务（线上服务）
-   QUARTERLY_SERVICE_SERVICE_ONLY
-   # 连续包季服务（线上服务）
-   CONTINUOUS_QUARTERLY_SERVICE_SERVICE_ONLY
+  # 包年服务（线上服务+试纸）
+  YEAR_SERVICE
+  # 包年服务（线上服务）
+  YEARLY_SERVICE_SERVICE_ONLY
+  # 包季服务（线上服务）
+  QUARTERLY_SERVICE_SERVICE_ONLY
+  # 连续包季服务（线上服务）
+  CONTINUOUS_QUARTERLY_SERVICE_SERVICE_ONLY
 }
 
 # 会员支付方式
 enum MethodOfPayment {
-    # 支付宝
-    ALIPAY
-    # 微信支付
-    WECHAT
+  # 支付宝
+  ALIPAY
+  # 微信支付
+  WECHAT
 }
 
 input ProfileInput {
@@ -165,19 +166,23 @@ input ProfileInput {
   height: Int
   weight: Int
   username: String
-  remarks:String
+  remarks: String
 }
 
 input InputPatientFilter {
   cdeId: ID
   # part of nickname
   namePattern: String
+  isRecentCLR: Boolean
+  isContinuousNonMonitor: Boolean
 }
 
 type PatientFilter {
   cdeId: ID
   # part of nickname
   namePattern: String
+  isRecentCLR: Boolean
+  isContinuousNonMonitor: Boolean
 }
 
 type NameCatalog {

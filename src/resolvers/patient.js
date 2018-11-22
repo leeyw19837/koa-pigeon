@@ -6,9 +6,9 @@ import moment from 'moment'
 import axios from 'axios'
 import { getMeasureFeedback } from '../cronJob/controller/getMeasureFeedback'
 
-const getCondition = ({ filter }) => {
-  const { namePattern, cdeId } = filter
-  const condition = {
+const getCondition = async ({ filter }, db) => {
+  const { namePattern, cdeId, isRecentCLR, isContinuousNonMonitor } = filter
+  let condition = {
     patientState: {
       $nin: ['REMOVED', 'POTENTIAL'],
     },
@@ -32,20 +32,46 @@ const getCondition = ({ filter }) => {
       },
     ]
   }
-
   if (cdeId) condition.cdeId = cdeId
+
+  if (isRecentCLR) {
+    // console.log('aaaa=====isRecentCLR', isRecentCLR)
+    condition = {
+      $and: [
+        condition,
+        {
+          'latestCLR.glycatedHemoglobin': { $gte: '7.0' },
+        },
+      ],
+    }
+  }
+
+  if (isContinuousNonMonitor) {
+    const timeOf14Ago = new Date(moment().subtract(13, 'days'))
+    // console.log('aaaa=====isContinuousNonMonitor', timeOf14Ago)
+    condition = {
+      $and: [
+        condition,
+        {
+          'latestBG.measuredAt': { $lt: timeOf14Ago },
+        },
+      ],
+    }
+  }
+
   return condition
 }
+
 export const PatientPagination = {
   total: async (pp, _, { getDb }) => {
     const db = await getDb()
-    const condition = getCondition(pp)
-
+    const condition = await getCondition(pp, db)
     return await db.collection('users').count(condition)
+    // return 0
   },
   patients: async (pp, _, { getDb }) => {
     const db = await getDb()
-    const condition = getCondition(pp)
+    const condition = await getCondition(pp, db)
     const { startIndex, stopIndex } = pp.slice
     return await db
       .collection('users')
@@ -57,7 +83,7 @@ export const PatientPagination = {
   },
   catalog: async (pp, _, { getDb }) => {
     const db = await getDb()
-    const condition = getCondition(pp)
+    const condition = await getCondition(pp, db)
     const data = await db
       .collection('users')
       .aggregate([
@@ -700,7 +726,7 @@ export const Patient = {
     const patientId = patient._id.toString()
     const chatRoom = await db
       .collection('needleChatRooms')
-      .find({ 'participants.userId' : patientId })
+      .find({ 'participants.userId': patientId })
       .sort({ createdAt: -1 })
       .limit(1)
       .toArray()
@@ -708,6 +734,20 @@ export const Patient = {
       return chatRoom[0]
     }
     return null
+  },
+
+  BG1NotUseReason: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    let result = []
+    if (patientId) {
+      result = await db
+        .collection('BG1NotUseReason')
+        .find({ patientId })
+        .sort({ createdAt: -1 })
+        .toArray()
+    }
+    return result
   }
 }
 

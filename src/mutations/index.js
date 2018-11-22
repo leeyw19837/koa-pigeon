@@ -52,6 +52,7 @@ import * as unsetArchived from './setArchived'
 import * as aiCall from './aiCall'
 import * as uploadBloodPressureMeasurement from './bloodPressure'
 import * as treatmentState from './treatmentState'
+import * as addBG1NotUseReason from './addBG1NotUseReason'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -114,6 +115,7 @@ const mutations = {
   ...aiCall,
   ...uploadBloodPressureMeasurement,
   ...treatmentState,
+  ...addBG1NotUseReason,
 }
 
 const mutationsWithAuthandLog = {}
