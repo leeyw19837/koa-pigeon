@@ -55,7 +55,7 @@ export const Outpatient = {
         _id: { $in: appointmentsId },
       })
     console.log(treatmentIds, '@treatmentIds')
-    return await db
+    const treatmentStatesArray = await db
       .collection('treatmentState')
       .find({
         _id: { $in: treatmentIds },
@@ -65,5 +65,21 @@ export const Outpatient = {
         createdAt: -1,
       })
       .toArray()
+    if (treatmentStatesArray && treatmentStatesArray.length > 0) {
+      for (let i = 0; i < treatmentStatesArray.length; i++) {
+        const patientId = treatmentStatesArray[i].patientId
+        if (patientId) {
+          const BG1NotUseReasonArray = await db
+            .collection('BG1NotUseReason')
+            .find({ patientId })
+            .sort({ createdAt: -1 })
+            .toArray()
+          treatmentStatesArray[i].BG1NotUseReason = BG1NotUseReasonArray
+        } else {
+          treatmentStatesArray[i].BG1NotUseReason = []
+        }
+      }
+    }
+    return treatmentStatesArray
   },
 }

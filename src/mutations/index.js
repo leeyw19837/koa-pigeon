@@ -116,11 +116,8 @@ const mutations = {
   ...aiCall,
   ...uploadBloodPressureMeasurement,
   ...treatmentState,
-<<<<<<< HEAD
   ...addBG1NotUseReason,
-=======
   ...addTakeMedicinePatient,
->>>>>>> e772b9908007855f2902fe8f9174e12060ec35de
 }
 
 const mutationsWithAuthandLog = {}
