@@ -27,6 +27,7 @@ type TreatmentState {
   orderNumber: Int
   type: String
   nickname: String
+  patientId: ID
   hisNumber: String
   note: String
   blood: Boolean
@@ -40,6 +41,7 @@ type TreatmentState {
   print: Boolean
   app: Boolean
   bodyCheck: TreatmentBodyCheck
+  BG1NotUseReason:[BG1NotUseReason]
 }
 
 type TreatmentStateRecord {
@@ -79,6 +81,7 @@ extend type Mutation {
   # 更新用户体征测量值
   mutateTreatmentSign(
     treatmentId: ID!
+    patientId:String
     treatmentSign:TreatmentSign
   ):Boolean
 

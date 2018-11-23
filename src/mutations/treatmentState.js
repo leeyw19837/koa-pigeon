@@ -1,6 +1,8 @@
-import {ObjectID} from 'mongodb'
+import { ObjectID } from 'mongodb'
 import find from 'lodash/find'
 import moment from 'moment'
+import isEmpty from 'lodash/isEmpty'
+
 // 如果有其他检查项已做的话，不能取消签到
 const canBeCancel = treatmentState => {
   const shouldChecks = [
@@ -25,21 +27,21 @@ const canBeCancel = treatmentState => {
  * @param {*} outpatientId
  */
 const getCheckInCounts = async outpatientId => {
-  const {appointmentsId} = await db
+  const { appointmentsId } = await db
     .collection('outpatients')
-    .findOne({_id: outpatientId})
+    .findOne({ _id: outpatientId })
   const treatmentStateIds = await db
     .collection('appointments')
     .distinct('treatmentStateId', {
-      _id: {$in: appointmentsId},
-      patientState: {$nin: ['REMOVED', 'ARCHIVED']},
+      _id: { $in: appointmentsId },
+      patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
       isOutPatient: true,
     })
 
   const aps = await db
     .collection('treatmentState')
-    .find({_id: {$in: treatmentStateIds}, checkIn: true})
-    .sort({orderNumber: -1})
+    .find({ _id: { $in: treatmentStateIds }, checkIn: true })
+    .sort({ orderNumber: -1 })
     .limit(1)
     .toArray()
   return aps.length ? aps[0].orderNumber : 1
@@ -54,14 +56,14 @@ const getPreyearTime = async patientId => {
     .collection('appointments')
     .find({
       patientId,
-      patientState: {$nin: ['REMOVED', 'ARCHIVED']},
+      patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
     })
     .sort({
       appointmentTime: -1,
     })
     .toArray()
-  const {appointmentTime} =
-  find(appointments, o => /year|first/g.test(o.type)) || {}
+  const { appointmentTime } =
+    find(appointments, o => /year|first/g.test(o.type)) || {}
   return appointmentTime
 }
 
@@ -70,14 +72,14 @@ const getPreyearTime = async patientId => {
  * @param {*} param0
  */
 const operateUser = async ({
-                             patientId,
-                             treatmentId,
-                             treatmentType,
-                             value,
-                           }) => {
+  patientId,
+  treatmentId,
+  treatmentType,
+  value,
+}) => {
   const defaultSet = {
     latestTSID: treatmentId,
-    updateAt: new Date(),
+    updatedAt: new Date(),
   }
   if (treatmentType === 'first') {
     defaultSet.patientState = value ? 'ACTIVE' : 'HAS_APPOINTMENT'
@@ -90,60 +92,55 @@ const operateUser = async ({
   await db
     .collection('users')
     .update(
-      {_id: ObjectID.createFromHexString(patientId)},
-      {$set: defaultSet},
+      { _id: ObjectID.createFromHexString(patientId) },
+      { $set: defaultSet },
     )
 }
 
-const operateCheckIn = async ({
-                                outpatientId,
-                                treatment,
-                                appointmentId,
-                                value,
-                                treatmentType,
-                              }) => {
-  const {patientId, type, _id} = treatment
-  console.log(treatment._id, '~~')
-  let count = 0
-  if (value) {
-    count = (await getCheckInCounts(outpatientId)) + 1
-  }
-  const condition = value
-    ? {
-      $set: {
-        checkIn: value,
-        orderNumber: count,
-        updateAt: new Date(),
-      },
-    }
-    : {
-      $unset: {
-        orderNumber: '',
-      },
-      $set: {checkIn: false},
-    }
-  await db.collection('treatmentState').update({_id}, condition)
+const operateCheckIn = async ({ treatment, appointmentId, value }) => {
+  const { patientId, type, _id } = treatment
   await db
     .collection('appointments')
-    .update({_id: appointmentId}, {$set: {isOutPatient: value}})
-  await operateUser({patientId, treatmentType: type, treatmentId: _id, value})
+    .update({ _id: appointmentId }, { $set: { isOutPatient: value } })
+  await operateUser({ patientId, treatmentType: type, treatmentId: _id, value })
 }
 
 export const mutateTreatmentCheckboxs = async (_, args, context) => {
-  const {propName, propValue, treatmentId, outpatientId} = args
+  const { propName, propValue, treatmentId, outpatientId } = args
   const treatmentState = await db
     .collection('treatmentState')
-    .findOne({_id: treatmentId})
+    .findOne({ _id: treatmentId })
   const appointment = await db.collection('appointments').findOne({
     treatmentStateId: treatmentId,
-    patientState: {$nin: ['REMOVED', 'ARCHIVED']},
+    patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
   })
   if (!treatmentState || !appointment) {
     const tip = `Can't not find ${treatmentId} for appointment or treateState, this is not a correct _id`
     console.log(`------------ ${tip} -------------`)
     throw new Error(tip)
   }
-  const {type, _id} = appointment
+  const { type, _id } = appointment
+
+  const timingKey = `timing.${propName}`
+
+  const setObj = {
+    [propName]: propValue,
+    updatedAt: new Date(),
+  }
+  const unSetObj = {}
+  if (propValue) {
+    setObj[timingKey] = new Date()
+    if (propName === 'checkIn')
+      setObj.orderNumber = (await getCheckInCounts(outpatientId)) + 1
+  } else {
+    unSetObj[timingKey] = ''
+    if (propName === 'checkIn') unSetObj.orderNumber = ''
+  }
+
+  const condition = isEmpty(unSetObj)
+    ? { $set: setObj }
+    : { $set: setObj, $unset: unSetObj }
+
   if (propName === 'checkIn') {
     if (!canBeCancel(treatmentState) && !propValue) {
       return {
@@ -152,24 +149,18 @@ export const mutateTreatmentCheckboxs = async (_, args, context) => {
       }
     } else {
       await operateCheckIn({
-        outpatientId,
         treatment: treatmentState,
         appointmentId: _id,
         value: propValue,
-        treatmentType: type,
       })
     }
   }
 
-  const timingKey = `timing.${propName}`
-  const timeCondition = propValue
-    ? {$set: {[timingKey]: new Date()}}
-    : {$unset: {[timingKey]: ''}}
-
-  await db
-    .collection('treatmentState')
-    .update({_id: treatmentId}, timeCondition)
-
+  // 当抽血的变为true的时候，需要添加验血字段
+  if (propName === 'blood') {
+    setObj.testBlood = propValue ? false : null
+  }
+  await db.collection('treatmentState').update({ _id: treatmentId }, condition)
   return {
     status: 'success',
   }
@@ -178,54 +169,47 @@ const getBMI = (weight, height) =>
   weight && height ? (weight / Math.pow(height / 100, 2)).toFixed(2) : null
 
 export const mutateTreatmentSign = async (_, args, context) => {
-  const {treatmentId, patientId, treatmentSign} = args;
+  const { treatmentId, patientId, treatmentSign } = args
   // 传入treatment user and so on
   await db
     .collection('treatmentState')
-    .update(
-      {_id: treatmentId},
-      {$set: {bodyCheck: treatmentSign,}}
-    )
-console.log(args)
-  const {height, weight, HP, LP} = treatmentSign
+    .update({ _id: treatmentId }, { $set: { bodyCheck: treatmentSign } })
+  console.log(args)
+  const { height, weight, HP, LP } = treatmentSign
 
-  await db
-    .collection('users')
-    .update(
-      {_id: ObjectID.createFromHexString(patientId)},
-      {
-        $set: {height, weight, HP, LP},
-      },
-    )
+  await db.collection('users').update(
+    { _id: ObjectID.createFromHexString(patientId) },
+    {
+      $set: { height, weight, HP, LP },
+    },
+  )
 
-  const isCs = await db
-    .collection('caseRecord')
-    .findOne({
-      patientId,
-      caseRecordAt: {
-        $gte: moment().startOf('day')._d,
-        $lt: moment().endOf('day')._d,
-      },
-    })
+  const isCs = await db.collection('caseRecord').findOne({
+    patientId,
+    caseRecordAt: {
+      $gte: moment().startOf('day')._d,
+      $lt: moment().endOf('day')._d,
+    },
+  })
 
   if (isCs) {
-    const {caseContent} = isCs
-    const {bodyCheckup} = caseContent
-    await db
-      .collection('caseRecord').update(
-        {
-          _id: isCs._id,
+    const { caseContent } = isCs
+    const { bodyCheckup } = caseContent
+    await db.collection('caseRecord').update(
+      {
+        _id: isCs._id,
+      },
+      {
+        $set: {
+          'caseContent.bodyCheckup.height': height || bodyCheckup.height,
+          'caseContent.bodyCheckup.weight': weight || bodyCheckup.weight,
+          'caseContent.bodyCheckup.HP': HP || bodyCheckup.HP,
+          'caseContent.bodyCheckup.LP': LP || bodyCheckup.LP,
+          'caseContent.bodyCheckup.bmi':
+            getBMI(weight, height) || bodyCheckup.bmi,
         },
-        {
-          $set: {
-            'caseContent.bodyCheckup.height': height || bodyCheckup.height,
-            'caseContent.bodyCheckup.weight': weight || bodyCheckup.weight,
-            'caseContent.bodyCheckup.HP': HP || bodyCheckup.HP,
-            'caseContent.bodyCheckup.LP': LP || bodyCheckup.LP,
-            'caseContent.bodyCheckup.bmi': getBMI(weight, height) || bodyCheckup.bmi,
-          },
-        },
-      )
+      },
+    )
   }
-  return true;
+  return true
 }
