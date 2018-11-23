@@ -58,6 +58,7 @@ import { logQueryOrMutation } from '../utils'
 
 import { logandAuthForApp } from '../utils/authentication'
 import * as bloodGlucoese from './bloodGlucoses'
+import * as addTakeMedicinePatient from './addTakeMedicinePatient'
 
 const mutations = {
   ...assessmentTime,
@@ -115,7 +116,11 @@ const mutations = {
   ...aiCall,
   ...uploadBloodPressureMeasurement,
   ...treatmentState,
+<<<<<<< HEAD
   ...addBG1NotUseReason,
+=======
+  ...addTakeMedicinePatient,
+>>>>>>> e772b9908007855f2902fe8f9174e12060ec35de
 }
 
 const mutationsWithAuthandLog = {}
