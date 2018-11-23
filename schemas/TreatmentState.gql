@@ -75,4 +75,29 @@ extend type Mutation {
     treatmentId: ID!
     outpatientId: ID!
   ): UpdateTreatmentResult
+
+  # 更新用户体征测量值
+  mutateTreatmentSign(
+    treatmentId: ID!
+    treatmentSign:TreatmentSign
+  ):Boolean
+
+}
+
+input TreatmentSign {
+      HP: Int
+      LP: Int
+      pulse: Int
+      height: Float
+      weight: Float
+      # 腰围
+      waist: Float
+      # 臀围
+      hip: Float
+      # 餐前血糖(AC)
+      ac: Float
+      # 餐后血糖(PC)
+      pc: Float
+      # 随机血糖
+      randomBloodGlucose: Float
 }
