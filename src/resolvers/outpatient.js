@@ -73,6 +73,7 @@ export const Outpatient = {
             .collection('BG1NotUseReason')
             .find({ patientId })
             .sort({ createdAt: -1 })
+            .limit(1)
             .toArray()
           treatmentStatesArray[i].BG1NotUseReason = BG1NotUseReasonArray
         } else {
