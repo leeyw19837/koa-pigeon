@@ -259,6 +259,18 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
         },
       },
     )
+    const BG1UseInfoArray = await db.collection('BG1NotUseReason').find({ patientId }).toArray()
+    if (BG1UseInfoArray && BG1UseInfoArray.length === 0) {
+      await db.collection('BG1NotUseReason').insertOne(
+        {
+          _id: new ObjectID().toString(),
+          patientId,
+          isUseBG1: rrue,
+          operateTime: new Date(),
+          createdAt: new Date(),
+        },
+      )
+    }
   }
   const mobile = user.username.replace('@ijk.com', '')
   const nickname = user.nickname
