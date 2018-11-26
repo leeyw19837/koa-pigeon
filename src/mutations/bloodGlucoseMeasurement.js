@@ -260,7 +260,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
       },
     )
     const BG1UseInfoArray = await db.collection('BG1NotUseReason').find({ patientId }).toArray()
-    if (BG1UseInfoArray && BG1UseInfoArray.length === 0) {
+    if (!BG1UseInfoArray || (BG1UseInfoArray && BG1UseInfoArray.length === 0)) {
       await db.collection('BG1NotUseReason').insertOne(
         {
           _id: new ObjectID().toString(),
