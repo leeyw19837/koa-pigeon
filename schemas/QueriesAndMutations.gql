@@ -174,8 +174,8 @@ type Query {
   cdeDutyPeopleperDay: Int!
   fetchChatSnapshots(qaId: ID!): QAAddition
   getTakeMedicineList(
-    healthCareTeamId: ID
-    outpatientDate: String
+    healthCareTeamId: ID!
+    outpatientDate: String!
   ): [TakeMedicinePeople]
 }
 
@@ -574,7 +574,9 @@ type Mutation {
     outpatientId: ID
     appointmentTime: Date
   ): Boolean
-  addTakeMedicinePatient(nickname: [String]!): Boolean
+  addTakeMedicinePatient(patientId: ID!): Boolean
+  removeTakeMedicinePatient(itemId: ID!): Boolean
+  editTakeMedicinePatient(itemId: ID!, patientId: ID!): Boolean
 }
 
 type Subscription {

@@ -3,10 +3,9 @@ export const getTakeMedicineList = async (_, args, context) => {
   const db = await context.getDb()
 
   const { healthCareTeamId, outpatientDate } = args
-
-  const chooseDay = outpatientDate || new Date()
-  const start = moment(chooseDay).startOf('d')._d
-  const end = moment(chooseDay).endOf('d')._d
+  const date = new Date(outpatientDate)
+  const start = moment(date).startOf('d')._d
+  const end = moment(date).endOf('d')._d
   const userLits = await db
     .collection('event')
     .find({
