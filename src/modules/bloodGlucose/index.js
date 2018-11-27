@@ -47,7 +47,13 @@ export const taskGen = async (measurement, getPairingMethod) => {
   const now = new Date(Date.now()) // 这样取当前时间虽然看起来比较怪，但是不要改
   if (!moment(now).isSame(moment(measuredAt), 'day')) return null
 
-  const latestHbA1c = get(userInfo, 'latestCLR.glycatedHemoglobin', '99')
+  let latestHbA1c = await db
+    .collection('clinicalLabResults')
+    .find({ patientId: measurement.patientId })
+    .sort({ testDate: -1 })
+    .limit(1)
+    .toArray()
+  latestHbA1c = get(latestHbA1c, '0.glycatedHemoglobin', 99)
 
   const newTask = {
     _id: freshId(),
