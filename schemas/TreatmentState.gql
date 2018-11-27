@@ -85,6 +85,11 @@ extend type Mutation {
     treatmentSign:TreatmentSign
   ):Boolean
 
+  mutateUserAppInfo(
+    patientId:ID!
+    notUseAppReason:String!
+  ):Boolean
+
 }
 
 input TreatmentSign {
