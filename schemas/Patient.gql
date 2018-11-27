@@ -34,6 +34,8 @@ type Patient {
   useNeedle: Boolean
   isUseBg1: Boolean
   notUseBg1Reason: String
+  notUseAppReason: String
+  deviceContext: DeviceContext
   useSPT: Boolean
   usePublicNumber: Boolean
   isLiDocter: Boolean
