@@ -26,6 +26,7 @@ type InterventionTask {
   # 对应的饮食圈
   foods: Foods
   state: InterventionTaskState!
+  riskLevel: Int
   createdAt: Date!
   updatedAt: Date!
   patient: Patient!
