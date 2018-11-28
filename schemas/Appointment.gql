@@ -67,6 +67,11 @@ type AdditionInfo {
   mgtAppointmentTime: Date
 }
 
+type AppointmentResult {
+  patientId: ID
+  treatmentStateId: ID
+}
+
 extend type Query {
   getAdditionInfo(patientId: ID!, appointmentTime: Date): AdditionInfo
 }

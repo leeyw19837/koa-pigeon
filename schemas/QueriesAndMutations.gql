@@ -522,12 +522,12 @@ type Mutation {
     healthTech: Boolean
     quantizationAt: Boolean
     note: String
-  ): Boolean
+  ): AppointmentResult
   updateOutpatientStates(
     patientId: ID
     appointmentTime: Date
     outpatientId: ID
-  ): Boolean
+  ): String
   # 更新问答状态
   updateQAStatus(
     qaId: ID!

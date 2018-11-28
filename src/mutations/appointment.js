@@ -173,7 +173,7 @@ export const addPatientAppointment = async (_, params, context) => {
     const currentDayOutPatientInfo = await db
       .collection('outpatients')
       .findOne({ _id: currentOutPatientId})
-    await updateOutpatientStates(
+    const treatmentStateId = await updateOutpatientStates(
       null,
       { patientId: patientId.toString(),
         appointmentTime: currentDayOutPatientInfo.outpatientDate,
@@ -181,10 +181,16 @@ export const addPatientAppointment = async (_, params, context) => {
       },
       context
     )
+    return {
+      patientId,
+      treatmentStateId
+    }
   }
-
   context.response.set('effect-types', 'PatientList,PatientDetail')
-  return true
+  return {
+    patientId,
+    treatmentStateId: '',
+  }
 }
 
 const syncInfo = async ({ patientId, key, value }) => {
@@ -672,7 +678,7 @@ export const updateOutpatientStates = async (_, params, context) => {
     },
   )
   // context.response.set('effect-types', 'PatientList,PatientDetail')
-  return true
+  return treatmentStateId
 }
 
 /**
