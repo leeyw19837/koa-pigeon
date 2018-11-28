@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { ObjectId } from 'mongodb'
 export const getOpModules = async outpatientModuleIds => {
   const cursor = {
     'dontDisturb.examineReminder': { $ne: true },
@@ -36,17 +37,25 @@ export const getNextOutpatients = async nextDays => {
 }
 
 export const getAppointments = async appointmentIds => {
-  // const startAt = moment(outpatientDate).startOf('day')._d
-  // const endAt = moment(outpatientDate).endOf('day')._d
   const appointments = await db
     .collection('appointments')
     .find({
       _id: { $in: appointmentIds },
       patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
-      // appointmentTime: { $gte: startAt, $lt: endAt },
     })
     .toArray()
   return appointments
+}
+
+export const getPatients = async patientIds => {
+  const patients = await db
+    .collection('users')
+    .find({
+      _id: { $in: patientIds.map(o => ObjectId(o)) },
+      patientState: 'ACTIVE',
+    })
+    .toArray()
+  return patients
 }
 
 export const PeriodMap = {

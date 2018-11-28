@@ -162,8 +162,12 @@ cronJob.post('/reminder-treatment-text', async ctx => {
   //   return ctx.throw(401, '密码错误或参数不正确')
   // }
   const { body } = ctx.request
-  const { isTest, nextDays = 1 } = body
-  const result = await treatmentReminderViaText({ isTest, nextDays: +nextDays })
+  const { isTest, nextDays = 1, preCheck } = body
+  const result = await treatmentReminderViaText({
+    isTest,
+    nextDays: +nextDays,
+    preCheck,
+  })
   ctx.body = result
 })
 export default cronJob
