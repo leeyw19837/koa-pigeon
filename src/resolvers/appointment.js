@@ -43,26 +43,27 @@ export const Appointment = {
     return timeRange
   },
   patientUserInfoCompleted: async (appointment, _, { getDb }) => {
-    const db = await getDb()
-    const { patientId } = appointment
-    const latestAp = await db
-      .collection('users')
-      .find({
-        patientId,
-      })
-      .limit(1)
-      .toArray()
-    if (latestAp[0]) {
-      const { appointmentTime } = latestAp[0]
-      timeRange = [
-        moment(appointmentTime)
-          .add(75, 'days')
-          .startOf('day')._d,
-        moment(appointmentTime)
-          .add(112, 'days')
-          .endOf('day')._d,
-      ]
-    }
-    return timeRange
+    // const db = await getDb()
+    // const { patientId } = appointment
+    // const latestAp = await db
+    //   .collection('users')
+    //   .find({
+    //     patientId,
+    //   })
+    //   .limit(1)
+    //   .toArray()
+    // if (latestAp[0]) {
+    //   const { appointmentTime } = latestAp[0]
+    //   timeRange = [
+    //     moment(appointmentTime)
+    //       .add(75, 'days')
+    //       .startOf('day')._d,
+    //     moment(appointmentTime)
+    //       .add(112, 'days')
+    //       .endOf('day')._d,
+    //   ]
+    // }
+    // return timeRange
+    return true
   },
 }

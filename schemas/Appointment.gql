@@ -45,6 +45,7 @@ type Appointment {
   healthTech: Boolean
   quantizationAt: Boolean
   inValueRange: [Date]
+  patientUserInfoCompleted: Boolean
 }
 
 type DailyAppointment {
