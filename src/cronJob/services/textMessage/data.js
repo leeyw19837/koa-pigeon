@@ -53,6 +53,9 @@ export const getPatients = async patientIds => {
     .find({
       _id: { $in: patientIds.map(o => ObjectId(o)) },
       patientState: { $in: ['HAS_APPOINTMENT', 'ACTIVE'] },
+      'dontDisturb.examineReminder': {
+        $ne: true,
+      },
     })
     .toArray()
   return patients
