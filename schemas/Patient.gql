@@ -70,6 +70,8 @@ type Patient {
   reapplyStatus: ReapplyStatus
   chatRoomInfos: BasicChatRoomInfos
   BG1NotUseReason: [BG1NotUseReason]!
+  nextAppointmentTime(appointmentTime: Date): String
+  lastSOAP(appointmentTime: Date): SOAP
 }
 
 type MembershipInformation {
@@ -184,6 +186,13 @@ input InputPatientFilter {
   namePattern: String
   isRecentCLR: Boolean
   isContinuousNonMonitor: Boolean
+}
+
+input UserIdentificationInfos {
+   idCard: String
+   district: String
+   districtId: String
+   street: String
 }
 
 type PatientFilter {
