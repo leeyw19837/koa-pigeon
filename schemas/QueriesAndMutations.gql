@@ -177,6 +177,7 @@ type Query {
     healthCareTeamId: ID!
     outpatientDate: String!
   ): [TakeMedicinePeople]
+   getCheckByTreatmentId(treatmentStateId: ID!): Appointment
 }
 
 type Mutation {

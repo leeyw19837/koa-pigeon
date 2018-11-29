@@ -28,6 +28,7 @@ type TreatmentState {
   type: String
   nickname: String
   patientId: ID
+  source: String
   hisNumber: String
   note: String
   blood: Boolean

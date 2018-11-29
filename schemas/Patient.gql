@@ -69,6 +69,8 @@ type Patient {
   reapplyStatus: ReapplyStatus
   chatRoomInfos: BasicChatRoomInfos
   BG1NotUseReason: [BG1NotUseReason]!
+  nextAppointmentTime(appointmentTime: Date): String
+  lastSOAP(appointmentTime: Date): SOAP
 }
 
 type MembershipInformation {
