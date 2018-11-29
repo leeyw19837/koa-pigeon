@@ -224,3 +224,15 @@ export const mutateUserAppInfo = async (_, args, context) => {
   )
   return true
 }
+
+export const mutateUserOneWeekMeasureInfo = async (_, args, context) => {
+  const {patientId, oneWeekNotMeasure} = args
+  await db.collection('users').update(
+    {_id: ObjectID.createFromHexString(patientId)},
+    {
+      $set: {oneWeekNotMeasure},
+    },
+  )
+  return true
+}
+

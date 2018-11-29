@@ -36,6 +36,7 @@ type Patient {
   notUseBg1Reason: String
   notUseAppReason: String
   deviceContext: DeviceContext
+  oneWeekNotMeasure:[OneWeekNotMeasure]
   useSPT: Boolean
   usePublicNumber: Boolean
   isLiDocter: Boolean
@@ -89,6 +90,12 @@ type ArchivedInfos {
   archivedReason: String
   # 归档时间
   archivedDate: [Date]
+}
+
+type OneWeekNotMeasure {
+  hadNoMeasureReason:String
+  createdAt:Date!
+  custimizedReason:String
 }
 
 input ArchivedInfoMutation {

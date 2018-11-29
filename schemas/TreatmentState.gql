@@ -42,6 +42,7 @@ type TreatmentState {
   app: Boolean
   bodyCheck: TreatmentBodyCheck
   BG1NotUseReason:[BG1NotUseReason]
+  measureCounts:Int
 }
 
 type TreatmentStateRecord {
@@ -85,11 +86,24 @@ extend type Mutation {
     treatmentSign:TreatmentSign
   ):Boolean
 
+  # 更新用户APP使用信息
   mutateUserAppInfo(
     patientId:ID!
     notUseAppReason:String!
   ):Boolean
 
+  # 更新用户一周未测量原因
+  mutateUserOneWeekMeasureInfo(
+    patientId:ID!
+    oneWeekNotMeasure:[OneWeekMeasure]
+  ):Boolean
+
+}
+
+input OneWeekMeasure {
+  hadNoMeasureReason:String
+  createdAt:Date!
+  custimizedReason:String
 }
 
 input TreatmentSign {
