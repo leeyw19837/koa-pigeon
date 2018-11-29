@@ -547,6 +547,9 @@ type Mutation {
   updatePatientProfile(patientId: ID!, profile: ProfileInput!): Boolean
   updateBloodGlucoses(bgId: ID!, dataStatus: String, mTime: String): Boolean
 
+  # 签到前首先检查是否录入了身份证信息和地址信息
+  updateUserIdentificationInfos(patientId: ID, userIdentificationInfos: UserIdentificationInfos): Boolean
+
   # 撤回消息
   withdrawMessage(messageId: ID!, userId: ID!): Boolean
 

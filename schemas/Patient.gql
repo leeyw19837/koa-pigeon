@@ -179,6 +179,13 @@ input InputPatientFilter {
   isContinuousNonMonitor: Boolean
 }
 
+input UserIdentificationInfos {
+   idCard: String
+   district: String
+   districtId: String
+   street: String
+}
+
 type PatientFilter {
   cdeId: ID
   # part of nickname

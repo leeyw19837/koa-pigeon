@@ -76,3 +76,28 @@ export const updateUserArchiveState = async (_, args, context) => {
   return true
 }
 
+export const updateUserIdentificationInfos = async (_, args, context) => {
+  const db = await context.getDb()
+  const { patientId, userIdentificationInfos } = args
+
+  if (!patientId) {
+    throw new Error('updateUserIdentificationInfos error! patientId 为空！')
+  }
+
+  const patient= await db
+    .collection('users')
+    .findOne({ _id: ObjectId(patientId) })
+  if (!patient) {
+    throw new Error('updateUserIdentificationInfos error! patient does not exist!')
+  }
+
+  await db.collection('users').update(
+      { _id: ObjectId(patientId) },
+      {
+        $set: userIdentificationInfos,
+      },
+    )
+
+  return true
+}
+
