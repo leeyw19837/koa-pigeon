@@ -139,9 +139,9 @@ const sendAllMsgs = async (msgMembers, isTest) => {
     }
     allOptions.push(option)
     try {
-      // if (!isTest && isProd) {
-      //   await sendTxt(option)
-      // }
+      if (!isTest && isProd) {
+        await sendTxt(option)
+      }
     } catch (error) {
       console.log('send fail')
     }
