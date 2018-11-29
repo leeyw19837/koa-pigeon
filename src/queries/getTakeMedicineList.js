@@ -6,14 +6,15 @@ export const getTakeMedicineList = async (_, args, context) => {
   const date = new Date(outpatientDate)
   const start = moment(date).startOf('d')._d
   const end = moment(date).endOf('d')._d
-  const userLits = await db
+  const userList = await db
     .collection('event')
     .find({
+      patientId: { $ne: null },
       healthCareTeamId,
       type: 'GET_MEDICINE',
       createdAt: { $gte: start, $lte: end },
     })
     .toArray()
 
-  return userLits
+  return userList
 }
