@@ -113,7 +113,9 @@ const shouldBePassPatient = (opPatients, appointment, outpatient) => {
   const inOutpatient = appointmentsId.indexOf(_id) !== -1
   const sameDay = moment(appointmentTime).isSame(outpatientDate, 'day')
   const isActivePatient = !!opPatients.filter(
-    o => o._id.toString() === patientId && o.patientState === 'ACTIVE',
+    o =>
+      o._id.toString() === patientId &&
+      ['ACTIVE', 'HAS_APPOINTMENT'].indexOf(o.patientState) !== -1,
   ).length
 
   return inOutpatient && sameDay && isActivePatient
