@@ -94,7 +94,7 @@ const getAppointmentOptions = (appointment, outpatient) => {
       blood &&
       outpatientPeriod === 'MORNING' &&
       ['healthCareTeam3', 'healthCareTeam7'].indexOf(healthCareTeamId) === -1
-        ? '空腹带上早餐'
+        ? '空腹（建议带早餐）'
         : '',
     idCard: type === 'first' ? '身份证、' : '',
   }
