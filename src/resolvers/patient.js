@@ -758,7 +758,7 @@ export const Patient = {
     if (patientId) {
       const result = await db
         .collection('appointments')
-        .find({ patientId, appointmentTime: { $gt: appointmentTime }, isOutPatient: false })
+        .find({ patientId, appointmentTime: { $gt: endAt }, isOutPatient: false })
         .sort({ appointmentTime: 1 })
         .limit(1)
         .toArray()
