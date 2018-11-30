@@ -96,7 +96,7 @@ extend type Mutation {
   # 更新用户一周未测量原因
   mutateUserOneWeekMeasureInfo(
     patientId:ID!
-    oneWeekNotMeasure:[OneWeekMeasure]
+    oneWeekNotMeasure:OneWeekMeasure
   ):Boolean
 
 }
