@@ -177,7 +177,7 @@ type Query {
     healthCareTeamId: ID!
     outpatientDate: String!
   ): [TakeMedicinePeople]
-   getCheckByTreatmentId(treatmentStateId: ID!): Appointment
+  getCheckByTreatmentId(treatmentStateId: ID!): Appointment
 }
 
 type Mutation {
@@ -549,12 +549,15 @@ type Mutation {
   updateBloodGlucoses(bgId: ID!, dataStatus: String, mTime: String): Boolean
 
   # 签到前首先检查是否录入了身份证信息和地址信息
-  updateUserIdentificationInfos(patientId: ID, userIdentificationInfos: UserIdentificationInfos): Boolean
+  updateUserIdentificationInfos(
+    patientId: ID
+    userIdentificationInfos: UserIdentificationInfos
+  ): Boolean
 
   # 撤回消息
   withdrawMessage(messageId: ID!, userId: ID!): Boolean
 
-   # 添加BG1未使用原因
+  # 添加BG1未使用原因
   addBG1NotUseReason(
     patientId: ID!
     isUseBG1: Boolean!
@@ -587,6 +590,7 @@ type Subscription {
   chatMessageAdded(chatRoomId: ID, client: String): NeedleChatMessage!
   chatMessageUpdated(chatRoomId: ID, client: String): NeedleChatMessage!
   chatRoomDynamics(userId: ID, nosy: Boolean, chatRoomId: ID): NeedleChatRoom!
+  treatmentDynamics(outpatientId: ID): TreatmentState!
   warningAdded: Warning
   interventionTaskDynamics(
     cdeId: ID

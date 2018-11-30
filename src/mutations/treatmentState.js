@@ -2,6 +2,8 @@ import { ObjectID } from 'mongodb'
 import find from 'lodash/find'
 import moment from 'moment'
 import isEmpty from 'lodash/isEmpty'
+import omit from 'lodash/omit'
+import { pubsub } from '../pubsub'
 
 // 如果有其他检查项已做的话，不能取消签到
 const canBeCancel = treatmentState => {
@@ -161,6 +163,13 @@ export const mutateTreatmentCheckboxs = async (_, args, context) => {
     setObj.testBlood = propValue ? false : null
   }
   await db.collection('treatmentState').update({ _id: treatmentId }, condition)
+  const unSetKeys = Object.keys(unSetObj)
+  const newTreatment = {
+    ...omit(treatmentState, unSetKeys),
+    ...setObj,
+    _operation: 'UPDATED',
+  }
+  pubsub.publish('treatmentDynamics', newTreatment)
   return {
     status: 'success',
   }
@@ -226,13 +235,12 @@ export const mutateUserAppInfo = async (_, args, context) => {
 }
 
 export const mutateUserOneWeekMeasureInfo = async (_, args, context) => {
-  const {patientId, oneWeekNotMeasure} = args
+  const { patientId, oneWeekNotMeasure } = args
   await db.collection('users').update(
-    {_id: ObjectID.createFromHexString(patientId)},
+    { _id: ObjectID.createFromHexString(patientId) },
     {
-      $push: {oneWeekNotMeasure},
+      $push: { oneWeekNotMeasure },
     },
   )
   return true
 }
-
