@@ -230,7 +230,7 @@ export const mutateUserOneWeekMeasureInfo = async (_, args, context) => {
   await db.collection('users').update(
     {_id: ObjectID.createFromHexString(patientId)},
     {
-      $set: {oneWeekNotMeasure},
+      $push: {oneWeekNotMeasure},
     },
   )
   return true

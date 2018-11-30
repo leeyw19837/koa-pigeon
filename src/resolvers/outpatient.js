@@ -66,18 +66,6 @@ export const Outpatient = {
       })
       .toArray()
 
-    const bgLists = await db
-      .collection('bloodGlucoses').find({
-        patientId: {$in: treatmentStatesArray.map(p => p.patientId)},
-        measuredAt: {$gte: moment().subtract(7, 'days')._d},
-        dataStatus: 'ACTIVE',
-      }).toArray()
-
-    treatmentStatesArray = treatmentStatesArray.map((t) => {
-      const measureCounts = bgLists.filter(o => o.patientId === t._id.valueOf())
-      return {...t, measureCounts: measureCounts.length}
-    })
-
     if (treatmentStatesArray && treatmentStatesArray.length > 0) {
       for (let i = 0; i < treatmentStatesArray.length; i++) {
         const patientId = treatmentStatesArray[i].patientId
