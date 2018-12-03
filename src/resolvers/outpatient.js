@@ -21,6 +21,7 @@ export const Outpatient = {
       .collection('appointments')
       .find({
         _id: { $in: appointmentsId },
+        patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
       })
       .sort({
         createdAt: -1,

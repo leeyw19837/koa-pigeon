@@ -228,6 +228,7 @@ const createOutpatientInstance = async ({
     'outpatientPeriod',
     'registrationLocation',
     'registrationDepartment',
+    'registrationType',
     'doctorId',
     'doctorName',
   ]
