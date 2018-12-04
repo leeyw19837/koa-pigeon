@@ -182,14 +182,14 @@ export const mutateTreatmentSign = async (_, args, context) => {
   // 传入treatment user and so on
   await db
     .collection('treatmentState')
-    .update({_id: treatmentId}, {$set: {bodyCheck: treatmentSign}})
+    .update({_id: treatmentId}, {$set: {bodyCheck: treatmentSign, ...treatmentSign}})
   console.log(args)
   const {height, weight, HP, LP} = treatmentSign
 
   await db.collection('users').update(
     {_id: ObjectID.createFromHexString(patientId)},
     {
-      $set: {height: height + "", weight: "" + weight, HP: HP + "", LP: "" + LP},
+      $set: {height, weight, HP, LP},
     },
   )
 
@@ -210,12 +210,12 @@ export const mutateTreatmentSign = async (_, args, context) => {
       },
       {
         $set: {
-          'caseContent.bodyCheckup.height': height+'' || bodyCheckup.height+'',
-          'caseContent.bodyCheckup.weight': weight+'' || bodyCheckup.weight+'',
-          'caseContent.bodyCheckup.HP': HP+'' || bodyCheckup.HP+'',
-          'caseContent.bodyCheckup.LP': LP+'' || bodyCheckup.LP+'',
+          'caseContent.bodyCheckup.height': height || bodyCheckup.height,
+          'caseContent.bodyCheckup.weight': weight || bodyCheckup.weight,
+          'caseContent.bodyCheckup.HP': HP || bodyCheckup.HP,
+          'caseContent.bodyCheckup.LP': LP || bodyCheckup.LP,
           'caseContent.bodyCheckup.bmi':
-          getBMI(weight, height)+'' || bodyCheckup.bmi+'',
+          getBMI(weight, height) || bodyCheckup.bmi,
         },
       },
     )
