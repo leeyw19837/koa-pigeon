@@ -25,12 +25,13 @@ type OutpatientDutyEmployee {
 
 type Outpatient {
   _id: ID
-  outpatientDate: String!
+  outpatientDate: Date!
   healthCareTeamId: String
   dayOfWeek: String!
   outpatientPeriod: String!
   doctorName: String!
   hospitalName: String!
+  hospitalId: String
   location: String!
   registerPlace: String!
   registerDepartment: String!
@@ -44,5 +45,6 @@ type Outpatient {
   updatedAt: Date
   patientsCount: Int!
   appointments: [Appointment!]
+  treatmentStates: [TreatmentState!]
   availableAppointmentDates: [Outpatient!]
 }

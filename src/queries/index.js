@@ -64,6 +64,8 @@ import * as queryAIContentTypes from './queryAIContentTypes'
 import * as getQAList from './getQAList'
 import * as fetchChatSnapshots from './fetchChatSnapshots'
 import * as aiCall from './aiCall'
+import * as getTakeMedicineList from './getTakeMedicineList'
+import * as getCheckByTreatmentId from './getCheckByTreatmentId'
 
 const queries = {
   ...bloodGlucoseMeasurements,
@@ -123,6 +125,8 @@ const queries = {
   ...fetchChatSnapshots,
   ...aiCall,
   ...getPressureHistory,
+  ...getTakeMedicineList,
+  ...getCheckByTreatmentId,
 }
 
 const queriesWithAuthandLog = {}

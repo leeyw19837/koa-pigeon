@@ -53,6 +53,7 @@ export const PatientPagination = {
     const db = await getDb()
     const condition = await getCondition(pp, db)
     return await db.collection('users').count(condition)
+    // return 0
   },
   patients: async (pp, _, { getDb }) => {
     const db = await getDb()
@@ -711,7 +712,7 @@ export const Patient = {
     const patientId = patient._id.toString()
     const chatRoom = await db
       .collection('needleChatRooms')
-      .find({ 'participants.userId' : patientId })
+      .find({ 'participants.userId': patientId })
       .sort({ createdAt: -1 })
       .limit(1)
       .toArray()
@@ -719,6 +720,85 @@ export const Patient = {
       return chatRoom[0]
     }
     return null
-  }
-}
+  },
 
+  BG1NotUseReason: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    let result = []
+    if (patientId) {
+      result = await db
+        .collection('BG1NotUseReason')
+        .find({ patientId })
+        .sort({ createdAt: -1 })
+        .toArray()
+    }
+    return result
+  },
+
+  nextAppointmentTime: async (patient, { appointmentTime }, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    const endAt = moment(appointmentTime).endOf('day')._d
+    let nextTime
+    if (patientId) {
+      const result = await db
+        .collection('appointments')
+        .find({ patientId, appointmentTime: { $gt: endAt }, isOutPatient: false })
+        .sort({ appointmentTime: 1 })
+        .limit(1)
+        .toArray()
+      if (result && result.length > 0) {
+        nextTime = result[0].appointmentTime
+      }
+    }
+    return nextTime
+  },
+
+  lastSOAP: async (patient, { appointmentTime }, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    let result = []
+    const soapItem = {}
+    const start = moment(appointmentTime).startOf('days')._d
+    const end = moment(appointmentTime).endOf('days')._d
+    if (patientId) {
+      result = await db
+        .collection('soap').find({ patientId, appointmentTime: { $exists: true, $gte: start, $lte: end }, })
+        .sort({ createdAt: 1 })
+        .toArray()
+      if (result && result.length > 1) {
+        const lastTwice = [result[0], result[1]]
+        if (result[0].appointmentTime.getTime() === result[1].appointmentTime.getTime()) {
+          const nurse = lastTwice.filter(
+            item => item.operator.roles === '护理师' || item.operator.roles === '超级护理师',
+          )
+          const nutrition = lastTwice.filter(
+            item => item.operator.roles === '营养师' || item.operator.roles === '超级护理师',
+          )
+          if (nurse.length && nurse[0].severity) {
+            soapItem.severity = nurse[0].severity
+            if (nutrition.length && nutrition[0].severity) {
+              mapKeys(soapItem.severity, (value, key) => {
+                if (key === 'diet' && nutrition[0].severity.diet.value !== 'NOT_ASSESSMENT') {
+                  soapItem.severity.diet = nutrition[0].severity.diet
+                } else if (key !== 'diet' && soapItem.severity[key].value === 'NOT_ASSESSMENT') {
+                  soapItem.severity[key] = nutrition[0].severity[key]
+                }
+                return key
+              })
+            }
+          } else if (nutrition.length && nutrition[0].severity) {
+            soapItem.severity = nutrition[0].severity
+          }
+        } else if (result[0].severity) {
+          soapItem.severity = result[0].severity
+        }
+      } else if (result.length === 1 && result[0].severity) {
+        soapItem.severity = result[0].severity
+      }
+    }
+    return soapItem
+  }
+
+}

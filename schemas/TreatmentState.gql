@@ -1,27 +1,124 @@
+type TreatmentBodyCheck {
+  HP: Int
+  LP: Int
+  pulse: Int
+  height: Float
+  weight: Float
+  # 腰围
+  waist: Float
+  # 臀围
+  hip: Float
+  # 餐前血糖(AC)
+  ac: Float
+  # 餐后血糖(PC)
+  pc: Float
+  # 随机血糖
+  randomBloodGlucose: Float
+}
 type TreatmentState {
   _id: ID!
   patient: Patient!
   footAt: Boolean
   footBloodAt: Boolean
   checkIn: Boolean
+
+  # 以上是Yang给足评App用的
+  appointmentTime: Date
+  orderNumber: Int
+  type: String
+  nickname: String
+  patientId: ID
+  source: String
+  hisNumber: String
+  note: String
+  blood: Boolean
+  testBlood: Boolean
+  nutritionAt: Boolean
+  insulinAt: Boolean
+  eyeGroundAt: Boolean
+  quantizationAt: Boolean
+  diagnosis: Boolean
+  healthTech: Boolean
+  print: Boolean
+  app: Boolean
+  bodyCheck: TreatmentBodyCheck
+  BG1NotUseReason: [BG1NotUseReason]
+  measureCounts: Int
+  # 操作类型（增 删 改，pubsub用）
+  _operation: Operation
 }
 
-type TreatmentStateRecord{
+type TreatmentStateRecord {
   _id: ID!
   healthCareTeam: HealthCareTeam
-  appointmentTime:Date
-  type:String
-  checkIn:Boolean
-  blood:Boolean
+  appointmentTime: Date
+  type: String
+  checkIn: Boolean
+  blood: Boolean
   footAt: Boolean
-  eyeGroundAt:Boolean
-  insulinAt:Boolean
-  nutritionAt:Boolean
-  quantizationAt:Boolean
-  diagnosis:Boolean
+  eyeGroundAt: Boolean
+  insulinAt: Boolean
+  nutritionAt: Boolean
+  quantizationAt: Boolean
+  diagnosis: Boolean
 }
 
-type TreatmentStateApp{
-  nextRecord:TreatmentStateRecord
-  historyRecords:[TreatmentStateRecord]
+type TreatmentStateApp {
+  nextRecord: TreatmentStateRecord
+  historyRecords: [TreatmentStateRecord]
+}
+
+type UpdateTreatmentResult {
+  status: String
+  tip: String
+}
+
+extend type Mutation {
+  # 更新已预约的信息
+  mutateTreatmentCheckboxs(
+    propName: String!
+    propValue: Boolean!
+    treatmentId: ID!
+    outpatientId: ID!
+  ): UpdateTreatmentResult
+
+  # 更新用户体征测量值
+  mutateTreatmentSign(
+    treatmentId: ID!
+    patientId: String
+    treatmentSign: TreatmentSign
+  ): Boolean
+
+  # 更新用户APP使用信息
+  mutateUserAppInfo(patientId: ID!, notUseAppReason: String!): Boolean
+
+  # 更新用户一周未测量原因
+  mutateUserOneWeekMeasureInfo(
+    patientId: ID!
+    oneWeekNotMeasure: OneWeekMeasure
+  ): Boolean
+}
+
+input OneWeekMeasure {
+  hadNoMeasureReason: String
+  createdAt: Date!
+  custimizedReason: String
+}
+
+input TreatmentSign {
+  HP: Int
+  LP: Int
+  pulse: Int
+  height: Float
+  weight: Float
+  # 腰围
+  waist: Float
+  # 臀围
+  hip: Float
+  # 餐前血糖(AC)
+  ac: Float
+  # 餐后血糖(PC)
+  pc: Float
+  # 随机血糖
+  randomBloodGlucose: Float
 }

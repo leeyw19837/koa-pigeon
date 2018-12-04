@@ -34,6 +34,9 @@ type Patient {
   useNeedle: Boolean
   isUseBg1: Boolean
   notUseBg1Reason: String
+  notUseAppReason: String
+  deviceContext: DeviceContext
+  oneWeekNotMeasure:[OneWeekNotMeasure]
   useSPT: Boolean
   usePublicNumber: Boolean
   isLiDocter: Boolean
@@ -66,6 +69,9 @@ type Patient {
   archivedInfos: [ArchivedInfos]
   reapplyStatus: ReapplyStatus
   chatRoomInfos: BasicChatRoomInfos
+  BG1NotUseReason: [BG1NotUseReason]!
+  nextAppointmentTime(appointmentTime: Date): String
+  lastSOAP(appointmentTime: Date): SOAP
 }
 
 type MembershipInformation {
@@ -86,6 +92,12 @@ type ArchivedInfos {
   archivedReason: String
   # 归档时间
   archivedDate: [Date]
+}
+
+type OneWeekNotMeasure {
+  hadNoMeasureReason:String
+  createdAt:Date!
+  custimizedReason:String
 }
 
 input ArchivedInfoMutation {
@@ -174,6 +186,13 @@ input InputPatientFilter {
   namePattern: String
   isRecentCLR: Boolean
   isContinuousNonMonitor: Boolean
+}
+
+input UserIdentificationInfos {
+   idCard: String
+   district: String
+   districtId: String
+   street: String
 }
 
 type PatientFilter {

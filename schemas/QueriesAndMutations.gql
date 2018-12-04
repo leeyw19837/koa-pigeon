@@ -173,6 +173,11 @@ type Query {
   cdeDutyAdjective: [String]
   cdeDutyPeopleperDay: Int!
   fetchChatSnapshots(qaId: ID!): QAAddition
+  getTakeMedicineList(
+    healthCareTeamId: ID!
+    outpatientDate: String!
+  ): [TakeMedicinePeople]
+  getCheckByTreatmentId(treatmentStateId: ID!): Appointment
 }
 
 type Mutation {
@@ -383,10 +388,7 @@ type Mutation {
     occurredAt: Date
   ): Boolean
   # 更新【重新申请加入照护组】状态
-  updateUserArchiveState(
-    patientId: ID!
-    reapplyStatus: String
-  ): Boolean
+  updateUserArchiveState(patientId: ID!, reapplyStatus: String): Boolean
   addAppointment: Boolean
   changeChatCardStatus(
     messageId: ID!
@@ -505,6 +507,8 @@ type Mutation {
   deletePatientAppointment(patientId: ID): Boolean
   # 新增待预约信息
   addPatientAppointment(
+    willAttendToday: Boolean
+    currentOutPatientId: ID
     institutionId: String
     nickname: String
     expectedTime: Date
@@ -519,12 +523,12 @@ type Mutation {
     healthTech: Boolean
     quantizationAt: Boolean
     note: String
-  ): Boolean
+  ): AppointmentResult
   updateOutpatientStates(
     patientId: ID
     appointmentTime: Date
     outpatientId: ID
-  ): Boolean
+  ): String
   # 更新问答状态
   updateQAStatus(
     qaId: ID!
@@ -544,17 +548,49 @@ type Mutation {
   updatePatientProfile(patientId: ID!, profile: ProfileInput!): Boolean
   updateBloodGlucoses(bgId: ID!, dataStatus: String, mTime: String): Boolean
 
+  # 签到前首先检查是否录入了身份证信息和地址信息
+  updateUserIdentificationInfos(
+    patientId: ID
+    userIdentificationInfos: UserIdentificationInfos
+  ): Boolean
+
   # 撤回消息
   withdrawMessage(messageId: ID!, userId: ID!): Boolean
 
-  setArchived(patientId: ID!,archivedReason:String ,archivedInfo:ArchivedInfoMutation!):Boolean
-  unsetArchived(patientId:ID!,outpatientId:ID,appointmentTime:Date):Boolean
+  # 添加BG1未使用原因
+  addBG1NotUseReason(
+    patientId: ID!
+    isUseBG1: Boolean!
+    isGotBG1: Boolean
+    reason: String
+    isOutpatientCompare: String
+    compareResult: String
+    bloodValue: String
+    BG1Value: String
+    isContinueUse: String
+    operatorId: ID
+    operatorName: String
+  ): Boolean
+  setArchived(
+    patientId: ID!
+    archivedReason: String
+    archivedInfo: ArchivedInfoMutation!
+  ): Boolean
+  unsetArchived(
+    patientId: ID!
+    outpatientId: ID
+    appointmentTime: Date
+  ): Boolean
+  addTakeMedicinePatient(patientId: ID!): Boolean
+  removeTakeMedicinePatient(itemId: ID!): Boolean
+  editTakeMedicinePatient(itemId: ID!, patientId: ID!): Boolean
 }
 
 type Subscription {
   chatMessageAdded(chatRoomId: ID, client: String): NeedleChatMessage!
   chatMessageUpdated(chatRoomId: ID, client: String): NeedleChatMessage!
   chatRoomDynamics(userId: ID, nosy: Boolean, chatRoomId: ID): NeedleChatRoom!
+  treatmentDynamics(outpatientId: ID): TreatmentState!
   warningAdded: Warning
   interventionTaskDynamics(
     cdeId: ID

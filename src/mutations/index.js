@@ -51,11 +51,16 @@ import * as setArchived from './setArchived'
 import * as unsetArchived from './setArchived'
 import * as aiCall from './aiCall'
 import * as uploadBloodPressureMeasurement from './bloodPressure'
+import * as treatmentState from './treatmentState'
+import * as addBG1NotUseReason from './addBG1NotUseReason'
 
 import { logQueryOrMutation } from '../utils'
 
 import { logandAuthForApp } from '../utils/authentication'
 import * as bloodGlucoese from './bloodGlucoses'
+import * as addTakeMedicinePatient from './addTakeMedicinePatient'
+import * as removeTakeMedicinePatient from './addTakeMedicinePatient'
+import * as editTakeMedicinePatient from './addTakeMedicinePatient'
 
 const mutations = {
   ...assessmentTime,
@@ -112,6 +117,11 @@ const mutations = {
   ...unsetArchived,
   ...aiCall,
   ...uploadBloodPressureMeasurement,
+  ...treatmentState,
+  ...addBG1NotUseReason,
+  ...addTakeMedicinePatient,
+  ...removeTakeMedicinePatient,
+  ...editTakeMedicinePatient,
 }
 
 const mutationsWithAuthandLog = {}

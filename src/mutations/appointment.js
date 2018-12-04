@@ -109,7 +109,7 @@ export const deletePatientAppointment = async (_, params, context) => {
 
 export const addPatientAppointment = async (_, params, context) => {
   console.log('addPatientAppointment', params)
-  const { institutionId, nickname, source, mobile } = params
+  const { willAttendToday, currentOutPatientId, institutionId, nickname, source, mobile } = params
 
   const existedUser = await db
     .collection('users')
@@ -168,8 +168,29 @@ export const addPatientAppointment = async (_, params, context) => {
     createdAt: new Date(),
     isOutPatient: false,
   })
+
+  if (willAttendToday && currentOutPatientId) {
+    const currentDayOutPatientInfo = await db
+      .collection('outpatients')
+      .findOne({ _id: currentOutPatientId})
+    const treatmentStateId = await updateOutpatientStates(
+      null,
+      { patientId: patientId.toString(),
+        appointmentTime: currentDayOutPatientInfo.outpatientDate,
+        outpatientId: currentOutPatientId,
+      },
+      context
+    )
+    return {
+      patientId,
+      treatmentStateId
+    }
+  }
   context.response.set('effect-types', 'PatientList,PatientDetail')
-  return true
+  return {
+    patientId,
+    treatmentStateId: '',
+  }
 }
 
 const syncInfo = async ({ patientId, key, value }) => {
@@ -657,7 +678,7 @@ export const updateOutpatientStates = async (_, params, context) => {
     },
   )
   // context.response.set('effect-types', 'PatientList,PatientDetail')
-  return true
+  return treatmentStateId
 }
 
 /**

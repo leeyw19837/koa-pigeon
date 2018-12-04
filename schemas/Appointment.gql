@@ -45,6 +45,8 @@ type Appointment {
   healthTech: Boolean
   quantizationAt: Boolean
   inValueRange: [Date]
+  patientUserInfoCompleted: Boolean
+  treatmentStateId: ID
 }
 
 type DailyAppointment {
@@ -65,6 +67,11 @@ type AdditionInfo {
   nextAppointment: Appointment
   mgtOutpatientId: ID
   mgtAppointmentTime: Date
+}
+
+type AppointmentResult {
+  patientId: ID
+  treatmentStateId: ID
 }
 
 extend type Query {
