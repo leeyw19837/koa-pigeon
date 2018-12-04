@@ -131,6 +131,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
         messageType: 'TEXT',
         text: '欢迎您加入共同照护门诊，请问有什么能帮您的吗？',
         senderId: assistant.userId,
+        actualSenderId: 'system',
         createdAt: new Date(),
         chatRoomId: chatRoom._id,
         sourceType: 'greeting',
@@ -145,6 +146,11 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   }
   const sourceTypeRegex = new RegExp(sourceTypeGroup.join('|'), 'i')
   const participants = chatRoom.participants.map(p => {
+    if (/system/i.test(actualSenderId)) {
+      if (p.role === '患者')
+        return { ...p, unreadCount: (p.unreadCount || 0) + 1 }
+      return p
+    }
     // 如果是系统自动回复的话，照护师的未读数不应该消失
     if (p.userId === participant.userId && !sourceTypeRegex.test(sourceType)) {
       return { ...p, lastSeenAt: new Date(), unreadCount: 0 }

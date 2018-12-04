@@ -87,3 +87,14 @@ pipeline:
   #     branch: develop
   #     status:
   #       - success
+  
+  jenkins:
+    image: appleboy/drone-jenkins
+    url: http://172.31.48.2:8080
+    user: guanjingtao
+    token: b0a83f6a85d9462244d102b372eef7a2
+    job: BulletBloodSugarSeries/pigeonApiAutoTest
+    when:
+      branch: develop
+      event: push
+      status: [ success ]

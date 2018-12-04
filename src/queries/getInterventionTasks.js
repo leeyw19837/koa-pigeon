@@ -48,6 +48,11 @@ export const getGroupedInterventionTasks = async (
 ) => {
   const db = await getDb()
   const condition = { state: { $nin: ['DONE', 'DONE_WITH_NO_SOAP'] } }
+  // 空腹高血糖、 餐后高血糖只查询级别一的
+  condition['$or'] = [
+    { type: { $in: ['EMPTY_STOMACH_HIGH', 'AFTER_MEALS_HIGH'] }, riskLevel: 0 },
+    { type: { $nin: ['EMPTY_STOMACH_HIGH', 'AFTER_MEALS_HIGH'] } },
+  ]
   if (!nosy && cdeId) {
     const patients = await db
       .collection('users')

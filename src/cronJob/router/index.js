@@ -15,6 +15,7 @@ import {
   reNotify,
 } from '../controller/duty'
 import { completeOutpatient } from '../services/outpatient'
+import { treatmentReminderViaText } from '../services/textMessage'
 
 const Router = require('koa-router')
 const cronJob = new Router()
@@ -153,4 +154,20 @@ cronJob.post('/complete-outpatient', async ctx => {
   ctx.body = 'OK! '
 })
 
+/**
+ * 就诊提醒短信
+ */
+cronJob.post('/reminder-treatment-text', async ctx => {
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const { body } = ctx.request
+  const { isTest, nextDays = 1, preCheck } = body
+  const result = await treatmentReminderViaText({
+    isTest,
+    nextDays: +nextDays,
+    preCheck,
+  })
+  ctx.body = result
+})
 export default cronJob

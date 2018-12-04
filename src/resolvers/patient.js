@@ -36,27 +36,13 @@ const getCondition = async ({ filter }, db) => {
 
   if (isRecentCLR) {
     // console.log('aaaa=====isRecentCLR', isRecentCLR)
-    condition = {
-      $and: [
-        condition,
-        {
-          'latestCLR.glycatedHemoglobin': { $gte: '7.0' },
-        },
-      ],
-    }
+    condition['latestCLR.glycatedHemoglobin'] = { $gte: '7.0' }
   }
 
   if (isContinuousNonMonitor) {
     const timeOf14Ago = new Date(moment().subtract(13, 'days'))
     // console.log('aaaa=====isContinuousNonMonitor', timeOf14Ago)
-    condition = {
-      $and: [
-        condition,
-        {
-          'latestBG.measuredAt': { $lt: timeOf14Ago },
-        },
-      ],
-    }
+    condition['latestBG.measuredAt'] = { $lt: timeOf14Ago }
   }
 
   return condition

@@ -2,6 +2,7 @@ import freshId from 'fresh-id'
 import { ObjectId } from 'mongodb'
 import moment from 'moment'
 import map from 'lodash/map'
+import get from 'lodash/get'
 import {
   isLessFour,
   isMealRecord,
@@ -11,6 +12,7 @@ import {
   isAboveTen,
 } from './utils'
 import { getPairingBgRecord } from './pairedMeasurement'
+import { getRiskLevel } from './riskLevel'
 
 const TIME_PERIOD_MAP = {
   BEFORE_BREAKFAST: '早餐前',
@@ -23,7 +25,7 @@ const TIME_PERIOD_MAP = {
   MIDNIGHT: '凌晨',
   RANDOM: '随机',
 }
-const assembleTaskDesc = (measuerments,createdAt) => {
+const assembleTaskDesc = (measuerments, createdAt) => {
   const summaryOfMeasurements = map(
     measuerments,
     ({ measurementTime, bloodGlucoseValue }) => {
@@ -37,11 +39,22 @@ const assembleTaskDesc = (measuerments,createdAt) => {
 }
 
 export const taskGen = async (measurement, getPairingMethod) => {
-  const userInfo = await db.collection('users').findOne({ _id: ObjectId(measurement.patientId) })
+  const userInfo = await db
+    .collection('users')
+    .findOne({ _id: ObjectId(measurement.patientId) })
   if (userInfo.patientState && userInfo.patientState === 'ARCHIVED') return null
   const { bloodGlucoseValue, measurementTime, measuredAt } = measurement
   const now = new Date(Date.now()) // 这样取当前时间虽然看起来比较怪，但是不要改
   if (!moment(now).isSame(moment(measuredAt), 'day')) return null
+
+  let latestHbA1c = await db
+    .collection('clinicalLabResults')
+    .find({ patientId: measurement.patientId })
+    .sort({ testDate: -1 })
+    .limit(1)
+    .toArray()
+  latestHbA1c = get(latestHbA1c, '0.glycatedHemoglobin', 99)
+
   const newTask = {
     _id: freshId(),
     state: 'PENDING',
@@ -53,7 +66,7 @@ export const taskGen = async (measurement, getPairingMethod) => {
     // 低血糖
     newTask.type = 'LOW_BLOOD_GLUCOSE'
     newTask.measurementRecords = [measurement]
-    newTask.desc = assembleTaskDesc(newTask.measurementRecords,now)
+    newTask.desc = assembleTaskDesc(newTask.measurementRecords, now)
     return newTask
   }
   if (!isMealRecord(measurementTime)) return null
@@ -64,7 +77,7 @@ export const taskGen = async (measurement, getPairingMethod) => {
     newTask.type = 'FLUCTUATION'
     newTask.measurementRecords = [measurement, pairedRecord]
     if (isAfterMeal(measurementTime)) newTask.measurementRecords.reverse()
-    newTask.desc = assembleTaskDesc(newTask.measurementRecords,now)
+    newTask.desc = assembleTaskDesc(newTask.measurementRecords, now)
     return newTask
   }
 
@@ -72,7 +85,8 @@ export const taskGen = async (measurement, getPairingMethod) => {
     // 餐后高血糖
     newTask.type = 'AFTER_MEALS_HIGH'
     newTask.measurementRecords = [measurement]
-    newTask.desc = assembleTaskDesc(newTask.measurementRecords,now)
+    newTask.desc = assembleTaskDesc(newTask.measurementRecords, now)
+    newTask.riskLevel = await getRiskLevel({ latestHbA1c, task: newTask })
     return newTask
   }
   if (
@@ -82,7 +96,8 @@ export const taskGen = async (measurement, getPairingMethod) => {
     // 空腹高血糖
     newTask.type = 'EMPTY_STOMACH_HIGH'
     newTask.measurementRecords = [measurement]
-    newTask.desc = assembleTaskDesc(newTask.measurementRecords,now)
+    newTask.desc = assembleTaskDesc(newTask.measurementRecords, now)
+    newTask.riskLevel = await getRiskLevel({ latestHbA1c, task: newTask })
     return newTask
   }
 }
