@@ -92,7 +92,7 @@ type Medicine {
   mealOptions: MealOptions
   # 状态 （新，调，停）
   status: String
-  change:[String]
+  change: [String]
 }
 
 type MealOptions {
@@ -121,6 +121,7 @@ type MealOptions {
 type CRPrescription {
   medicines: [Medicine]
   isTelephoneFollowUp: Boolean
+  medicineNote: String
 }
 
 type BodyCheckup {
