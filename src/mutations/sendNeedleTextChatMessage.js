@@ -41,6 +41,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   // 待APP升级按新的规则sourceType和contentCode过来以后，可以移除这个if块
   if (/_\d+$/.test(sourceType)) {
     contentCode = sourceType
+    actualSenderId='system'
     sourceType = 'FROM_FOREST'
   }
 
