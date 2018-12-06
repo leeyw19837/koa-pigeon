@@ -99,6 +99,8 @@ export const loginOrSignUp = async (_, args, context) => {
     let exp = TOKEN_EXP_FOR_NEW
     if (existingPatient.patientState === 'ACTIVE') {
       exp = TOKEN_EXP // 1 year
+    } else if (existingPatient.patientState === 'BLACKLIST') {
+      throw new Error('黑名单用户无登录权限！')
     }
 
     //JWT签名 console.log('准备为用户进行JWT签名：', existingPatient)
@@ -119,9 +121,9 @@ export const loginOrSignUp = async (_, args, context) => {
         : isWechat
           ? existingPatient.wechatInfo.headimgurl
             ? existingPatient.wechatInfo.headimgurl.replace(
-                'http://',
-                'https://',
-              )
+              'http://',
+              'https://',
+            )
             : existingPatient.gender === 'male'
               ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
               : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
