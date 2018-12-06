@@ -39,6 +39,7 @@ type TreatmentState {
   quantizationAt: Boolean
   diagnosis: Boolean
   healthTech: Boolean
+  offLineTech: Boolean
   print: Boolean
   app: Boolean
   bodyCheck: TreatmentBodyCheck
