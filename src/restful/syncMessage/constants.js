@@ -9,4 +9,11 @@ export const TEMPLATE_CODES = {
     'SMS_78800203',
     'SMS_142946848',
   ],
+  duty: ['SMS_145501348', 'SMS_128635144', 'SMS_128635142'],
+}
+
+export const shouldRefuseSync = templateCode => {
+  const { verification, duty } = TEMPLATE_CODES
+  const refuseCodes = [...verification, ...duty]
+  return refuseCodes.includes(templateCode)
 }

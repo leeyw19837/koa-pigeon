@@ -1,7 +1,7 @@
 import { ObjectID } from 'mongodb'
 import freshId from 'fresh-id'
 import includes from 'lodash/includes'
-import { TEMPLATE_CODES } from './constants'
+import { shouldRefuseSync } from './constants'
 import { sendNeedleTextChatMessage } from '../../mutations/sendNeedleTextChatMessage'
 
 const findPatientByUsername = async ({ username, sourceType }) => {
@@ -57,7 +57,7 @@ export const syncMessageFromOtherSide = async ({
     }
     if (sourceType === 'FROM_RAVEN') {
       // 验证码不同步到聊天消息中
-      if (includes(TEMPLATE_CODES.verification, template)) return
+      if (shouldRefuseSync(template)) return
       if (!needleChatRoomId) {
         needleChatRoomId = freshId()
         await db.collection('needleChatRooms').insert({
