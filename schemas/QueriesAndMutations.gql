@@ -149,6 +149,7 @@ type Query {
   getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
   getGoods(goodId: ID, goodType: String): Goods
   getAllGoods: [Goods]
+  getEntityGoods: [Goods]
   # 不要再继续使用这个API，用getSomeChatRooms代替
   getChatrooms(
     nosy: Boolean
@@ -178,6 +179,9 @@ type Query {
     outpatientDate: String!
   ): [TakeMedicinePeople]
   getCheckByTreatmentId(treatmentStateId: ID!): Appointment
+
+  # 购物车
+  getShoppingCartGoods(patientId: ID): [ShoppingCart]
 }
 
 type Mutation {

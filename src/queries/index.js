@@ -59,6 +59,8 @@ import * as tags from './tags'
 import * as cdeDutyAdjective from './cdeDutyAdjective'
 import * as cdeDutyPeopleperDay from './cdeDutyPeopleperDay'
 
+import * as getShoppingCartGoods from './getShoppingCartGoods'
+
 //AI
 import * as queryAIContentTypes from './queryAIContentTypes'
 import * as getQAList from './getQAList'
@@ -127,6 +129,7 @@ const queries = {
   ...getPressureHistory,
   ...getTakeMedicineList,
   ...getCheckByTreatmentId,
+  ...getShoppingCartGoods,
 }
 
 const queriesWithAuthandLog = {}

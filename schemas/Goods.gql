@@ -1,10 +1,5 @@
-type goodDetail{
-   name: String
-   type: String
-}
-
 type Goods {
-  _id: ID!
+  _id: ID
   goodType: String
   goodName: String
   price: Float
@@ -20,4 +15,24 @@ type Goods {
   priceNotes: [String]
   # 续费金额（目前只有连续包季用到该字段）
   renewalAmount : Float
+
+  # 以下字段是整合实物商品增加的字段
+  # 商品特征（规格、型号等）
+  goodSpecification: [GoodDetailedDescription]
+  # 商品缩略图（用于商品列表展示）
+  goodThumbnailUrl: String
+  # 商品图片（用于商品详细显示）
+  goodPictureUrl: String
+  # 商品细节（包装清单、注意事项等）
+  goodDetails: [GoodDetailedDescription]
+}
+
+type goodDetail{
+   name: String
+   type: String
+}
+
+type GoodDetailedDescription {
+  title: String
+  content: String
 }
