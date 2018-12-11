@@ -38,13 +38,6 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     messageType,
   } = args
 
-  // 待APP升级按新的规则sourceType和contentCode过来以后，可以移除这个if块
-  if (/_\d+$/.test(sourceType)) {
-    contentCode = sourceType
-    actualSenderId='system'
-    sourceType = 'FROM_FOREST'
-  }
-
   const userObjectId = ObjectId.createFromHexString(userId)
 
   let chatRoom = await db
@@ -66,6 +59,15 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     chatRoom.participants,
     db,
   )
+
+  // 待APP升级按新的规则sourceType和contentCode过来以后，可以移除这个if块
+  if (/_\d+$/.test(sourceType)) {
+    contentCode = sourceType
+    sourceType = 'FROM_FOREST'
+    if(participant.role !== '患者')
+      actualSenderId='system'
+  }
+
   const sender = await db
     .collection('users')
     .findOne({ _id: { $in: [userId, userObjectId] } }, { roles: 1 })
