@@ -2,6 +2,8 @@ import { ObjectId } from 'mongodb'
 import isEmpty from 'lodash/isEmpty'
 import get from 'lodash/get'
 import { changeUsername } from './changeUsername'
+import moment from 'moment'
+import {Date} from "../utils";
 
 export const updatePatientProfile = async (_, args, context) => {
   const db = await context.getDb()
@@ -91,10 +93,12 @@ export const updateUserIdentificationInfos = async (_, args, context) => {
     throw new Error('updateUserIdentificationInfos error! patient does not exist!')
   }
 
+  const idCardDateOfBirth = userIdentificationInfos.idCard.substring(6,14)
+  const dateOfBirth = moment(idCardDateOfBirth,'YYYYMMDD').toDate()
   await db.collection('users').update(
       { _id: ObjectId(patientId) },
       {
-        $set: userIdentificationInfos,
+        $set: {...userIdentificationInfos, dateOfBirth},
       },
     )
 
