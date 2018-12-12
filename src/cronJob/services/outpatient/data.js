@@ -109,7 +109,10 @@ export const getAppointments = async ({
   }
   return await db
     .collection('appointments')
-    .find(cursor)
+    .find({
+      ...cursor,
+      patientState: { $nin: ['REMOVED', 'ARCHIVED'] },
+    })
     .toArray()
 }
 
