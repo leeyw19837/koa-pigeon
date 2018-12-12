@@ -588,6 +588,19 @@ type Mutation {
   addTakeMedicinePatient(patientId: ID!): Boolean
   removeTakeMedicinePatient(itemId: ID!): Boolean
   editTakeMedicinePatient(itemId: ID!, patientId: ID!): Boolean
+
+  # 更新购物中的商品数量（增/减）
+  updateGoodsFromShoppingCart(
+    patientId: ID
+    goodsId: ID
+    isAdd: Boolean
+  ) :Boolean
+
+  # 删除购物中的商品
+  deleteGoodsFromShoppingCart(
+    patientId: ID
+    goodsId: ID
+  ) :Boolean
 }
 
 type Subscription {
