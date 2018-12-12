@@ -584,6 +584,7 @@ type Mutation {
   addTakeMedicinePatient(patientId: ID!): Boolean
   removeTakeMedicinePatient(itemId: ID!): Boolean
   editTakeMedicinePatient(itemId: ID!, patientId: ID!): Boolean
+  uploadFoodPhoto(circleImages: [String]): UploadFoodPhotoResult
 }
 
 type Subscription {

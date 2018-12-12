@@ -2,6 +2,7 @@ import freshId from 'fresh-id'
 import moment from 'moment'
 import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
+import isEmpty from 'lodash/isEmpty'
 import { insertFoodMessagesIntoChat } from '../utils/insertNeedleChatMessage'
 
 export const addFoodComments = async (_, args, context) => {
@@ -44,8 +45,10 @@ export const addFoodComments = async (_, args, context) => {
       desc: `${moment(now).format('MM-DD HH:mm')} 写了一条新的评论`,
       patientId: authorId,
     }
-    const userInfo = await db.collection('users').findOne({ _id: ObjectId(patientId) })
-    if (userInfo.patientState && userInfo.patientState !== 'ARCHIVED'){
+    const userInfo = await db
+      .collection('users')
+      .findOne({ _id: ObjectId(patientId) })
+    if (userInfo.patientState && userInfo.patientState !== 'ARCHIVED') {
       await db.collection('interventionTask').insert(newTask)
       const relatedFoods = await db
         .collection('foods')
@@ -94,7 +97,9 @@ export const saveFoodComments = async (_, args, context) => {
   const userId = foods && foods.patientId
   const user = await db.collection('users').findOne({ _id: ObjectID(userId) })
   const cdeId = user && user.cdeId
-  const cdeInfo = await db.collection('certifiedDiabetesEducators').findOne({ _id: cdeId })
+  const cdeInfo = await db
+    .collection('certifiedDiabetesEducators')
+    .findOne({ _id: cdeId })
   const condition = {
     ...args.comment,
     _id: commentId,
@@ -127,9 +132,13 @@ export const saveFoodComments = async (_, args, context) => {
     badgeCreatedAt,
   })
 
-  const author = await db
-    .collection('users')
-    .findOne({ _id: { $in: [ObjectID(authorId), authorId] } }, { roles: 1 }) || {}
+  const author =
+    (await db
+      .collection('users')
+      .findOne(
+        { _id: { $in: [ObjectID(authorId), authorId] } },
+        { roles: 1 },
+      )) || {}
 
   pubsub.publish('foodDynamics', {
     ...relatedFoods,
@@ -144,12 +153,55 @@ export const saveFoodComments = async (_, args, context) => {
   })
 
   //app端聊天页面插入饮食卡片
-  await insertFoodMessagesIntoChat(_, {
-    patientId,
-    senderId: authorId,
-    shouldQueryTotalScore: true,
-    foodCircleId,
-    sourceType: 'FROM_WEB_CDE_SCORES_AND_COMMENTS'
-  }, context)
+  await insertFoodMessagesIntoChat(
+    _,
+    {
+      patientId,
+      senderId: authorId,
+      shouldQueryTotalScore: true,
+      foodCircleId,
+      sourceType: 'FROM_WEB_CDE_SCORES_AND_COMMENTS',
+    },
+    context,
+  )
   return !!resultComments.result.ok && !!resultBadgeRecords.result.ok
+}
+
+export const uploadFoodPhoto = async (_, args, context) => {
+  const url = 'https://eat.ihealthlabs.com.cn/api/uploadPhoto'
+  const token = 'ba9d802e-d200-444d-8e64-ec7d930daa6b'
+
+  const { circleImages } = args
+  const imageList = circleImages.map((o, index) => {
+    return { url: o }
+  })
+  const params = {
+    token: token,
+    type: 'openApi',
+    imageList: imageList,
+    isDiabetes: 1,
+  }
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    mode: 'no-cors',
+    body: JSON.stringify(params),
+  })
+    .then(response => {
+      return response.json()
+    })
+    .then(data => {
+      const score = data.data.score
+      const commentList = data.data.commentList
+      return {
+        score,
+        commentList,
+      }
+    })
+    .catch(e => {
+      console.log(e, '~~~~')
+      return false
+    })
 }

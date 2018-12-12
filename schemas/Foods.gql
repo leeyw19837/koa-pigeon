@@ -68,3 +68,12 @@ input FoodsScoreInput {
   albumenScore: String
   richnessScore: String
 }
+
+type UploadFoodPhotoResult {
+  score: Float
+  commentList: [comment]
+}
+
+type comment {
+  comment: String
+}
