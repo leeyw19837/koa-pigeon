@@ -3,7 +3,11 @@ import moment from 'moment'
 
 export const Outpatient = {
   patientsCount: async outpatient => {
-    return outpatient.patientsId.length
+    const patientLength = await db.collection('users').count({
+      _id: { $in: outpatient.patientsId.map(o => ObjectID(o)) },
+      patientState: 'ACTIVE',
+    })
+    return patientLength
   },
   hospitalName: async outpatient => {
     const { hospitalId, hospitalName } = outpatient
@@ -67,12 +71,14 @@ export const Outpatient = {
       .toArray()
 
     const bgLists = await db
-      .collection('bloodGlucoses').find({
+      .collection('bloodGlucoses')
+      .find({
         patientId: { $in: treatmentStatesArray.map(p => p.patientId) },
         measuredAt: { $gte: moment().subtract(7, 'days')._d },
         dataStatus: 'ACTIVE',
-      }).toArray()
-    treatmentStatesArray = treatmentStatesArray.map((t) => {
+      })
+      .toArray()
+    treatmentStatesArray = treatmentStatesArray.map(t => {
       const measureCounts = bgLists.filter(o => o.patientId === t._id.valueOf())
       return { ...t, measureCounts: measureCounts.length }
     })
