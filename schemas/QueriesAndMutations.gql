@@ -599,7 +599,7 @@ type Mutation {
   # 删除购物中的商品
   deleteGoodsFromShoppingCart(
     patientId: ID
-    goodsId: ID
+    goodsIds: [ID]
   ) :Boolean
 }
 

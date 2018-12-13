@@ -27,8 +27,8 @@ export const updateGoodsFromShoppingCart = async (_, args, { getDb }) => {
           updatedAt: new Date(),
         }
       })
-    }else {
-      if (existedGood.goodsQuantity >0 ){
+    } else {
+      if (existedGood.goodsQuantity > 1 ){
         await db.collection('shoppingCart').update({
           patientId,
           goodsId,
@@ -65,7 +65,7 @@ export const updateGoodsFromShoppingCart = async (_, args, { getDb }) => {
  */
 export const deleteGoodsFromShoppingCart = async (_, args, { getDb }) => {
   const db = await getDb()
-  const { patientId, goodsId } = args
+  const { patientId, goodsIds } = args
 
   // const existedGood = await db.collection('shoppingCart').findOne({
   //   patientId,
@@ -76,8 +76,8 @@ export const deleteGoodsFromShoppingCart = async (_, args, { getDb }) => {
   // } else {
   //   throw new Error('错误！不存在此商品！')
   // }
-  goodsId.forEach(async i=>{
-    await db.collection('shoppingCart').delete({
+  goodsIds.forEach(async i=>{
+    await db.collection('shoppingCart').remove({
       patientId,
       goodsId: i,
     })
