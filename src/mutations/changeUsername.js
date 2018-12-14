@@ -1,7 +1,7 @@
 import { ObjectID } from 'mongodb'
 
 export const changeUsername = async (_, args, context) => {
-  const db = await context.getDb()
+  const db = context ? await context.getDb() : db
   const { patientId, newUsername } = args
   console.log(args)
   const old = await db.collection('users').findOne({

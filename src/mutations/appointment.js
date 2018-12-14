@@ -1,6 +1,8 @@
 import pick from 'lodash/pick'
 import omit from 'lodash/omit'
 import { ObjectID } from 'mongodb'
+import { changeUsername } from './changeUsername'
+import { changeUserProperties } from '../modules/appointment'
 const moment = require('moment')
 
 export const addAppointment = async (_, args, context) => {
@@ -109,7 +111,14 @@ export const deletePatientAppointment = async (_, params, context) => {
 
 export const addPatientAppointment = async (_, params, context) => {
   console.log('addPatientAppointment', params)
-  const { willAttendToday, currentOutPatientId, institutionId, nickname, source, mobile } = params
+  const {
+    willAttendToday,
+    currentOutPatientId,
+    institutionId,
+    nickname,
+    source,
+    mobile,
+  } = params
 
   const existedUser = await db
     .collection('users')
@@ -172,18 +181,19 @@ export const addPatientAppointment = async (_, params, context) => {
   if (willAttendToday && currentOutPatientId) {
     const currentDayOutPatientInfo = await db
       .collection('outpatients')
-      .findOne({ _id: currentOutPatientId})
+      .findOne({ _id: currentOutPatientId })
     const treatmentStateId = await updateOutpatientStates(
       null,
-      { patientId: patientId.toString(),
+      {
+        patientId: patientId.toString(),
         appointmentTime: currentDayOutPatientInfo.outpatientDate,
         outpatientId: currentOutPatientId,
       },
-      context
+      context,
     )
     return {
       patientId,
-      treatmentStateId
+      treatmentStateId,
     }
   }
   context.response.set('effect-types', 'PatientList,PatientDetail')
@@ -193,99 +203,74 @@ export const addPatientAppointment = async (_, params, context) => {
   }
 }
 
-const syncInfo = async ({ patientId, key, value }) => {
-  if (value === '') return
-  const setKey = key === 'mobile' ? 'username' : key
-  const $userObj = {
-    [setKey]: value,
-    updatedAt: new Date(),
-  }
-  const $setObj = {
-    [key]: value,
-    updatedAt: new Date(),
-  }
-  await db
-    .collection('appointments')
-    .update({ patientId }, { $set: $setObj }, { multi: true })
-  await db
-    .collection('treatmentState')
-    .update({ patientId }, { $set: $setObj }, { multi: true })
-
-  await db.collection('users').update(
-    {
-      _id: ObjectID.createFromHexString(patientId),
-    },
-    { $set: $userObj },
-  )
-}
-
 /**
  * 基于预约id 更新预约
  * 只不过参数是整个预约
+ * 适用于 多个属性需要被修改
+ * 姓名，电话，来源
  * @param {*} _
  * @param {*} param1
  * @param {*} context
  */
-export const updateAppointmentById = async (_, { appointment }, context) => {
-  const { _id, patientId, nickname, mobile } = appointment
+export const updateAppointmentById = async (_, { appointment }) => {
+  const { _id, patientId, nickname, mobile, source } = appointment
   const dbAppointment = await db.collection('appointments').findOne({ _id })
   if (!dbAppointment) {
-    throw new Error('Appointment _id is not existed!')
+    throw new Error(`Appointment ${_id} is not existed!`)
   }
   if (mobile !== dbAppointment.mobile) {
-    const user = await db.collection('users').findOne({ username: mobile })
-    if (user) {
+    const result = await changeUsername(_, { patientId, newUsername: mobile })
+    if (!result) {
       return 'duplicate'
     }
-    await syncInfo({
-      patientId,
-      key: 'mobile',
-      value: mobile,
-    })
   }
-
-  if (appointment.nickname !== dbAppointment.nickname) {
-    await syncInfo({
-      patientId,
-      key: 'nickname',
-      value: nickname,
-    })
+  if (nickname !== dbAppointment.nickname || source !== dbAppointment.source) {
+    await changeUserProperties(_, { patientId, nickname, source })
   }
+  return 'OK'
+}
 
+/**
+ * 更新检查项目
+ * @param {*} _
+ * @param {*} param1
+ */
+export const updateCheckItemsForAppointment = async (
+  _,
+  { checkItems, appointmentId },
+) => {
+  const dbAppointment = await db
+    .collection('appointments')
+    .findOne({ _id: appointmentId })
+  if (!dbAppointment) {
+    throw new Error(`Appointment ${appointmentId} is not existed!`)
+  }
   const { treatmentStateId } = dbAppointment
+  const treatment = await db
+    .collection('treatmentState')
+    .findOne({ _id: treatmentStateId })
+  if (!treatment) {
+    throw new Error(`treatment ${treatmentStateId} is not existed!`)
+  }
+  // 如果当前这个字段已经是true了，就不能再改变这个值了
+  const checkItemKeys = Object.keys(checkItems).filter(
+    itemKey => !treatment[itemKey],
+  )
   await db.collection('appointments').update(
-    {
-      _id,
-    },
+    { _id: appointmentId },
     {
       $set: {
-        ...appointment,
+        ...pick(checkItems, checkItemKeys),
         updatedAt: new Date(),
       },
     },
   )
-
-  const syncToTreatments = ['note', 'hisNumber', 'source']
-  const checkItems = [
-    'blood',
-    'footAt',
-    'eyeGroundAt',
-    'insulinAt',
-    'nutritionAt',
-    'healthTech',
-    'quantizationAt',
-  ]
   const treatmentObj = {}
-  checkItems.forEach(o => {
-    treatmentObj[o] = appointment[o] ? false : null
-  })
-  syncToTreatments.forEach(o => {
-    treatmentObj[o] = appointment[o]
+  checkItemKeys.forEach(o => {
+    treatmentObj[o] = checkItems[o] ? false : null
   })
   await db.collection('treatmentState').update(
-    {
-      _id: treatmentStateId,
-    },
+    { _id: treatmentStateId },
     {
       $set: {
         ...treatmentObj,
@@ -293,7 +278,6 @@ export const updateAppointmentById = async (_, { appointment }, context) => {
       },
     },
   )
-  return 'OK'
 }
 
 /**
@@ -511,18 +495,26 @@ const handleAppointmentTimeChange = async ({
  * 更新某一个预约上的属性
  * propKey 预约的key
  * propValue 需要更改预约的值
+ * 适用于 单个属性需要被修改
  * @param {*} _
  * @param {*} param1
  * @param {*} context
  */
 export const updateAppointmentByPropName = async (_, params, context) => {
-  const { propKey, propValue, appointmentId, toOutpatientId } = params
+  const {
+    propKey,
+    propValue,
+    appointmentId,
+    toOutpatientId,
+    isSyncToTreatment,
+  } = params
   const dbAppointment = await db
     .collection('appointments')
     .findOne({ _id: appointmentId })
   if (!dbAppointment) {
     throw new Error('Appointment _id is not existed!')
   }
+  const { treatmentStateId } = dbAppointment
   switch (propKey) {
     case 'confirmStatus':
       await handleConfirmStatusChange(params)
@@ -535,19 +527,18 @@ export const updateAppointmentByPropName = async (_, params, context) => {
         toOutpatientId,
       })
       break
-    default:
-      await db.collection('appointments').update(
-        {
-          _id,
-        },
-        {
-          $set: {
-            [propKey]: propValue,
-            updatedAt: new Date(),
-          },
-        },
-      )
+    default: {
+      const setObj = { [propKey]: propValue, updatedAt: new Date() }
+      await db
+        .collection('appointments')
+        .update({ _id: appointmentId }, { $set: setObj })
+      if (isSyncToTreatment) {
+        await db
+          .collection('treatmentState')
+          .update({ _id: treatmentStateId }, { $set: setObj })
+      }
       break
+    }
   }
 }
 
@@ -607,8 +598,8 @@ export const updateOutpatientStates = async (_, params, context) => {
     quantizationAt: quantizationAt
       ? false
       : quantizationAt !== null
-        ? false
-        : null,
+      ? false
+      : null,
     insulinAt: insulinAt ? false : insulinAt !== null ? false : null,
     healthTech: healthTech ? false : healthTech !== null ? false : null,
     diagnosis: false,

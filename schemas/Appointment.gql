@@ -18,6 +18,16 @@ input AppointmentInput {
   quantizationAt: Boolean
 }
 
+input AppointmentCheckItems {
+  blood: Boolean
+  footAt: Boolean
+  eyeGroundAt: Boolean
+  insulinAt: Boolean
+  nutritionAt: Boolean
+  healthTech: Boolean
+  quantizationAt: Boolean
+}
+
 type Appointment {
   _id: ID
   source: String
@@ -87,8 +97,13 @@ extend type Mutation {
     propValue: String!
     appointmentId: ID!
     toOutpatientId: ID
+    isSyncToTreatment: Boolean
   ): String
   moveAppointmentOut(appointmentId: ID!, outpatientId: ID!): String
+  updateCheckItemsForAppointment(
+    appointmentId: ID!
+    checkItems: AppointmentCheckItems
+  ): String
   deleteAdditionAppointment(appointmentId: ID!, outpatientId: ID!): String
   createQuarterReplaceAddition(
     patientId: ID!

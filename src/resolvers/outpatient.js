@@ -5,7 +5,7 @@ export const Outpatient = {
   patientsCount: async outpatient => {
     const patientLength = await db.collection('users').count({
       _id: { $in: outpatient.patientsId.map(o => ObjectID(o)) },
-      patientState: 'ACTIVE',
+      patientState: { $in: ['ACTIVE', 'HAS_APPOINTMENT'] },
     })
     return patientLength
   },
