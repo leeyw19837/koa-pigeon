@@ -1,5 +1,6 @@
 import freshId from 'fresh-id'
 import moment from 'moment'
+import { ObjectId } from 'mongodb'
 import { wechatPayServices } from '../wechatPay'
 import * as orderServices from '../modules/order'
 import { convertTime } from '../wechatPay/utils'
@@ -22,6 +23,24 @@ export const addOrder = async (_, args, context) => {
     freightPrice,
     totalPrice,
   } = args
+
+  // 增加商城：兼容老APP新数据结构，创建订单时，插入此字段。
+  // 硬编码：从goods表中筛选出 iHealth 血糖试纸这个商品，撷取需要的字段
+  const bgGoods = await db.collection('goods').findOne({ _id: ObjectId.createFromHexString('5c0a1a9e4faaf3b3e4b6dc6c') })
+  const { _id, couponFee, goodPictureUrl, goodSpecification } = bgGoods || {}
+  const goodsListItem = {
+    goodsId: _id,
+    goodsPrice: goodsUnitPrice,
+    goodsTotalPrice: totalPrice,
+    goodsDiscount: couponFee,
+    goodsQuantity: purchaseQuantity,
+    goodsImageUrl: goodPictureUrl,
+    goodsSpecification: goodSpecification,
+  }
+
+  //增加订单过期时间
+  const expiredTime = moment().add(24, "hours").toDate()
+
   let result = await db.collection('orders').insert({
     _id: freshId(),
     patientId,
@@ -38,6 +57,8 @@ export const addOrder = async (_, args, context) => {
     freightPrice,
     totalPrice,
     source: 'NEEDLE',
+    goodsList: [goodsListItem],
+    expiredTime,
   })
   if (!!result.result.ok) {
     return true

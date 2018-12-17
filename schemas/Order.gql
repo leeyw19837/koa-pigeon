@@ -61,4 +61,54 @@ type Order {
   totalPrice: Float
   # 年费服务结束日期
   serviceEndAt: Date
+  # 购买的商品详情（一个订单可能包含多件商品）
+  goodsList: [ GoodsTypeForQuery ]
+}
+
+type GoodsTypeForQuery {
+  # 商品_id
+  goodsId: ID
+  # 商品价格
+  goodsPrice: String
+  # 商品总价格
+  goodsTotalPrice: String
+  # 商品折扣价格
+  goodsDiscount: String
+  # 商品数量
+  goodsQuantity: String
+  # 商品图片地址
+  goodsImageUrl: String
+  # 商品详情（规格、型号等）
+  goodsSpecification: [GoodDetailedDescription]
+}
+
+input GoodsTypeForMutation {
+  # 商品_id
+  goodsId: ID
+  # 商品价格
+  goodsPrice: String
+  # 商品总价格
+  goodsTotalPrice: String
+  # 商品折扣价格
+  goodsDiscount: String
+  # 商品数量
+  goodsQuantity: String
+  # 商品图片地址
+  goodsImageUrl: String
+  # 商品详情（规格、型号等）
+  goodsSpecification: [GoodDetailedDescriptionMutation]
+}
+
+input GoodDetailedDescriptionMutation {
+    title: String
+    content: String
+}
+
+input GoodsReceiverInfos {
+    # 实物商品 收货人
+    receiver: String
+    # 实物商品 收货联系电话
+    phoneNumber: String
+    # 实物商品 收货地址
+    receiveAddress: String
 }

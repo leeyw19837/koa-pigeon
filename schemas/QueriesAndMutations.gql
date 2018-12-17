@@ -359,6 +359,12 @@ type Mutation {
     #  购买数量
     purchaseQuantity: Int
     source: String
+    # 购买的商品详情（一个订单可能包含多件商品）
+    goodsList: [GoodsTypeForMutation]
+    # 购买的商品类型
+    goodsType: String
+    # 购买的实物商品收货信息
+    goodsReceiverInfos: GoodsReceiverInfos
   ): Order
   createPrepayForWechat(
     patientId: ID!

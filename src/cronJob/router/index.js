@@ -16,6 +16,7 @@ import {
 } from '../controller/duty'
 import { completeOutpatient } from '../services/outpatient'
 import { treatmentReminderViaText } from '../services/textMessage'
+import { verifyOrderValidity } from '../controller/orders'
 
 const Router = require('koa-router')
 const cronJob = new Router()
@@ -170,4 +171,19 @@ cronJob.post('/reminder-treatment-text', async ctx => {
   })
   ctx.body = result
 })
+
+/**
+ * 订单过期检测
+ */
+cronJob.get('/verify_order_validity', async ctx => {
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const result = await verifyOrderValidity()
+  if (result) {
+    ctx.body = 'OK! ' + result
+  }
+})
+
+cronJob.g
 export default cronJob
