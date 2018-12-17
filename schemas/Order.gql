@@ -63,6 +63,8 @@ type Order {
   serviceEndAt: Date
   # 购买的商品详情（一个订单可能包含多件商品）
   goodsList: [ GoodsTypeForQuery ]
+  # 订单过期时间
+  expiredTime: Date
 }
 
 type GoodsTypeForQuery {

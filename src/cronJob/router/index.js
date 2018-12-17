@@ -179,7 +179,8 @@ cronJob.get('/verify_order_validity', async ctx => {
   if (!authorization(ctx)) {
     return ctx.throw(401, '密码错误或参数不正确')
   }
-  const result = await verifyOrderValidity()
+  const { frequncy } = ctx.request
+  const result = await verifyOrderValidity(frequncy)
   if (result) {
     ctx.body = 'OK! ' + result
   }

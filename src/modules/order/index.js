@@ -1,6 +1,7 @@
 import { ObjectId, ObjectID } from 'mongodb'
 import moment from 'moment'
 import { findGoodById } from '../goods/index'
+import  { deleteGoodsFromShoppingCart } from '../../mutations/updateGoodsFromShoppingCart'
 
 export const findOrderById = async ({ orderId }) => {
   const result = await db.collection('orders').findOne({
@@ -12,13 +13,17 @@ export const findOrderById = async ({ orderId }) => {
 /**
  * 当用户发起一个微信或者支付宝支付的时候，先在我们数据库插入一条订单记录
  * 后面再对试纸购买扩展
- * @param {*} ctx
+ * @param _
+ * @param args
+ * @param context
+ * @return {Promise<*>}
  */
-export const createOrder = async orderInfo => {
+export const createOrder = async (_, args, context) => {
+  console.log('----args----', args)
   const id = new ObjectID().toString()
-  const { goodId, source, patientId, goodsType, goodsList, goodsReceiverInfos } = orderInfo
+  const { goodId, source, patientId, goodsType, goodsList, goodsReceiverInfos } = args
 
-  console.log('===createOrder===', orderInfo)
+  console.log('===createOrder===', args)
 
   const goods = await findGoodById({ goodId })
   const { goodType, goodName, actualPrice } = goods || {}
@@ -36,17 +41,22 @@ export const createOrder = async orderInfo => {
     totalPrice: actualPrice,
   }
 
-  // 对于试纸包年装（会员商品）服务，不传入此字段(goodsList)。
-  // 对于从商城购买的商品，加入此字段(goodsList)，这样在订单页面能够显示出来订单的状态。
+  // 对于试纸包年装（会员商品）服务，不传入此字段(goodsList)
+  // 对于从商城购买的商品，加入此字段(goodsList)，这样在订单页面能够显示出来订单的状态
   if (goodsList && goodsType){
     let totalPrice = 0
     goodsList.forEach(i=>{
       totalPrice += parseFloat(i.goodsTotalPrice)
     })
     const expiredTime = moment().add(24, "hours").toDate()
-    content = {...content, goodsType, goodsSpecification:'实物商品', totalPrice, goodsList, ...goodsReceiverInfos, expiredTime}
+    content = {...content, freightPrice: 10, goodsType, goodsSpecification:'实物商品', totalPrice, goodsList, ...goodsReceiverInfos, expiredTime}
+
+    // 创建订单同时将购物车中的商品删除
+    const goodsIds = goodsList.map(i=>i.goodsId)
+    await deleteGoodsFromShoppingCart(null, {patientId, goodsIds}, context )
   }
 
+  const db = await context.getDb()
   const data = await db.collection('orders').insertOne(content)
   if (data.result.ok) {
     return content

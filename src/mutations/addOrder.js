@@ -81,7 +81,7 @@ export const createPayOrder = async (_, args, context) => {
 }
 
 export const createOrder = async (_, args, context) => {
-  const result = await orderServices.createOrder(args)
+  const result = await orderServices.createOrder(_, args, context)
   return !result.errCode ? result : null
 }
 
