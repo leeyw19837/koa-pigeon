@@ -46,13 +46,13 @@ export const addOrder = async (_, args, context) => {
     patientId,
     orderId,
     orderTime: new Date(),
-    orderStatus: 'SUCCESSFUL',
+    orderStatus: 'SUCCESS',
     receiver,
     phoneNumber,
     receiveAddress,
-    goodsType: 'BG1',
+    goodsType: 'ENTITY_GOODS',
     goodsUnitPrice,
-    goodsSpecification,
+    goodsSpecification: '糖友商城商品',
     purchaseQuantity,
     freightPrice,
     totalPrice,
@@ -68,6 +68,7 @@ export const addOrder = async (_, args, context) => {
 
 export const createPayOrder = async (_, args, context) => {
   const { patientId, totalPrice } = args
+  console.log('createPayOrder',args)
   const getDb = context.getDb
   const result = await wechatPayServices.createUnifiedOrder({
     data: {
@@ -87,8 +88,10 @@ export const createOrder = async (_, args, context) => {
 
 export const createPrepayForWechat = async (_, args, context) => {
   const { orderId, patientId, goodId } = args
-  const goods = await findGoodById({ goodId })
-  const { goodType, goodName, actualPrice } = goods
+  console.log('createPrepayForWechat',args)
+
+  // const goods = await findGoodById({ goodId })
+  // const { goodType, goodName, actualPrice } = goods
   const result = await wechatPayServices.createUnifiedOrder({
     totalPrice: actualPrice,
     goodsSpecification: goodName,
