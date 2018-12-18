@@ -444,6 +444,7 @@ type Mutation {
   saveFoodComments(comment: CommentInput!): Boolean!
   updateInterventionTaskState(_id: ID!, state: InterventionTaskState!): Boolean!
   updateOrder(orderId: ID!, setData: OrderSetDataInput): Boolean
+  updateOrderList(orderId: ID!, setData: OrderSetDataInput): Boolean
   glycatedHemoglobinAchieve(patientId: ID!): Alipay
   updateFoodBadgeReadState(badgeId: ID): Boolean
   setFoodBadgeState(badgeIds: [ID], badgeState: String): Boolean
