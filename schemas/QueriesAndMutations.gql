@@ -607,6 +607,13 @@ type Mutation {
     patientId: ID
     goodsIds: [ID]
   ) :Boolean
+
+  # 为货到付款的订单创建pay history
+  createPayHistory(
+    patientId: ID
+    orderId: String
+    payWay: String
+  ) :Boolean
 }
 
 type Subscription {

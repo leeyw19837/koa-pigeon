@@ -64,6 +64,8 @@ import * as editTakeMedicinePatient from './addTakeMedicinePatient'
 
 import * as updateGoodsFromShoppingCart from './updateGoodsFromShoppingCart'
 
+import * as createPayHistory from './payHistories'
+
 const mutations = {
   ...assessmentTime,
   ...chatMessages,
@@ -125,6 +127,7 @@ const mutations = {
   ...removeTakeMedicinePatient,
   ...editTakeMedicinePatient,
   ...updateGoodsFromShoppingCart,
+  ...createPayHistory,
 }
 
 const mutationsWithAuthandLog = {}
