@@ -144,6 +144,7 @@ export const loginOrSignUp = async (_, args, context) => {
         : '',
       mobile: existingPatient.username.replace('@ijk.com', ''),
       JWT,
+      idCard: existingPatient.idCard,
     }
   }
 
@@ -176,6 +177,7 @@ export const loginOrSignUp = async (_, args, context) => {
     JWT_SECRET,
     { expiresIn: TOKEN_EXP_FOR_NEW },
   )
+
   // console.log('JWT', JWT)
 
   return {
@@ -184,5 +186,6 @@ export const loginOrSignUp = async (_, args, context) => {
     patientState: newPatient.patientState,
     mobile: newPatient.username.replace('@ijk.com', ''),
     JWT,
+    idCard: '',
   }
 }
