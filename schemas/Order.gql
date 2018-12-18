@@ -65,6 +65,9 @@ type Order {
   goodsList: [ GoodsTypeForQuery ]
   # 订单过期时间
   expiredTime: Date
+
+  # resolver: 支付方式
+  payWay: String
 }
 
 type GoodsTypeForQuery {
