@@ -3,6 +3,6 @@ export const orders = async (_, args, { getDb }) => {
 
   return db
     .collection('orders')
-    .find({ patientId: args.patientId })
+    .find({ patientId: args.patientId ,goodsType:'ENTITY_GOODS'})
     .toArray()
 }
