@@ -70,6 +70,8 @@ type Order {
 type GoodsTypeForQuery {
   # 商品_id
   goodsId: ID
+  # 商品名称
+  goodsName: String
   # 商品价格
   goodsPrice: String
   # 商品总价格
@@ -87,6 +89,8 @@ type GoodsTypeForQuery {
 input GoodsTypeForMutation {
   # 商品_id
   goodsId: ID
+  # 商品名称
+  goodsName: String
   # 商品价格
   goodsPrice: String
   # 商品总价格

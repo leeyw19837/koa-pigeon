@@ -81,25 +81,30 @@ export const createPayOrder = async (_, args, context) => {
   return result
 }
 
+
 export const createOrder = async (_, args, context) => {
   const result = await orderServices.createOrder(_, args, context)
   return !result.errCode ? result : null
 }
 
 export const createPrepayForWechat = async (_, args, context) => {
-  const { orderId, patientId, goodId } = args
+  const { orderId, patientId } = args
   console.log('createPrepayForWechat',args)
 
-  // const goods = await findGoodById({ goodId })
-  // const { goodType, goodName, actualPrice } = goods
-  const result = await wechatPayServices.createUnifiedOrder({
-    totalPrice: actualPrice,
-    goodsSpecification: goodName,
-    orderId,
-    patientId,
-  })
-  logger.log({level: 'info', message: 'create pre order', tag: 'wechat-pay', meta: result })
-  return result
+  const order = await orderServices.findOrderById({ orderId })
+  if (order){
+    const { goodsSpecification, totalPrice, freightPrice } = order
+    const result = await wechatPayServices.createUnifiedOrder({
+      totalPrice: totalPrice + (freightPrice || 0),
+      goodsSpecification,
+      orderId,
+      patientId,
+    })
+    logger.log({level: 'info', message: 'create pre order', tag: 'wechat-pay', meta: result })
+    return result
+  } else {
+    return false
+  }
 }
 
 export const checkPayOrderStatus = async (_, args, context) => {
