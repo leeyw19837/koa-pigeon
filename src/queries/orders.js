@@ -4,6 +4,7 @@ export const orders = async (_, args, {getDb}) => {
   return db
     .collection('orders')
     .find({patientId: args.patientId, goodsType: 'ENTITY_GOODS', orderStatus: {$ne: 'DELETED'}})
+    .sort({orderTime:-1})
     .toArray()
 }
 
