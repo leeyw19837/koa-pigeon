@@ -20,7 +20,7 @@ import * as treatmentStateApp from './treatmentStateApp'
 import * as treatmentStates from './treatmentStates'
 import * as getPressureHistory from './getPressureHistoy'
 
-import { logQueryOrMutation } from '../utils'
+import {logQueryOrMutation} from '../utils'
 import * as evaluate from './evaluate'
 import * as getClinicalLabResult from './getClinicalLabResult'
 import * as warningsOfHigh from './warningsOfHigh'
@@ -31,6 +31,7 @@ import * as certifiedDiabetesEducator from './certifiedDiabetesEducator'
 import * as cdeForDuty from './cdeForDuty'
 import * as healthCareTeam from './healthCareTeam'
 import * as orders from './orders'
+import * as nowDate from './statistics/getNowDate'
 import * as outpatients from './outpatients'
 import * as terribleMeasure from './terribleMeasure'
 
@@ -41,7 +42,7 @@ import * as getDiagnosticWordsNew from './getDiagnosticWordsNew'
 import * as getOrderReceiverInfo from './getOrderReceiverInfo'
 import * as getPatientInstitution from './getPatientInstitution'
 import * as getUserUseBg1Situation from './getUserUseBg1Situation'
-import { blogs } from './blogs'
+import {blogs} from './blogs'
 import * as getFoodRecords from './getFoodRecords'
 
 import * as getAlipay from './getAlipay'
@@ -49,7 +50,7 @@ import * as getInterventionTasks from './getInterventionTasks'
 import * as getTaskSoapCorpus from './getTaskSoapCorpus'
 import * as getTaskSoap from './getTaskSoap'
 import * as getGoods from './getGoods'
-import { logandAuthForApp } from '../utils/authentication'
+import {logandAuthForApp} from '../utils/authentication'
 
 import * as getUnreadFoodBadges from './getUnreadFoodBadges'
 import * as session from './session'
@@ -130,6 +131,7 @@ const queries = {
   ...getTakeMedicineList,
   ...getCheckByTreatmentId,
   ...getShoppingCartGoods,
+  ...nowDate,
 }
 
 const queriesWithAuthandLog = {}

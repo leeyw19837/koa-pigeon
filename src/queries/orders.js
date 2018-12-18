@@ -6,3 +6,4 @@ export const orders = async (_, args, {getDb}) => {
     .find({patientId: args.patientId, goodsType: 'ENTITY_GOODS', orderStatus: {$ne: 'DELETED'}})
     .toArray()
 }
+
