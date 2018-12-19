@@ -49,7 +49,7 @@ export const createOrder = async (_, args, context) => {
       totalPrice += parseFloat(i.goodsTotalPrice)
     })
     const expiredTime = moment().add(24, "hours").toDate()
-    content = {...content, freightPrice: 10, goodsType, goodsSpecification:'糖友商城商品', totalPrice, goodsList, ...goodsReceiverInfos, expiredTime}
+    content = {...content, freightPrice: 0, goodsType, goodsSpecification:'糖友商城商品', totalPrice, goodsList, ...goodsReceiverInfos, expiredTime}
 
     // 创建订单同时将购物车中的商品删除
     const goodsIds = goodsList.map(i=>i.goodsId)

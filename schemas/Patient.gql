@@ -161,6 +161,8 @@ enum MembershipType {
   QUARTERLY_SERVICE_SERVICE_ONLY
   # 连续包季服务（线上服务）
   CONTINUOUS_QUARTERLY_SERVICE_SERVICE_ONLY
+  # 实物商品
+  ENTITY_GOODS
 }
 
 # 会员支付方式
