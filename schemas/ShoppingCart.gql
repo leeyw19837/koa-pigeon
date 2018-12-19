@@ -1,0 +1,14 @@
+type ShoppingCart {
+  _id: ID!
+  # 患者ID
+  patientId: ID
+  # 商品ID
+  goodsId: ID
+  # 商品数量
+  goodsQuantity: Int
+  createdAt: Date
+  updatedAt: Date
+
+  # 在resolver中
+  goods: Goods
+}

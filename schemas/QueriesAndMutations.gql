@@ -149,6 +149,7 @@ type Query {
   getAlipay(out_trade_no: String!, goodId: String!, patientId: String): Alipay
   getGoods(goodId: ID, goodType: String): Goods
   getAllGoods: [Goods]
+  getEntityGoods: [Goods]
   # 不要再继续使用这个API，用getSomeChatRooms代替
   getChatrooms(
     nosy: Boolean
@@ -178,6 +179,9 @@ type Query {
     outpatientDate: String!
   ): [TakeMedicinePeople]
   getCheckByTreatmentId(treatmentStateId: ID!): Appointment
+
+  # 购物车
+  getShoppingCartGoods(patientId: ID): [ShoppingCart]
 }
 
 type Mutation {
@@ -355,6 +359,12 @@ type Mutation {
     #  购买数量
     purchaseQuantity: Int
     source: String
+    # 购买的商品详情（一个订单可能包含多件商品）
+    goodsList: [GoodsTypeForMutation]
+    # 购买的商品类型
+    goodsType: String
+    # 购买的实物商品收货信息
+    goodsReceiverInfos: GoodsReceiverInfos
   ): Order
   createPrepayForWechat(
     patientId: ID!
@@ -434,6 +444,7 @@ type Mutation {
   saveFoodComments(comment: CommentInput!): Boolean!
   updateInterventionTaskState(_id: ID!, state: InterventionTaskState!): Boolean!
   updateOrder(orderId: ID!, setData: OrderSetDataInput): Boolean
+  updateOrderList(orderId: ID!, setData: OrderSetDataInput): Boolean
   glycatedHemoglobinAchieve(patientId: ID!): Alipay
   updateFoodBadgeReadState(badgeId: ID): Boolean
   setFoodBadgeState(badgeIds: [ID], badgeState: String): Boolean
@@ -584,6 +595,26 @@ type Mutation {
   addTakeMedicinePatient(patientId: ID!): Boolean
   removeTakeMedicinePatient(itemId: ID!): Boolean
   editTakeMedicinePatient(itemId: ID!, patientId: ID!): Boolean
+
+  # 更新购物中的商品数量（增/减）
+  updateGoodsFromShoppingCart(
+    patientId: ID
+    goodsId: ID
+    isAdd: Boolean
+  ) :Boolean
+
+  # 删除购物中的商品
+  deleteGoodsFromShoppingCart(
+    patientId: ID
+    goodsIds: [ID]
+  ) :Boolean
+
+  # 为货到付款的订单创建pay history
+  createPayHistory(
+    patientId: ID
+    orderId: String
+    payWay: String
+  ) :Boolean
   uploadFoodPhoto(circleImages: [String]): UploadFoodPhotoResult
 }
 

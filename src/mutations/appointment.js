@@ -173,7 +173,10 @@ export const addPatientAppointment = async (_, params, context) => {
   await db.collection('appointments').insert({
     _id: new ObjectID().toString(),
     patientId: patientId.toString(),
-    ...params,
+    institutionId,
+    nickname,
+    source,
+    mobile,
     createdAt: new Date(),
     isOutPatient: false,
   })
