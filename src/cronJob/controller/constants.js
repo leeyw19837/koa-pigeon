@@ -111,7 +111,8 @@ export const healthCareTeamMap = {
     2: 'afternoon',
   },
   healthCareTeam6: {
-    4: 'morning',
-    5: 'afternoon',
+    // 东方诊从周五改到周四下午，所以统一小程序的nps都下午发送
+    4: 'afternoon',
+    // 5: 'afternoon',
   },
 }
