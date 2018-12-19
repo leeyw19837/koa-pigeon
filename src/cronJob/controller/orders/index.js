@@ -2,12 +2,14 @@ import {
   getPresetOrders
 } from '../../services/order'
 import moment from 'dayjs'
-export const verifyOrderValidity = async (frequncy = 5) => {
-  await db
+export const verifyOrderValidity = async (frequency) => {
+  console.log('verifyOrderValidity called', frequency)
+  const result = await db
     .collection('orders')
     .updateMany({
+      // orderStatus:{'INIT'
       orderTime: {
-        $gte: moment().subtract(frequncy, "m").toDate(),
+        $gte: moment().subtract(frequency, "m").toDate(),
         $lte: moment().toDate(),
       }
     },{
@@ -15,5 +17,6 @@ export const verifyOrderValidity = async (frequncy = 5) => {
         'orderStatus': 'CANCEL',
       }
     })
+
   return true
 }
