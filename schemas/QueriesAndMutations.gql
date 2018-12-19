@@ -365,6 +365,8 @@ type Mutation {
     goodsType: String
     # 购买的实物商品收货信息
     goodsReceiverInfos: GoodsReceiverInfos
+    # 购买的方式
+    buyWay: String
   ): Order
   createPrepayForWechat(
     patientId: ID!

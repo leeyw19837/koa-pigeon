@@ -21,7 +21,7 @@ export const findOrderById = async ({ orderId }) => {
 export const createOrder = async (_, args, context) => {
   console.log('----args----', args)
   const id = new ObjectID().toString()
-  const { goodId, source, patientId, goodsType, goodsList, goodsReceiverInfos } = args
+  const { goodId, source, patientId, goodsType, goodsList, goodsReceiverInfos, buyWay } = args
 
   console.log('===createOrder===', args)
 
@@ -51,9 +51,11 @@ export const createOrder = async (_, args, context) => {
     const expiredTime = moment().add(24, "hours").toDate()
     content = {...content, freightPrice: 0, goodsType, goodsSpecification:'糖友商城商品', totalPrice, goodsList, ...goodsReceiverInfos, expiredTime}
 
-    // 创建订单同时将购物车中的商品删除
-    const goodsIds = goodsList.map(i=>i.goodsId)
-    await deleteGoodsFromShoppingCart(null, {patientId, goodsIds}, context )
+    // 如果不是立即购买方式，那么创建订单同时将购物车中的商品删除
+    if (buyWay !== 'PURCHASE_IMMEDIATELY'){
+      const goodsIds = goodsList.map(i=>i.goodsId)
+      await deleteGoodsFromShoppingCart(null, {patientId, goodsIds}, context )
+    }
   }
 
   const db = await context.getDb()
