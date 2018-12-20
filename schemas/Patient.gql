@@ -36,7 +36,7 @@ type Patient {
   notUseBg1Reason: String
   notUseAppReason: String
   deviceContext: DeviceContext
-  oneWeekNotMeasure:[OneWeekNotMeasure]
+  oneWeekNotMeasure: [OneWeekNotMeasure]
   useSPT: Boolean
   usePublicNumber: Boolean
   isLiDocter: Boolean
@@ -95,9 +95,9 @@ type ArchivedInfos {
 }
 
 type OneWeekNotMeasure {
-  hadNoMeasureReason:String
-  createdAt:Date!
-  custimizedReason:String
+  hadNoMeasureReason: String
+  createdAt: Date!
+  custimizedReason: String
 }
 
 input ArchivedInfoMutation {
@@ -176,10 +176,12 @@ enum MethodOfPayment {
 input ProfileInput {
   nickname: String
   gender: Gender
+  dateOfBirth: Date
   height: Int
   weight: Int
   username: String
   remarks: String
+  idCard: String
 }
 
 input InputPatientFilter {
@@ -191,10 +193,10 @@ input InputPatientFilter {
 }
 
 input UserIdentificationInfos {
-   idCard: String
-   district: String
-   districtId: String
-   street: String
+  idCard: String
+  district: String
+  districtId: String
+  street: String
 }
 
 type PatientFilter {
