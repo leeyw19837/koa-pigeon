@@ -95,10 +95,11 @@ export const updateUserIdentificationInfos = async (_, args, context) => {
 
   const idCardDateOfBirth = userIdentificationInfos.idCard.substring(6,14)
   const dateOfBirth = moment(idCardDateOfBirth,'YYYYMMDD').toDate()
+  const genderDigit = userIdentificationInfos.idCard.substr(-2,1)
   await db.collection('users').update(
       { _id: ObjectId(patientId) },
       {
-        $set: {...userIdentificationInfos, dateOfBirth},
+        $set: {...userIdentificationInfos, dateOfBirth, gender: genderDigit % 2 === 0 ? 'female' : 'male'},
       },
     )
 
