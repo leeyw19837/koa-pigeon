@@ -176,9 +176,9 @@ cronJob.post('/reminder-treatment-text', async ctx => {
  * 订单过期检测
  */
 cronJob.get('/verify_order_validity', async ctx => {
-  // if (!authorization(ctx)) {
-  //   return ctx.throw(401, '密码错误或参数不正确')
-  // }
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
   const { frequency } = ctx.query
   console.log('interface called!')
   const result = await verifyOrderValidity(frequency)
