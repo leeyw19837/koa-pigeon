@@ -71,6 +71,10 @@ input FoodsScoreInput {
 
 type UploadFoodPhotoResult {
   score: Float
+  stapleFoodScore: Float
+  calorieScore: Float
+  proteinScore: Float
+  richnessScore: Float
   commentList: [comment]
 }
 

@@ -177,8 +177,8 @@ input ProfileInput {
   nickname: String
   gender: Gender
   dateOfBirth: Date
-  height: Int
-  weight: Int
+  height: Float
+  weight: Float
   username: String
   remarks: String
   idCard: String
