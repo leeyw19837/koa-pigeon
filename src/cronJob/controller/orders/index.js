@@ -3,7 +3,7 @@ export const verifyOrderValidity = async (frequency) => {
   await db
     .collection('orders')
     .updateMany({
-      $or:[{orderStatus:'INIT'},{orderStatus:'PREPAY_FAILED'},{orderStatus:'NOTPAY'}],
+      $or:[{orderStatus:'INIT'},{orderStatus:'PREPAY_FAILED'},{orderStatus:'PREPAY_SUCCESS'},{orderStatus:'NOTPAY'}],
       goodsType:'ENTITY_GOODS',
       source: 'NEEDLE',
       orderTime: {
