@@ -194,9 +194,17 @@ export const uploadFoodPhoto = async (_, args, context) => {
     })
     .then(data => {
       const score = data.data.score
+      const stapleFoodScore = data.data.stapleFoodScore
+      const proteinScore = data.data.proteinScore
+      const richnessScore = data.data.richnessScore
+      const calorieScore = data.data.calorieScore
       const commentList = data.data.commentList
       return {
         score,
+        stapleFoodScore,
+        proteinScore,
+        richnessScore,
+        calorieScore,
         commentList,
       }
     })
