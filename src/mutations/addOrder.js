@@ -27,9 +27,10 @@ export const addOrder = async (_, args, context) => {
   // 增加商城：兼容老APP新数据结构，创建订单时，插入此字段。
   // 硬编码：从goods表中筛选出 iHealth 血糖试纸这个商品，撷取需要的字段
   const bgGoods = await db.collection('goods').findOne({_id: ObjectId.createFromHexString('5c0a1a9e4faaf3b3e4b6dc6c')})
-  const {_id, couponFee, goodPictureUrl, goodSpecification} = bgGoods || {}
+  const {_id, couponFee, goodPictureUrl, goodSpecification, goodName} = bgGoods || {}
   const goodsListItem = {
     goodsId: _id,
+    goodsName: goodName,
     goodsPrice: goodsUnitPrice,
     goodsTotalPrice: totalPrice,
     goodsDiscount: couponFee,
