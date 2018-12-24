@@ -10,10 +10,10 @@ export const payNotify = async (ctx, next) => {
   console.log(info, order, '@result')
   let replyResult = ''
   if (order) {
-    const { orderStatus, totalPrice, patientId, goodsType} = order
+    const { orderStatus, totalPrice, frightPrice = 0, patientId, goodsType} = order
     if (orderStatus !== 'SUCCESS') {
       let setOrderObj = {}
-      if (+total_fee !== strip(totalPrice * 100)) {
+      if (+total_fee !== strip((totalPrice + frightPrice) * 100)) {
         replyResult = '订单金额和微信商户金额不匹配'
         setOrderObj = {
           orderStatus: 'PAY_FAIL',
@@ -31,14 +31,19 @@ export const payNotify = async (ctx, next) => {
         orderId: out_trade_no,
         setData: setOrderObj,
       })
-      await updateUserCollectionOrderFields({
-        patientId,
-        membershipInformation:{
-          type: goodsType,
-          serviceEndTime: moment(convertTime(time_end)).add(1, 'years')._d,
-          methodOfPayment: 'WECHAT',
-        }
-      })
+
+      // 如果不是实物商品，则更新user表中会员相关字段
+      if (goodsType !== 'ENTITY_GOODS'){
+        await updateUserCollectionOrderFields({
+          patientId,
+          membershipInformation:{
+            type: goodsType,
+            serviceEndTime: moment(convertTime(time_end)).add(1, 'years')._d,
+            methodOfPayment: 'WECHAT',
+          }
+        })
+      }
+
       await createPayHistory({
         patientId,
         orderId: out_trade_no,

@@ -110,7 +110,10 @@ class WeChatPay {
     const ignoreStatus = ['SUCCESS', 'REFUND', 'CLOSED']
     if (ignoreStatus.indexOf(orderStatus) < 0) {
       const transactionOrder = await this.queryUnifiedOrder({ orderId })
-      const { errCode, trade_state, transaction_id } = transactionOrder
+      // liyanwen 2018-12-24 待 totalPrice 随APP再次上线修正后，再修改此处。
+      // const order = await findOrderById({ orderId, payWay: 'WECHAT' })
+      // const { totalPrice, frightPrice } = order
+      const { errCode, trade_state, transaction_id, total_fee } = transactionOrder
       if (!errCode && trade_state !== orderStatus) {
         tradeOrder = await updateOrder({
           orderId,
