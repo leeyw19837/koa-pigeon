@@ -618,6 +618,7 @@ type Mutation {
     payWay: String
   ) :Boolean
   uploadFoodPhoto(circleImages: [String]): UploadFoodPhotoResult
+  updateOffLineTeach(treatmentId: ID!, offLineTeach: [OffLineTeachInput]!): Boolean
 }
 
 type Subscription {

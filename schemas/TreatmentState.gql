@@ -40,6 +40,7 @@ type TreatmentState {
   diagnosis: Boolean
   healthTech: Boolean
   offLineTech: Boolean
+  offLineTeach:[OffLineTeach]
   print: Boolean
   app: Boolean
   bodyCheck: TreatmentBodyCheck
@@ -122,4 +123,14 @@ input TreatmentSign {
   pc: Float
   # 随机血糖
   randomBloodGlucose: Float
+}
+
+type OffLineTeach {
+  content: String
+  result: Boolean
+}
+
+input OffLineTeachInput {
+  content: String
+  result: Boolean
 }
