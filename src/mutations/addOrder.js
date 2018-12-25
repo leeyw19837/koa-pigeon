@@ -32,7 +32,7 @@ export const addOrder = async (_, args, context) => {
     goodsId: _id,
     goodsName: goodName,
     goodsPrice: goodsUnitPrice,
-    goodsTotalPrice: totalPrice,
+    goodsTotalPrice: goodsUnitPrice,
     goodsDiscount: couponFee,
     goodsQuantity: purchaseQuantity,
     goodsImageUrl: goodPictureUrl,

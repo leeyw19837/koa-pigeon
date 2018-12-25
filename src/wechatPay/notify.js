@@ -10,10 +10,10 @@ export const payNotify = async (ctx, next) => {
   console.log(info, order, '@result')
   let replyResult = ''
   if (order) {
-    const { orderStatus, totalPrice, frightPrice = 0, patientId, goodsType} = order
+    const { orderStatus, totalPrice, freightPrice = 0, patientId, goodsType} = order
     if (orderStatus !== 'SUCCESS') {
       let setOrderObj = {}
-      if (+total_fee !== strip((totalPrice + frightPrice) * 100)) {
+      if (+total_fee !== strip((totalPrice + freightPrice) * 100)) {
         replyResult = '订单金额和微信商户金额不匹配'
         setOrderObj = {
           orderStatus: 'PAY_FAIL',

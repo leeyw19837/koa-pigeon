@@ -15,10 +15,10 @@ export const aliPayNotify = async (ctx) => {
   const time_end = moment(gmt_payment).format('YYYYMMDDHHmmss')
   const order = await findOrderById({ orderId: out_trade_no, payWay: 'ALIPAY' })
   if (order) {
-    const { orderStatus, totalPrice, frightPrice = 0, patientId, goodsType } = order
+    const { orderStatus, totalPrice, freightPrice = 0, patientId, goodsType } = order
     if (orderStatus !== 'SUCCESS') {
       let setOrderObj = {}
-      if (+total_amount !== strip(totalPrice + frightPrice)) {
+      if (+total_amount !== strip(totalPrice + freightPrice)) {
         errCode = '订单金额和支付宝金额不匹配'
         setOrderObj = {
           orderStatus: 'PAY_FAIL',
