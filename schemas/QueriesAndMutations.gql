@@ -603,22 +603,22 @@ type Mutation {
     patientId: ID
     goodsId: ID
     isAdd: Boolean
-  ) :Boolean
+  ): Boolean
 
   # 删除购物中的商品
-  deleteGoodsFromShoppingCart(
-    patientId: ID
-    goodsIds: [ID]
-  ) :Boolean
+  deleteGoodsFromShoppingCart(patientId: ID, goodsIds: [ID]): Boolean
 
   # 为货到付款的订单创建pay history
-  createPayHistory(
-    patientId: ID
-    orderId: String
-    payWay: String
-  ) :Boolean
-  uploadFoodPhoto(circleImages: [String]): UploadFoodPhotoResult
-  updateOffLineTeach(treatmentId: ID!, offLineTeach: [OffLineTeachInput]!): Boolean
+  createPayHistory(patientId: ID, orderId: String, payWay: String): Boolean
+  updateOffLineTeach(
+    treatmentId: ID!
+    offLineTeach: [OffLineTeachInput]!
+  ): Boolean
+  createPayHistory(patientId: ID, orderId: String, payWay: String): Boolean
+  uploadFoodPhoto(
+    circleImages: [String]
+    invokerName: String
+  ): UploadFoodPhotoResult
 }
 
 type Subscription {

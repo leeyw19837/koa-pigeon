@@ -171,7 +171,7 @@ export const uploadFoodPhoto = async (_, args, context) => {
   const url = 'https://eat.ihealthlabs.com.cn/api/uploadPhoto'
   const token = 'ba9d802e-d200-444d-8e64-ec7d930daa6b'
 
-  const { circleImages } = args
+  const { circleImages, invokerName } = args
   const imageList = circleImages.map((o, index) => {
     return { url: o }
   })
@@ -179,6 +179,7 @@ export const uploadFoodPhoto = async (_, args, context) => {
     token: token,
     type: 'openApi',
     imageList: imageList,
+    invokerName: invokerName,
     isDiabetes: 1,
   }
   return fetch(url, {
