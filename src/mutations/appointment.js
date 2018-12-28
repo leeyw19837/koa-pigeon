@@ -170,10 +170,10 @@ export const addPatientAppointment = async (_, params, context) => {
       },
     )
   }
-  await db.collection('appointments').insert({
+  const appresult = await db.collection('appointments').insert({
     _id: new ObjectID().toString(),
     patientId: patientId.toString(),
-    ...omit(params, ['willAttendToday','currentOutPatientId']),
+    ...omit(params, ['willAttendToday', 'currentOutPatientId']),
     createdAt: new Date(),
     isOutPatient: false,
   })
@@ -598,8 +598,8 @@ export const updateOutpatientStates = async (_, params, context) => {
     quantizationAt: quantizationAt
       ? false
       : quantizationAt !== null
-      ? false
-      : null,
+        ? false
+        : null,
     insulinAt: insulinAt ? false : insulinAt !== null ? false : null,
     healthTech: healthTech ? false : healthTech !== null ? false : null,
     diagnosis: false,

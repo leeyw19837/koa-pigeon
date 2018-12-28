@@ -6,6 +6,7 @@ type HealthCareTeam {
   institution: Institution!
   healthCareProfessionals: [HealthcareProfessional]
   availableAppointmentDates: [Outpatient]
+  institutionId: String
 }
 
 extend type Query {
