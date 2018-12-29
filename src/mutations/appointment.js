@@ -405,7 +405,7 @@ const handleAppointmentTimeChange = async ({
   }
   // 第二步
   const getInsulinAt = async initInsulinAt => {
-    let insulinAt = initInsulinAt
+    let insulinAt = !initInsulinAt
     const caseRecords = await db
       .collection('caseRecord')
       .find({
