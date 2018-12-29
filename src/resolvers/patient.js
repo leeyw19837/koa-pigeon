@@ -677,12 +677,12 @@ export const Patient = {
             'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589073621.png'
           cdeInfo.hospitalCdeName = '张爱思照护师'
           cdeInfo.hospitalCdeAvatar =
-            'http://paper-king.ks3-cn-beijing.ksyun.com/workwechat1534215612480.png'
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1544076618242.png'
           break
         case 'healthCareTeam6':
           cdeInfo.cdeName = '周晓露照护师'
           cdeInfo.cdeAvatar =
-            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589220936.png'
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1544076562020.png'
           cdeInfo.hospitalCdeName = '白丹丹照护师'
           cdeInfo.hospitalCdeAvatar =
             'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540881357489.png'
