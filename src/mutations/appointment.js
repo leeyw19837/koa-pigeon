@@ -404,8 +404,8 @@ const handleAppointmentTimeChange = async ({
     cursor.type = changeToYear ? 'year' : 'quarter'
   }
   // 第二步
-  const getInsulinAt = async () => {
-    let insulinAt = false
+  const getInsulinAt = async initInsulinAt => {
+    let insulinAt = initInsulinAt
     const caseRecords = await db
       .collection('caseRecord')
       .find({
@@ -432,7 +432,7 @@ const handleAppointmentTimeChange = async ({
     return insulinAt
   }
 
-  const actualInsulinAt = await getInsulinAt()
+  const actualInsulinAt = await getInsulinAt(treatmentState.insulinAt)
   // 第三步
   const isToday = moment(appointmentTime, 'day').isSame(new Date(), 'day')
   if (isToday) {
@@ -598,8 +598,8 @@ export const updateOutpatientStates = async (_, params, context) => {
     quantizationAt: quantizationAt
       ? false
       : quantizationAt !== null
-        ? false
-        : null,
+      ? false
+      : null,
     insulinAt: insulinAt ? false : insulinAt !== null ? false : null,
     healthTech: healthTech ? false : healthTech !== null ? false : null,
     diagnosis: false,
