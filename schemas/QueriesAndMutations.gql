@@ -182,6 +182,9 @@ type Query {
 
   # 购物车
   getShoppingCartGoods(patientId: ID): [ShoppingCart]
+
+  # 获取就诊医生
+  getOutpatientModules(hospitalId: String): [OutpatientModules]
 }
 
 type Mutation {
@@ -542,6 +545,11 @@ type Mutation {
     appointmentTime: Date
     outpatientId: ID
   ): String
+  updateOutpatientInfos(
+    outpatientId: String
+    state: String
+    doctorId: String
+  ): Boolean
   # 更新问答状态
   updateQAStatus(
     qaId: ID!

@@ -62,6 +62,8 @@ import * as cdeDutyPeopleperDay from './cdeDutyPeopleperDay'
 
 import * as getShoppingCartGoods from './getShoppingCartGoods'
 
+import * as getOutpatientModules from './getOutpatientModules'
+
 //AI
 import * as queryAIContentTypes from './queryAIContentTypes'
 import * as getQAList from './getQAList'
@@ -132,6 +134,7 @@ const queries = {
   ...getCheckByTreatmentId,
   ...getShoppingCartGoods,
   ...nowDate,
+  ...getOutpatientModules,
 }
 
 const queriesWithAuthandLog = {}

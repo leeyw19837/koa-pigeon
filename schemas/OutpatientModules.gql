@@ -1,0 +1,16 @@
+type OutpatientModules {
+  _id: ID
+  dayOfWeek: String
+  outpatientStartTime: String
+  outpatientEndTime: String
+  outpatientPeriod: String
+  hospitalId: String
+  hospitalName: String
+  doctorId: ID
+  doctorName: String
+  location: String
+  registrationLocation: String
+  registrationDepartment: String
+  registrationType: String
+  createdAt: Date
+}

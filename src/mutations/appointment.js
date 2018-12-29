@@ -1070,3 +1070,47 @@ export const createQuarterReplaceAddition = async (
   }
   return 'OK'
 }
+
+export const updateOutpatientInfos = async (_, params, context) => {
+  const { outpatientId, state, doctorId } = params
+  const originalOutpatientItem = await db.collection('outpatients').findOne({_id:outpatientId})
+  if (!originalOutpatientItem) {
+    throw new Error(`no outpatient record matching this outpatientId: ${outpatientId}`)
+  }
+
+  // 修改门诊状态
+  // 1、开诊、停诊 统一处理，只修改state分别为WAITING、CANCELED
+  // 2、改期单独处理。
+  // 2.1 注意：改期这个state不能存储为'MODIFIED'，而应该是'WAITING'
+  // 2.2 如果改期的时间恰好有诊，则把所有的患者移入到这个诊中
+  // 2.3 如果改期的时间没有诊，那么全新创建一诊
+  if (state === 'WAITING' || state === 'CANCELED') {
+    await db.collection('outpatients').update({
+      _id: outpatientId,
+    },{
+      $set:{
+        state,
+      }
+    })
+  } else if (state === 'MODIFIED') {
+
+  }
+
+  // 修改出诊医生
+  // 待确定需求：修改出诊医生时，只修改医生的姓名和id还是相关的其他信息都要修改？
+  if (doctorId) {
+    if (doctorId !== originalOutpatientItem.doctorId) {
+      const outpatientModule = await db.collection('outpatientModules').findOne({ doctorId })
+      await db.collection('outpatients').update({
+        _id: outpatientId,
+      },{
+        $set:{
+          doctorId,
+          doctorName: outpatientModule.doctorName
+        }
+      })
+    }
+  }
+
+  return true
+}
