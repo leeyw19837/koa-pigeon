@@ -682,10 +682,10 @@ export const Patient = {
         case 'healthCareTeam6':
           cdeInfo.cdeName = '周晓露照护师'
           cdeInfo.cdeAvatar =
-            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1544076562020.png'
+            'http://swift-snail.ks3-cn-beijing.ksyun.com/fafac6f1mKJFTaafa1530589220936.png'
           cdeInfo.hospitalCdeName = '白丹丹照护师'
           cdeInfo.hospitalCdeAvatar =
-            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540881357489.png'
+            'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1544076562020.png'
           break
         case 'healthCareTeam7':
           cdeInfo.cdeName = '周晓露照护师'
