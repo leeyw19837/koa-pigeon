@@ -4,10 +4,16 @@ type DailyOutpatients {
 }
 
 enum OutpatientState {
+  # 尚未开诊
   WAITING
+  # 正在进行的诊（暂时未用）
   PROCESSING
+  # 已完成的诊
   COMPLETED
+  # 被取消的诊（包含停诊的状态）
   CANCELED
+  # 已被改期的诊
+  MODIFIED
 }
 
 type OutpatientReport {

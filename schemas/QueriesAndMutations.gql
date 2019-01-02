@@ -548,6 +548,8 @@ type Mutation {
   updateOutpatientInfos(
     outpatientId: String
     state: String
+    outpatientDate: Date
+    outpatientPeriod: String
     doctorId: String
   ): Boolean
   # 更新问答状态
