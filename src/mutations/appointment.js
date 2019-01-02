@@ -340,7 +340,7 @@ const changeAppointmentInOutpatient = async ({
   await db.collection('outpatients').update(
     {
       appointmentsId: appointmentId,
-      state: { $ne: 'COMPLETED' },
+      state: { $nin: ['COMPLETED','MODIFIED','CANCELED']},
       patientsId: patientId,
     },
     {
@@ -1094,45 +1094,41 @@ export const updateOutpatientInfos = async (_, params, context) => {
       }
     })
   } else if (state === 'MODIFIED') {
-    const appointedPatientIds = originalOutpatient.patientsId
+    // const appointedPatientIds = originalOutpatient.patientsId
     const appointmentIds = originalOutpatient.appointmentsId
-    const newOutpatientId = new ObjectID().toString()
     // 格式化为 形如 MON TUE ... SAT SUN
     const dayOfWeek = moment(outpatientDate).format('ddd').toUpperCase()
-    const unchangedItems = [
-      'patientsId',
-      'appointmentsId',
-      'personalOutpatientsId',
-      'healthCareTeamId',
-      'location',
-      'hospitalId',
-      'hospitalName',
-      'registrationLocation',
-      'registrationDepartment',
-      'registrationType',
-      'doctorId',
-      'doctorName',
-      'outpatientModuleId',
-      'dutyEmployees',
-    ]
+    // const unchangedItems = [
+    //   'patientsId',
+    //   'appointmentsId',
+    //   'personalOutpatientsId',
+    //   'healthCareTeamId',
+    //   'location',
+    //   'hospitalId',
+    //   'hospitalName',
+    //   'registrationLocation',
+    //   'registrationDepartment',
+    //   'registrationType',
+    //   'doctorId',
+    //   'doctorName',
+    //   'outpatientModuleId',
+    //   'dutyEmployees',
+    // ]
     const insertObj = {
-      _id: newOutpatientId,
       state: 'WAITING',
       outpatientDate,
-      ...pick(originalOutpatient, unchangedItems),
       dayOfWeek,
       outpatientPeriod,
-      report: {
-        patients: appointedPatientIds.length,
-      },
-      note: '',
-      createdAt: new Date(),
       updatedAt: new Date(),
     }
 
-    // 插入一条新诊
-    await db.collection('outpatients').insert({
-      ...insertObj,
+    // 更新这条诊的时间
+    await db.collection('outpatients').update({
+      _id: outpatientId
+    },{
+      $set:{
+        ...insertObj,
+      }
     })
 
     // 遍历涉及的患者，执行预约时间更改的逻辑
@@ -1149,21 +1145,20 @@ export const updateOutpatientInfos = async (_, params, context) => {
           propValue,
           appointmentId: item,
           appointment: dbAppointment,
-          toOutpatientId: newOutpatientId,
+          toOutpatientId: outpatientId,
         })
       })
     }
 
     // 更新旧诊状态
-    await db.collection('outpatients').update({
-      _id: outpatientId,
-    },{
-      $set:{
-        state,
-        updatedAt: new Date(),
-      }
-    })
-
+    // await db.collection('outpatients').update({
+    //   _id: outpatientId,
+    // },{
+    //   $set:{
+    //     state,
+    //     updatedAt: new Date(),
+    //   }
+    // })
   }
 
   // 修改出诊医生
