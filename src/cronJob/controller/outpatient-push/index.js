@@ -285,10 +285,29 @@ const assembleMsgsAndPubsub = async (filteredOutpatientPatients, day) => {
 const checkWhetherUseBg1 = async patientId => {
   // console.log('------checkWhetherUseBg1-----')
 
+  // let userCount = await db
+  //   .collection('users')
+  //   .find({
+  //     _id: ObjectID.createFromHexString(patientId),
+  //     $or: [
+  //       {
+  //         isUseBg1: true,
+  //       },
+  //       {
+  //         $and: [
+  //           { $or: [{ isUseBg1: false }, { isUseBg1: { $exists: false } }] },
+  //           { notUseBg1Reason: { $exists: true } },
+  //           { notUseBg1Reason: 'gotButNoUse' },
+  //         ],
+  //       },
+  //     ],
+  //   })
+  //   .count()
+
   let userCount = await db
-    .collection('users')
+    .collection('BG1NotUseReason')
     .find({
-      _id: ObjectID.createFromHexString(patientId),
+      patientId: patientId,
       $or: [
         {
           isUseBg1: true,
@@ -296,8 +315,8 @@ const checkWhetherUseBg1 = async patientId => {
         {
           $and: [
             { $or: [{ isUseBg1: false }, { isUseBg1: { $exists: false } }] },
-            { notUseBg1Reason: { $exists: true } },
-            { notUseBg1Reason: 'gotButNoUse' },
+            { reason: { $exists: true } },
+            { reason: 'gotButNoUse' },
           ],
         },
       ],
