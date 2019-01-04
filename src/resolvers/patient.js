@@ -696,8 +696,8 @@ export const Patient = {
             'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540881357489.png'
           break
         case 'healthCareTeam9':
-          cdeInfo.hospitalCdeName = '刘红利照护师'
-          cdeInfo.hospitalCdeAvatar =
+          cdeInfo.cdeName = '刘红利照护师'
+          cdeInfo.cdeAvatar =
             'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1540878916517.png'
           cdeInfo.hospitalCdeName = '郑晓琳照护师'
           cdeInfo.hospitalCdeAvatar =
