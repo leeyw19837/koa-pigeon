@@ -10,7 +10,7 @@ import {
 } from './data'
 import { sendTxt } from '../../../common'
 
-const TemplateId = 'SMS_151233986'
+const TemplateId = 'SMS_154586789'
 
 const request = require('request-promise')
 const {
@@ -58,6 +58,7 @@ const preCheckAppointments = async (errorMembers, outpatientIds) => {
  */
 const getLocation = outpatient => {
   const {
+    hospitalId,
     hospitalName,
     outpatientPeriod,
     location,
@@ -65,6 +66,11 @@ const getLocation = outpatient => {
     registrationDepartment,
     registrationType,
   } = outpatient
+
+  // 深圳医院希望用 团队管理 而不是 共同照护
+  const hospitalNameText = `${hospitalName}${
+    hospitalId === 'SHENZHENRENMINYIYUAN' ? '团队管理' : '共同照护'
+  }门诊`
 
   const prefix =
     registrationType === 'ONSITE'
@@ -74,7 +80,7 @@ const getLocation = outpatient => {
   const options = {
     period: PeriodMap[outpatientPeriod],
     outpatientLocation,
-    hosiptalName: hospitalName,
+    hosiptalName: hospitalNameText,
   }
   return options
 }

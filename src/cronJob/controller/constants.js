@@ -115,4 +115,11 @@ export const healthCareTeamMap = {
     4: 'afternoon',
     // 5: 'afternoon',
   },
+  healthCareTeam7: {
+    1: 'morning',
+    5: 'morning',
+  },
+  healthCareTeam9: {
+    1: 'morning',
+  },
 }
