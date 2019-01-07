@@ -337,7 +337,7 @@ const changeAppointmentInOutpatient = async ({
   await db.collection('outpatients').update(
     {
       appointmentsId: appointmentId,
-      state: { $ne: 'COMPLETED' },
+      state: { $nin: ['COMPLETED','MODIFIED','CANCELED']},
       patientsId: patientId,
     },
     {
@@ -1067,3 +1067,113 @@ export const createQuarterReplaceAddition = async (
   }
   return 'OK'
 }
+
+export const updateOutpatientInfos = async (_, params, context) => {
+  const { outpatientId, state, outpatientDate, outpatientPeriod, doctorId } = params
+  const originalOutpatient = await db.collection('outpatients').findOne({_id:outpatientId})
+  if (!originalOutpatient) {
+    throw new Error(`no outpatient record matching this outpatientId: ${outpatientId}`)
+  }
+
+  // 修改门诊状态
+  // 1、开诊、停诊 统一处理，只修改state分别为WAITING、CANCELED
+  // 2、改期单独处理。
+  // 2.1 注意：将被改期的诊的state状态设定为'MODIFIED'，同时在outpatients中创建一条新诊，状态是'WAITING'
+  // 2.2 改诊一定是创建了一条新诊，不存在将改期的诊叠加到现有诊的情况（因为这种情况就相当于停诊了）
+  // 2.3 改期需要首先创建全新一诊，对于每个被改期的患者，都要经历 改变预约时间的 过程，因此都要走一遍 预约时间更改的逻辑
+  if (state === 'WAITING' || state === 'CANCELED') {
+    await db.collection('outpatients').update({
+      _id: outpatientId,
+    },{
+      $set:{
+        state,
+        updatedAt: new Date(),
+      }
+    })
+  } else if (state === 'MODIFIED') {
+    // const appointedPatientIds = originalOutpatient.patientsId
+    const appointmentIds = originalOutpatient.appointmentsId
+    // 格式化为 形如 MON TUE ... SAT SUN
+    const dayOfWeek = moment(outpatientDate).format('ddd').toUpperCase()
+    // const unchangedItems = [
+    //   'patientsId',
+    //   'appointmentsId',
+    //   'personalOutpatientsId',
+    //   'healthCareTeamId',
+    //   'location',
+    //   'hospitalId',
+    //   'hospitalName',
+    //   'registrationLocation',
+    //   'registrationDepartment',
+    //   'registrationType',
+    //   'doctorId',
+    //   'doctorName',
+    //   'outpatientModuleId',
+    //   'dutyEmployees',
+    // ]
+    const insertObj = {
+      state: 'WAITING',
+      outpatientDate,
+      dayOfWeek,
+      outpatientPeriod,
+      updatedAt: new Date(),
+    }
+
+    // 更新这条诊的时间
+    await db.collection('outpatients').update({
+      _id: outpatientId
+    },{
+      $set:{
+        ...insertObj,
+      }
+    })
+
+    // 遍历涉及的患者，执行预约时间更改的逻辑
+    if (appointmentIds.length > 0){
+      const propValue = moment(outpatientDate).startOf('day')._d
+      appointmentIds.forEach(async (item, index) => {
+        const dbAppointment = await db
+          .collection('appointments')
+          .findOne({ _id: item })
+        if (!dbAppointment) {
+          throw new Error('Appointment _id is not existed!')
+        }
+        await handleAppointmentTimeChange({
+          propValue,
+          appointmentId: item,
+          appointment: dbAppointment,
+          toOutpatientId: outpatientId,
+        })
+      })
+    }
+
+    // 更新旧诊状态
+    // await db.collection('outpatients').update({
+    //   _id: outpatientId,
+    // },{
+    //   $set:{
+    //     state,
+    //     updatedAt: new Date(),
+    //   }
+    // })
+  }
+
+  // 修改出诊医生
+  // 待确定需求：修改出诊医生时，只修改医生的姓名和id还是相关的其他信息都要修改？
+  if (doctorId) {
+    if (doctorId !== originalOutpatient.doctorId) {
+      const outpatientModule = await db.collection('outpatientModules').findOne({ doctorId })
+      await db.collection('outpatients').update({
+        _id: outpatientId,
+      },{
+        $set:{
+          doctorId,
+          doctorName: outpatientModule.doctorName
+        }
+      })
+    }
+  }
+
+  return true
+}
+
