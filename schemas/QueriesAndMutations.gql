@@ -628,6 +628,7 @@ type Mutation {
   uploadFoodPhoto(
     circleImages: [String]
     invokerName: String
+    measurementTime: String
   ): UploadFoodPhotoResult
 }
 
