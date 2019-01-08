@@ -16,13 +16,13 @@ type Activity {
     state:ActivityState
     expiredTime:Date
     alertPattern:AlertPattern
-    createAt:Date
+    createdAt:Date
     # 优先级 0-n
     priority:Int
-    popupContent:PopupContent
+    popupModal:PopupModal
 }
 
-type PopupContent {
+type PopupModal {
     popupTitle:String
     popupContent:String
     popupBackgroundImage:String

@@ -8,8 +8,10 @@ export const PublicityActivityController = {
     })
     let publicityActivity = await db.collection('publicityActivity').find({
       _id: {$in: activityId},
-      expiredTime: {$lt: new Date()}
-    }).sort({priority: 1}).toArray()
+      expiredTime: {$gt: new Date()}
+    })
+      .sort({priority: 1})
+      .toArray()
     publicityActivity = publicityActivity.map(item => {
       const matchedA = find(pubActCon.activity, a => a._id === item._id)
       return {...matchedA, ...item}
