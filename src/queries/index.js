@@ -63,6 +63,7 @@ import * as cdeDutyPeopleperDay from './cdeDutyPeopleperDay'
 import * as getShoppingCartGoods from './getShoppingCartGoods'
 
 import * as getOutpatientModules from './getOutpatientModules'
+import * as getPublicityActivityController from './getPublicityActivity'
 
 //AI
 import * as queryAIContentTypes from './queryAIContentTypes'
@@ -135,6 +136,7 @@ const queries = {
   ...getShoppingCartGoods,
   ...nowDate,
   ...getOutpatientModules,
+  ...getPublicityActivityController,
 }
 
 const queriesWithAuthandLog = {}
