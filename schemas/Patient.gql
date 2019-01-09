@@ -33,7 +33,7 @@ type Patient {
   useIGluco: Boolean
   useNeedle: Boolean
   isUseBg1: Boolean
-  notUseBg1Reason: String
+  # notUseBg1Reason: String
   notUseAppReason: String
   deviceContext: DeviceContext
   oneWeekNotMeasure: [OneWeekNotMeasure]
