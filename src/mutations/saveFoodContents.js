@@ -5,7 +5,10 @@ import { saveFoodComments } from './foodComments'
 import freshId from 'fresh-id'
 import some from 'lodash/some'
 import moment from 'moment'
-import { insertChat, insertFoodMessagesIntoChat } from '../utils/insertNeedleChatMessage'
+import {
+  insertChat,
+  insertFoodMessagesIntoChat,
+} from '../utils/insertNeedleChatMessage'
 
 const dietMap = {
   BREAKFAST: '早餐',
@@ -59,7 +62,9 @@ export const saveFoodContents = async (_, args, context) => {
     desc: `${moment(now).format('MM-DD HH:mm')} ${foods.latestState}`,
     patientId: patientId,
   }
-  const userInfo = await db.collection('users').findOne({ _id: ObjectId(patientId) })
+  const userInfo = await db
+    .collection('users')
+    .findOne({ _id: ObjectId(patientId) })
   if (userInfo.patientState && userInfo.patientState !== 'ARCHIVED') {
     await db.collection('interventionTask').insert(newTask)
     pubsub.publish('interventionTaskDynamics', {
@@ -84,15 +89,59 @@ export const saveFoodContents = async (_, args, context) => {
   })
 
   //app端聊天页面插入饮食卡片
-  await insertFoodMessagesIntoChat(_, {
-    patientId,
-    senderId: patientId,
-    shouldQueryTotalScore: false,
-    foodCircleId,
-    sourceType: foodUploadSourceType
-  }, context)
+  await insertFoodMessagesIntoChat(
+    _,
+    {
+      patientId,
+      senderId: patientId,
+      shouldQueryTotalScore: false,
+      foodCircleId,
+      sourceType: foodUploadSourceType,
+    },
+    context,
+  )
 
   return true
+}
+
+const submitComment = (scores, comment) => {
+  const url = 'https://eat.ihealthlabs.com.cn/api/submitComment'
+  const token = 'ba9d802e-d200-444d-8e64-ec7d930daa6b'
+
+  const imageList = comment.circleImages.map((o, index) => {
+    return { url: o }
+  })
+  const params = {
+    token: token,
+    type: 'openApi',
+    imageList: imageList,
+    comment: comment.commentContent,
+    score: scores.totalScore,
+    richnessScore: scores.richnessScore,
+    proteinScore: scores.albumenScore,
+    stapleFoodScore: scores.mainFoodScore,
+    calorieScore: scores.foodEnergyScore,
+  }
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    mode: 'no-cors',
+    body: JSON.stringify(params),
+  })
+    .then(response => {
+      return response.json()
+    })
+    .then(data => {
+      if (data.code === 100) {
+        console.log('submit success')
+      }
+    })
+    .catch(e => {
+      console.log(e, '~~~~')
+      return false
+    })
 }
 
 export const updateFoodScore = async (_, args, context) => {
@@ -103,7 +152,8 @@ export const updateFoodScore = async (_, args, context) => {
   if (allScoreUnset) throw new Error('should be scored items at least one')
   let success = true
   const foodRecord = await db.collection('foods').findOne({ _id })
-  const updatedScoreFlag = foodRecord.totalScore && foodRecord.totalScore !== '0'
+  const updatedScoreFlag =
+    foodRecord.totalScore && foodRecord.totalScore !== '0'
   const updateResult = await db.collection('foods').update(
     {
       _id,
@@ -119,8 +169,17 @@ export const updateFoodScore = async (_, args, context) => {
 
   success = !!updateResult.result.ok
   if (comment) {
+    submitComment(scores, comment)
     if (success) {
-      const saveCommentResult = await saveFoodComments(null, { comment, _operationDetailType: 'SCORES_AND_COMMENTS', patientId: foodRecord.patientId }, context)
+      const saveCommentResult = await saveFoodComments(
+        null,
+        {
+          comment,
+          _operationDetailType: 'SCORES_AND_COMMENTS',
+          patientId: foodRecord.patientId,
+        },
+        context,
+      )
       success = !!saveCommentResult
     }
   } else {
@@ -146,16 +205,20 @@ export const updateFoodScore = async (_, args, context) => {
       _recordId: recordId,
       badgeId,
       badgeCreatedAt,
-      _senderRole: 'cde'
+      _senderRole: 'cde',
     })
     //app端聊天页面插入饮食卡片
-    await insertFoodMessagesIntoChat(_, {
-      patientId: foodRecord.patientId,
-      senderId: 'cde',
-      shouldQueryTotalScore: true,
-      foodCircleId: _id,
-      sourceType: 'FROM_WEB_CDE_SCORES_ONLY'
-    }, context)
+    await insertFoodMessagesIntoChat(
+      _,
+      {
+        patientId: foodRecord.patientId,
+        senderId: 'cde',
+        shouldQueryTotalScore: true,
+        foodCircleId: _id,
+        sourceType: 'FROM_WEB_CDE_SCORES_ONLY',
+      },
+      context,
+    )
   }
   context.response.set('effect-types', 'Foods')
   return success
