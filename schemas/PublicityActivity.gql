@@ -2,8 +2,8 @@ type PublicityActivityController {
      _id: ID
      patientId: String
      activity: [Activity]
-     createAt: Date
-     updateAt: Date
+     createdAt: Date
+     updatedAt: Date
 }
 
 type Activity {
@@ -26,10 +26,16 @@ type PopupModal {
     popupTitle:String
     popupContent:String
     popupBackgroundImage:String
-    popupButtonText:String
-    popupButtonVisibility:Boolean
-    popupButtonBackgroundColor:String
-    popupButtonTextColor:String
+    popupBackgroundImgStyle:ImageStyle
+    popupButtonImage:String
+    popupButtonImgStyle:ImageStyle
+}
+
+type ImageStyle {
+    width: Int
+    height: Int
+    top: Int
+    left: Int
 }
 
 enum ActivityState {

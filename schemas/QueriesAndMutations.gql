@@ -187,7 +187,7 @@ type Query {
   getOutpatientModules(hospitalId: String): [OutpatientModules]
 
   # 查询用户的活动配置信息
-  getPublicityActivityController(patientId: ID!):PublicityActivityController
+  getPublicityActivityController(patientId: ID):PublicityActivityController
 }
 
 type Mutation {
