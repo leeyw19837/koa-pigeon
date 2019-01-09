@@ -632,6 +632,7 @@ type Mutation {
     circleImages: [String]
     invokerName: String
   ): UploadFoodPhotoResult
+  markReadPublicityActivity(patientId: ID,activityId:ID):Boolean
 }
 
 type Subscription {
