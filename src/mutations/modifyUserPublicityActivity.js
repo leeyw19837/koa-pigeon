@@ -7,7 +7,7 @@ export const markReadPublicityActivity = async (_, args, context) => {
   let {activity} = userActivity
   activity = activity.map((item) => {
     if (item._id === activityId) {
-      item.readyState = true
+      item.readState = true
     }
     return item
   })
