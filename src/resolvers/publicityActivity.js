@@ -8,7 +8,8 @@ export const PublicityActivityController = {
     })
     let publicityActivity = await db.collection('publicityActivity').find({
       _id: {$in: activityId},
-      expiredTime: {$gt: new Date()}
+      expiredTime: {$gt: new Date()},
+      state:'AVAILABLE'
     })
       .sort({priority: 1})
       .toArray()
