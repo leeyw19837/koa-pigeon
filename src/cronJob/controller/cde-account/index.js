@@ -87,11 +87,13 @@ const getMaxDistancePercent = (currentHctCdePercent = []) => {
     } = cp
     const acutalTotal = currentTotal + needAddPatients.length
     const acutalHad = hadPatientCounts + needAddPatients.length
+    const divisor =
+      !acutalTotal && !acutalHad
+        ? (acutalHad / acutalTotal * 100).toFixed(3)
+        : 0
     result.push({
       cdeId,
-      percentDistance: strip(
-        percent - ((acutalHad / acutalTotal) * 100).toFixed(3),
-      ),
+      percentDistance: strip(percent - divisor),
     })
   })
   return maxBy(result, o => o.percentDistance)
