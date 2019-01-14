@@ -20,6 +20,7 @@ type Activity {
     # 优先级 0-n
     priority:Int
     popupModal:PopupModal
+    headerBar:HeaderBar
 }
 
 type PopupModal {
@@ -29,6 +30,11 @@ type PopupModal {
     popupBackgroundImgStyle:ImageStyle
     popupButtonImage:String
     popupButtonImgStyle:ImageStyle
+}
+
+type HeaderBar {
+    colors:[String]
+    isShowShareButton:Boolean
 }
 
 type ImageStyle {
