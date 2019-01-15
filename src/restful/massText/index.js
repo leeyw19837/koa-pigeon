@@ -62,13 +62,14 @@ export const sendMassText = async ctx => {
       .collection('needleChatMessages')
       .insert(massTextMessages)
     if (insertResult.result.ok === 1) {
-      await multiSendMiPushForAlias(
-        mipushAlias,
-        'TEXT',
-        '',
-        '',
-        massTextMessages[0].text,
-      )
+      await multiSendMiPushForAlias({
+        type: 'CHAT',
+        patientIds: mipushAlias,
+        messageType: 'TEXT',
+        title: '',
+        desc: '',
+        messageText: massTextMessages[0].text,
+      })
       pubChatMessages(massTextMessages)
     }
   }
@@ -167,12 +168,17 @@ export const sendCardMassText = async ctx => {
   return 'ok'
 }
 
+/**
+ * ATTENTION: 注意修改 ctx.request.body ：增加knowledgeId !!!!!!
+ * @param ctx
+ * @return {Promise<string>}
+ */
 export const sendKnowledgeToMiPush = async ctx => {
   const env = process.env.NODE_ENV
   if (env !== 'production') {
     return 'only production allow to send mipush'
   }
-  const { title, desc } = ctx.request.body
+  const { title, desc, knowledgeId } = ctx.request.body
   const users = await db
     .collection('users')
     .find({
@@ -186,7 +192,59 @@ export const sendKnowledgeToMiPush = async ctx => {
   console.log(`发送小米推送 ->${users.length}人，${title}`)
   const patientIds = users.map(o => o._id.toString())
 
-  await multiSendMiPushForAlias(patientIds, 'TEXT', title, desc, '')
+  await multiSendMiPushForAlias({
+    type:'KNOWLEDGE',
+    patientIds,
+    messageType: 'TEXT',
+    title,
+    desc,
+    messageText: '',
+    extraInfos: {
+      id: knowledgeId,
+    }
+  })
   console.log('推送结束', title)
   return 'ok'
 }
+
+/**
+ * ATTENTION : 修改'deviceContext.appVersion' 为实际上线版本号！！！！！
+ * @param ctx
+ * @return {Promise<string>}
+ */
+export const sendPublicityActivitiesToMiPush = async ctx => {
+  const env = process.env.NODE_ENV
+  // if (env !== 'production') {
+  //   return 'only production allow to send mipush'
+  // }
+  console.log('ctx',ctx)
+  const { title, desc, activityId } = ctx.request.body
+  // const users = await db
+  //   .collection('users')
+  //   .find({
+  //     'deviceContext.appVersion': {
+  //       $gte: '1.6.8.2',
+  //     },
+  //     patientState: 'ACTIVE',
+  //   })
+  //   .toArray()
+  //
+  // console.log(`发送小米推送 ->${users.length}人，${title}`)
+  // const patientIds = users.map(o => o._id.toString())
+
+  const patientIds = ['5ae977bf598e1211b97d66b7']
+
+  await multiSendMiPushForAlias({
+    type:'PUBLICITY_ACTIVITY',
+    patientIds,
+    title,
+    desc,
+    messageText: '',
+    extraInfos: {
+      id: activityId,
+    }
+  })
+  console.log('推送结束', title)
+  return 'ok'
+}
+

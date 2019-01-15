@@ -37,6 +37,7 @@ const generateSendMessages = async ({
   messageType,
   title,
   desc,
+  extraInfos = {}
 }) => {
   const hasDeviceContextInUser = await db
     .collection('users')
@@ -77,11 +78,10 @@ const generateSendMessages = async ({
     ...getDeviceInBgRecord.filter(o => o.deviceContext),
   ]
 
-  const defaultOptions = {
+  const commonOptions = {
     pass_through: 0,
     notify_type: 1,
     notify_id: TYPE_MAP[type] || 1,
-    payload: JSON.stringify({ type }),
     'extra.badge': 2,
     'extra.notify_foreground': type === 'CHAT' ? '0' : '1',
     title: title ? `护血糖-${title}` : '护血糖',
@@ -90,6 +90,12 @@ const generateSendMessages = async ({
         ? '[新消息] 收到一张就诊提醒卡片，请点击查看。'
         : desc || '[新消息] 收到一条新消息，请点击查看。',
   }
+
+  const defaultOptions = {
+    ...commonOptions,
+    payload: JSON.stringify({ type, ...extraInfos }),
+  }
+  console.log('JSON.stringify({ type, ...extraInfos })', JSON.stringify({ type, ...extraInfos }))
 
   const androidPatientIds = []
   const iosPatientIds = []
@@ -143,19 +149,14 @@ const pushChatNotification = async (
     }
   }
 }
-export const multiSendMiPushForAlias = async (
-  patientIds,
-  messageType,
-  title,
-  desc,
-  messageText,
-) => {
+export const multiSendMiPushForAlias = async ({ type, patientIds, messageType, title, desc, messageText, extraInfos}) => {
   const result = await generateSendMessages({
-    type: 'CHAT',
+    type,
     patientIds,
     messageType,
     title,
     desc,
+    extraInfos,
   })
   await pushChatNotification('ios', result, messageText)
   await pushChatNotification('android', result, messageText)

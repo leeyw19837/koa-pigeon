@@ -333,7 +333,11 @@ const createChatCardMessage = async (cardMessages, isTest) => {
       .insert(chatInfoMsgs)
 
     if (insertResult.result.ok === 1) {
-      await multiSendMiPushForAlias(miPushAlias, 'CARD')
+      await multiSendMiPushForAlias({
+        type: 'CHAT',
+        patientIds: miPushAlias,
+        messageType: 'CARD'
+      })
       pubChatMessages(cardMessages)
     }
     if (chatInfoInsertResult.result.ok === 1) {
