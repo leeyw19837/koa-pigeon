@@ -188,6 +188,10 @@ type Query {
 
   # 查询用户的活动配置信息
   getPublicityActivityController(patientId: ID):PublicityActivityController
+
+  # 根据活动的ID查询当前的活动
+  getOneOfPublicityActivity(activityId:String):Activity
+
 }
 
 type Mutation {
