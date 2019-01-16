@@ -58,15 +58,33 @@ export const blogs = async (_, args, context) => {
     }
   })
 
-  // const db = await context.getDb()
-  // const { blogId } = args
-  // const cursor = {}
-  // if (blogId) cursor['_id'] = blogId
-  // const blogs = await db
-  //   .collection('blogs')
-  //   .find(cursor)
-  //   .sort({ publishedAt: -1 })
-  //   .toArray()
-
   return result
 }
+
+export const blogById = async (_, args, context) => {
+  const query = `query GetBlogDetail($_id: String!) {
+    getBlogDetail(_id: $_id) {
+      _id
+      title
+      avatar
+      content
+      desc
+    }
+  }`
+  const { _id } = args
+  let result
+  try {
+    const data = await request(BLOG_URL, query, {
+      _id,
+    })
+    result = data.getBlogDetail
+  } catch (error) {
+    console.log(error, 'error')
+  }
+
+  console.log(result, 'result')
+  return result
+
+}
+
+

@@ -5,7 +5,7 @@ export const Blog = {
     const db = await getDb()
     const { comments } = blog
     const transforComment = []
-    if (comments.length) {
+    if (comments && comments.length) {
       const users = await db
         .collection('users')
         .find({

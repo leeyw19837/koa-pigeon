@@ -134,7 +134,7 @@ if (!AUTH) AUTH = 'FALSE'
   // 然后再所有的query和mutation中增加了前置去认证context中是否包含user，不包含抛出认证错误
   // graphql认证逻辑和为graphql认证增加context.user：middlewares/UserAuthorization
   // query和mutation的前置：utils/authentication
-  //router.use(Auth(JWT_SECRET))
+  router.use(Auth(JWT_SECRET))
 
   // restful认证 先调用login登录（systemUsers表）登陆后带token请求 login：login/login.controller
   // restful认证校验逻辑：utils/authorization login后默认无roles字段，需要手动添加roles字段
