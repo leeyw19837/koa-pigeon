@@ -42,7 +42,7 @@ import * as getDiagnosticWordsNew from './getDiagnosticWordsNew'
 import * as getOrderReceiverInfo from './getOrderReceiverInfo'
 import * as getPatientInstitution from './getPatientInstitution'
 import * as getUserUseBg1Situation from './getUserUseBg1Situation'
-import { blogs } from './blogs'
+import * as blogs from './blogs'
 import * as getFoodRecords from './getFoodRecords'
 
 import * as getAlipay from './getAlipay'
@@ -63,6 +63,7 @@ import * as cdeDutyPeopleperDay from './cdeDutyPeopleperDay'
 import * as getShoppingCartGoods from './getShoppingCartGoods'
 
 import * as getOutpatientModules from './getOutpatientModules'
+import * as getPublicityActivityController from './getPublicityActivity'
 
 //AI
 import * as queryAIContentTypes from './queryAIContentTypes'
@@ -111,7 +112,7 @@ const queries = {
   ...appointments,
   ...outpatients,
   ...certifiedDiabetesEducator,
-  blogs,
+  ...blogs,
   ...getInterventionTasks,
   ...getTaskSoapCorpus,
   ...getFoodRecords,
@@ -136,6 +137,7 @@ const queries = {
   ...getShoppingCartGoods,
   ...nowDate,
   ...getOutpatientModules,
+  ...getPublicityActivityController,
   ...configurationContent,
 }
 

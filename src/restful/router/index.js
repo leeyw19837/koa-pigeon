@@ -11,6 +11,7 @@ import {
   sendMassText,
   sendCardMassText,
   sendKnowledgeToMiPush,
+  sendPublicityActivitiesToMiPush
 } from '../massText'
 
 import { getAllJobs } from '../../modules/delayJob'
@@ -36,6 +37,11 @@ restfulRouter.post('/sendCardMassText', async ctx => {
 
 restfulRouter.post('/sendKnowledgeToMiPush', async ctx => {
   const result = await sendKnowledgeToMiPush(ctx)
+  ctx.body = result
+})
+
+restfulRouter.post('/sendPublicityActivityToMiPush', async ctx => {
+  const result = await sendPublicityActivitiesToMiPush(ctx)
   ctx.body = result
 })
 

@@ -1,0 +1,65 @@
+type PublicityActivityController {
+     _id: ID
+     patientId: String
+     activity: [Activity]
+     createdAt: Date
+     updatedAt: Date
+}
+
+type Activity {
+    _id:ID
+    readState: Boolean
+    name: String
+    shareImageThumbnail: String
+    imageSource:String
+    publicityTitle:String
+    publicityContent:String
+    jumpToUrl:String
+    state:ActivityState
+    expiredTime:Date
+    alertPattern:AlertPattern
+    createdAt:Date
+    # 优先级 0-n
+    priority:Int
+    popupModal:PopupModal
+    headerBar:HeaderBar
+}
+
+type PopupModal {
+    popupTitle:String
+    popupContent:String
+    popupBackgroundImage:String
+    popupBackgroundImgStyle:ImageStyle
+    popupButtonImage:String
+    popupButtonImgStyle:ImageStyle
+}
+
+type HeaderBar {
+    colors:[String]
+    isShowShareButton:Boolean
+}
+
+type ImageStyle {
+    width: Int
+    height: Int
+    top: Int
+    left: Int
+}
+
+enum ActivityState {
+    #可用的活动
+    AVAILABLE
+    #取消的活动
+    CANCELED
+    #停止的活动
+    STOPPED
+    #暂停的活动
+    PAUSED
+}
+
+enum AlertPattern {
+    ALWAYS
+    ONCE
+}
+
+

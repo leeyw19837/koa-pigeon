@@ -81,7 +81,10 @@ const shareRecords = async (type, recordId) => {
       }
       return result
     default:
-      break
+      return {
+        type,
+        name: '活动内容'
+      }
   }
 }
 // 根据type判断，调用插入积分的接口

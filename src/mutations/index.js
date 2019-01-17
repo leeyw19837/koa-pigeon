@@ -53,6 +53,7 @@ import * as aiCall from './aiCall'
 import * as uploadBloodPressureMeasurement from './bloodPressure'
 import * as treatmentState from './treatmentState'
 import * as addBG1NotUseReason from './addBG1NotUseReason'
+import * as modifyUserPublicityActivity from './modifyUserPublicityActivity'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -128,6 +129,7 @@ const mutations = {
   ...editTakeMedicinePatient,
   ...updateGoodsFromShoppingCart,
   ...createPayHistory,
+  ...modifyUserPublicityActivity,
 }
 
 const mutationsWithAuthandLog = {}
