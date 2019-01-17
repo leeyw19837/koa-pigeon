@@ -1,6 +1,11 @@
-import { logger } from '../lib/logger'
+import { logger } from '../common'
 
-export const formatError = error => {
-  logger.log({level: 'error', message: error.message, status: error.status })
+export const formatError = (error, ctx) => {
+  logger.log({
+    level: 'error',
+    message: error.message,
+    status: error.status,
+    context: ctx,
+  })
   return error.message
 }

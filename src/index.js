@@ -50,7 +50,6 @@ if (!PORT) PORT = '3080'
 if (!NODE_ENV) NODE_ENV = 'development'
 if (!SECRET) SECRET = '8B8kMWAunyMhxM9q9OhMVCJiXpxBIqpo'
 if (!AUTH) AUTH = 'FALSE'
-
 ;(async () => {
   const resolverMap = {
     ...resolvers,
@@ -147,7 +146,7 @@ if (!AUTH) AUTH = 'FALSE'
           ...context,
         },
         schema,
-        formatError,
+        formatError: error => formatError(error, ctx),
         tracing: true, // 中间件QueryAnalyzer需要依赖tracing的内容
       })),
     ),

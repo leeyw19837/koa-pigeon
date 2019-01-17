@@ -1,11 +1,12 @@
 import freshId from 'fresh-id'
+import get from 'lodash/get'
 import moment from 'moment'
-import {ObjectId} from 'mongodb'
-import {wechatPayServices} from '../wechatPay'
+import { ObjectId } from 'mongodb'
+import { wechatPayServices } from '../wechatPay'
 import * as orderServices from '../modules/order'
-import {convertTime} from '../wechatPay/utils'
-import {findGoodById} from '../modules/goods/index'
-import {logger} from '../lib/logger';
+import { convertTime } from '../wechatPay/utils'
+import { findGoodById } from '../modules/goods/index'
+import { logger } from '../common'
 
 export const addOrder = async (_, args, context) => {
   const db = await context.getDb()
@@ -26,8 +27,11 @@ export const addOrder = async (_, args, context) => {
 
   // 增加商城：兼容老APP新数据结构，创建订单时，插入此字段。
   // 硬编码：从goods表中筛选出 iHealth 血糖试纸这个商品，撷取需要的字段
-  const bgGoods = await db.collection('goods').findOne({_id: ObjectId.createFromHexString('5c0a1a9e4faaf3b3e4b6dc6c')})
-  const {_id, couponFee, goodPictureUrl, goodSpecification, goodName} = bgGoods || {}
+  const bgGoods = await db
+    .collection('goods')
+    .findOne({ _id: ObjectId.createFromHexString('5c0a1a9e4faaf3b3e4b6dc6c') })
+  const { _id, couponFee, goodPictureUrl, goodSpecification, goodName } =
+    bgGoods || {}
   const goodsListItem = {
     goodsId: _id,
     goodsName: goodName,
@@ -40,7 +44,9 @@ export const addOrder = async (_, args, context) => {
   }
 
   //增加订单过期时间
-  const expiredTime = moment().add(24, "hours").toDate()
+  const expiredTime = moment()
+    .add(24, 'hours')
+    .toDate()
 
   let result = await db.collection('orders').insert({
     _id: freshId(),
@@ -68,7 +74,7 @@ export const addOrder = async (_, args, context) => {
 }
 
 export const createPayOrder = async (_, args, context) => {
-  const {patientId, totalPrice} = args
+  const { patientId, totalPrice } = args
   console.log('createPayOrder', args)
   const getDb = context.getDb
   const result = await wechatPayServices.createUnifiedOrder({
@@ -78,10 +84,15 @@ export const createPayOrder = async (_, args, context) => {
     },
     getDb,
   })
-  logger.log({level: 'info', message: 'create pre order', tag: 'wechat-pay', meta: result})
+  logger.log({
+    level: 'info',
+    message: 'create pre order',
+    tag: 'wechat-pay',
+    meta: result,
+    context,
+  })
   return result
 }
-
 
 export const createOrder = async (_, args, context) => {
   const result = await orderServices.createOrder(_, args, context)
@@ -89,19 +100,25 @@ export const createOrder = async (_, args, context) => {
 }
 
 export const createPrepayForWechat = async (_, args, context) => {
-  const {orderId, patientId} = args
+  const { orderId, patientId } = args
   console.log('createPrepayForWechat', args)
 
-  const order = await orderServices.findOrderById({orderId})
+  const order = await orderServices.findOrderById({ orderId })
   if (order) {
-    const {goodsSpecification, totalPrice, freightPrice} = order
+    const { goodsSpecification, totalPrice, freightPrice } = order
     const result = await wechatPayServices.createUnifiedOrder({
       totalPrice: totalPrice + (freightPrice || 0),
       goodsSpecification,
       orderId,
       patientId,
     })
-    logger.log({level: 'info', message: 'create pre order', tag: 'wechat-pay', meta: result})
+    logger.log({
+      level: 'info',
+      message: 'create pre order',
+      tag: 'wechat-pay',
+      meta: result,
+      context,
+    })
     return result
   } else {
     return false
@@ -109,14 +126,14 @@ export const createPrepayForWechat = async (_, args, context) => {
 }
 
 export const checkPayOrderStatus = async (_, args, context) => {
-  const {orderId, type} = args
+  const { orderId, type } = args
   const result = await wechatPayServices.queryUnifiedOrder({
     orderId,
     type: type || 'out_trade_no',
   })
-  const {returnCode, trade_state, errCode, time_end, transaction_id} = result
-  const tradeOrder = await orderServices.findOrderById({orderId})
-  const {orderStatus, patientId, goodsType} = tradeOrder
+  const { returnCode, trade_state, errCode, time_end, transaction_id } = result
+  const tradeOrder = await orderServices.findOrderById({ orderId })
+  const { orderStatus, patientId, goodsType } = tradeOrder
   if (orderStatus !== trade_state) {
     let setData = {
       orderStatus: trade_state,
@@ -140,7 +157,7 @@ export const checkPayOrderStatus = async (_, args, context) => {
         type: goodsType,
         serviceEndTime: moment(convertTime(time_end)).add(1, 'years')._d,
         methodOfPayment: 'WECHAT',
-      }
+      },
     })
   }
   return {
@@ -151,17 +168,23 @@ export const checkPayOrderStatus = async (_, args, context) => {
 }
 
 export const updateOrder = async (_, args, context) => {
-  const {orderId, setData} = args
+  const { orderId, setData } = args
   const data = await orderServices.updateOrder({
     orderId,
     setData,
   })
-  logger.log({level: 'info', message: 'update order status', tag: 'wechat-pay', meta: args})
+  logger.log({
+    level: 'info',
+    message: 'update order status',
+    tag: 'wechat-pay',
+    meta: args,
+    context,
+  })
   return data.nModified === 1
 }
 
 export const updateOrderList = async (_, args, context) => {
-  const {orderId, setData} = args
+  const { orderId, setData } = args
   await orderServices.updateOrder({
     orderId,
     setData,

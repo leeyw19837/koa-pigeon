@@ -1,4 +1,4 @@
-import { logger } from '../lib/logger'
+import { logger } from '../common'
 
 /**
  * Error handler middleware.
@@ -10,6 +10,12 @@ export async function errorHandler(ctx, next) {
   } catch (err) {
     ctx.status = err.statusCode || 500
     ctx.body = err.toJSON ? err.toJSON() : { message: err.message, ...err }
-    logger.log({level: 'error', message: 'Error in request', error: err.message, status: ctx.status})
+    logger.log({
+      level: 'error',
+      message: 'Error in request',
+      error: err.message,
+      status: ctx.status,
+      context: ctx,
+    })
   }
 }
