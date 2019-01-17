@@ -1,0 +1,7 @@
+type ConfigurationContent {
+  _id: ID
+  type: String
+  title: String
+  content: [String]
+  createdAt: Date
+}

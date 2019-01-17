@@ -185,6 +185,8 @@ type Query {
 
   # 获取就诊医生
   getOutpatientModules(hospitalId: String): [OutpatientModules]
+   # 获取前端配置
+  configurationContent(type: String!): ConfigurationContent
 }
 
 type Mutation {
