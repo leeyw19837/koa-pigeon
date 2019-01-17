@@ -10,8 +10,10 @@ type Activity {
     _id:ID
     readState: Boolean
     name: String
+    shareImageThumbnail: String
     imageSource:String
-    publicityText:String
+    publicityTitle:String
+    publicityContent:String
     jumpToUrl:String
     state:ActivityState
     expiredTime:Date
