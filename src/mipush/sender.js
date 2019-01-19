@@ -131,6 +131,8 @@ const realSender = async ({
         },*/
     title,
     description,
+    // fileds for ios only
+    'extra.appIntent': JSON.stringify({ type }),
   }
 
   const options = {

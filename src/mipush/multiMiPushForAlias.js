@@ -94,6 +94,7 @@ const generateSendMessages = async ({
   const defaultOptions = {
     ...commonOptions,
     payload: JSON.stringify({ type, ...extraInfos }),
+    'extra.appIntent': JSON.stringify({ type, ...extraInfos }),
   }
   console.log('JSON.stringify({ type, ...extraInfos })', JSON.stringify({ type, ...extraInfos }))
 
