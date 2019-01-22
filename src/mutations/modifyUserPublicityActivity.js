@@ -8,6 +8,7 @@ export const markReadPublicityActivity = async (_, args, context) => {
   activity = activity.map((item) => {
     if (item._id === activityId) {
       item.readState = true
+      item.updatedAt = new Date()
     }
     return item
   })
