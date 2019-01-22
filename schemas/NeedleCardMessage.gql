@@ -18,10 +18,14 @@ enum CardContentStatus {
 }
 
 enum CardContentType {
-  # 预约类型
+  # 预约
   APPOINTMENT
+  # 涨知识
   KNOWLEDGE
+  # 饮食
   FOOD
+  # 宣传活动
+  PUBLICITY_ACTIVITY
 }
 
 enum CardContentSourceType {

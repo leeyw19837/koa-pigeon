@@ -20,6 +20,8 @@ type Blog {
   type: BlogType
   # 文章配图
   avatar: String
+  # 文章配图缩略图
+  avatarThumbnail: String
   # 标题
   title: String
   # 内容

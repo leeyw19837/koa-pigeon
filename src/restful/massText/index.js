@@ -231,9 +231,82 @@ export const sendPublicityActivitiesToMiPush = async ctx => {
   //
   // console.log(`发送小米推送 ->${users.length}人，${title}`)
   // const patientIds = users.map(o => o._id.toString())
-
   const patientIds = ['5ae977bf598e1211b97d66b7']
 
+  // 第一步：向聊天信息表中插入推送数据
+  const massTextMessages = []
+  const chatRooms = await db
+    .collection('needleChatRooms')
+    .find({
+      'participants.userId': {
+        $in: patientIds,
+      },
+    })
+    .toArray()
+  const activityDetail = await db
+    .collection('publicityActivity')
+    .findOne({_id: activityId})
+  const { name, publicityTitle, publicityContent, shareImageThumbnail } = activityDetail
+  const messageTemplate = {
+    messageType: 'CARD',
+    content: {
+      name,
+      type: 'PUBLICITY_ACTIVITY',
+      body: [
+        {
+          key: 'id',
+          value: activityId,
+        },
+        {
+          key: 'title',
+          value: publicityTitle,
+        },
+        {
+          key: 'content',
+          value: publicityContent,
+        },
+        {
+          key: 'avatar',
+          value: shareImageThumbnail,
+        },
+        {
+          key: 'type',
+          value: '',
+        },
+        {
+          key: 'notificationText',
+          value: '您的健康报告出炉啦，请您查看。',
+        },
+      ],
+    },
+    senderId: 'system',
+    sourceType: 'FROM_SYSTEM',
+    createdAt: new Date(),
+  }
+  patientIds.forEach(user => {
+    const patientId = user.toString()
+    const chatRoom = chatRooms.find(o =>
+      find(o.participants, item => item.userId === patientId),
+    )
+    if (chatRoom) {
+      const message = {
+        ...messageTemplate,
+        _id: new ObjectID().toString(),
+        content: {
+          ...messageTemplate.content,
+          toUserId: patientId,
+        },
+        chatRoomId: chatRoom._id,
+      }
+      massTextMessages.push(message)
+    }
+  })
+  const insertResult = await db
+    .collection('needleChatMessages')
+    .insert(massTextMessages)
+  console.log('insertResult', insertResult)
+
+  // 第二步：调用多推送接口，推送数据
   await multiSendMiPushForAlias({
     type:'PUBLICITY_ACTIVITY',
     patientIds,

@@ -3,6 +3,7 @@ import freshId from 'fresh-id'
 import { request } from 'graphql-request'
 const {
   BLOG_URL = 'https://blog-backend.ihealthlabs.com.cn/graphql',
+  // BLOG_URL = 'https://blog-backend.gtzh-stg.ihealthcn.com/graphql',
 } = process.env
 
 export const blogs = async (_, args, context) => {
@@ -12,6 +13,7 @@ export const blogs = async (_, args, context) => {
       title
       type
       avatar
+      avatarThumbnail
       content
       desc
       author
@@ -67,6 +69,7 @@ export const blogById = async (_, args, context) => {
       _id
       title
       avatar
+      avatarThumbnail
       content
       desc
     }
@@ -81,10 +84,8 @@ export const blogById = async (_, args, context) => {
   } catch (error) {
     console.log(error, 'error')
   }
-
   console.log(result, 'result')
   return result
-
 }
 
 
