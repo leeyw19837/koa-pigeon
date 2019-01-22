@@ -2,8 +2,7 @@ import { ObjectId } from 'mongodb'
 import freshId from 'fresh-id'
 import { request } from 'graphql-request'
 const {
-  BLOG_URL = 'https://blog-backend.ihealthlabs.com.cn/graphql',
-  // BLOG_URL = 'https://blog-backend.gtzh-stg.ihealthcn.com/graphql',
+  BLOG_URL = 'https://blog-backend.gtzh-stg.ihealthcn.com/graphql',
 } = process.env
 
 export const blogs = async (_, args, context) => {
@@ -87,5 +86,3 @@ export const blogById = async (_, args, context) => {
   console.log(result, 'result')
   return result
 }
-
-
