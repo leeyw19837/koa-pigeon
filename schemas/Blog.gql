@@ -87,5 +87,6 @@ type BlogCommentInput {
 
 extend type Query {
   blogs(blogId: ID): [Blog]
+  getBlogsPagination(systemType: String!, count: Int!, index: Int!): [Blog]
   blogById(_id: String): Blog
 }
