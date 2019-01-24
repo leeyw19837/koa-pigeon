@@ -26,6 +26,8 @@ enum CardContentType {
   FOOD
   # 宣传活动
   PUBLICITY_ACTIVITY
+  # 春节福利
+  NEW_YEAR
 }
 
 enum CardContentSourceType {
