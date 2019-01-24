@@ -16,7 +16,7 @@ const sendToElasticSearch = ({ context, ...restInfo }) => {
     })}`
   }
   const isProd = NODE_ENV === 'production'
-  if (true) {
+  if (isProd) {
     try {
       const uri = `${ELASTIC_ELEPHANT_URL}/addLog`
       const options = {
