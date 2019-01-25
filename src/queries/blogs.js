@@ -89,12 +89,24 @@ export const getBlogsPagination = async (_, args, context) => {
       views(systemType: $systemType)
     }
   }`
+
+  const queryBlogTotalNumber = `query GetBlogsTotalNumber($systemType: String!) {
+    getBlogsTotalNumber(systemType: $systemType)
+  }`
   let result = []
+  let dataTotalNumber = 0
   try {
     const data = await request(BLOG_URL, query, {
       systemType: 'BG',
+      count: args.count,
+      index: args.index,
     })
     result = data.getBlogsBySystemTypePagination
+    const totalNumberResult = await request(BLOG_URL, queryBlogTotalNumber, {
+      systemType: 'BG',
+    })
+    dataTotalNumber = totalNumberResult.getBlogsTotalNumber
+    console.log('====dataTotalNumber====', dataTotalNumber)
   } catch (error) {
     console.log(error, 'error')
   }
@@ -113,8 +125,11 @@ export const getBlogsPagination = async (_, args, context) => {
       comments: tempCms,
       publishedAt: new Date(blog.publishedAt),
       createdAt: new Date(blog.publishedAt),
+      totalCount: dataTotalNumber,
     }
   })
+
+  // console.log('result=', result)
 
   return result
 }

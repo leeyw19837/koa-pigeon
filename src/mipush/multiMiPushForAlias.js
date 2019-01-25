@@ -82,7 +82,8 @@ const generateSendMessages = async ({
     pass_through: 0,
     notify_type: 1,
     notify_id: TYPE_MAP[type] || 1,
-    'extra.badge': 2,
+    'extra.sound_url': 'default',
+    'extra.badge': 1,
     'extra.notify_foreground': type === 'CHAT' ? '0' : '1',
     title: title ? `护血糖-${title}` : '护血糖',
     description:

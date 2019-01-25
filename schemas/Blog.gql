@@ -42,6 +42,8 @@ type Blog {
   createdAt: Date
   # 文章发布时间
   publishedAt: Date
+  # 文章总数
+  totalCount: Int
 }
 
 input BlogBatchDataInput {
@@ -87,6 +89,6 @@ type BlogCommentInput {
 
 extend type Query {
   blogs(blogId: ID): [Blog]
-  getBlogsPagination(systemType: String!, count: Int!, index: Int!): [Blog]
+  getBlogsPagination(count: Int!, index: Int!): [Blog]
   blogById(_id: String): Blog
 }
