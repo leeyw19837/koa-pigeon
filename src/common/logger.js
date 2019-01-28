@@ -6,6 +6,7 @@ const {
   ELASTIC_ELEPHANT_URL = 'http://172.16.0.69:6010',
   NODE_ENV,
   JWT_SECRET,
+  TEST_LOGGER,
 } = process.env
 
 const sendToElasticSearch = ({ context, ...restInfo }) => {
@@ -16,7 +17,7 @@ const sendToElasticSearch = ({ context, ...restInfo }) => {
     })}`
   }
   const isProd = NODE_ENV === 'production'
-  if (isProd) {
+  if (isProd || TEST_LOGGER) {
     try {
       const uri = `${ELASTIC_ELEPHANT_URL}/addLog`
       const options = {
