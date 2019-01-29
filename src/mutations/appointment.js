@@ -212,14 +212,14 @@ export const addPatientAppointment = async (_, params, context) => {
  * @param {*} param1
  * @param {*} context
  */
-export const updateAppointmentById = async (_, { appointment }) => {
+export const updateAppointmentById = async (_, { appointment }, context) => {
   const { _id, patientId, nickname, mobile, source } = appointment
   const dbAppointment = await db.collection('appointments').findOne({ _id })
   if (!dbAppointment) {
     throw new Error(`Appointment ${_id} is not existed!`)
   }
   if (mobile !== dbAppointment.mobile) {
-    const result = await changeUsername(_, { patientId, newUsername: mobile })
+    const result = await changeUsername(_, { patientId, newUsername: mobile }, context)
     if (!result) {
       return 'duplicate'
     }
