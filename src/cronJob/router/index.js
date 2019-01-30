@@ -17,6 +17,7 @@ import {
 import { completeOutpatient } from '../services/outpatient'
 import { treatmentReminderViaText } from '../services/textMessage'
 import { verifyOrderValidity } from '../controller/orders'
+import { sendMassMessages } from '../../modules/chat/massMessages'
 
 const Router = require('koa-router')
 const cronJob = new Router()
@@ -183,6 +184,17 @@ cronJob.get('/verify_order_validity', async ctx => {
   console.log('interface called!')
   const result = await verifyOrderValidity(frequency)
   ctx.body = 'OK! ' + result
+})
+
+cronJob.post('/sprint-festival-hi', async ctx => {
+  const { ip, body = {} } = ctx.request
+  console.log('===== sprint-festival-hi start =====from ip:' + ip)
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  await sendMassMessages(body)
+  ctx.body = 'OK'
+  console.log('===== sprint-festival-hi end =====from ip:' + ip)
 })
 
 export default cronJob

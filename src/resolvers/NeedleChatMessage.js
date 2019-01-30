@@ -23,7 +23,7 @@ const specialSenderMap = new Map([
     {
       nickname: '系统',
       avatar:
-        'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1541670208966.png',
+        'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1548840912578.jpeg',
     },
   ],
 ])

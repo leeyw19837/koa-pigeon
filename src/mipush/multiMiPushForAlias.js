@@ -1,5 +1,5 @@
 import { ObjectID } from 'mongodb'
-import { difference, find, omit } from 'lodash'
+import { difference, chunk, find, omit } from 'lodash'
 import {
   MI_PUSH_URL,
   ALIAS_URL,
@@ -19,7 +19,13 @@ const getChatRooms = async patientIds =>
     })
     .toArray()
 
-const insertEvent = async (response, deviceType, msgCounts, messageText) => {
+const insertEvent = async (
+  response,
+  deviceType,
+  msgCounts,
+  messageText,
+  sessionId,
+) => {
   await db.collection('event').insert({
     _id: new ObjectID(),
     eventType: 'treatment/sendChatCard',
@@ -27,6 +33,7 @@ const insertEvent = async (response, deviceType, msgCounts, messageText) => {
     messageText,
     pushCounts: msgCounts,
     result: JSON.parse(response),
+    sessionId,
     createdAt: new Date(),
   })
 }
@@ -37,7 +44,7 @@ const generateSendMessages = async ({
   messageType,
   title,
   desc,
-  extraInfos = {}
+  extraInfos = {},
 }) => {
   const hasDeviceContextInUser = await db
     .collection('users')
@@ -87,9 +94,10 @@ const generateSendMessages = async ({
     'extra.notify_foreground': type === 'CHAT' ? '0' : '1',
     title: title ? `护血糖-${title}` : '护血糖',
     description:
-      messageType === 'CARD'
+      desc ||
+      (messageType === 'CARD'
         ? '[新消息] 收到一张就诊提醒卡片，请点击查看。'
-        : desc || '[新消息] 收到一条新消息，请点击查看。',
+        : '[新消息] 收到一条新消息，请点击查看。'),
   }
 
   const defaultOptions = {
@@ -97,7 +105,10 @@ const generateSendMessages = async ({
     payload: JSON.stringify({ type, ...extraInfos }),
     'extra.appIntent': JSON.stringify({ type, ...extraInfos }),
   }
-  console.log('JSON.stringify({ type, ...extraInfos })', JSON.stringify({ type, ...extraInfos }))
+  console.log(
+    'JSON.stringify({ type, ...extraInfos })',
+    JSON.stringify({ type, ...extraInfos }),
+  )
 
   const androidPatientIds = []
   const iosPatientIds = []
@@ -125,7 +136,8 @@ const generateSendMessages = async ({
   }
 }
 /**
- * 小米多条推送的时候不区分平台，所以我们应该把ios和android分开两条来推
+ * 小米多条推送的时候不区分平台，所以我们应该把 ios 和 android 分开两条来推
+ * 小米推送人数限制每次1000人
  */
 const pushChatNotification = async (
   deviceType,
@@ -133,25 +145,46 @@ const pushChatNotification = async (
   messageText = 'card',
 ) => {
   const formData = result[deviceType]
+  const sessionId = `pt_${Math.random()}`
   if (formData.alias) {
-    const options = {
-      method: 'POST',
-      uri: ALIAS_URL,
-      headers: {
-        Authorization: `key=${APP_SECRET[deviceType]}`,
-      },
-      form: formData,
-    }
-    try {
-      const response = await request(options)
-      const msgCounts = formData.alias.split(',').length
-      await insertEvent(response, deviceType, msgCounts, messageText)
-    } catch (error) {
-      console.log(error, '@error')
+    const patientIds = formData.alias.split(',')
+    const chunkResults = chunk(patientIds, 990)
+    for (let i = 0; i < chunkResults.length; i++) {
+      const alias = chunkResults[i].join(',')
+      const data = { ...formData, alias }
+      const options = {
+        method: 'POST',
+        uri: ALIAS_URL,
+        headers: {
+          Authorization: `key=${APP_SECRET[deviceType]}`,
+        },
+        form: data,
+      }
+      try {
+        const response = await request(options)
+        const msgCounts = chunkResults[i].length
+        await insertEvent(
+          response,
+          deviceType,
+          msgCounts,
+          messageText,
+          sessionId,
+        )
+      } catch (error) {
+        console.log(error, '@error')
+      }
     }
   }
 }
-export const multiSendMiPushForAlias = async ({ type, patientIds, messageType, title, desc, messageText, extraInfos}) => {
+export const multiSendMiPushForAlias = async ({
+  type,
+  patientIds,
+  messageType,
+  title,
+  desc,
+  messageText,
+  extraInfos,
+}) => {
   const result = await generateSendMessages({
     type,
     patientIds,
