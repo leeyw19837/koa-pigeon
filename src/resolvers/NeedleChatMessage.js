@@ -18,6 +18,14 @@ const specialSenderMap = new Map([
         'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1541670208966.png',
     },
   ],
+  [
+    'FROM_SYSTEM',
+    {
+      nickname: '系统',
+      avatar:
+        'https://paper-king.ks3-cn-beijing.ksyun.com/workwechat1541670208966.png',
+    },
+  ],
 ])
 
 export const NeedleChatMessage = {
@@ -59,16 +67,16 @@ export const sharedNeedleChatMessageResolvers = {
         avatar: user.avatar
           ? user.avatar
           : isPro
-            ? 'https://prod.gtzh.51ijk.com/imgs/app/avatars/doctor.png'
-            : isWechat
-              ? user.wechatInfo.headimgurl
-                ? user.wechatInfo.headimgurl.replace('http://', 'https://')
-                : user.gender === 'male'
-                  ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-                  : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
-              : user.gender === 'male'
-                ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-                : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
+          ? 'https://prod.gtzh.51ijk.com/imgs/app/avatars/doctor.png'
+          : isWechat
+          ? user.wechatInfo.headimgurl
+            ? user.wechatInfo.headimgurl.replace('http://', 'https://')
+            : user.gender === 'male'
+            ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+            : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
+          : user.gender === 'male'
+          ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+          : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
       }
     }
     return { _id: '', nickname: '', avatar: '' }
