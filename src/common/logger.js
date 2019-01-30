@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import { sign } from 'jsonwebtoken'
-const request = require('request-promise')
+const request = require('request')
 
 const {
   ELASTIC_ELEPHANT_URL = 'http://172.16.0.69:6010',
