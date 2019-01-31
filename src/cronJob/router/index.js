@@ -18,7 +18,9 @@ import { completeOutpatient } from '../services/outpatient'
 import { treatmentReminderViaText } from '../services/textMessage'
 import { verifyOrderValidity } from '../controller/orders'
 import { sendMassMessages } from '../../modules/chat/massMessages'
+import { stop19SprintFestival } from '../controller/stop-treatment'
 
+const moment = require('moment')
 const Router = require('koa-router')
 const cronJob = new Router()
 
@@ -186,6 +188,9 @@ cronJob.get('/verify_order_validity', async ctx => {
   ctx.body = 'OK! ' + result
 })
 
+/**
+ * 新春活动的通知
+ */
 cronJob.post('/sprint-festival-hi', async ctx => {
   const { ip, body = {} } = ctx.request
   console.log('===== sprint-festival-hi start =====from ip:' + ip)
@@ -195,6 +200,27 @@ cronJob.post('/sprint-festival-hi', async ctx => {
   await sendMassMessages(body)
   ctx.body = 'OK'
   console.log('===== sprint-festival-hi end =====from ip:' + ip)
+})
+
+cronJob.post('/stop-treatment', async ctx => {
+  const { ip, body = {} } = ctx.request
+  console.log('===== stop-treatment start =====from ip:' + ip)
+  if (!authorization(ctx)) {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const currentDay = moment().format('YYYY-MM-DD')
+  console.log(
+    currentDay,
+    moment()
+      .add(1, 'days')
+      .format('YYYY-MM-DD'),
+    '~~~',
+  )
+  if (currentDay !== '2019-02-01') {
+    await stop19SprintFestival(body)
+  }
+  ctx.body = 'OK'
+  console.log('===== stop-treatment end =====from ip:' + ip)
 })
 
 export default cronJob
