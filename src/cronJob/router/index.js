@@ -209,14 +209,7 @@ cronJob.post('/stop-treatment', async ctx => {
     return ctx.throw(401, '密码错误或参数不正确')
   }
   const currentDay = moment().format('YYYY-MM-DD')
-  console.log(
-    currentDay,
-    moment()
-      .add(1, 'days')
-      .format('YYYY-MM-DD'),
-    '~~~',
-  )
-  if (currentDay !== '2019-02-01') {
+  if (currentDay === '2019-02-01') {
     await stop19SprintFestival(body)
   }
   ctx.body = 'OK'
