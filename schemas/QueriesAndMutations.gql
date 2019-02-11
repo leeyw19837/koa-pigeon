@@ -185,15 +185,14 @@ type Query {
 
   # 获取就诊医生
   getOutpatientModules(hospitalId: String): [OutpatientModules]
-   # 获取前端配置
+  # 获取前端配置
   configurationContent(type: String!): ConfigurationContent
 
   # 查询用户的活动配置信息
-  getPublicityActivityController(patientId: ID):PublicityActivityController
+  getPublicityActivityController(patientId: ID): PublicityActivityController
 
   # 根据活动的ID查询当前的活动
-  getOneOfPublicityActivity(activityId:String):Activity
-
+  getOneOfPublicityActivity(activityId: String): Activity
 }
 
 type Mutation {
@@ -477,7 +476,7 @@ type Mutation {
     shareWay: String!
     shareStatus: String!
   ): String
-  finishSession(chatRoomId: ID!): Boolean
+  finishSession(chatRoomId: ID!, operatorId: ID): Boolean
   updateContentType(messageId: ID!, contentType: String!): NeedleTextMessage
   updateTag(
     type: String!
@@ -639,7 +638,7 @@ type Mutation {
     invokerName: String
     measurementTime: String
   ): UploadFoodPhotoResult
-  markReadPublicityActivity(patientId: ID,activityId:ID):Boolean
+  markReadPublicityActivity(patientId: ID, activityId: ID): Boolean
 }
 
 type Subscription {

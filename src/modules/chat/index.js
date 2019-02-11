@@ -29,7 +29,12 @@ export const whoAmI = async (userId, nosy, participants, db) => {
 }
 
 const delay = 15 * 60
-export const finishSession = async (db, chatRoomId, finishReason) => {
+export const finishSession = async (
+  db,
+  chatRoomId,
+  finishReason,
+  { operatorId },
+) => {
   const now = new Date()
   if (finishReason !== 'timeout') {
     const room = await db.collection('needleChatRooms').findOne({
@@ -70,6 +75,11 @@ export const finishSession = async (db, chatRoomId, finishReason) => {
   if (!latestSession || latestSession.endAt) {
     // 最后一个会话如果不是未结束的，中止
     console.log('no processing session matched')
+    if (latestSession && operatorId)
+      db.collection('sessions').update(
+        { _id: latestSession._id },
+        { $push: { eraser: { operatorId, occurAt: new Date() } } },
+      )
     return
   }
 
@@ -110,11 +120,9 @@ export const sessionFeeder = async (message, db) => {
   const actualSender =
     actualId === 'system'
       ? actualId
-      : await db
-          .collection('users')
-          .findOne({
-            _id: { $in: [actualId, maybeCreateFromHexString(actualId)] },
-          })
+      : await db.collection('users').findOne({
+          _id: { $in: [actualId, maybeCreateFromHexString(actualId)] },
+        })
 
   if (jobExists) {
     let processingSession = await db
