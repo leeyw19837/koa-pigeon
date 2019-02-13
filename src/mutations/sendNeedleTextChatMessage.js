@@ -6,6 +6,7 @@ import { ObjectID } from 'mongodb'
 import { whoAmI, sessionFeeder } from '../modules/chat'
 import { categories, classify, qa } from '../modules/AI'
 import { handleReplySms } from '../resolvers/handleReplySms'
+import moment from 'moment'
 
 const sourceTypeGroup = [
   'LG',
@@ -64,8 +65,8 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   if (/_\d+$/.test(sourceType)) {
     contentCode = sourceType
     sourceType = 'FROM_FOREST'
-    if(participant.role !== '患者')
-      actualSenderId='system'
+    if (participant.role !== '患者')
+      actualSenderId = 'system'
   }
 
   const sender = await db
@@ -116,6 +117,8 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     newChatMessage.contentType = await classify(newChatMessage.text)
     newChatMessage.approved = false
   }
+  var nowHours = moment(new Date()).hour()
+  var nowDays = moment(new Date()).day()
 
   await db.collection('needleChatMessages').insertOne(newChatMessage)
   await sessionFeeder(newChatMessage, db)
@@ -146,7 +149,28 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
         chatMessageAdded: newChatMessageAutoReplied,
       })
     }
+  } else if (nowHours > 21 || nowHours < 6 || nowDays == 6 || nowDays == 7) {
+    const newChatMessageAutoReplied = {
+      _id: freshId(),
+      messageType: 'TEXT',
+      text: '医生在线沟通时间：周一到周五 06:00-22:00 紧急联系电话：18513953090',
+      senderId: assistant.userId,
+      actualSenderId: 'system',
+      createdAt: new Date(),
+      chatRoomId: chatRoom._id,
+      sourceType: 'FROM_SYSTEM',
+    }
+    await db
+      .collection('needleChatMessages')
+      .insertOne(newChatMessageAutoReplied)
+    pubsub.publish('chatMessageAdded', {
+      chatMessageAdded: newChatMessageAutoReplied,
+    })
   }
+
+
+
+
   const sourceTypeRegex = new RegExp(sourceTypeGroup.join('|'), 'i')
   const participants = chatRoom.participants.map(p => {
     if (/system/i.test(actualSenderId)) {
