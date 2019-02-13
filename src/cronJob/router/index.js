@@ -19,6 +19,7 @@ import { treatmentReminderViaText } from '../services/textMessage'
 import { verifyOrderValidity } from '../controller/orders'
 import { sendMassMessages } from '../../modules/chat/massMessages'
 import { stop19SprintFestival } from '../controller/stop-treatment'
+import { getUserInfo } from '../controller/userInfo'
 
 const moment = require('moment')
 const Router = require('koa-router')
@@ -214,6 +215,16 @@ cronJob.post('/stop-treatment', async ctx => {
   }
   ctx.body = 'OK'
   console.log('===== stop-treatment end =====from ip:' + ip)
+})
+
+cronJob.get('/getUserInfo', async ctx => {
+  console.log('From TIAN JIN server')
+  const { header } = ctx.request
+  if (header.authorization != '4Z21FjF') {
+    return ctx.throw(401, '密码错误或参数不正确')
+  }
+  const result = await getUserInfo(ctx)
+  ctx.body = result
 })
 
 export default cronJob
