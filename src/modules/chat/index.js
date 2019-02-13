@@ -2,6 +2,7 @@ import freshId from 'fresh-id'
 import { pubsub } from '../../pubsub'
 import { maybeCreateFromHexString } from '../../utils'
 import first from 'lodash/first'
+import get from 'lodash/get'
 import { setDelayJob, delDelayJob, isJobExists } from '../delayJob'
 
 export const whoAmI = async (userId, nosy, participants, db) => {
@@ -33,7 +34,7 @@ export const finishSession = async (
   db,
   chatRoomId,
   finishReason,
-  { operatorId },
+  additional,
 ) => {
   const now = new Date()
   if (finishReason !== 'timeout') {
@@ -75,6 +76,7 @@ export const finishSession = async (
   if (!latestSession || latestSession.endAt) {
     // 最后一个会话如果不是未结束的，中止
     console.log('no processing session matched')
+    const operatorId = get(additional, 'operatorId')
     if (latestSession && operatorId)
       db.collection('sessions').update(
         { _id: latestSession._id },
