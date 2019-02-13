@@ -22,4 +22,5 @@ input TaskSoapInput {
   taskId: ID!
   plans: [TaskSoapPlanInput]
   byTel: Boolean!
+  operatorId: ID
 }
