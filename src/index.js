@@ -32,6 +32,7 @@ import restfulApi from './restful/router'
 import { correctSessions } from './modules/chat'
 
 import { registerAiCalls } from './modules/AI/call'
+import detectFaceApi from "./detectFace/router";
 
 const EventEmitter = require('events')
 
@@ -119,6 +120,7 @@ if (!AUTH) AUTH = 'FALSE'
   router.use('/wx-mini', miniProgramRouter.routes())
   router.use('/redis-cron', redisCron.routes())
   router.use('/api', restfulApi.routes())
+  router.use('/detectFace', detectFaceApi.routes())
   router.post('/login', LoginController.login)
   router.post('/register', LoginController.register)
 
@@ -162,6 +164,7 @@ if (!AUTH) AUTH = 'FALSE'
           '/login',
           '/register',
           /\/api*/,
+          /\/detectFace*/,
           /\/wx-mini*/,
           `/${SECRET}`,
           /\/feedback*/,

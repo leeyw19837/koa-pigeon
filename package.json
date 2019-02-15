@@ -34,6 +34,7 @@
     "apollo-server": "^2.1.0",
     "apollo-server-koa": "1.4.0",
     "axios": "^0.18.0",
+    "baidu-aip-sdk": "^2.3.9",
     "bcryptjs": "^2.4.3",
     "co-wechat-oauth": "^2.0.1",
     "crypto": "^1.0.1",
