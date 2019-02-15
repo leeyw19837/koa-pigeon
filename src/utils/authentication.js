@@ -28,6 +28,8 @@ export const logandAuthForApp = (requestType, funcName, func) => async (
       'sendMobileVerificationCode',
       'sendMobileVerificationCodeForWeb',
       'professionalLogin',
+      'saveChatMessage',
+      'chatMessages',
     ].indexOf(funcName) == -1
   ) {
     if (!ctx.userInfo) {
