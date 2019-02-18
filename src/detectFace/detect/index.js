@@ -57,9 +57,11 @@ const detect = async (base64Image) => {
 export const addUser = async (ctx) => {
   const {base64Image, hospitalId, userInfo} = ctx.request.body
   const detectResult = detect(base64Image);
-  return detectResult
-
+  const {error_code, error_msg} = detectResult
   const {phoneNumber, nickname, idCard = ""} = userInfo
+  if (error_code !== 0 || error_msg !== 'SUCCESS') {
+    return responseMessage(false, userInfo, "用户人脸检测失败，请重新录入")
+  }
   const user = await db
     .collection('users')
     .findOne({
