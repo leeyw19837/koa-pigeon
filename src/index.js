@@ -33,6 +33,7 @@ import { correctSessions } from './modules/chat'
 
 import { registerAiCalls } from './modules/AI/call'
 import detectFaceApi from "./detectFace/router";
+import DetectLogin from "./detectFace/detectLogin";
 
 const EventEmitter = require('events')
 
@@ -120,9 +121,11 @@ if (!AUTH) AUTH = 'FALSE'
   router.use('/wx-mini', miniProgramRouter.routes())
   router.use('/redis-cron', redisCron.routes())
   router.use('/api', restfulApi.routes())
+  /*上线时干掉下面这个router*/
   router.use('/detectFace', detectFaceApi.routes())
   router.post('/login', LoginController.login)
   router.post('/register', LoginController.register)
+  detectFaceApi.post('/detectLogin', DetectLogin.login)
 
   router.use(
     queryAnalyzer({

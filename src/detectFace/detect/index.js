@@ -31,12 +31,12 @@ const detect = async (base64Image) => {
   try {
     const detectResult = await client.detect(base64Image, imageType, options)
     console.log('人脸检测结果', detectResult)
-      const {error_code, error_msg} = detectResult
-      if (error_code === 0 && error_msg === 'SUCCESS') {
-        return true
-      }
-      return false
-  }catch (e) {
+    const {error_code, error_msg} = detectResult
+    if (error_code === 0 && error_msg === 'SUCCESS') {
+      return true
+    }
+    return false
+  } catch (e) {
     console.log(e)
     return false
   }
@@ -74,7 +74,7 @@ export const addUser = async (ctx) => {
   const {base64Image, hospitalId, userInfo} = ctx.request.body
   const detectResult = await detect(base64Image);
   const {phoneNumber, nickname, idCard = ""} = userInfo
-  console.log('detectResult',detectResult)
+  console.log('detectResult', detectResult)
   if (!detectResult) {
     return responseMessage(false, userInfo, "用户人脸检测失败，请重新录入")
   }
@@ -88,16 +88,7 @@ export const addUser = async (ctx) => {
     // 数据库查到了该用户
     console.log(user)
     const patient = {userId: user._id, ...userInfo}
-    const addUserFaceResult = await addUserFace({base64Image, hospitalId, userInfo: patient})
-    console.log('addUserFaceResult', addUserFaceResult)
-
-    if (addUserFaceResult) {
-      /*** 加入签到的逻辑*/
-
-      return responseMessage(true, patient, "用户录入并签到成功")
-    } else {
-      return responseMessage(false, patient, "用户录入并签到失败")
-    }
+    return responseResult(base64Image, hospitalId, patient)
   } else {
     // 数据库没有查到该用户
     const pinyinName = getPinyinUsername(nickname);
@@ -113,21 +104,23 @@ export const addUser = async (ctx) => {
       ...getUserInfoByIdCard(idCard)
     })
     const patient = {_id, ...userInfo}
-    const addUserFaceResult = await addUserFace({base64Image, hospitalId, userInfo: patient})
-    console.log('addUserFaceResult', addUserFaceResult)
-    if (addUserFaceResult) {
-      /*** 加入签到的逻辑*/
-
-      return responseMessage(true, patient, "用户录入并签到成功")
-    } else {
-      return responseMessage(false, patient, "用户录入并签到失败")
-    }
-
+    return responseResult(base64Image, hospitalId, patient)
   }
 
 }
 
+const responseResult = async (base64Image, hospitalId, userInfo) => {
+  const addUserFaceResult = await addUserFace({base64Image, hospitalId, userInfo})
+  console.log('addUserFaceResult', addUserFaceResult)
 
+  if (addUserFaceResult) {
+    /*** 加入签到的逻辑*/
+
+    return responseMessage(true, patient, "用户录入并签到成功")
+  } else {
+    return responseMessage(false, patient, "用户录入并签到失败")
+  }
+}
 /*** 人脸注册到人脸库中
  *
  * @params:
@@ -151,7 +144,7 @@ const addUserFace = async ({base64Image, hospitalId, userInfo}) => {
       return true;
     }
     return false;
-  }catch (e) {
+  } catch (e) {
     return false
   }
 }

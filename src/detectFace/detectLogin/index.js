@@ -1,13 +1,16 @@
 import bcrypt from 'bcryptjs'
 import jsonwebtoken from 'jsonwebtoken'
+
 const omit = require('lodash/omit')
 
 const {JWT_SECRET, TOKEN_EXP_FOR_API} = process.env;
 
 class DetectLogin {
 
-  /** you can login with
-   * curl -X POST http://localhost:3080/login -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' -d 'username=superman2&password=123456'
+  /**
+   *  @params
+   *  userName
+   *  password
    */
   async login(ctx) {
     const {body} = ctx.request
@@ -17,8 +20,8 @@ class DetectLogin {
       const user = await db
         .collection('institutions')
         .findOne({
-          username: body
-            .username
+          userName: body
+            .userName
             .toString()
         });
       if (!user) {
@@ -97,5 +100,6 @@ class DetectLogin {
   }
 
 }
+
 
 export default new DetectLogin();
