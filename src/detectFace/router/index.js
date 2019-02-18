@@ -11,6 +11,7 @@ detectFaceApi.post('/addUser', async (ctx) => {
 })
 detectFaceApi.post('/searchFace', async (ctx) => {
   const result = await searchFace(ctx)
+  console.log('resullllt',result,'ctttx',ctx)
   ctx.body = result
 })
 detectFaceApi.post('/detectLogin', DetectLogin.login)

@@ -1,5 +1,5 @@
 import {face as AipFaceClient, HttpClient} from 'baidu-aip-sdk'
-import {APP_ID, API_KEY, SECRET_KEY} from "./ConstantValue";
+import {APP_ID, API_KEY, SECRET_KEY, FACE_RESPONSE_CODE} from "./ConstantValue";
 import {ObjectID} from "mongodb";
 import {getPinyinUsername, getUserInfoByIdCard, responseMessage} from "../util";
 import {isEmpty} from "lodash";
@@ -94,9 +94,9 @@ export const addUser = async (ctx) => {
     if (addUserFaceResult) {
       /*** 加入签到的逻辑*/
 
-      return responseMessage(true, patient, "用户录入并签到成功")
+      return responseMessage(FACE_RESPONSE_CODE.suceess, patient, "用户录入并签到成功")
     } else {
-      return responseMessage(false, patient, "用户录入并签到失败")
+      return responseMessage(FACE_RESPONSE_CODE.error_add_user_other_errors, patient, "用户录入并签到失败")
     }
   } else {
     // 数据库没有查到该用户
@@ -118,9 +118,9 @@ export const addUser = async (ctx) => {
     if (addUserFaceResult) {
       /*** 加入签到的逻辑*/
 
-      return responseMessage(true, patient, "用户录入并签到成功")
+      return responseMessage(FACE_RESPONSE_CODE.suceess, patient, "用户录入并签到成功")
     } else {
-      return responseMessage(false, patient, "用户录入并签到失败")
+      return responseMessage(FACE_RESPONSE_CODE.error_add_user_other_errors, patient, "用户录入并签到失败")
     }
 
   }
@@ -171,29 +171,44 @@ const addUserFace = async ({base64Image, hospitalId, userInfo}) => {
 export const searchFace = async (ctx) => {
   const {base64Image, hospitalId} = ctx.request.body
   const imageType = 'BASE64';
-  // 调用人脸搜索
-  client.search(base64Image, imageType, hospitalId).then(function (result) {
-    console.log('人脸搜索结果', JSON.stringify(result));
 
-    if (!isEmpty(result.user_list[0])) {
+  // 调用人脸搜索
+  try {
+    const searchResult = await client.search(base64Image, imageType, hospitalId)
+    console.log('人脸搜索结果', JSON.stringify(searchResult));
+
+    const { error_code, result } = searchResult
+    if (error_code === 0 && !isEmpty(result.user_list[0])) {
       const {
         group_id,
         user_info,
         score
       } = result.user_list[0];
-      if (score > 80) {
+      if (score > 90) {
         addUserFace({base64Image, group_id, userInfo: user_info})
-        return responseMessage(true, user_info, "用户录入并签到成功")
+        return responseMessage(FACE_RESPONSE_CODE.suceess, JSON.parse(user_info), "用户录入并签到成功")
       } else {
-        return responseMessage(false, user_info, "用户录入并签到失败")
+        return responseMessage(FACE_RESPONSE_CODE.error_search_user_found_not_match, JSON.parse(user_info), "用户查找到，但是比对评分过低")
       }
+    }else {
+      const user_info = {
+        userId: '',
+        phoneNumber:'',
+        nickname:'',
+        idCard:'',
+      }
+      return responseMessage(FACE_RESPONSE_CODE.error_search_user_not_found, user_info, "用户未找到")
     }
-
-  }).catch(function (err) {
-    // 如果发生网络错误
+  }catch (err) {
     console.log('人脸搜索出错', err);
-    return responseMessage(false, {}, err)
-  });
+    const user_info = {
+      userId: '',
+      phoneNumber:'',
+      nickname:'',
+      idCard:'',
+    }
+    return responseMessage(FACE_RESPONSE_CODE.error_search_other_errors, user_info, err)
+  }
 }
 
 /** 根据手机号查询用户*/
