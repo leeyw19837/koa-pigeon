@@ -30,11 +30,14 @@ const detect = async (base64Image) => {
 
   client.detect(base64Image, imageType, options).then(function (result) {
     console.log('人脸检测结果', result)
-
-    return result
+    const {error_code, error_msg} = result
+    if (error_code === 0 && error_msg === 'SUCCESS') {
+      return true
+    }
+    return false
   }).catch(function (err) {
     console.log("人脸检测出错了", err)
-    return err
+    return false
   })
 
 }
@@ -57,9 +60,8 @@ const detect = async (base64Image) => {
 export const addUser = async (ctx) => {
   const {base64Image, hospitalId, userInfo} = ctx.request.body
   const detectResult = detect(base64Image);
-  const {error_code, error_msg} = detectResult
   const {phoneNumber, nickname, idCard = ""} = userInfo
-  if (error_code !== 0 || error_msg !== 'SUCCESS') {
+  if (!detectResult) {
     return responseMessage(false, userInfo, "用户人脸检测失败，请重新录入")
   }
   const user = await db
