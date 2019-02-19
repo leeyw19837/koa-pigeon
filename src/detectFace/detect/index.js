@@ -76,7 +76,7 @@ export const addUser = async (ctx) => {
   const {phoneNumber, nickname, idCard = ""} = userInfo
   console.log('detectResult', detectResult)
   if (!detectResult) {
-    return responseMessage(false, userInfo, "用户人脸检测失败，请重新录入")
+    return responseMessage(FACE_RESPONSE_CODE.error_detect_user_face_invalid, userInfo, "用户人脸检测失败，请重新录入")
   }
   const user = await db
     .collection('users')
@@ -116,9 +116,9 @@ const responseResult = async (base64Image, hospitalId, userInfo) => {
   if (addUserFaceResult) {
     /*** 加入签到的逻辑*/
 
-    return responseMessage(FACE_RESPONSE_CODE.suceess, patient, "用户录入并签到成功")
+    return responseMessage(FACE_RESPONSE_CODE.success, userInfo, "用户录入并签到成功")
   } else {
-    return responseMessage(FACE_RESPONSE_CODE.error_add_user_other_errors, patient, "用户录入并签到失败")
+    return responseMessage(FACE_RESPONSE_CODE.error_add_user_other_errors, userInfo, "用户录入并签到失败")
   }
 }
 /*** 人脸注册到人脸库中
@@ -163,6 +163,12 @@ const addUserFace = async ({base64Image, hospitalId, userInfo}) => {
  */
 export const searchFace = async (ctx) => {
   const {base64Image, hospitalId} = ctx.request.body
+  const detectResult = await detect(base64Image);
+  console.log('detectResult', detectResult)
+  if (!detectResult) {
+    return responseMessage(FACE_RESPONSE_CODE.error_detect_user_face_invalid, userInfo, "用户人脸检测失败，请重新录入")
+  }
+
   const imageType = 'BASE64';
 
   // 调用人脸搜索
@@ -179,7 +185,7 @@ export const searchFace = async (ctx) => {
       } = result.user_list[0];
       if (score > 90) {
         addUserFace({base64Image, group_id, userInfo: user_info})
-        return responseMessage(FACE_RESPONSE_CODE.suceess, JSON.parse(user_info), "用户录入并签到成功")
+        return responseMessage(FACE_RESPONSE_CODE.success, JSON.parse(user_info), "用户录入并签到成功")
       } else {
         return responseMessage(FACE_RESPONSE_CODE.error_search_user_found_not_match, JSON.parse(user_info), "用户查找到，但是比对评分过低")
       }
