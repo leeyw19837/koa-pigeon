@@ -1,5 +1,5 @@
 import {face as AipFaceClient, HttpClient} from 'baidu-aip-sdk'
-import {APP_ID, API_KEY, SECRET_KEY, FACE_RESPONSE_CODE} from "./ConstantValue";
+import {APP_ID, API_KEY, SECRET_KEY, FACE_RESPONSE_CODE, EmptyUserInfo} from "./ConstantValue";
 import {ObjectID} from "mongodb";
 import {getPinyinUsername, getUserInfoByIdCard, responseMessage} from "../util";
 import {isEmpty} from "lodash";
@@ -161,12 +161,13 @@ const addUserFace = async ({base64Image, hospitalId, userInfo}) => {
  * 如果搜索到的结果score得分小于80，则表示搜索到的不是同一个人，提示用户注册人脸到人脸库
  *
  */
+
 export const searchFace = async (ctx) => {
   const {base64Image, hospitalId} = ctx.request.body
   const detectResult = await detect(base64Image);
   console.log('detectResult', detectResult)
   if (!detectResult) {
-    return responseMessage(FACE_RESPONSE_CODE.error_detect_user_face_invalid, userInfo, "用户人脸检测失败，请重新录入")
+    return responseMessage(FACE_RESPONSE_CODE.error_detect_user_face_invalid, EmptyUserInfo, "用户人脸检测失败，请重新录入")
   }
 
   const imageType = 'BASE64';
@@ -176,7 +177,7 @@ export const searchFace = async (ctx) => {
     const searchResult = await client.search(base64Image, imageType, hospitalId)
     console.log('人脸搜索结果', JSON.stringify(searchResult));
 
-    const { error_code, result } = searchResult
+    const {error_code, result} = searchResult
     if (error_code === 0 && !isEmpty(result.user_list[0])) {
       const {
         group_id,
@@ -184,29 +185,16 @@ export const searchFace = async (ctx) => {
         score
       } = result.user_list[0];
       if (score > 90) {
-        addUserFace({base64Image, group_id, userInfo: user_info})
-        return responseMessage(FACE_RESPONSE_CODE.success, JSON.parse(user_info), "用户录入并签到成功")
+        return responseResult(base64Image, group_id, JSON.parse(user_info))
       } else {
         return responseMessage(FACE_RESPONSE_CODE.error_search_user_found_not_match, JSON.parse(user_info), "用户查找到，但是比对评分过低")
       }
-    }else {
-      const user_info = {
-        userId: '',
-        phoneNumber:'',
-        nickname:'',
-        idCard:'',
-      }
-      return responseMessage(FACE_RESPONSE_CODE.error_search_user_not_found, user_info, "用户未找到")
+    } else {
+      return responseMessage(FACE_RESPONSE_CODE.error_search_user_not_found, EmptyUserInfo, "用户未找到")
     }
-  }catch (err) {
+  } catch (err) {
     console.log('人脸搜索出错', err);
-    const user_info = {
-      userId: '',
-      phoneNumber:'',
-      nickname:'',
-      idCard:'',
-    }
-    return responseMessage(FACE_RESPONSE_CODE.error_search_other_errors, user_info, err)
+    return responseMessage(FACE_RESPONSE_CODE.error_search_other_errors, EmptyUserInfo, err)
   }
 }
 
