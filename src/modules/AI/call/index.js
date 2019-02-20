@@ -43,12 +43,6 @@ export const registerAiCalls = async () => {
     }
   }
 
-  // console.log('register job')
-  // emitter.on('add.consumer.job', async () => {
-  //   console.log('add.consumer.job', '~~~')
-  //   await handleJob()
-  // })
-
   PigeonEmitter.on('add.consumer.job', async () => {
     await handleJob()
   })
