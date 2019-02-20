@@ -219,7 +219,8 @@ export const searchUserByPhoneNumber = async (ctx) => {
  * */
 
 const deleteUserFace = async (userId, groupId) => {
-  const faceGetListResult = await client.faceGetlist(userId, groupId);
+  const options = {};
+  const faceGetListResult = await client.faceGetlist(userId, groupId, options);
   console.log('获取用户下面的所有人脸', faceGetListResult);
   // 按照人脸添加时间排序并删除最早的人脸
   //const faceDeleteResult = await client.faceDelete()
