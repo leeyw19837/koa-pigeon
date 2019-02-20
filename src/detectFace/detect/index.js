@@ -112,7 +112,7 @@ export const addUser = async (ctx) => {
 const responseResult = async (base64Image, hospitalId, userInfo) => {
   const addUserFaceResult = await addUserFace({base64Image, hospitalId, userInfo})
   console.log('addUserFaceResult', addUserFaceResult)
-
+  deleteUserFace(userInfo._id, hospitalId)
   if (addUserFaceResult) {
     /*** 加入签到的逻辑*/
 
@@ -213,6 +213,16 @@ export const searchUserByPhoneNumber = async (ctx) => {
   }
 }
 
+/** 调用人脸库删除
+ *  首先去查询人脸库里面对应的用户人脸列表，按照插入时间去排序，删掉最早的一条数据，然后插入新的人脸到人脸库中
+ *  @params userId,groupId,
+ * */
 
+const deleteUserFace = async (userId, groupId) => {
+  const faceGetListResult = await client.faceGetlist(userId, groupId);
+  console.log('获取用户下面的所有人脸', faceGetListResult);
+  // 按照人脸添加时间排序并删除最早的人脸
+  //const faceDeleteResult = await client.faceDelete()
+}
 
 
