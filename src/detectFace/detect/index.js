@@ -103,7 +103,7 @@ export const addUser = async (ctx) => {
       pinyinName,
       ...getUserInfoByIdCard(idCard)
     })
-    const patient = {_id, ...userInfo}
+    const patient = {userId:_id, ...userInfo}
     return responseResult(base64Image, hospitalId, patient)
   }
 
@@ -111,8 +111,8 @@ export const addUser = async (ctx) => {
 
 const responseResult = async (base64Image, hospitalId, userInfo) => {
   const addUserFaceResult = await addUserFace({base64Image, hospitalId, userInfo})
-  console.log('addUserFaceResult', addUserFaceResult)
-  deleteUserFace(userInfo._id, hospitalId)
+  console.log('addUserFaceResult', addUserFaceResult,userInfo)
+  deleteUserFace(userInfo.userId, hospitalId)
   if (addUserFaceResult) {
     /*** 加入签到的逻辑*/
 
