@@ -11,6 +11,7 @@ enum InterventionTaskState {
   PROCESSING
   DONE
   DONE_WITH_NO_SOAP
+  SILENT
 }
 
 type InterventionTaskCount {

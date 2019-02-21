@@ -1,13 +1,8 @@
 import freshId from 'fresh-id'
 import moment from 'moment'
 import { ObjectID } from 'mongodb'
-import { taskGen } from '../modules/bloodGlucose'
+import { taskGen, saveTask } from '../modules/bloodGlucose'
 import { pubsub } from '../pubsub'
-import {
-  addDelayEvent,
-  deleteDelayEvent,
-  queryDelayEvent,
-} from '../redisCron/controller'
 import map from 'lodash/map'
 import { DigestiveStateLookup } from '../utils/i18n'
 import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
@@ -180,11 +175,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
   // 生成干预任务
   const task = await taskGen(objectToWrite)
   if (task) {
-    await db.collection('interventionTask').insert(task)
-    pubsub.publish('interventionTaskDynamics', {
-      ...task,
-      _operation: 'ADDED',
-    })
+    await saveTask(task)
 
     //聊天页面插入task气泡
     const TIME_PERIOD_MAP = {
@@ -263,17 +254,18 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
         },
       },
     )
-    const BG1UseInfoArray = await db.collection('BG1NotUseReason').find({ patientId }).toArray()
+    const BG1UseInfoArray = await db
+      .collection('BG1NotUseReason')
+      .find({ patientId })
+      .toArray()
     if (!BG1UseInfoArray || (BG1UseInfoArray && BG1UseInfoArray.length === 0)) {
-      await db.collection('BG1NotUseReason').insertOne(
-        {
-          _id: new ObjectID().toString(),
-          patientId,
-          isUseBG1: rrue,
-          operateTime: new Date(),
-          createdAt: new Date(),
-        },
-      )
+      await db.collection('BG1NotUseReason').insertOne({
+        _id: new ObjectID().toString(),
+        patientId,
+        isUseBG1: rrue,
+        operateTime: new Date(),
+        createdAt: new Date(),
+      })
     }
   }
   const mobile = user.username.replace('@ijk.com', '')
