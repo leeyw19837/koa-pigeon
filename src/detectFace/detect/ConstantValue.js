@@ -7,8 +7,10 @@ export const FACE_RESPONSE_CODE = {
   'error_search_user_not_found': 1001,
   'error_search_user_found_not_match': 1002,
   'error_search_other_errors': 1003,
-  'error_add_user_other_errors': 2001,
+  'error_add_user_user_not_exist': 2001,
+  'error_add_user_other_errors': 2002,
   'error_detect_user_face_invalid': 3001,
+
 }
 
 export const EmptyUserInfo = {

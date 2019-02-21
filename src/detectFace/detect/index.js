@@ -203,11 +203,17 @@ export const searchUserByPhoneNumber = async (ctx) => {
     .collection('users')
     .findOne({
       username: phoneNumber
-    }, {nickname: 1, idCard: 1})
+    }, {nickname: 1, idCard: 1, username:1})
   if (user) {
-    return user
+    const formattedUser = {
+      userId: user._id.valueOf().toString(),
+      phoneNumber: user.username,
+      nickname:user.nickname || null,
+      idCard: user.idCard || null
+    }
+    return responseMessage(FACE_RESPONSE_CODE.success, formattedUser, "手机号校验：查到该用户！")
   } else {
-    return null
+    return responseMessage(FACE_RESPONSE_CODE.error_add_user_user_not_exist, EmptyUserInfo, "手机号校验：未查到该用户！")
   }
 }
 

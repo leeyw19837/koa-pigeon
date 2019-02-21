@@ -39,14 +39,15 @@ class DetectLogin {
           hospitalFullName:user.fullname,
           hospitalLogoImage:user.logoImg,
         }
+        const token=jsonwebtoken.sign({
+          user: user._id,
+        }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_API})
+      // console.log('tokentokentokentokentokentokentoken',token)
         ctx.body = {
           message: '登录成功',
           user: userInfo,
           // 生成 token 返回给客户端
-          token: jsonwebtoken.sign({
-            user: omit(user, 'password')
-          }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_API})
-        }
+          token}
       } else {
         ctx.status = 401
         const emptyUserInfo = {
