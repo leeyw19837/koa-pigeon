@@ -87,10 +87,9 @@ const getMaxDistancePercent = (currentHctCdePercent = []) => {
     } = cp
     const acutalTotal = currentTotal + needAddPatients.length
     const acutalHad = hadPatientCounts + needAddPatients.length
-    const divisor =
-      !acutalTotal && !acutalHad
-        ? (acutalHad / acutalTotal * 100).toFixed(3)
-        : 0
+    const divisor = acutalTotal
+      ? ((acutalHad / acutalTotal) * 100).toFixed(3)
+      : 0
     result.push({
       cdeId,
       percentDistance: strip(percent - divisor),
