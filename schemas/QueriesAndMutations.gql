@@ -193,6 +193,12 @@ type Query {
 
   # 根据活动的ID查询当前的活动
   getOneOfPublicityActivity(activityId: String): Activity
+
+  # 获取一个门诊的信息
+  getOutpatientPlan(id: ID!): OutpatientPlan
+  # 获取某个月及其前后一周的门诊信息（用于日历显示）
+  # date的格式为YYYY-MM
+  getGroupedOutpatientPlans(date: String): [OutpatientPlan]
 }
 
 type Mutation {

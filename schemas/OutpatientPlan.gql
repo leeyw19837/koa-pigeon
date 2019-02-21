@@ -1,0 +1,39 @@
+type OutpatientPlan {
+  _id: ID
+
+  date: Date!
+  dayOfWeek: DayOfWeek!
+  period: PeriodOfDay!
+
+  hospitalId: String!
+  hospitalName: String!
+  hospital: Institution!
+  departmentCode: String
+  department: String
+
+  note: String
+
+  patientIds: [ID!]
+  patients: [User!]
+  patientsCount: Int!
+
+  signedIds: [ID!]
+
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+enum DayOfWeek {
+  Mon
+  Tues
+  Wed
+  Thur
+  Fri
+  Sat
+  Sun
+}
+
+enum PeriodOfDay {
+  MORNING
+  AFTERNOON
+}
