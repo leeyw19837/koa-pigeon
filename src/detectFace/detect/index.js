@@ -3,6 +3,7 @@ import {APP_ID, API_KEY, SECRET_KEY, FACE_RESPONSE_CODE, EmptyUserInfo} from "./
 import {ObjectID} from "mongodb";
 import {getPinyinUsername, getUserInfoByIdCard, responseMessage} from "../util";
 import {isEmpty, sortBy} from "lodash";
+import {uploadBase64Img} from "../../utils";
 
 const client = new AipFaceClient(APP_ID, API_KEY, SECRET_KEY);
 
@@ -78,6 +79,7 @@ export const addUser = async (ctx) => {
   if (!detectResult) {
     return responseMessage(FACE_RESPONSE_CODE.error_detect_user_face_invalid, userInfo, "用户人脸检测失败，请重新录入")
   }
+  const pinyinName = getPinyinUsername(nickname);
   const user = await db
     .collection('users')
     .findOne({
@@ -88,22 +90,44 @@ export const addUser = async (ctx) => {
     // 数据库查到了该用户
     console.log(user)
     const patient = {userId: user._id, ...userInfo}
+    const imageUrl = getImageUrlFromKs3(user._id.valueOf().toString(), hospitalId, patient, base64Image)
+    db.collection('users').update(
+      {_id: user._id},
+      {
+        $set: {
+          authenticAvatar: imageUrl,
+          username: phoneNumber,
+          nickname,
+          idCard,
+          pinyinName,
+          updatedAt: new Date(),
+          institutionId: hospitalId,
+          ...getUserInfoByIdCard(idCard)
+        }
+      },
+    )
+
     return responseResult(base64Image, hospitalId, patient)
   } else {
     // 数据库没有查到该用户
-    const pinyinName = getPinyinUsername(nickname);
+
     const _id = new ObjectID();
+    const patient = {userId: _id, ...userInfo}
     // 插入新用户到数据库
-    await db.collection('users').insert({
+    const imageUrl = getImageUrlFromKs3(_id.valueOf().toString(), hospitalId, patient, base64Image)
+    db.collection('users').insert({
       _id,
       nickname,
       username: phoneNumber,
       createdAt: new Date(),
       idCard,
       pinyinName,
-      ...getUserInfoByIdCard(idCard)
+      authenticAvatar: imageUrl,
+      institutionId: hospitalId,
+      ...getUserInfoByIdCard(idCard),
+      createdBy: 'FACE_DOG'
     })
-    const patient = {userId: _id, ...userInfo}
+
     return responseResult(base64Image, hospitalId, patient)
   }
 
@@ -120,6 +144,7 @@ const responseResult = async (base64Image, hospitalId, userInfo) => {
     return responseMessage(FACE_RESPONSE_CODE.error_add_user_other_errors, userInfo, "用户录入并签到失败")
   }
 }
+
 /*** 人脸注册到人脸库中
  *
  * @params:
@@ -223,6 +248,7 @@ export const searchUserByPhoneNumber = async (ctx) => {
  * */
 
 const deleteAndAddNewUserFace = async (userId, groupId) => {
+  console.log(userId, groupId, 'userId', 'groupId')
   const options = {};
   try {
     const faceGetListResult = await client.faceGetlist(userId, groupId, options);
@@ -230,7 +256,7 @@ const deleteAndAddNewUserFace = async (userId, groupId) => {
     if (error_code === 0 && result.face_list.length >= 20) {
       const earliestFace = sortBy(result.face_list, (o) => o.ctime)
       const deleteOptions = {}
-      const faceDeleteResult = await client.faceDelete(userId, groupId, earliestFace[0].ctime, deleteOptions)
+      const faceDeleteResult = await client.faceDelete(userId, groupId, earliestFace[0].face_token, deleteOptions)
       console.log('人脸删除结果', faceDeleteResult)
       return true
     } else {
@@ -242,7 +268,63 @@ const deleteAndAddNewUserFace = async (userId, groupId) => {
     return true
   }
 
-
 }
 
+/**
+ *
+ *  const imageUrls = []
 
+ for (let i = 0; i < circleImageBase64.length; i++) {
+
+    imageUrls.push(imageUrl)
+  }
+ *
+ *
+ * */
+
+const getImageUrlFromKs3 = async (patientId, hospitalId, patient, base64Image) => {
+  const imageUrlKey = `${patientId}${Date.now()}`
+  const imageUrl = await uploadBase64Img(imageUrlKey, base64Image)
+  updateLocalFaceStorage(hospitalId, imageUrl, patient)
+  return imageUrl;
+}
+
+// 把用户的人脸图片保存到公司的服务器中
+const updateLocalFaceStorage = async (groupID, faceUrl, userInfo) => {
+  const userFaceDatabase = await db
+    .collection('faceDatabase')
+    .findOne({
+      userId: userInfo.userId,
+      groupID,
+    });
+
+  const nowDate = new Date()
+  const faceSourceItem = {
+    faceToken: new ObjectID().valueOf().toString(),
+    faceUrl,
+    faceImageType: 'URL',
+    updatedAt: nowDate
+  }
+  if (userFaceDatabase) {
+    db.collection('faceDatabase').update(
+      {_id: userFaceDatabase._id},
+      {
+        $set: {
+          userInfo,
+          updatedAt: nowDate,
+          faceSource: [...userFaceDatabase.faceSource, faceSourceItem]
+        }
+      },
+    )
+  } else {
+    //
+    db.collection('faceDatabase').insert({
+      _id: new ObjectID().valueOf().toString(),
+      userId: userInfo.userId,
+      groupID,
+      userInfo,
+      createdAt: nowDate,
+      faceSource: [faceSourceItem]
+    })
+  }
+} 
