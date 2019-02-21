@@ -217,6 +217,7 @@ export const searchUserByPhoneNumber = async (ctx) => {
  * */
 
 const deleteAndAddNewUserFace = async (userId, groupId) => {
+  console.log(userId,groupId,'userId','groupId')
   const options = {};
   try {
     const faceGetListResult = await client.faceGetlist(userId, groupId, options);
@@ -224,7 +225,7 @@ const deleteAndAddNewUserFace = async (userId, groupId) => {
     if (error_code === 0 && result.face_list.length >= 20) {
       const earliestFace = sortBy(result.face_list, (o) => o.ctime)
       const deleteOptions = {}
-      const faceDeleteResult = await client.faceDelete(userId, groupId, earliestFace[0].ctime, deleteOptions)
+      const faceDeleteResult = await client.faceDelete(userId, groupId, earliestFace[0].face_token, deleteOptions)
       console.log('人脸删除结果', faceDeleteResult)
       return true
     } else {

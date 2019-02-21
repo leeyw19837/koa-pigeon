@@ -44,6 +44,7 @@ class DetectLogin {
           user: userInfo,
           // 生成 token 返回给客户端
           token: jsonwebtoken.sign({
+            exp: '365 days',
             user: omit(user, 'password')
           }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_API})
         }
