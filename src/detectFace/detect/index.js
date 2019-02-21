@@ -2,7 +2,7 @@ import {face as AipFaceClient, HttpClient} from 'baidu-aip-sdk'
 import {APP_ID, API_KEY, SECRET_KEY, FACE_RESPONSE_CODE, EmptyUserInfo} from "./ConstantValue";
 import {ObjectID} from "mongodb";
 import {getPinyinUsername, getUserInfoByIdCard, responseMessage} from "../util";
-import {isEmpty} from "lodash";
+import {isEmpty, sortBy} from "lodash";
 
 const client = new AipFaceClient(APP_ID, API_KEY, SECRET_KEY);
 
@@ -103,7 +103,7 @@ export const addUser = async (ctx) => {
       pinyinName,
       ...getUserInfoByIdCard(idCard)
     })
-    const patient = {userId:_id, ...userInfo}
+    const patient = {userId: _id, ...userInfo}
     return responseResult(base64Image, hospitalId, patient)
   }
 
@@ -111,8 +111,7 @@ export const addUser = async (ctx) => {
 
 const responseResult = async (base64Image, hospitalId, userInfo) => {
   const addUserFaceResult = await addUserFace({base64Image, hospitalId, userInfo})
-  console.log('addUserFaceResult', addUserFaceResult,userInfo)
-  deleteUserFace(userInfo.userId, hospitalId)
+  console.log('addUserFaceResult', addUserFaceResult, userInfo)
   if (addUserFaceResult) {
     /*** 加入签到的逻辑*/
 
@@ -136,14 +135,13 @@ const addUserFace = async ({base64Image, hospitalId, userInfo}) => {
   options["user_info"] = `${JSON.stringify(userInfo)}`;
   // options["quality_control"] = "NORMAL";
   // options["liveness_control"] = "LOW";
+  await deleteAndAddNewUserFace(userInfo.userId, hospitalId)
 
   // 调用人脸注册
   try {
     const addResult = await client.addUser(base64Image, imageType, hospitalId, userInfo.userId, options)
-    if (addResult.result.face_token) {
-      return true;
-    }
-    return false;
+    console.log('人脸注册添加结果', addResult)
+    return true;
   } catch (e) {
     return false
   }
@@ -218,17 +216,27 @@ export const searchUserByPhoneNumber = async (ctx) => {
  *  @params userId,groupId,
  * */
 
-const deleteUserFace = async (userId, groupId) => {
+const deleteAndAddNewUserFace = async (userId, groupId) => {
   const options = {};
-  const faceGetListResult = await client.faceGetlist(userId, groupId, options);
-  console.log('获取用户下面的所有人脸', faceGetListResult);
+  try {
+    const faceGetListResult = await client.faceGetlist(userId, groupId, options);
+    const {error_code, result} = faceGetListResult
+    if (error_code === 0 && result.face_list.length >= 20) {
+      const earliestFace = sortBy(result.face_list, (o) => o.ctime)
+      const deleteOptions = {}
+      const faceDeleteResult = await client.faceDelete(userId, groupId, earliestFace[0].ctime, deleteOptions)
+      console.log('人脸删除结果', faceDeleteResult)
+      return true
+    } else {
+      console.log('获取当前用户的人脸库数据失败', error_code)
+      return false
+    }
+  } catch (e) {
+    console.log('获取当前用户的人脸库数据失败', e)
+    return true
+  }
 
-  const array = faceGetListResult.result.face_list
 
-  console.log("faceGetListResult.result.face_list.array[0]= ", JSON.stringify(array))
-
-  // 按照人脸添加时间排序并删除最早的人脸
-  //const faceDeleteResult = await client.faceDelete()
 }
 
 
