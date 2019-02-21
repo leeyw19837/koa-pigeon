@@ -172,6 +172,7 @@ export const saveTask = async task => {
       })
     }
   }
+
   const taskState = shouldPub ? 'PENDING' : 'SILENT'
   await db.collection('interventionTask').insert({ ...task, state: taskState })
   if (shouldPub) {
