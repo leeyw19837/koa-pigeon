@@ -222,6 +222,11 @@ const deleteUserFace = async (userId, groupId) => {
   const options = {};
   const faceGetListResult = await client.faceGetlist(userId, groupId, options);
   console.log('获取用户下面的所有人脸', faceGetListResult);
+
+  const array = faceGetListResult.result.face_list
+
+  console.log("faceGetListResult.result.face_list.array[0]= ", JSON.stringify(array))
+
   // 按照人脸添加时间排序并删除最早的人脸
   //const faceDeleteResult = await client.faceDelete()
 }

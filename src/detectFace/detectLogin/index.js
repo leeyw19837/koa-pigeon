@@ -34,9 +34,14 @@ class DetectLogin {
       // 匹配密码是否相等
       if (await bcrypt.compare(body.password, user.password)) {
         ctx.status = 200
+        const userInfo = {
+          groupId:user._id,
+          hospitalFullName:user.fullname,
+          hospitalLogoImage:user.logoImg,
+        }
         ctx.body = {
           message: '登录成功',
-          user: user.userInfo,
+          user: userInfo,
           // 生成 token 返回给客户端
           token: jsonwebtoken.sign({
             user: omit(user, 'password')
@@ -44,8 +49,15 @@ class DetectLogin {
         }
       } else {
         ctx.status = 401
+        const emptyUserInfo = {
+          groupId:'',
+          hospitalFullName:'',
+          hospitalLogoImage:'',
+        }
         ctx.body = {
-          message: '密码错误'
+          message: '密码错误',
+          user: emptyUserInfo,
+          token: '',
         }
       }
     } catch (error) {
