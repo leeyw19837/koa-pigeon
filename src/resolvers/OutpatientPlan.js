@@ -1,7 +1,7 @@
 import { size, map, isEmpty } from 'lodash'
 import { ObjectId } from 'mongodb'
 
-export const Outpatient = {
+export const OutpatientPlan = {
   hospital: async ({ hospitalId }, args, { getDb }) => {
     const db = await getDb()
     return await db.collection('institutions').findOne({ _id: hospitalId })
@@ -11,10 +11,12 @@ export const Outpatient = {
     if (isEmpty(patientIds)) return []
     const db = await getDb()
     const objIds = map(patientIds, id => ObjectId.createFromHexString(id))
-    return db
+    return await db
       .collection('users')
       .find({ _id: { $in: objIds } })
       .toArray()
   },
-  patientsCount: async ({ patientIds }) => size(patientIds),
+  patientsCount: async ({ patientIds }) => {
+    return size(patientIds)
+  },
 }

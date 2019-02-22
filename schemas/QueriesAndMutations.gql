@@ -198,7 +198,7 @@ type Query {
   getOutpatientPlan(id: ID!): OutpatientPlan
   # 获取某个月及其前后一周的门诊信息（用于日历显示）
   # date的格式为YYYY-MM
-  getGroupedOutpatientPlans(date: String): [OutpatientPlan]
+  getOutpatientPlans(date: String): [OutpatientPlan]
 }
 
 type Mutation {
