@@ -1,7 +1,13 @@
-import {addUser, detect, searchFace, searchUserByPhoneNumber} from "../detect";
+import {getHospitals, addUser, detect, searchFace, searchUserByPhoneNumber} from "../detect";
 
 const Router = require('koa-router')
 const detectFaceApi = new Router()
+
+detectFaceApi.get('/getHospitals', async (ctx) => {
+  const result = await getHospitals(ctx)
+  console.log('addUser result',result,'ctttx',ctx)
+  ctx.body = result
+})
 
 detectFaceApi.post('/addUser', async (ctx) => {
   const result = await addUser(ctx)
