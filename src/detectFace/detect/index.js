@@ -1,5 +1,5 @@
 import {face as AipFaceClient, HttpClient} from 'baidu-aip-sdk'
-import {APP_ID, API_KEY, SECRET_KEY, FACE_RESPONSE_CODE, EmptyUserInfo} from "./ConstantValue";
+import {API_KEY, APP_ID, EmptyUserInfo, FACE_RESPONSE_CODE, SECRET_KEY} from "./ConstantValue";
 import {ObjectID} from "mongodb";
 import {getPinyinUsername, getUserInfoByIdCard, responseMessage} from "../util";
 import {isEmpty, sortBy} from "lodash";
@@ -228,12 +228,12 @@ export const searchUserByPhoneNumber = async (ctx) => {
     .collection('users')
     .findOne({
       username: phoneNumber
-    }, {nickname: 1, idCard: 1, username:1})
+    }, {nickname: 1, idCard: 1, username: 1})
   if (user) {
     const formattedUser = {
       userId: user._id.valueOf().toString(),
       phoneNumber: user.username,
-      nickname:user.nickname || null,
+      nickname: user.nickname || null,
       idCard: user.idCard || null
     }
     return responseMessage(FACE_RESPONSE_CODE.success, formattedUser, "手机号校验：查到该用户！")
@@ -270,17 +270,6 @@ const deleteAndAddNewUserFace = async (userId, groupId) => {
 
 }
 
-/**
- *
- *  const imageUrls = []
-
- for (let i = 0; i < circleImageBase64.length; i++) {
-
-    imageUrls.push(imageUrl)
-  }
- *
- *
- * */
 
 const getImageUrlFromKs3 = async (patientId, hospitalId, patient, base64Image) => {
   const imageUrlKey = `${patientId}${Date.now()}`
@@ -327,4 +316,25 @@ const updateLocalFaceStorage = async (groupID, faceUrl, userInfo) => {
       faceSource: [faceSourceItem]
     })
   }
-} 
+}
+
+/**
+ * 获取医院的列表信息
+ * */
+
+export const getHospitals = async () => {
+  const hospitalList = await db
+    .collection('institutions')
+    .find({}).toArray();
+  const responseData = hospitalList.map((item) => {
+    const {_id, code, name, fullname, logoImg} = item
+    return {
+      hospitalId: _id,
+      hospitalCode: code,
+      name: name,
+      fullname,
+      logoImg
+    }
+  })
+  return responseMessage(FACE_RESPONSE_CODE.success, responseData, "获取到医院的列表信息")
+}

@@ -20,9 +20,7 @@ class DetectLogin {
       const user = await db
         .collection('institutions')
         .findOne({
-          userName: body
-            .userName
-            .toString()
+          _id: body.hospitalId
         });
       if (!user) {
         ctx.status = 401
@@ -40,10 +38,9 @@ class DetectLogin {
           hospitalLogoImage:user.logoImg,
         }
         const token=jsonwebtoken.sign({
-          // exp: '365 days',
+          exp: '365 days',
           user: user._id,
         }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_API})
-      // console.log('tokentokentokentokentokentokentoken',token)
         ctx.body = {
           message: '登录成功',
           user: userInfo,

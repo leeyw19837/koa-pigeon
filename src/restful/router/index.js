@@ -1,3 +1,5 @@
+import {getHospitals} from "../../detectFace/detect";
+
 const Router = require('koa-router')
 const restfulRouter = new Router()
 import dayjs from 'dayjs'
@@ -16,6 +18,7 @@ import {
 
 import { getAllJobs } from '../../modules/delayJob'
 import { aiCallNotify } from '../../modules/AI/call/api'
+import detectFaceApi from "../../detectFace/router";
 
 restfulRouter.post('/uploadFile', async ctx => {
   const result = await uploadFileByType(ctx)
@@ -73,6 +76,11 @@ restfulRouter.post('/ai-call-notify', async ctx => {
   console.log(ctx.request, ctx.request.body, '~~~test')
   await aiCallNotify(ctx.request.body)
   ctx.body = 'OK'
+})
+
+restfulRouter.get('/getHospitals', async (ctx) => {
+  const result = await getHospitals()
+  ctx.body = result
 })
 
 restfulRouter.get('/delayjobs', async ctx => {
