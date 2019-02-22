@@ -33,25 +33,26 @@ class DetectLogin {
       if (await bcrypt.compare(body.password, user.password)) {
         ctx.status = 200
         const userInfo = {
-          groupId:user._id,
-          hospitalFullName:user.fullname,
-          hospitalLogoImage:user.logoImg,
+          groupId: user._id,
+          hospitalFullName: user.fullname,
+          hospitalLogoImage: user.logoImg,
         }
-        const token=jsonwebtoken.sign({
-          exp: '365 days',
+        const token = jsonwebtoken.sign({
+         // exp: '365 days',
           user: user._id,
         }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_API})
         ctx.body = {
           message: '登录成功',
           user: userInfo,
           // 生成 token 返回给客户端
-          token}
+          token
+        }
       } else {
         ctx.status = 401
         const emptyUserInfo = {
-          groupId:'',
-          hospitalFullName:'',
-          hospitalLogoImage:'',
+          groupId: '',
+          hospitalFullName: '',
+          hospitalLogoImage: '',
         }
         ctx.body = {
           message: '密码错误',

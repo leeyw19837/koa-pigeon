@@ -1,6 +1,6 @@
 import {face as AipFaceClient, HttpClient} from 'baidu-aip-sdk'
 import {API_KEY, APP_ID, EmptyUserInfo, FACE_RESPONSE_CODE, SECRET_KEY} from "./ConstantValue";
-import {ObjectID} from "mongodb";
+import {ObjectId, ObjectID} from "mongodb";
 import {getPinyinUsername, getUserInfoByIdCard, responseMessage} from "../util";
 import {isEmpty, sortBy} from "lodash";
 import {uploadBase64Img} from "../../utils";
@@ -88,9 +88,8 @@ export const addUser = async (ctx) => {
 
   if (user) {
     // 数据库查到了该用户
-    console.log(user)
     const patient = {userId: user._id, ...userInfo}
-    const imageUrl = getImageUrlFromKs3(user._id.valueOf().toString(), hospitalId, patient, base64Image)
+    const imageUrl = await getImageUrlFromKs3(user._id.valueOf().toString(), base64Image)
     db.collection('users').update(
       {_id: user._id},
       {
@@ -107,14 +106,14 @@ export const addUser = async (ctx) => {
       },
     )
 
-    return responseResult(base64Image, hospitalId, patient)
+    return responseResult(base64Image, hospitalId, patient, imageUrl)
   } else {
     // 数据库没有查到该用户
 
     const _id = new ObjectID();
     const patient = {userId: _id, ...userInfo}
     // 插入新用户到数据库
-    const imageUrl = getImageUrlFromKs3(_id.valueOf().toString(), hospitalId, patient, base64Image)
+    const imageUrl = await getImageUrlFromKs3(_id.valueOf().toString(), base64Image)
     db.collection('users').insert({
       _id,
       nickname,
@@ -128,17 +127,39 @@ export const addUser = async (ctx) => {
       createdBy: 'FACE_DOG'
     })
 
-    return responseResult(base64Image, hospitalId, patient)
+    return responseResult(base64Image, hospitalId, patient, imageUrl)
   }
 
 }
 
-const responseResult = async (base64Image, hospitalId, userInfo) => {
+const responseResult = async (base64Image, hospitalId, userInfo, imageUrl = "") => {
   const addUserFaceResult = await addUserFace({base64Image, hospitalId, userInfo})
+  let userFaceImageUrl = imageUrl;
+  if (!userFaceImageUrl) {
+    userFaceImageUrl = await getImageUrlFromKs3(userInfo.userId, base64Image)
+    const {userId, phoneNumber, nickname, idCard} = userInfo
+    const pinyinName = getPinyinUsername(nickname)
+    db.collection('users').update(
+      {_id: ObjectId.createFromHexString(userId)},
+      {
+        $set: {
+          authenticAvatar: userFaceImageUrl,
+          username: phoneNumber,
+          nickname,
+          idCard,
+          pinyinName,
+          updatedAt: new Date(),
+          institutionId: hospitalId,
+          ...getUserInfoByIdCard(idCard)
+        }
+      },
+    )
+  }
+  updateLocalFaceStorage(hospitalId, userFaceImageUrl, userInfo)
+
   console.log('addUserFaceResult', addUserFaceResult, userInfo)
   if (addUserFaceResult) {
     /*** 加入签到的逻辑*/
-
     return responseMessage(FACE_RESPONSE_CODE.success, userInfo, "用户录入并签到成功")
   } else {
     return responseMessage(FACE_RESPONSE_CODE.error_add_user_other_errors, userInfo, "用户录入并签到失败")
@@ -208,7 +229,7 @@ export const searchFace = async (ctx) => {
         score
       } = result.user_list[0];
       if (score > 90) {
-        return responseResult(base64Image, group_id, JSON.parse(user_info))
+        return responseResult(base64Image, group_id, JSON.parse(user_info),)
       } else {
         return responseMessage(FACE_RESPONSE_CODE.error_search_user_found_not_match, JSON.parse(user_info), "用户查找到，但是比对评分过低")
       }
@@ -271,10 +292,9 @@ const deleteAndAddNewUserFace = async (userId, groupId) => {
 }
 
 
-const getImageUrlFromKs3 = async (patientId, hospitalId, patient, base64Image) => {
+const getImageUrlFromKs3 = async (patientId, base64Image) => {
   const imageUrlKey = `${patientId}${Date.now()}`
   const imageUrl = await uploadBase64Img(imageUrlKey, base64Image)
-  updateLocalFaceStorage(hospitalId, imageUrl, patient)
   return imageUrl;
 }
 
@@ -306,7 +326,6 @@ const updateLocalFaceStorage = async (groupID, faceUrl, userInfo) => {
       },
     )
   } else {
-    //
     db.collection('faceDatabase').insert({
       _id: new ObjectID().valueOf().toString(),
       userId: userInfo.userId,
