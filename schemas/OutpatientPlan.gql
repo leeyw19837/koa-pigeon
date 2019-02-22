@@ -1,7 +1,7 @@
 type OutpatientPlan {
   _id: ID
 
-  date: Date!
+  date: String!
   dayOfWeek: DayOfWeek!
   period: PeriodOfDay!
 
@@ -21,6 +21,13 @@ type OutpatientPlan {
 
   createdAt: Date!
   updatedAt: Date!
+}
+
+input InputOutpatientPlan {
+  date: String!
+  period: PeriodOfDay!
+  hospitalId: String!
+  departmentCode: String!
 }
 
 enum DayOfWeek {

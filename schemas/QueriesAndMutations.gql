@@ -645,6 +645,15 @@ type Mutation {
     measurementTime: String
   ): UploadFoodPhotoResult
   markReadPublicityActivity(patientId: ID, activityId: ID): Boolean
+  # 将一个患者加入到一个门诊计划中
+  # 若传了fromPlanId则同时将该患者从相应的门诊计划中移出
+  movePatientToOutpatientPlan(
+    patientId: ID!
+    toPlan: InputOutpatientPlan!
+    fromPlanId: ID
+  ): Boolean
+  # 取消签到（只能取消当天的签到）
+  cancelCheckIn(patientId: ID!, planId: ID!): Boolean
 }
 
 type Subscription {

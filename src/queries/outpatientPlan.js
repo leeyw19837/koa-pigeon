@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 
 export const getOutpatientPlan = async (_, { id }, { getDb }) => {
   const db = await getDb()
-  return await db.collection('outpatientPlan').findOne({ _id })
+  return await db.collection('outpatientPlan').findOne({ _id: id })
 }
 
 export const getGroupedOutpatientPlans = async (_, { date }, { getDb }) => {
