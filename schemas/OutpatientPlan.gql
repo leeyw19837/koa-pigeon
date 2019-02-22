@@ -21,6 +21,7 @@ type OutpatientPlan {
 
   createdAt: Date!
   updatedAt: Date!
+  _operation: Operation
 }
 
 input InputOutpatientPlan {

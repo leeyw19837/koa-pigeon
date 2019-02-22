@@ -670,6 +670,7 @@ type Subscription {
   ): InterventionTask
   foodDynamics(patientId: ID, client: String): Foods
   sessionDynamics(userId: ID, nosy: Boolean, chatRoomId: ID): Session
+  outpatientPlanDynamics(date: String): OutpatientPlan
 }
 
 schema {

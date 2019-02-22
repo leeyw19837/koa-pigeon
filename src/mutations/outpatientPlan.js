@@ -1,5 +1,7 @@
 import freshId from 'fresh-id'
 import dayjs from 'dayjs'
+import union from 'lodash/union'
+import { pubsub } from '../pubsub'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
 export const movePatientToOutpatientPlan = async (
@@ -23,25 +25,45 @@ export const movePatientToOutpatientPlan = async (
       createdAt: new Date(),
     }
     result = await db.collection('outpatientPlan').insert(planObj)
+    result.result.ok &&
+      pubsub.publish('outpatientPlanDynamics', {
+        ...planObj,
+        _operation: 'ADDED',
+      })
   } else {
-    result = await db
-      .collection('outpatientPlan')
-      .update(
-        { _id: existsPlan._id },
-        {
-          $addToSet: { patientIds: patientId },
-          $set: { updatedAt: new Date() },
-        },
-      )
+    result = await db.collection('outpatientPlan').update(
+      { _id: existsPlan._id },
+      {
+        $addToSet: { patientIds: patientId },
+        $set: { updatedAt: new Date() },
+      },
+    )
+    result.result.ok &&
+      pubsub.publish('outpatientPlanDynamics', {
+        ...existsPlan,
+        patientIds: union(existsPlan.patientIds, [patientId]),
+        _operation: 'UPDATED',
+      })
   }
 
   if (fromPlanId && result.result.ok) {
-    result = await db
-      .collection('outpatientPlan')
-      .update(
-        { _id: fromPlanId },
-        { $pull: { patientIds: patientId, signedIds: patientId } },
-      )
+    result = await db.collection('outpatientPlan').update(
+      { _id: fromPlanId },
+      {
+        $pull: { patientIds: patientId, signedIds: patientId },
+        $set: { updatedAt: new Date() },
+      },
+    )
+    if (result.result.ok) {
+      const updatedPlan = await db
+        .collection('outpatientPlan')
+        .findOne({ _id: fromPlanId })
+      updatedPlan &&
+        pubsub.publish('outpatientPlanDynamics', {
+          ...updatedPlan,
+          _operation: 'UPDATED',
+        })
+    }
   }
   return result.result.ok
 }
