@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 import moment from 'moment'
 import map from 'lodash/map'
 import get from 'lodash/get'
+import first from 'lodash/first'
 import {
   isLessFour,
   isMealRecord,
@@ -13,6 +14,7 @@ import {
 } from './utils'
 import { getPairingBgRecord } from './pairedMeasurement'
 import { getRiskLevel } from './riskLevel'
+import { pubsub } from '../../pubsub'
 
 const TIME_PERIOD_MAP = {
   BEFORE_BREAKFAST: '早餐前',
@@ -99,5 +101,84 @@ export const taskGen = async (measurement, getPairingMethod) => {
     newTask.desc = assembleTaskDesc(newTask.measurementRecords, now)
     newTask.riskLevel = await getRiskLevel({ latestHbA1c, task: newTask })
     return newTask
+  }
+}
+
+const getNearestDay26 = () => {
+  const currentDayOfMonth = moment().date()
+  const monthOffset = currentDayOfMonth < 26 ? 1 : 0
+  const nearestDay26 = moment()
+    .subtract('months', monthOffset)
+    .set('date', 26)
+    .startOf('days')._d
+  return nearestDay26
+}
+export const getNearestTaskWithSameType = async ({ _id, type, patientId }) => {
+  const nearestDay26 = getNearestDay26()
+  let prevTask = await db
+    .collection('interventionTask')
+    .find({
+      _id: { $ne: _id },
+      patientId,
+      type,
+      state: { $nin: ['SILENT', 'DONE_WITH_NO_SOAP'] },
+      createdAt: { $gt: nearestDay26 },
+    })
+    .limit(1)
+    .sort({ createdAt: -1 })
+    .toArray()
+  prevTask = first(prevTask)
+  return prevTask
+}
+
+export const saveTask = async task => {
+  let shouldPub = false,
+    shouldSilenceNearest = false
+  if (task.type === 'LOW_BLOOD_GLUCOSE') {
+    shouldPub = true
+  } else {
+    const nearestTask = await getNearestTaskWithSameType(task)
+    if (!nearestTask) shouldPub = true
+    else {
+      if (task.type === 'FLUCTUATION') {
+        // 覆盖上次
+        shouldPub = nearestTask.state !== 'DONE'
+        shouldSilenceNearest = shouldPub
+      } else if (
+        task.type === 'AFTER_MEALS_HIGH' ||
+        task.type === 'EMPTY_STOMACH_HIGH'
+      ) {
+        // 大于0表示新任务的优先级更高
+        const diffRiskLevel = nearestTask.riskLevel - task.riskLevel
+        const isNearestTaskDone = nearestTask.state === 'DONE'
+        if (isNearestTaskDone) {
+          shouldPub = diffRiskLevel > 0
+        } else {
+          // 覆盖上次
+          shouldPub = diffRiskLevel >= 0
+          shouldSilenceNearest = shouldPub
+        }
+      }
+    }
+
+    if (shouldSilenceNearest) {
+      await db
+        .collection('interventionTask')
+        .update({ _id: nearestTask._id }, { $set: { state: 'SILENT' } })
+      pubsub.publish('interventionTaskDynamics', {
+        ...nearestTask,
+        state: 'SILENT',
+        _operation: 'UPDATED',
+      })
+    }
+  }
+  const taskState = shouldPub ? 'PENDING' : 'SILENT'
+  await db.collection('interventionTask').insert({ ...task, state: taskState })
+  if (shouldPub) {
+    pubsub.publish('interventionTaskDynamics', {
+      ...task,
+      state: taskState,
+      _operation: 'ADDED',
+    })
   }
 }

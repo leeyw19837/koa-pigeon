@@ -1,11 +1,11 @@
 import first from 'lodash/first'
 import dayjs from 'dayjs'
 
-const calcLevel = (hba1cTooHight, bgTooHight) => {
-  if (hba1cTooHight && bgTooHight) return 0
-  else if (!hba1cTooHight && bgTooHight) return 1
-  else if (hba1cTooHight && !bgTooHight) return 2
-  else if (!hba1cTooHight && !bgTooHight) return 3
+const calcLevel = (hba1cTooHigh, bgTooHigh) => {
+  if (hba1cTooHigh && bgTooHigh) return 0
+  else if (!hba1cTooHigh && bgTooHigh) return 1
+  else if (hba1cTooHigh && !bgTooHigh) return 2
+  else if (!hba1cTooHigh && !bgTooHigh) return 3
 }
 
 export const getRiskLevel = async ({
@@ -67,11 +67,11 @@ export const getRiskLevel = async ({
         // 有签到过的门诊的患者，取前次测量值的起始日期设置为门诊那天
         if (latestEffectiveTreatment) {
           latestTaskCondition.measuredAt = {
-            ...latestHbA1cTooHigh.measuredAt,
+            ...latestTaskCondition.measuredAt,
             $gt: latestEffectiveTreatment.appointmentTime,
           }
         }
-
+        console.log('latestTaskCondition :', latestTaskCondition)
         // 统计一下患者历史上上次门诊至今天之前的最近一次的空腹血糖数据,并取其最高值作为该天的测量值
         const emptyStomachBgsByDay = await db
           .collection('bloodGlucoses')
@@ -97,6 +97,8 @@ export const getRiskLevel = async ({
           .toArray()
         const latestDayTooHigh = first(emptyStomachBgsByDay)
         // 以前未测量过空腹血糖，或者前一天的测量值不高于阈值，认为不连续超高
+
+        console.log('latestDayTooHigh :', latestDayTooHigh)
         if (
           !latestDayTooHigh ||
           latestDayTooHigh.higherValue < thresholdOfTooHigh
