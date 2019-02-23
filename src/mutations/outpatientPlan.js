@@ -1,6 +1,7 @@
 import freshId from 'fresh-id'
 import dayjs from 'dayjs'
 import union from 'lodash/union'
+import findIndex from 'lodash/findIndex'
 import { pubsub } from '../pubsub'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
@@ -67,13 +68,24 @@ export const movePatientToOutpatientPlan = async (
   }
   return result.result.ok
 }
+export const outpatientPlanCheckIn = async (
+  _,
+  { patientId, planId },
+  context,
+) => {
+  const db = await context.getDb()
+  db.collection('outpatientPlan').update(
+    { _id: planId },
+    { $addToSet: { signedIds: patientId } },
+  )
+}
 
 export const cancelCheckIn = async (_, { patientId, planId }, context) => {
   const db = await context.getDb()
   const existsPlan = await db
     .collection('outpatientPlan')
     .findOne({ _id: planId })
-  if (!existsPlan) return true
+  if (!existsPlan) return false
 
   const isSameDay = dayjs().isSame(existsPlan.date, 'day')
   if (!isSameDay) throw new Error('cannot cancel a non-preset check-in')
@@ -82,4 +94,48 @@ export const cancelCheckIn = async (_, { patientId, planId }, context) => {
     .collection('outpatientPlan')
     .update({ _id: planId }, { $pull: { signedIds: patientId } })
   return result.result.ok
+}
+
+export const changeWildPatientInfos = async (
+  _,
+  { operatorId, planId, patient },
+  { getDb },
+) => {
+  const db = await getDb()
+  const existsPlan = await db
+    .collection('outpatientPlan')
+    .findOne({ _id: planId })
+  if (!existsPlan) return false
+
+  const { _id, mobile, idCard, name } = patient
+  const index = findIndex(existsPlan.extraData, { patientId: _id })
+  let setter
+  if (index < 0) {
+    setter = {
+      $push: { mobile },
+      $set: { updatedBy: operatorId, updatedAt: new Date() },
+    }
+  } else {
+    const extraData = [...existsPlan.extraData]
+    extraData[index] = { ...extraData[index], mobile }
+    setter = {
+      $set: { extraData, updatedBy: operatorId, updatedAt: new Date() },
+    }
+  }
+  await db.collection('outpatientPlan').update({ _id: existsPlan._id }, setter)
+
+  await db.collection('wildPatients').update(
+    { _id },
+    {
+      $set: {
+        mobile,
+        idCard,
+        name,
+        updatedBy: operatorId,
+        updatedAt: new Date(),
+      },
+    },
+  )
+
+  return true
 }

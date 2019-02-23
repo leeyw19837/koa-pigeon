@@ -654,6 +654,15 @@ type Mutation {
   ): Boolean
   # 取消签到（只能取消当天的签到）
   cancelCheckIn(patientId: ID!, planId: ID!): Boolean
+  # 新增患者（签到工作台）
+  addWildPatient(operatorId: ID!, patient: InputWildPatient!): Boolean
+  # 编辑患者（签到工作台）
+  changeWildPatientInfos(
+    operatorId: ID!
+    patient: InputEditWildPatient
+  ): Boolean
+  # 签到(签到工作台)
+  outpatientPlanCheckIn(planId: ID!, patientId: ID!): Boolean
 }
 
 type Subscription {

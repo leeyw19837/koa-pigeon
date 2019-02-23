@@ -14,7 +14,7 @@ type OutpatientPlan {
   note: String
 
   patientIds: [ID!]
-  patients: [User!]
+  patients: [WildPatient!]
   patientsCount: Int!
 
   signedIds: [ID!]
@@ -29,6 +29,13 @@ input InputOutpatientPlan {
   period: PeriodOfDay!
   hospitalId: String!
   departmentCode: String!
+}
+
+input InputEditWildPatient {
+  patientId: ID!
+  name: String
+  mobile: String
+  idCard: String
 }
 
 enum DayOfWeek {
