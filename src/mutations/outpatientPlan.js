@@ -75,10 +75,28 @@ export const outpatientPlanCheckIn = async (
   context,
 ) => {
   const db = await context.getDb()
-  db.collection('outpatientPlan').update(
-    { _id: planId },
-    { $addToSet: { signedIds: patientId } },
-  )
+
+  const existsPlan = await db
+    .collection('outpatientPlan')
+    .findOne({ _id: planId })
+  if (!existsPlan) return false
+
+  const isSameDay = dayjs().format('YYYY-MM-DD') === existsPlan.date
+  if (!isSameDay) throw new Error('the outpatient not open!')
+
+  const result = await db
+    .collection('outpatientPlan')
+    .update({ _id: planId }, { $addToSet: { signedIds: patientId } })
+  if (result.result.ok) {
+    const updatedPlan = await db
+      .collection('outpatientPlan')
+      .findOne({ _id: planId })
+    pubsub.publish('outpatientPlanDynamics', {
+      ...updatedPlan,
+      _operation: 'UPDATED',
+    })
+  }
+  return result.result.ok
 }
 
 export const cancelCheckIn = async (_, { patientId, planId }, context) => {
@@ -88,12 +106,22 @@ export const cancelCheckIn = async (_, { patientId, planId }, context) => {
     .findOne({ _id: planId })
   if (!existsPlan) return false
 
-  const isSameDay = dayjs().isSame(existsPlan.date, 'day')
+  const isSameDay = dayjs().format('YYYY-MM-DD') === existsPlan.date
   if (!isSameDay) throw new Error('cannot cancel a non-preset check-in')
 
   const result = await db
     .collection('outpatientPlan')
     .update({ _id: planId }, { $pull: { signedIds: patientId } })
+
+  if (result.result.ok) {
+    const updatedPlan = await db
+      .collection('outpatientPlan')
+      .findOne({ _id: planId })
+    pubsub.publish('outpatientPlanDynamics', {
+      ...updatedPlan,
+      _operation: 'UPDATED',
+    })
+  }
   return result.result.ok
 }
 
