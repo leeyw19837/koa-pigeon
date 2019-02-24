@@ -199,6 +199,8 @@ type Query {
   # 获取某个月及其前后一周的门诊信息（用于日历显示）
   # date的格式为YYYY-MM
   getOutpatientPlans(date: String): [OutpatientPlan]
+  # 获取病种列表
+  getDisease: [Disease!]
 }
 
 type Mutation {
@@ -663,6 +665,8 @@ type Mutation {
   ): Boolean
   # 签到(签到工作台)
   outpatientPlanCheckIn(planId: ID!, patientId: ID!): Boolean
+  # 保存病种（添加或修改，用于签到工作台）
+  saveDisease(_id: ID, name: String): Boolean
 }
 
 type Subscription {

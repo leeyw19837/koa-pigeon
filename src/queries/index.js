@@ -73,7 +73,10 @@ import * as aiCall from './aiCall'
 import * as getTakeMedicineList from './getTakeMedicineList'
 import * as getCheckByTreatmentId from './getCheckByTreatmentId'
 import * as configurationContent from './configurationContent'
+
 import * as outpatientPlan from './outpatientPlan'
+import * as disease from './disease'
+
 import { themes } from './themes'
 
 const queries = {
@@ -142,6 +145,7 @@ const queries = {
   ...getPublicityActivityController,
   ...configurationContent,
   ...outpatientPlan,
+  ...disease,
   themes,
 }
 
