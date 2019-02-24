@@ -1,4 +1,5 @@
 type WildPatient {
+  _id: ID!
   # 姓名
   name: String!
   # 头像
@@ -13,6 +14,8 @@ type WildPatient {
   disease: [Disease!]
   # 门诊附加信息（此字段内容不是保存在WildPatient表中而是从门诊表获取得到）
   outpatientExtra: [OutpatientExtraData!]
+  # 下次就诊日期 YYYY-MM-DD
+  nextVisitDate: String
 }
 
 input InputWildPatient {

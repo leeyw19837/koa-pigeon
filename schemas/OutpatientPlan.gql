@@ -32,10 +32,14 @@ input InputOutpatientPlan {
 }
 
 input InputEditWildPatient {
-  patientId: ID!
+  _id: ID!
   name: String
   mobile: String
   idCard: String
+  avatar: String
+  disease: [ID!]
+  status: WildPatientStatus
+  nextVisitDate: String
 }
 
 enum DayOfWeek {

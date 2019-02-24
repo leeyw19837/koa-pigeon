@@ -11,6 +11,7 @@ export const addWildPatient = async (_, { operatorId, patient }, context) => {
 
   const result = await db.collection('wildPatients').insert({
     _id: freshId(),
+    status: 'NOT_FIRST_VISIT',
     ...patient,
     createdAt: new Date(),
     createdBy: operatorId,

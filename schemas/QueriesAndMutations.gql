@@ -660,8 +660,9 @@ type Mutation {
   addWildPatient(operatorId: ID!, patient: InputWildPatient!): Boolean
   # 编辑患者（签到工作台）
   changeWildPatientInfos(
-    operatorId: ID!
-    patient: InputEditWildPatient
+    operatorId: ID
+    planId: ID
+    patient: InputEditWildPatient!
   ): Boolean
   # 签到(签到工作台)
   outpatientPlanCheckIn(planId: ID!, patientId: ID!): Boolean

@@ -2,6 +2,7 @@ import freshId from 'fresh-id'
 import dayjs from 'dayjs'
 import union from 'lodash/union'
 import findIndex from 'lodash/findIndex'
+import pick from 'lodash/pick'
 import { pubsub } from '../pubsub'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
@@ -102,35 +103,43 @@ export const changeWildPatientInfos = async (
   { getDb },
 ) => {
   const db = await getDb()
+
   const existsPlan = await db
     .collection('outpatientPlan')
     .findOne({ _id: planId })
-  if (!existsPlan) return false
-
-  const { _id, mobile, idCard, name } = patient
-  const index = findIndex(existsPlan.extraData, { patientId: _id })
-  let setter
-  if (index < 0) {
-    setter = {
-      $push: { mobile },
-      $set: { updatedBy: operatorId, updatedAt: new Date() },
+  if (existsPlan) {
+    const index = findIndex(existsPlan.extraData, { patientId: patient._id })
+    const extraPart = pick(patient, ['nextVisitDate', 'disease', 'mobile'])
+    let setter
+    if (index < 0) {
+      setter = {
+        $push: extraPart,
+        $set: { updatedBy: operatorId, updatedAt: new Date() },
+      }
+    } else {
+      const extraData = [...existsPlan.extraData]
+      extraData[index] = { ...extraData[index], ...extraPart }
+      setter = {
+        $set: { extraData, updatedBy: operatorId, updatedAt: new Date() },
+      }
     }
-  } else {
-    const extraData = [...existsPlan.extraData]
-    extraData[index] = { ...extraData[index], mobile }
-    setter = {
-      $set: { extraData, updatedBy: operatorId, updatedAt: new Date() },
-    }
+    await db
+      .collection('outpatientPlan')
+      .update({ _id: existsPlan._id }, setter)
   }
-  await db.collection('outpatientPlan').update({ _id: existsPlan._id }, setter)
-
   await db.collection('wildPatients').update(
-    { _id },
+    { _id: patient._id },
     {
       $set: {
-        mobile,
-        idCard,
-        name,
+        ...pick(patient, [
+          'name',
+          'mobile',
+          'idCard',
+          'avatar',
+          'status',
+          'disease',
+          'nextVisitDate',
+        ]),
         updatedBy: operatorId,
         updatedAt: new Date(),
       },
