@@ -653,6 +653,7 @@ type Mutation {
     patientId: ID!
     toPlan: InputOutpatientPlan!
     fromPlanId: ID
+    disease: [String]
   ): Boolean
   # 取消签到（只能取消当天的签到）
   cancelCheckIn(patientId: ID!, planId: ID!): Boolean

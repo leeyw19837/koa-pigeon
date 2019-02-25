@@ -7,16 +7,14 @@ import pick from 'lodash/pick'
 import { pubsub } from '../pubsub'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
-export const movePatientToOutpatientPlan = async (
-  _,
-  { patientId, toPlan, fromPlanId },
-  context,
-) => {
+export const movePatientToOutpatientPlan = async (_, args, context) => {
   const db = await context.getDb()
+  const { patientId, toPlan, fromPlanId, disease } = args
 
   const existsPlan = await db.collection('outpatientPlan').findOne(toPlan)
   let result
   if (!existsPlan) {
+    const extraData = { patientId: patientId, disease: disease }
     const planObj = {
       _id: freshId(),
       ...toPlan,
@@ -26,6 +24,7 @@ export const movePatientToOutpatientPlan = async (
       patientIds: [patientId],
       signedIds: [],
       createdAt: new Date(),
+      extraData: [extraData],
     }
     result = await db.collection('outpatientPlan').insert(planObj)
     result.result.ok &&
@@ -34,11 +33,30 @@ export const movePatientToOutpatientPlan = async (
         _operation: 'ADDED',
       })
   } else {
+    const index = findIndex(existsPlan.extraData, { patientId: patientId })
+    const extraPart = pick(args, ['nextVisitDate', 'disease', 'mobile'])
+    let setter
+    if (!isEmpty(extraPart)) {
+      extraPart.patientId = patientId
+      if (index < 0) {
+        setter = {
+          $push: { extraData: extraPart },
+          $set: { updatedAt: new Date() },
+        }
+      } else {
+        const extraData = [...existsPlan.extraData]
+        extraData[index] = { ...extraData[index], ...extraPart }
+        setter = {
+          $set: { extraData, updatedAt: new Date() },
+        }
+      }
+    }
+
     result = await db.collection('outpatientPlan').update(
       { _id: existsPlan._id },
       {
         $addToSet: { patientIds: patientId },
-        $set: { updatedAt: new Date() },
+        ...setter,
       },
     )
     result.result.ok &&
