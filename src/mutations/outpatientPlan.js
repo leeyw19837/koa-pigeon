@@ -1,6 +1,7 @@
 import freshId from 'fresh-id'
 import dayjs from 'dayjs'
 import union from 'lodash/union'
+import isEmpty from 'lodash/isEmpty'
 import findIndex from 'lodash/findIndex'
 import pick from 'lodash/pick'
 import { pubsub } from '../pubsub'
@@ -138,22 +139,32 @@ export const changeWildPatientInfos = async (
   if (existsPlan) {
     const index = findIndex(existsPlan.extraData, { patientId: patient._id })
     const extraPart = pick(patient, ['nextVisitDate', 'disease', 'mobile'])
-    let setter
-    if (index < 0) {
-      setter = {
-        $push: extraPart,
-        $set: { updatedBy: operatorId, updatedAt: new Date() },
+    if (!isEmpty(extraPart)) {
+      extraPart.patientId = patient._id
+      let setter
+      if (index < 0) {
+        setter = {
+          $push: { extraData: extraPart },
+          $set: { updatedBy: operatorId, updatedAt: new Date() },
+        }
+      } else {
+        const extraData = [...existsPlan.extraData]
+        extraData[index] = { ...extraData[index], ...extraPart }
+        setter = {
+          $set: { extraData, updatedBy: operatorId, updatedAt: new Date() },
+        }
       }
-    } else {
-      const extraData = [...existsPlan.extraData]
-      extraData[index] = { ...extraData[index], ...extraPart }
-      setter = {
-        $set: { extraData, updatedBy: operatorId, updatedAt: new Date() },
-      }
+      await db
+        .collection('outpatientPlan')
+        .update({ _id: existsPlan._id }, setter)
+      const updatedPlan = await db
+        .collection('outpatientPlan')
+        .findOne({ _id: existsPlan._id })
+      pubsub.publish('outpatientPlanDynamics', {
+        ...updatedPlan,
+        _operation: 'UPDATED',
+      })
     }
-    await db
-      .collection('outpatientPlan')
-      .update({ _id: existsPlan._id }, setter)
   }
   await db.collection('wildPatients').update(
     { _id: patient._id },
