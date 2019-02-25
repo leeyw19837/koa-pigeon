@@ -1,5 +1,5 @@
 import { size, map, isEmpty, find } from 'lodash'
-import { ObjectId } from 'mongodb'
+import { ObjectID } from 'mongodb'
 
 export const OutpatientPlan = {
   hospital: async ({ hospitalId }, args, { getDb }) => {
@@ -10,15 +10,17 @@ export const OutpatientPlan = {
   patients: async ({ patientIds, extraData }, args, { getDb }) => {
     if (isEmpty(patientIds)) return []
     const db = await getDb()
+    const objIds = map(patientIds, id => ObjectID(id))
     let patients = await db
-      .collection('wildPatients')
-      .find({ _id: { $in: patientIds } })
+      .collection('users')
+      .find({ _id: { $in: objIds } })
       .toArray()
+
     if (!isEmpty(extraData)) {
       patients = patients.map(p => {
         const outpatientExtra = find(extraData, { patientId: p._id })
         if (!outpatientExtra) return p
-        return { ...p, outpatientExtra }
+        return { ...p, _id: p._id.valueOf(), outpatientExtra }
       })
     }
     return patients

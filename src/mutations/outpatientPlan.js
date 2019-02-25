@@ -4,11 +4,13 @@ import union from 'lodash/union'
 import isEmpty from 'lodash/isEmpty'
 import findIndex from 'lodash/findIndex'
 import pick from 'lodash/pick'
+import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
 export const movePatientToOutpatientPlan = async (_, args, context) => {
   const db = await context.getDb()
+
   const { patientId, toPlan, fromPlanId, disease } = args
 
   const existsPlan = await db.collection('outpatientPlan').findOne(toPlan)
@@ -156,7 +158,7 @@ export const changeWildPatientInfos = async (
     .findOne({ _id: planId })
   if (existsPlan) {
     const index = findIndex(existsPlan.extraData, { patientId: patient._id })
-    const extraPart = pick(patient, ['nextVisitDate', 'disease', 'mobile'])
+    const extraPart = pick(patient, ['nextVisitDate', 'disease', 'username'])
     if (!isEmpty(extraPart)) {
       extraPart.patientId = patient._id
       let setter
@@ -177,26 +179,27 @@ export const changeWildPatientInfos = async (
         .update({ _id: existsPlan._id }, setter)
     }
   }
-  await db.collection('wildPatients').update(
-    { _id: patient._id },
+  const patientFields = pick(patient, [
+    'username',
+    'nickname',
+    'idCard',
+    'avatar',
+    'status',
+    'disease',
+    'nextVisitDate',
+  ])
+  await db.collection('users').update(
+    { _id: ObjectID(patient._id) },
     {
       $set: {
-        ...pick(patient, [
-          'name',
-          'mobile',
-          'idCard',
-          'avatar',
-          'status',
-          'disease',
-          'nextVisitDate',
-        ]),
+        ...patientFields,
         updatedBy: operatorId,
         updatedAt: new Date(),
       },
     },
   )
 
-  if (existsPlan || patient.status) {
+  if (existsPlan) {
     const updatedPlan = await db
       .collection('outpatientPlan')
       .findOne({ _id: existsPlan._id })

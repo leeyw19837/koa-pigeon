@@ -67,7 +67,6 @@ import * as updateGoodsFromShoppingCart from './updateGoodsFromShoppingCart'
 
 import * as createPayHistory from './payHistories'
 import * as outpatientPlan from './outpatientPlan'
-import * as wildPatient from './wildPatient'
 import * as disease from './disease'
 
 const mutations = {
@@ -134,7 +133,6 @@ const mutations = {
   ...createPayHistory,
   ...modifyUserPublicityActivity,
   ...outpatientPlan,
-  ...wildPatient,
   ...disease,
 }
 
