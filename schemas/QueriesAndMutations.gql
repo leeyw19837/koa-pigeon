@@ -639,6 +639,10 @@ type Mutation {
     measurementTime: String
   ): UploadFoodPhotoResult
   markReadPublicityActivity(patientId: ID, activityId: ID): Boolean
+  updateUserHeadImage(
+    patientId: String!
+    headImageBase64: String!
+  ): String
 }
 
 type Subscription {

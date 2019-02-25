@@ -3,7 +3,8 @@ import isEmpty from 'lodash/isEmpty'
 import get from 'lodash/get'
 import { changeUsername } from './changeUsername'
 import moment from 'moment'
-import { Date } from "../utils";
+// import { Date } from "../utils";
+import { uploadBase64Img } from '../utils/ks3'
 
 export const updatePatientProfile = async (_, args, context) => {
   const db = await context.getDb()
@@ -104,5 +105,17 @@ export const updateUserIdentificationInfos = async (_, args, context) => {
   )
 
   return true
+}
+
+export const updateUserHeadImage = async (_, args, context) => {
+  const db = await context.getDb()
+  const { patientId, headImageBase64 } = args
+  const imageUrlKey = `${patientId}${Date.now()}`
+  const imageUrl = await uploadBase64Img(imageUrlKey, headImageBase64)
+  await db.collection('users').update(
+    { _id: ObjectId(patientId) },
+    { $set: { avatar: imageUrl } }
+  )
+  return imageUrl
 }
 
