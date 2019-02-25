@@ -25,6 +25,7 @@ type OutpatientPlan {
 }
 
 input InputOutpatientPlan {
+  _id: ID
   date: String!
   period: PeriodOfDay!
   hospitalId: String!
