@@ -157,13 +157,6 @@ export const changeWildPatientInfos = async (
       await db
         .collection('outpatientPlan')
         .update({ _id: existsPlan._id }, setter)
-      const updatedPlan = await db
-        .collection('outpatientPlan')
-        .findOne({ _id: existsPlan._id })
-      pubsub.publish('outpatientPlanDynamics', {
-        ...updatedPlan,
-        _operation: 'UPDATED',
-      })
     }
   }
   await db.collection('wildPatients').update(
@@ -185,5 +178,14 @@ export const changeWildPatientInfos = async (
     },
   )
 
+  if (existsPlan || patient.status) {
+    const updatedPlan = await db
+      .collection('outpatientPlan')
+      .findOne({ _id: existsPlan._id })
+    pubsub.publish('outpatientPlanDynamics', {
+      ...updatedPlan,
+      _operation: 'UPDATED',
+    })
+  }
   return true
 }
