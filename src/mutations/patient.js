@@ -3,7 +3,7 @@ import isEmpty from 'lodash/isEmpty'
 import get from 'lodash/get'
 import { changeUsername } from './changeUsername'
 import moment from 'moment'
-import {Date} from "../utils";
+import { Date } from "../utils";
 
 export const updatePatientProfile = async (_, args, context) => {
   const db = await context.getDb()
@@ -73,7 +73,7 @@ export const updateUserArchiveState = async (_, args, context) => {
   const { patientId, reapplyStatus } = args
   await db.collection('users').update(
     { _id: ObjectId(patientId) },
-    { $set: {reapplyStatus}}
+    { $set: { reapplyStatus } }
   )
   return true
 }
@@ -86,22 +86,22 @@ export const updateUserIdentificationInfos = async (_, args, context) => {
     throw new Error('updateUserIdentificationInfos error! patientId 为空！')
   }
 
-  const patient= await db
+  const patient = await db
     .collection('users')
     .findOne({ _id: ObjectId(patientId) })
   if (!patient) {
     throw new Error('updateUserIdentificationInfos error! patient does not exist!')
   }
 
-  const idCardDateOfBirth = userIdentificationInfos.idCard.substring(6,14)
-  const dateOfBirth = moment(idCardDateOfBirth,'YYYYMMDD').toDate()
-  const genderDigit = userIdentificationInfos.idCard.substr(-2,1)
+  const idCardDateOfBirth = userIdentificationInfos.idCard.substring(6, 14)
+  const dateOfBirth = moment(idCardDateOfBirth, 'YYYYMMDD').toDate()
+  const genderDigit = userIdentificationInfos.idCard.substr(-2, 1)
   await db.collection('users').update(
-      { _id: ObjectId(patientId) },
-      {
-        $set: {...userIdentificationInfos, dateOfBirth, gender: genderDigit % 2 === 0 ? 'female' : 'male'},
-      },
-    )
+    { _id: ObjectId(patientId) },
+    {
+      $set: { ...userIdentificationInfos, dateOfBirth, gender: genderDigit % 2 === 0 ? 'female' : 'male' },
+    },
+  )
 
   return true
 }

@@ -2,6 +2,7 @@ type LoginOrSignUpResponse {
   patientId: ID
   avatar: String
   nickname: String
+  petname: String
   patientState: String
   birthday: Date
   gender: String

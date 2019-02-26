@@ -132,6 +132,7 @@ export const loginOrSignUp = async (_, args, context) => {
             : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
       nickname: existingPatient.nickname,
       patientState: existingPatient.patientState,
+      petname: existingPatient.petname,
       birthday: existingPatient.dateOfBirth,
       gender: existingPatient.gender,
       height: existingPatient.height,

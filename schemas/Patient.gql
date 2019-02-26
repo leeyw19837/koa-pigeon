@@ -1,6 +1,7 @@
 type Patient {
   _id: ID
   nickname: String
+  petname: String
   username: String
   gender: String
   dateOfBirth: String
@@ -182,6 +183,7 @@ input ProfileInput {
   username: String
   remarks: String
   idCard: String
+  petname:String
 }
 
 input InputPatientFilter {
