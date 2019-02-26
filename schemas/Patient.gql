@@ -76,6 +76,7 @@ type Patient {
   disease: [Disease!]
   # 门诊附加信息（此字段内容不是保存在WildPatient表中而是从门诊表获取得到）
   outpatientExtra: OutpatientExtraData
+  authenticAvatar: String
 }
 
 type MembershipInformation {

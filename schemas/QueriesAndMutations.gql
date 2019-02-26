@@ -670,7 +670,12 @@ type Mutation {
     patient: InputEditWildPatient!
   ): Boolean
   # 签到(签到工作台)
-  outpatientPlanCheckIn(planId: ID!, patientId: ID!): Boolean
+  outpatientPlanCheckIn(
+    planId: ID
+    hospitalID: ID
+    departmentID: ID
+    patientId: ID!
+  ): ApiReturn
   # 保存病种（添加或修改，用于签到工作台）
   saveDisease(_id: ID, name: String): Boolean
 }

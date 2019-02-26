@@ -13,3 +13,18 @@ type SliceInfo {
   startIndex: Int!
   stopIndex: Int!
 }
+
+enum ApiReturnMessageType {
+  SUCCESS
+  WARNING
+  ERROR
+}
+type ApiReturnMessage {
+  type: ApiReturnMessageType
+  text: String
+}
+type ApiReturn {
+  code: String
+  type: String
+  message: ApiReturnMessage
+}

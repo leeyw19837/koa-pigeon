@@ -1,9 +1,11 @@
 import freshId from 'fresh-id'
 import dayjs from 'dayjs'
+import find from 'lodash/find'
 import union from 'lodash/union'
 import isEmpty from 'lodash/isEmpty'
 import findIndex from 'lodash/findIndex'
 import pick from 'lodash/pick'
+import includes from 'lodash/includes'
 import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
 
@@ -90,21 +92,120 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
   }
   return result.result.ok
 }
+const MessageMap = [
+  {
+    code: 'PLANID_NOT_FOUND',
+    type: 'FAIL',
+    message: {
+      type: 'ERROR',
+      text: '没有对应的门诊信息',
+    },
+  },
+  {
+    code: 'NO_PLAN_FOR_DEPARTMENT',
+    type: 'FAIL',
+    message: {
+      type: 'ERROR',
+      text: '今日无门诊',
+    },
+  },
+  {
+    code: 'NO_PARAMS',
+    type: 'FAIL',
+    message: {
+      type: 'ERROR',
+      text: '参数错误',
+    },
+  },
+  {
+    code: 'ONLY_CHECKIN_AT_THAT_DAY',
+    type: 'FAIL',
+    message: {
+      type: 'ERROR',
+      text: '只能在当天签到',
+    },
+  },
+  {
+    code: 'NOT_PLAN_PATIENT',
+    type: 'SUCCESS',
+    message: {
+      type: 'WARNING',
+      text: '今日门诊计划无此患者',
+    },
+  },
+  {
+    code: 'CHECKIN',
+    type: 'SUCCESS',
+    message: {
+      type: 'SUCCESS',
+      text: '签到成功',
+    },
+  },
+  {
+    code: 'ALREADY_SIGNED',
+    type: 'SUCCESS',
+    message: {
+      type: 'SUCCESS',
+      text: '签到成功',
+    },
+  },
+  {
+    code: 'FAILED',
+    type: 'FAIL',
+    message: {
+      type: 'ERROR',
+      text: '签到失败',
+    },
+  },
+]
+const getReturnMessage = code => {
+  return (
+    find(MessageMap, { code }) || {
+      type: 'UNKNOWN',
+      code: 'UNKNOWN',
+      message: {
+        type: 'ERROR',
+        text: '未知错误',
+      },
+    }
+  )
+}
+
 export const outpatientPlanCheckIn = async (
   _,
-  { patientId, planId },
+  { patientId, planId, hospitalId, departmentId },
   context,
 ) => {
   const db = await context.getDb()
 
-  const existsPlan = await db
-    .collection('outpatientPlan')
-    .findOne({ _id: planId })
-  if (!existsPlan) return false
+  let cond
+  let returnCode
+  if (planId) {
+    cond = { _id: planId }
+    returnCode = 'PLANID_NOT_FOUND'
+  } else if (hospitalId && departmentId) {
+    const dateStr = dayjs().format('YYYY-MM-DD')
+    cond = { hospitalId, departmentId, date: dateStr }
+    returnCode = 'NO_PLAN_FOR_DEPARTMENT'
+  } else {
+    returnCode = 'NO_PARAMS'
+  }
+  const existsPlan = await db.collection('outpatientPlan').findOne(cond)
+  if (!existsPlan) {
+    return getReturnMessage(returnCode)
+  }
 
   const isSameDay = dayjs().format('YYYY-MM-DD') === existsPlan.date
-  if (!isSameDay) throw new Error('the outpatient not open!')
+  if (!isSameDay) return getReturnMessage('ONLY_CHECKIN_AT_THAT_DAY')
 
+  if (includes(existsPlan.signedIds, patientId)) {
+    return getReturnMessage('ALREADY_SIGNED')
+  }
+  if (!includes(existsPlan.patientIds, patientId)) {
+    returnCode = 'NOT_PLAN_PATIENT'
+  } else {
+    returnCode = 'CHECKIN'
+  }
   const result = await db
     .collection('outpatientPlan')
     .update({ _id: planId }, { $addToSet: { signedIds: patientId } })
@@ -117,7 +218,10 @@ export const outpatientPlanCheckIn = async (
       _operation: 'UPDATED',
     })
   }
-  return result.result.ok
+  if (result.result.ok) {
+    return getReturnMessage(returnCode)
+  }
+  return getReturnMessage('FAILED')
 }
 
 export const cancelCheckIn = async (_, { patientId, planId }, context) => {
