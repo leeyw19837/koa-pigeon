@@ -4,6 +4,7 @@ import {ObjectId, ObjectID} from "mongodb";
 import {getPinyinUsername, getUserInfoByIdCard, responseMessage} from "../util";
 import {isEmpty, sortBy} from "lodash";
 import {uploadBase64Img} from "../../utils";
+import {outpatientPlanCheckIn} from "../../mutations/outpatientPlan";
 
 const client = new AipFaceClient(APP_ID, API_KEY, SECRET_KEY);
 
@@ -160,6 +161,7 @@ const responseResult = async (base64Image, hospitalId, userInfo, imageUrl = "") 
   console.log('addUserFaceResult', addUserFaceResult, userInfo)
   if (addUserFaceResult) {
     /*** 加入签到的逻辑*/
+   await checkInResult({patientId:userInfo.userId, hospitalId})
     return responseMessage(FACE_RESPONSE_CODE.success, userInfo, "用户录入并签到成功")
   } else {
     return responseMessage(FACE_RESPONSE_CODE.error_add_user_other_errors, userInfo, "用户录入并签到失败")
@@ -340,7 +342,6 @@ const updateLocalFaceStorage = async (groupID, faceUrl, userInfo) => {
 /**
  * 获取医院的列表信息
  * */
-
 export const getHospitals = async () => {
   const hospitalList = await db
     .collection('institutions')
@@ -356,4 +357,15 @@ export const getHospitals = async () => {
     }
   })
   return responseMessage(FACE_RESPONSE_CODE.success, responseData, "获取到医院的列表信息")
+}
+
+// 获取签到结果
+export const checkInResult = async ({patientId, hospitalId}) => {
+
+  const checkInResult = await outpatientPlanCheckIn(null, {
+    patientId,
+    hospitalId,
+    departmentId: 'neifenmi'
+  }, {getDb: () => db})
+  console.log("checkInResult",checkInResult)
 }

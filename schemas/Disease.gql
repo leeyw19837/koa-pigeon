@@ -1,0 +1,6 @@
+type Disease {
+  _id: ID!
+  name: String
+  createdBy: User
+  createdAt: Date!
+}

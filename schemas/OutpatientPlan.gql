@@ -1,0 +1,69 @@
+type OutpatientPlan {
+  _id: ID
+
+  date: String!
+  dayOfWeek: DayOfWeek!
+
+  hospitalId: String!
+  hospitalName: String!
+  hospital: Institution!
+  department: Department
+
+  note: String
+
+  patientIds: [ID!]
+  patients: [Patient!]
+  patientsCount: Int!
+
+  signedIds: [ID!]
+
+  createdAt: Date!
+  updatedAt: Date!
+  _operation: Operation
+}
+
+type Department {
+  _id: ID!
+  name: String!
+}
+
+input InputOutpatientPlan {
+  _id: ID
+  date: String!
+  hospitalId: String!
+  departmentCode: String!
+}
+
+input InputEditWildPatient {
+  _id: ID!
+  nickname: String
+  username: String
+  idCard: String
+  avatar: String
+  disease: [ID!]
+  nextVisitDate: String
+}
+
+enum DayOfWeek {
+  Mon
+  Tues
+  Wed
+  Thur
+  Fri
+  Sat
+  Sun
+}
+
+input InputWildPatient {
+  nickname: String!
+  username: String!
+  idCard: String!
+  institutionId: ID
+}
+
+type OutpatientExtraData {
+  mobile: String
+  disease: [Disease!]
+  doctor: String
+  nextVisitDate: String
+}

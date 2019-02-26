@@ -1,9 +1,9 @@
-import { ObjectId } from 'mongodb'
+import { ObjectID } from 'mongodb'
 import isEmpty from 'lodash/isEmpty'
 import get from 'lodash/get'
 import { changeUsername } from './changeUsername'
 import moment from 'moment'
-import { Date } from "../utils";
+import { movePatientToOutpatientPlan } from './outpatientPlan'
 
 export const updatePatientProfile = async (_, args, context) => {
   const db = await context.getDb()
@@ -15,7 +15,7 @@ export const updatePatientProfile = async (_, args, context) => {
       restSetter.pinyinName = getPinyinUsername(restSetter.nickname)
     }
     await db.collection('users').update(
-      { _id: ObjectId(patientId) },
+      { _id: ObjectID(patientId) },
       {
         $set: restSetter,
       },
@@ -71,10 +71,9 @@ const getPinyinUsername = name => {
 export const updateUserArchiveState = async (_, args, context) => {
   const db = await context.getDb()
   const { patientId, reapplyStatus } = args
-  await db.collection('users').update(
-    { _id: ObjectId(patientId) },
-    { $set: { reapplyStatus } }
-  )
+  await db
+    .collection('users')
+    .update({ _id: ObjectID(patientId) }, { $set: { reapplyStatus } })
   return true
 }
 
@@ -88,21 +87,68 @@ export const updateUserIdentificationInfos = async (_, args, context) => {
 
   const patient = await db
     .collection('users')
-    .findOne({ _id: ObjectId(patientId) })
+    .findOne({ _id: ObjectID(patientId) })
   if (!patient) {
-    throw new Error('updateUserIdentificationInfos error! patient does not exist!')
+    throw new Error(
+      'updateUserIdentificationInfos error! patient does not exist!',
+    )
   }
 
   const idCardDateOfBirth = userIdentificationInfos.idCard.substring(6, 14)
   const dateOfBirth = moment(idCardDateOfBirth, 'YYYYMMDD').toDate()
   const genderDigit = userIdentificationInfos.idCard.substr(-2, 1)
   await db.collection('users').update(
-    { _id: ObjectId(patientId) },
+    { _id: ObjectID(patientId) },
     {
-      $set: { ...userIdentificationInfos, dateOfBirth, gender: genderDigit % 2 === 0 ? 'female' : 'male' },
+      $set: {
+        ...userIdentificationInfos,
+        dateOfBirth,
+        gender: genderDigit % 2 === 0 ? 'female' : 'male',
+      },
     },
   )
 
   return true
 }
 
+export const addWildPatient = async (
+  _,
+  { operatorId, patient, planId },
+  context,
+) => {
+  const db = await context.getDb()
+  const { username, idCard, nickname } = patient
+  const isDuplicate = await db.collection('users').count({
+    $or: [{ username }, { idCard }],
+  })
+  if (isDuplicate) throw new Error('No duplicate username or idCard allowed')
+  const patientId = new ObjectID()
+
+  const wildPatient = {
+    _id: patientId,
+    patientState: 'WILD',
+    username,
+    nickname,
+    idCard,
+    pinyinName: getPinyinUsername(nickname),
+    createdAt: new Date(),
+  }
+  if (patient.institutionId) {
+    wildPatient.institutionId = patient.institutionId
+  } else if (planId) {
+    const plan = await db
+      .collection('outpatientPlan')
+      .findOne({ _id: planId }, { hospitalId: 1 })
+    if (plan) wildPatient.institutionId = plan.hospitalId
+  }
+  if (operatorId) {
+    wildPatient.createdBy = operatorId
+  }
+  const result = await db.collection('users').insert(wildPatient)
+  await movePatientToOutpatientPlan(
+    null,
+    { patientId: patientId.toString(), toPlan: { _id: planId } },
+    context,
+  )
+  return result.result.ok
+}

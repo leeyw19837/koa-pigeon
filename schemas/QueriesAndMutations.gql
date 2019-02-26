@@ -193,6 +193,14 @@ type Query {
 
   # 根据活动的ID查询当前的活动
   getOneOfPublicityActivity(activityId: String): Activity
+
+  # 获取一个门诊的信息
+  getOutpatientPlan(id: ID!): OutpatientPlan
+  # 获取某个月及其前后一周的门诊信息（用于日历显示）
+  # date的格式为YYYY-MM
+  getOutpatientPlans(date: String): [OutpatientPlan]
+  # 获取病种列表
+  getDisease: [Disease!]
 }
 
 type Mutation {
@@ -639,6 +647,37 @@ type Mutation {
     measurementTime: String
   ): UploadFoodPhotoResult
   markReadPublicityActivity(patientId: ID, activityId: ID): Boolean
+  # 将一个患者加入到一个门诊计划中
+  # 若传了fromPlanId则同时将该患者从相应的门诊计划中移出
+  movePatientToOutpatientPlan(
+    patientId: ID!
+    toPlan: InputOutpatientPlan!
+    fromPlanId: ID
+    disease: [String]
+  ): Boolean
+  # 取消签到（只能取消当天的签到）
+  cancelCheckIn(patientId: ID!, planId: ID!): Boolean
+  # 新增患者（签到工作台）
+  addWildPatient(
+    operatorId: ID
+    patient: InputWildPatient!
+    planId: ID
+  ): Boolean
+  # 编辑患者（签到工作台）
+  changeWildPatientInfos(
+    operatorId: ID
+    planId: ID
+    patient: InputEditWildPatient!
+  ): Boolean
+  # 签到(签到工作台)
+  outpatientPlanCheckIn(
+    planId: ID
+    hospitalID: ID
+    departmentID: ID
+    patientId: ID!
+  ): ApiReturn
+  # 保存病种（添加或修改，用于签到工作台）
+  saveDisease(_id: ID, name: String): Boolean
 }
 
 type Subscription {
@@ -655,6 +694,7 @@ type Subscription {
   ): InterventionTask
   foodDynamics(patientId: ID, client: String): Foods
   sessionDynamics(userId: ID, nosy: Boolean, chatRoomId: ID): Session
+  outpatientPlanDynamics(date: String, id: ID): OutpatientPlan
 }
 
 schema {
