@@ -512,14 +512,14 @@ export const Patient = {
     const avatar = patient.avatar
       ? patient.avatar
       : isWechat
-        ? patient.wechatInfo.headimgurl
-          ? patient.wechatInfo.headimgurl.replace('http://', 'https://')
-          : patient.gender === 'male'
-            ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-            : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
+      ? patient.wechatInfo.headimgurl
+        ? patient.wechatInfo.headimgurl.replace('http://', 'https://')
         : patient.gender === 'male'
-          ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-          : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
+        ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+        : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
+      : patient.gender === 'male'
+      ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+      : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
     return avatar
   },
   healthInformation: async (patient, _, { getDb }) => {
@@ -752,7 +752,11 @@ export const Patient = {
     if (patientId) {
       const result = await db
         .collection('appointments')
-        .find({ patientId, appointmentTime: { $gt: endAt }, isOutPatient: false })
+        .find({
+          patientId,
+          appointmentTime: { $gt: endAt },
+          isOutPatient: false,
+        })
         .sort({ appointmentTime: 1 })
         .limit(1)
         .toArray()
@@ -772,25 +776,42 @@ export const Patient = {
     const end = moment(appointmentTime).endOf('days')._d
     if (patientId) {
       result = await db
-        .collection('soap').find({ patientId, appointmentTime: { $exists: true, $gte: start, $lte: end }, })
+        .collection('soap')
+        .find({
+          patientId,
+          appointmentTime: { $exists: true, $gte: start, $lte: end },
+        })
         .sort({ createdAt: 1 })
         .toArray()
       if (result && result.length > 1) {
         const lastTwice = [result[0], result[1]]
-        if (result[0].appointmentTime.getTime() === result[1].appointmentTime.getTime()) {
+        if (
+          result[0].appointmentTime.getTime() ===
+          result[1].appointmentTime.getTime()
+        ) {
           const nurse = lastTwice.filter(
-            item => item.operator.roles === '护理师' || item.operator.roles === '超级护理师',
+            item =>
+              item.operator.roles === '护理师' ||
+              item.operator.roles === '超级护理师',
           )
           const nutrition = lastTwice.filter(
-            item => item.operator.roles === '营养师' || item.operator.roles === '超级护理师',
+            item =>
+              item.operator.roles === '营养师' ||
+              item.operator.roles === '超级护理师',
           )
           if (nurse.length && nurse[0].severity) {
             soapItem.severity = nurse[0].severity
             if (nutrition.length && nutrition[0].severity) {
               mapKeys(soapItem.severity, (value, key) => {
-                if (key === 'diet' && nutrition[0].severity.diet.value !== 'NOT_ASSESSMENT') {
+                if (
+                  key === 'diet' &&
+                  nutrition[0].severity.diet.value !== 'NOT_ASSESSMENT'
+                ) {
                   soapItem.severity.diet = nutrition[0].severity.diet
-                } else if (key !== 'diet' && soapItem.severity[key].value === 'NOT_ASSESSMENT') {
+                } else if (
+                  key !== 'diet' &&
+                  soapItem.severity[key].value === 'NOT_ASSESSMENT'
+                ) {
                   soapItem.severity[key] = nutrition[0].severity[key]
                 }
                 return key
@@ -807,6 +828,13 @@ export const Patient = {
       }
     }
     return soapItem
-  }
-
+  },
+  disease: async ({ outpatientExtra }, _, { getDb }) => {
+    const db = await getDb()
+    const ids = get(outpatientExtra, 'disease', [])
+    return await db
+      .collection('disease')
+      .find({ _id: { $in: ids } })
+      .toArray()
+  },
 }

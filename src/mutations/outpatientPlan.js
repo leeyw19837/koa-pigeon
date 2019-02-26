@@ -71,6 +71,14 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
       })
   }
 
+  if (!isEmpty(disease)) {
+    await db
+      .collection('users')
+      .update(
+        { _id: ObjectID(patientId) },
+        { $set: { extraData: { disease } } },
+      )
+  }
   if (fromPlanId && result.result.ok) {
     result = await db.collection('outpatientPlan').update(
       { _id: fromPlanId },
