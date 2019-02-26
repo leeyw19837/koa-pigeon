@@ -512,14 +512,14 @@ export const Patient = {
     const avatar = patient.avatar
       ? patient.avatar
       : isWechat
-      ? patient.wechatInfo.headimgurl
-        ? patient.wechatInfo.headimgurl.replace('http://', 'https://')
+        ? patient.wechatInfo.headimgurl
+          ? patient.wechatInfo.headimgurl.replace('http://', 'https://')
+          : patient.gender === 'male'
+            ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+            : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
         : patient.gender === 'male'
-        ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-        : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
-      : patient.gender === 'male'
-      ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-      : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
+          ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+          : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png'
     return avatar
   },
   healthInformation: async (patient, _, { getDb }) => {
@@ -828,5 +828,19 @@ export const Patient = {
       }
     }
     return soapItem
+  },
+
+  address: async (patient, _, { getDb }) => {
+    const db = await getDb()
+    const patientId = patient._id.toString()
+    let result = []
+    if (patientId) {
+      result = await db
+        .collection('address')
+        .find({ patientId })
+        .sort({ createdAt: -1 })
+        .toArray()
+    }
+    return result
   },
 }

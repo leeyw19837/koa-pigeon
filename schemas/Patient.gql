@@ -73,6 +73,7 @@ type Patient {
   BG1NotUseReason: [BG1NotUseReason]!
   nextAppointmentTime(appointmentTime: Date): String
   lastSOAP(appointmentTime: Date): SOAP
+  address:[Address]
 }
 
 type MembershipInformation {

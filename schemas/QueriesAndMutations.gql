@@ -643,6 +643,8 @@ type Mutation {
     patientId: String!
     headImageBase64: String!
   ): String
+  saveAddress(address: AddressInput): Boolean
+  removeAddress( _id: ID!): Boolean
 }
 
 type Subscription {

@@ -54,6 +54,7 @@ import * as uploadBloodPressureMeasurement from './bloodPressure'
 import * as treatmentState from './treatmentState'
 import * as addBG1NotUseReason from './addBG1NotUseReason'
 import * as modifyUserPublicityActivity from './modifyUserPublicityActivity'
+import * as saveAddress from './saveAddress'
 
 import { logQueryOrMutation } from '../utils'
 
@@ -130,6 +131,7 @@ const mutations = {
   ...updateGoodsFromShoppingCart,
   ...createPayHistory,
   ...modifyUserPublicityActivity,
+  ...saveAddress,
 }
 
 const mutationsWithAuthandLog = {}
