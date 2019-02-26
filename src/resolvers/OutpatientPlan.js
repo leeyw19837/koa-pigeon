@@ -6,7 +6,7 @@ export const OutpatientPlan = {
     const db = await getDb()
     return await db.collection('institutions').findOne({ _id: hospitalId })
   },
-  department: async () => '内分泌',
+  department: async () => ({ _id: 'neifenmi', name: '内分泌' }),
   patients: async ({ patientIds, extraData }, args, { getDb }) => {
     if (isEmpty(patientIds)) return []
     const db = await getDb()

@@ -7,8 +7,7 @@ type OutpatientPlan {
   hospitalId: String!
   hospitalName: String!
   hospital: Institution!
-  departmentCode: String
-  department: String
+  department: Department
 
   note: String
 
@@ -21,6 +20,11 @@ type OutpatientPlan {
   createdAt: Date!
   updatedAt: Date!
   _operation: Operation
+}
+
+type Department {
+  _id: ID!
+  name: String!
 }
 
 input InputOutpatientPlan {
