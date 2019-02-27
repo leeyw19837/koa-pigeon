@@ -4,14 +4,14 @@ import {ObjectId, ObjectID} from "mongodb";
 import {getPinyinUsername, getUserInfoByIdCard, responseMessage} from "../util";
 import {isEmpty, sortBy} from "lodash";
 import {uploadBase64Img} from "../../utils";
-import {outpatientPlanCheckIn} from "../../mutations/outpatientPlan";
+import {MessageMap, outpatientPlanCheckIn} from "../../mutations/outpatientPlan";
 
 const client = new AipFaceClient(APP_ID, API_KEY, SECRET_KEY);
 
 HttpClient.setRequestInterceptor(function (requestOptions) {
 
   // 查看参数
-  console.log(requestOptions)
+  // console.log(requestOptions)
   // 修改参数
   requestOptions.timeout = 5000;
   // 返回参数
@@ -32,27 +32,27 @@ const detect = async (base64Image) => {
 
   try {
     const detectResult = await client.detect(base64Image, imageType, options)
-    console.log('人脸检测结果', detectResult)
+    // console.log('人脸检测结果', detectResult)
     const {error_code, error_msg} = detectResult
     if (error_code === 0 && error_msg === 'SUCCESS') {
       return true
     }
     return false
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return false
   }
 
 
   //   .then(function (result) {
-  //   console.log('人脸检测结果', result)
+  //   // console.log('人脸检测结果', result)
   //   const {error_code, error_msg} = result
   //   if (error_code === 0 && error_msg === 'SUCCESS') {
   //     return true
   //   }
   //   return false
   // }).catch(function (err) {
-  //   console.log("人脸检测出错了", err)
+  //   // console.log("人脸检测出错了", err)
   //   return false
   // })
 }
@@ -76,7 +76,7 @@ export const addUser = async (ctx) => {
   const {base64Image, hospitalId, userInfo} = ctx.request.body
   const detectResult = await detect(base64Image);
   const {phoneNumber, nickname, idCard = ""} = userInfo
-  console.log('detectResult', detectResult)
+  // console.log('detectResult', detectResult)
   if (!detectResult) {
     return responseMessage(FACE_RESPONSE_CODE.error_detect_user_face_invalid, userInfo, "用户人脸检测失败，请重新录入")
   }
@@ -158,11 +158,46 @@ const responseResult = async (base64Image, hospitalId, userInfo, imageUrl = "") 
   }
   updateLocalFaceStorage(hospitalId, userFaceImageUrl, userInfo)
 
-  console.log('addUserFaceResult', addUserFaceResult, userInfo)
+  // console.log('addUserFaceResult', addUserFaceResult, userInfo)
   if (addUserFaceResult) {
     /*** 加入签到的逻辑*/
-   await checkInResult({patientId:userInfo.userId, hospitalId})
-    return responseMessage(FACE_RESPONSE_CODE.success, userInfo, "用户录入并签到成功")
+    const result = await checkInResult({patientId:userInfo.userId, hospitalId})
+    // console.log('==result==', result)
+    const {
+      code,
+      type,
+      message
+    } = result
+    let resultStatus = FACE_RESPONSE_CODE.error_check_in_other_reasons
+    let resultMessage = message.text
+    switch (code) {
+      case 'ALREADY_SIGNED':
+        resultStatus = FACE_RESPONSE_CODE.error_check_in_already_signed
+       break
+
+      case 'PLANID_NOT_FOUND':
+      case 'NO_PLAN_FOR_DEPARTMENT':
+      case 'NO_PARAMS':
+
+      // 不是共同照护门诊患者（理论不应返回，直接走签到的流程）
+      case 'NOT_PLAN_PATIENT':
+        resultStatus = FACE_RESPONSE_CODE.error_check_in_need_contact_cde
+        break
+
+      // 是共同照护门诊的患者，但是不该今天来。返回前端，让患者选择是参与共同照护门诊还是普通门诊
+      case 'ONLY_CHECKIN_AT_THAT_DAY':
+        resultStatus = FACE_RESPONSE_CODE.error_check_in_should_check_certain_day
+        break
+
+      case 'CHECKIN':
+        resultStatus = FACE_RESPONSE_CODE.success
+        break
+
+      default:
+        resultStatus = FACE_RESPONSE_CODE.error_check_in_other_reasons
+        break
+    }
+    return responseMessage(resultStatus, userInfo, resultMessage)
   } else {
     return responseMessage(FACE_RESPONSE_CODE.error_add_user_other_errors, userInfo, "用户录入并签到失败")
   }
@@ -188,7 +223,7 @@ const addUserFace = async ({base64Image, hospitalId, userInfo}) => {
   // 调用人脸注册
   try {
     const addResult = await client.addUser(base64Image, imageType, hospitalId, userInfo.userId, options)
-    console.log('人脸注册添加结果', addResult)
+    // console.log('人脸注册添加结果', addResult)
     return true;
   } catch (e) {
     return false
@@ -211,7 +246,7 @@ const addUserFace = async ({base64Image, hospitalId, userInfo}) => {
 export const searchFace = async (ctx) => {
   const {base64Image, hospitalId} = ctx.request.body
   const detectResult = await detect(base64Image);
-  console.log('detectResult', detectResult)
+  // console.log('detectResult', detectResult)
   if (!detectResult) {
     return responseMessage(FACE_RESPONSE_CODE.error_detect_user_face_invalid, EmptyUserInfo, "用户人脸检测失败，请重新录入")
   }
@@ -221,7 +256,7 @@ export const searchFace = async (ctx) => {
   // 调用人脸搜索
   try {
     const searchResult = await client.search(base64Image, imageType, hospitalId)
-    console.log('人脸搜索结果', JSON.stringify(searchResult));
+    // console.log('人脸搜索结果', JSON.stringify(searchResult));
 
     const {error_code, result} = searchResult
     if (error_code === 0 && !isEmpty(result.user_list[0])) {
@@ -239,7 +274,7 @@ export const searchFace = async (ctx) => {
       return responseMessage(FACE_RESPONSE_CODE.error_search_user_not_found, EmptyUserInfo, "用户未找到")
     }
   } catch (err) {
-    console.log('人脸搜索出错', err);
+    // console.log('人脸搜索出错', err);
     return responseMessage(FACE_RESPONSE_CODE.error_search_other_errors, EmptyUserInfo, err)
   }
 }
@@ -271,7 +306,7 @@ export const searchUserByPhoneNumber = async (ctx) => {
  * */
 
 const deleteAndAddNewUserFace = async (userId, groupId) => {
-  console.log(userId, groupId, 'userId', 'groupId')
+  // console.log(userId, groupId, 'userId', 'groupId')
   const options = {};
   try {
     const faceGetListResult = await client.faceGetlist(userId, groupId, options);
@@ -280,14 +315,14 @@ const deleteAndAddNewUserFace = async (userId, groupId) => {
       const earliestFace = sortBy(result.face_list, (o) => o.ctime)
       const deleteOptions = {}
       const faceDeleteResult = await client.faceDelete(userId, groupId, earliestFace[0].face_token, deleteOptions)
-      console.log('人脸删除结果', faceDeleteResult)
+      // console.log('人脸删除结果', faceDeleteResult)
       return true
     } else {
-      console.log('获取当前用户的人脸库数据失败', error_code)
+      // console.log('获取当前用户的人脸库数据失败', error_code)
       return false
     }
   } catch (e) {
-    console.log('获取当前用户的人脸库数据失败', e)
+    // console.log('获取当前用户的人脸库数据失败', e)
     return true
   }
 
@@ -361,11 +396,11 @@ export const getHospitals = async () => {
 
 // 获取签到结果
 export const checkInResult = async ({patientId, hospitalId}) => {
-
   const checkInResult = await outpatientPlanCheckIn(null, {
     patientId,
     hospitalId,
     departmentId: 'neifenmi'
   }, {getDb: () => db})
-  console.log("checkInResult",checkInResult)
+  // console.log("checkInResult",checkInResult)
+  return checkInResult
 }
