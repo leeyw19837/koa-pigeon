@@ -19,6 +19,7 @@ import { verifyOrderValidity } from '../controller/orders'
 import { sendMassMessages } from '../../modules/chat/massMessages'
 import { stop19SprintFestival } from '../controller/stop-treatment'
 import { getUserInfo } from '../controller/userInfo'
+import { sendOutpatientReminder } from '../services/outpatientPlan'
 
 const moment = require('moment')
 const Router = require('koa-router')
@@ -166,6 +167,13 @@ cronJob.get('/getUserInfo', async ctx => {
   }
   const result = await getUserInfo(ctx)
   ctx.body = result
+})
+
+cronJob.get('/sendOutpatientPlanReminder', async ctx => {
+  console.log('======== start send outpatientPlan reminder =======')
+  await sendOutpatientReminder()
+  console.log('======== outpatientPlan reminder sent =======')
+  ctx.body = 'OK'
 })
 
 export default cronJob
