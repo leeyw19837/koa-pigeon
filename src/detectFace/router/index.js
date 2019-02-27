@@ -1,4 +1,4 @@
-import {addUser, detect, searchFace, searchUserByPhoneNumber} from "../detect";
+import { addUser, checkInWithCondition, detect, searchFace, searchUserByPhoneNumber } from "../detect";
 
 const Router = require('koa-router')
 const detectFaceApi = new Router()
@@ -10,6 +10,11 @@ detectFaceApi.post('/addUser', async (ctx) => {
 })
 detectFaceApi.post('/searchFace', async (ctx) => {
   const result = await searchFace(ctx)
+  console.log('searchFace result', result, 'ctttx', ctx)
+  ctx.body = result
+})
+detectFaceApi.post('/checkInWithCondition', async (ctx) => {
+  const result = await checkInWithCondition(ctx)
   console.log('searchFace result', result, 'ctttx', ctx)
   ctx.body = result
 })

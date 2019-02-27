@@ -42,19 +42,6 @@ const detect = async (base64Image) => {
     // console.log(e)
     return false
   }
-  
-  
-  //   .then(function (result) {
-  //   // console.log('人脸检测结果', result)
-  //   const {error_code, error_msg} = result
-  //   if (error_code === 0 && error_msg === 'SUCCESS') {
-  //     return true
-  //   }
-  //   return false
-  // }).catch(function (err) {
-  //   // console.log("人脸检测出错了", err)
-  //   return false
-  // })
 }
 
 
@@ -415,5 +402,11 @@ export const checkInResult = async ({ patientId, hospitalId }) => {
     resultStatus,
     resultMessage
   }
-  
+}
+
+export const checkInWithCondition = async (ctx) => {
+  const { patientId, hospitalId, noHealthCare } = ctx.request.body
+  const result = await checkInResult({ patientId, hospitalId, noHealthCare })
+  const { resultStatus, resultMessage } = result
+  return responseMessage(resultStatus, EmptyUserInfo, resultMessage)
 }
