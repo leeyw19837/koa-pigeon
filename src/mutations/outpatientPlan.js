@@ -29,7 +29,6 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
       _id: freshId(),
       ...toPlan,
       dayOfWeek: WEEKDAYS[dayjs(toPlan.date).day()],
-      hospitalName: '朝阳医院',
       patientIds: [patientId],
       signedIds: [],
       createdAt: new Date(),
@@ -195,52 +194,52 @@ const getReturnMessage = code => {
 
 export const outpatientPlanCheckIn = async (
   _,
-  { patientId, planId, hospitalId, departmentId },
+  { patientId, planId, hospitalId, departmentId, noHealthCare = false },
   context,
 ) => {
   const db = await context.getDb()
-  let gtzhCheckInState
-  const patient = await db
-    .collection('users')
-    .findOne({
+  if (!noHealthCare) {
+    let gtzhCheckInState
+    const patient = await db.collection('users').findOne({
       _id: ObjectID(patientId),
       patientState: { $in: ['ACTIVE', 'HAS_APPOINTMENT'] },
     })
-  if (patient) {
-    const treatmentToday = await db.collection('appointments').findOne({
-      patientId,
-      patientState: { $ne: 'ARCHIVED' },
-      appointmentTime: {
-        $gte: dayjs()
-          .startOf('day')
-          .toDate(),
-        $lt: dayjs()
-          .endOf('day')
-          .toDate(),
-      },
-    })
-    if (!treatmentToday) {
-      return getReturnMessage('NO_TREATMENT_TODAY_FOR_YOU')
-    } else if (treatmentToday.checkIn) {
-      return getReturnMessage('ALREADY_SIGNED')
-    } else {
-      const appointmentId = treatmentToday.appointmentId
-      const outpatient = await db
-        .collection('outpatients')
-        .findOne({ appointmentsId: { $eq: appointmentId, $ne: null } })
-      if (outpatient) {
-        gtzhCheckInState = await mutateTreatmentCheckboxs(
-          null,
-          {
-            propName: 'checkIn',
-            propValue: true,
-            treatmentId: treatmentToday._id,
-            outpatientId: outpatient._id,
-          },
-          context,
-        )
-        if (gtzhCheckInState.status !== 'success') {
-          return getReturnMessage('FAILED')
+    if (patient) {
+      const treatmentToday = await db.collection('appointments').findOne({
+        patientId,
+        patientState: { $ne: 'ARCHIVED' },
+        appointmentTime: {
+          $gte: dayjs()
+            .startOf('day')
+            .toDate(),
+          $lt: dayjs()
+            .endOf('day')
+            .toDate(),
+        },
+      })
+      if (!treatmentToday) {
+        return getReturnMessage('NO_TREATMENT_TODAY_FOR_YOU')
+      } else if (treatmentToday.checkIn) {
+        return getReturnMessage('ALREADY_SIGNED')
+      } else {
+        const appointmentId = treatmentToday.appointmentId
+        const outpatient = await db
+          .collection('outpatients')
+          .findOne({ appointmentsId: { $eq: appointmentId, $ne: null } })
+        if (outpatient) {
+          gtzhCheckInState = await mutateTreatmentCheckboxs(
+            null,
+            {
+              propName: 'checkIn',
+              propValue: true,
+              treatmentId: treatmentToday._id,
+              outpatientId: outpatient._id,
+            },
+            context,
+          )
+          if (gtzhCheckInState.status !== 'success') {
+            return getReturnMessage('FAILED')
+          }
         }
       }
     }
@@ -256,7 +255,7 @@ export const outpatientPlanCheckIn = async (
     cond = { hospitalId, departmentId, date: dateStr }
     returnCode = 'NO_PLAN_FOR_DEPARTMENT'
   } else {
-    returnCode = 'NO_PARAMS'
+    return getReturnMessage('NO_PARAMS')
   }
   let existsPlan = await db.collection('outpatientPlan').findOne(cond)
   if (!existsPlan) {
@@ -268,7 +267,7 @@ export const outpatientPlanCheckIn = async (
     existsPlan = await db.collection('outpatientPlan').findOne(cond)
   }
 
-  const isSameDay = dayjs().format('YYYY-MM-DD') === existsPlan.date
+  const isSameDay = dateStr === existsPlan.date
   if (!isSameDay) return getReturnMessage('ONLY_CHECKIN_AT_THAT_DAY')
 
   if (includes(existsPlan.signedIds, patientId)) {

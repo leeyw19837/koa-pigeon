@@ -676,6 +676,7 @@ type Mutation {
     hospitalID: ID
     departmentID: ID
     patientId: ID!
+    noHealthCare: Boolean
   ): ApiReturn
   # 保存病种（添加或修改，用于签到工作台）
   saveDisease(_id: ID, name: String): Boolean
