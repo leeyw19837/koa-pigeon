@@ -21,6 +21,7 @@ type Patient {
   patientState: String
   archivedReason: String
   district: String
+  localCity: String
   caseRecords(limit: Int): [CaseRecord]
   remarks: String
   soaps: [SOAP]

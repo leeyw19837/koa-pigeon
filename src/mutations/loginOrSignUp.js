@@ -146,6 +146,7 @@ export const loginOrSignUp = async (_, args, context) => {
       mobile: existingPatient.username.replace('@ijk.com', ''),
       JWT,
       idCard: existingPatient.idCard,
+      localCity: existingPatient.localCity,
     }
   }
 

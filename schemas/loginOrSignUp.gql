@@ -18,6 +18,7 @@ type LoginOrSignUpResponse {
   JWT:String
   healthCareTeamId: String
   idCard: String
+  localCity: String
 }
 
 extend type Mutation {

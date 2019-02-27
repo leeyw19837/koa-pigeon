@@ -119,3 +119,13 @@ export const updateUserHeadImage = async (_, args, context) => {
   return imageUrl
 }
 
+export const updateUserLocalCity = async (_, args, context) => {
+  const db = await context.getDb()
+  const { patientId, city } = args
+  await db.collection('users').update(
+    { _id: ObjectId(patientId) },
+    { $set: { localCity: city } }
+  )
+  return true
+}
+
