@@ -829,4 +829,12 @@ export const Patient = {
     }
     return soapItem
   },
+  disease: async ({ outpatientExtra }, _, { getDb }) => {
+    const db = await getDb()
+    const ids = get(outpatientExtra, 'disease', [])
+    return await db
+      .collection('disease')
+      .find({ _id: { $in: ids } })
+      .toArray()
+  },
 }

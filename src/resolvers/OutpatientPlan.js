@@ -18,7 +18,7 @@ export const OutpatientPlan = {
 
     if (!isEmpty(extraData)) {
       patients = patients.map(p => {
-        const outpatientExtra = find(extraData, { patientId: p._id })
+        const outpatientExtra = find(extraData, { patientId: p._id.toString() })
         if (!outpatientExtra) return p
         return { ...p, _id: p._id.valueOf(), outpatientExtra }
       })
