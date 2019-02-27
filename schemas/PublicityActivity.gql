@@ -62,4 +62,9 @@ enum AlertPattern {
     ONCE
 }
 
+extend type Query {
+  getPublicActivities(patientId: ID!): [Activity]
+}
+
+
 

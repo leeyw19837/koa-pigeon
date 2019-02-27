@@ -73,8 +73,8 @@ import * as aiCall from './aiCall'
 import * as getTakeMedicineList from './getTakeMedicineList'
 import * as getCheckByTreatmentId from './getCheckByTreatmentId'
 import * as configurationContent from './configurationContent'
-import {themes} from './themes'
-
+import { themes } from './themes'
+import * as article from './article'
 const queries = {
   ...bloodGlucoseMeasurements,
   ...chatMessages,
@@ -141,6 +141,7 @@ const queries = {
   ...getPublicityActivityController,
   ...configurationContent,
   themes,
+  ...article,
 }
 
 const queriesWithAuthandLog = {}

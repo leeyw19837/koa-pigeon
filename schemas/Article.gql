@@ -1,0 +1,37 @@
+# 此版本的文章是为了给App所有，所以有所修改
+type Article {
+  _id: String!
+  # 文章配图的缩略图
+  avatarThumbnail: String
+  # 标题
+  title: String
+  # 文章发布时间
+  publishedAt: Date
+  # 纯文本简介
+  desc: String
+  views: Int
+  comments: Int
+  sharings: Int
+}
+
+enum ArticleCategory {
+  # 最新资讯
+  NEWS
+  # 健康饮食
+  HEALTH_FOOD
+  # 专家讲座
+  EXPERT_LECTURES
+  # 糖友家园
+  FAMILY_GROUP
+}
+
+type CategoryArticle {
+  dayUpdateCount: Int
+  category: ArticleCategory
+  articles: [Article]
+}
+
+extend type Query {
+  getCategoryArticles(category: String, systemType: String): [CategoryArticle]
+  getArticlesByCategory(category: String, systemType: String): [Article]
+}
