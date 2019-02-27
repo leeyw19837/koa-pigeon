@@ -257,15 +257,14 @@ export const outpatientPlanCheckIn = async (
   } else {
     return getReturnMessage('NO_PARAMS')
   }
-  let existsPlan = await db.collection('outpatientPlan').findOne(cond)
-  if (!existsPlan) {
-    await movePatientToOutpatientPlan(
-      null,
-      { patientId, toPlan: { date: dateStr, hospitalId, departmentId } },
-      context,
-    )
-    existsPlan = await db.collection('outpatientPlan').findOne(cond)
-  }
+  // let existsPlan = await db.collection('outpatientPlan').findOne(cond)
+  // if (!existsPlan || !includes( existsPlan.patientIds, patientId)) {
+  await movePatientToOutpatientPlan(
+    null,
+    { patientId, toPlan: { date: dateStr, hospitalId, departmentId } },
+    context,
+  )
+  const existsPlan = await db.collection('outpatientPlan').findOne(cond)
 
   const isSameDay = dateStr === existsPlan.date
   if (!isSameDay) return getReturnMessage('ONLY_CHECKIN_AT_THAT_DAY')

@@ -673,8 +673,8 @@ type Mutation {
   # 签到(签到工作台)
   outpatientPlanCheckIn(
     planId: ID
-    hospitalID: ID
-    departmentID: ID
+    hospitalId: ID
+    departmentId: ID
     patientId: ID!
     noHealthCare: Boolean
   ): ApiReturn
