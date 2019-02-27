@@ -408,5 +408,16 @@ export const checkInWithCondition = async (ctx) => {
   const { patientId, hospitalId, noHealthCare } = ctx.request.body
   const result = await checkInResult({ patientId, hospitalId, noHealthCare })
   const { resultStatus, resultMessage } = result
-  return responseMessage(resultStatus, EmptyUserInfo, resultMessage)
+  const user = await db
+    .collection('users')
+    .findOne({
+      _id: ObjectId.createFromHexString(patientId)
+    }, { nickname: 1, idCard: 1, username: 1 })
+  const formattedUser = {
+    userId: user._id.valueOf().toString(),
+    phoneNumber: user.username,
+    nickname: user.nickname || null,
+    idCard: user.idCard || null
+  }
+  return responseMessage(resultStatus, formattedUser, resultMessage)
 }
