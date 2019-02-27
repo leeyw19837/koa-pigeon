@@ -5,7 +5,6 @@ type OutpatientPlan {
   dayOfWeek: DayOfWeek!
 
   hospitalId: String!
-  hospitalName: String!
   hospital: Institution!
   department: Department
 
