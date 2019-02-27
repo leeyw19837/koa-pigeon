@@ -13,12 +13,12 @@ export const outpatientPlanDynamics = {
       if (date) {
         const firstDay = dayjs(date)
           .startOf('month')
-          .subtract(7, 'day')
-          .format('YYYY-MM')
+          .subtract(6, 'day')
+          .format('YYYY-MM-DD')
         const lastDay = dayjs(date)
           .endOf('month')
-          .add(7, 'day')
-          .format('YYYY-MM')
+          .add(13, 'day')
+          .format('YYYY-MM-DD')
         return payload.date >= firstDay && payload.date < lastDay
       }
       if (id) {
