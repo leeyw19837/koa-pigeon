@@ -9,6 +9,8 @@ import includes from 'lodash/includes'
 import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
 
+import { mutateTreatmentCheckboxs } from './treatmentState'
+
 const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
 export const movePatientToOutpatientPlan = async (_, args, context) => {
   const db = await context.getDb()
@@ -164,6 +166,14 @@ const MessageMap = [
       text: '签到失败',
     },
   },
+  {
+    code: 'NO_TREATMENT_TODAY_FOR_YOU',
+    type: 'FAIL',
+    message: {
+      type: 'ERROR',
+      text: '患者今日无共同照护门诊',
+    },
+  },
 ]
 const getReturnMessage = code => {
   return (
@@ -184,22 +194,73 @@ export const outpatientPlanCheckIn = async (
   context,
 ) => {
   const db = await context.getDb()
+  let gtzhCheckInState
+  const patient = await db
+    .collection('users')
+    .findOne({
+      _id: ObjectID(patientId),
+      patientState: { $in: ['ACTIVE', 'HAS_APPOINTMENT'] },
+    })
+  if (patient) {
+    const treatmentToday = await db.collection('appointments').findOne({
+      patientId,
+      patientState: { $ne: 'ARCHIVED' },
+      appointmentTime: {
+        $gte: dayjs()
+          .startOf('day')
+          .toDate(),
+        $lt: dayjs()
+          .endOf('day')
+          .toDate(),
+      },
+    })
+    if (!treatmentToday) {
+      return getReturnMessage('NO_TREATMENT_TODAY_FOR_YOU')
+    } else if (treatmentToday.checkIn) {
+      return getReturnMessage('ALREADY_SIGNED')
+    } else {
+      const appointmentId = treatmentToday.appointmentId
+      const outpatient = await db
+        .collection('outpatients')
+        .findOne({ appointmentsId: { $eq: appointmentId, $ne: null } })
+      if (outpatient) {
+        gtzhCheckInState = await mutateTreatmentCheckboxs(
+          null,
+          {
+            propName: 'checkIn',
+            propValue: true,
+            treatmentId: treatmentToday._id,
+            outpatientId: outpatient._id,
+          },
+          context,
+        )
+        if (gtzhCheckInState.status !== 'success') {
+          return getReturnMessage('FAILED')
+        }
+      }
+    }
+  }
 
   let cond
   let returnCode
+  const dateStr = dayjs().format('YYYY-MM-DD')
   if (planId) {
     cond = { _id: planId }
     returnCode = 'PLANID_NOT_FOUND'
   } else if (hospitalId && departmentId) {
-    const dateStr = dayjs().format('YYYY-MM-DD')
     cond = { hospitalId, departmentId, date: dateStr }
     returnCode = 'NO_PLAN_FOR_DEPARTMENT'
   } else {
     returnCode = 'NO_PARAMS'
   }
-  const existsPlan = await db.collection('outpatientPlan').findOne(cond)
+  let existsPlan = await db.collection('outpatientPlan').findOne(cond)
   if (!existsPlan) {
-    return getReturnMessage(returnCode)
+    await movePatientToOutpatientPlan(
+      null,
+      { patientId, toPlan: { date: dateStr, hospitalId, departmentId } },
+      context,
+    )
+    existsPlan = await db.collection('outpatientPlan').findOne(cond)
   }
 
   const isSameDay = dayjs().format('YYYY-MM-DD') === existsPlan.date
