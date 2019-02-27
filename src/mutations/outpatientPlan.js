@@ -15,12 +15,16 @@ const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
 export const movePatientToOutpatientPlan = async (_, args, context) => {
   const db = await context.getDb()
 
-  const { patientId, toPlan, fromPlanId, disease } = args
+  const { patientId, toPlan, fromPlanId, disease, doctorName } = args
 
   const existsPlan = await db.collection('outpatientPlan').findOne(toPlan)
   let result
   if (!existsPlan) {
-    const extraData = { patientId: patientId, disease: disease }
+    const extraData = {
+      patientId: patientId,
+      disease: disease,
+      doctor: doctorName,
+    }
     const planObj = {
       _id: freshId(),
       ...toPlan,
@@ -43,6 +47,7 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
     let setter
     if (!isEmpty(extraPart)) {
       extraPart.patientId = patientId
+      extraPart.doctor = doctorName
       if (index < 0) {
         setter = {
           $push: { extraData: extraPart },
