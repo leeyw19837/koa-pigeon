@@ -24,7 +24,6 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
       ...toPlan,
       dayOfWeek: WEEKDAYS[dayjs(toPlan.date).day()],
       hospitalName: '朝阳医院',
-      department: '内分泌',
       patientIds: [patientId],
       signedIds: [],
       createdAt: new Date(),
@@ -216,11 +215,11 @@ export const outpatientPlanCheckIn = async (
   }
   const result = await db
     .collection('outpatientPlan')
-    .update({ _id: planId }, { $addToSet: { signedIds: patientId } })
+    .update({ _id: existsPlan._id }, { $addToSet: { signedIds: patientId } })
   if (result.result.ok) {
     const updatedPlan = await db
       .collection('outpatientPlan')
-      .findOne({ _id: planId })
+      .findOne({ _id: existsPlan._id })
     pubsub.publish('outpatientPlanDynamics', {
       ...updatedPlan,
       _operation: 'UPDATED',
