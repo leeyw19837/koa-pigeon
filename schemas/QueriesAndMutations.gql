@@ -649,6 +649,10 @@ type Mutation {
   ): String
   saveAddress(address: AddressInput): Boolean
   removeAddress( _id: ID!): Boolean
+  updateUserLocalCity(
+    patientId: String!
+    city: String!
+  ): Boolean
 }
 
 type Subscription {
