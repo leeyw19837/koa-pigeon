@@ -38,7 +38,6 @@ class DetectLogin {
           hospitalLogoImage: user.logoImg,
         }
         const token = jsonwebtoken.sign({
-         // exp: '365 days',
           user: user._id,
         }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_API})
         ctx.body = {
