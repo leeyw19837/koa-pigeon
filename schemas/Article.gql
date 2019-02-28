@@ -31,7 +31,27 @@ type CategoryArticle {
   articles: [Article]
 }
 
+input PaginationCursorInput {
+  first: Int
+  after: String
+}
+
+type PaginationCursor {
+  first: Int
+  after: String
+  hasNextPage: Boolean
+}
+
+type PaginationResult {
+  pageCursor: PaginationCursor
+  articles: [Article]
+}
+
 extend type Query {
   getCategoryArticles(category: String, systemType: String): [CategoryArticle]
-  getArticlesByCategory(category: String, systemType: String): [Article]
+  getArticlesByCategory(
+    category: String
+    systemType: String
+    cursorInput: PaginationCursorInput
+  ): PaginationResult
 }
