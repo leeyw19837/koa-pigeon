@@ -121,6 +121,7 @@ export const addWildPatient = async (
   const isDuplicate = await db.collection('users').count({
     $or: [{ username }, { idCard }],
   })
+  console.log('fffffffffffkkkkkkkkkkkkkk')
   if (isDuplicate) throw new Error('No duplicate username or idCard allowed')
   const patientId = new ObjectID()
 
@@ -133,22 +134,25 @@ export const addWildPatient = async (
     pinyinName: getPinyinUsername(nickname),
     createdAt: new Date(),
   }
+  let plan
   if (patient.institutionId) {
     wildPatient.institutionId = patient.institutionId
   } else if (planId) {
-    const plan = await db
+    plan = await db
       .collection('outpatientPlan')
-      .findOne({ _id: planId }, { hospitalId: 1 })
+      .findOne({ _id: planId }, { hospitalId: 1, departmentId: 1, date: 1 })
     if (plan) wildPatient.institutionId = plan.hospitalId
   }
   if (operatorId) {
     wildPatient.createdBy = operatorId
   }
   const result = await db.collection('users').insert(wildPatient)
-  await movePatientToOutpatientPlan(
-    null,
-    { patientId: patientId.toString(), toPlan: { _id: planId } },
-    context,
-  )
+  if (plan) {
+    await movePatientToOutpatientPlan(
+      null,
+      { patientId: patientId.toString(), toPlan: plan },
+      context,
+    )
+  }
   return result.result.ok
 }

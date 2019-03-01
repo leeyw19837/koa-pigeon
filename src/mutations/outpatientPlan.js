@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import find from 'lodash/find'
 import union from 'lodash/union'
 import isEmpty from 'lodash/isEmpty'
+import get from 'lodash/get'
 import findIndex from 'lodash/findIndex'
 import pick from 'lodash/pick'
 import filter from 'lodash/filter'
@@ -74,7 +75,7 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
     )
   }
 
-  const existsPlan = await db.collection('outpatientPlan').findOne({ toPlan })
+  const existsPlan = await db.collection('outpatientPlan').findOne(toPlan)
   let result
   if (!existsPlan) {
     const extraData = {
@@ -83,7 +84,7 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
       doctor: doctorName,
     }
     const planObj = {
-      _id: freshId(),
+      _id: new ObjectID().toString(),
       groupId: existsPlanGroup._id,
       ...toPlan,
       dayOfWeek: WEEKDAYS[dayjs(toPlan.date).day()],
@@ -117,11 +118,13 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
         }
       }
     }
-
-    result = await db
-      .collection('outpatientPlan')
-      .update({ _id: existsPlan._id }, setter)
-    result.result.ok &&
+    if (setter) {
+      result = await db
+        .collection('outpatientPlan')
+        .update({ _id: existsPlan._id }, setter)
+    }
+    result &&
+      result.result.ok &&
       pubsub.publish('outpatientPlanDynamics', {
         ...existsPlan,
         patientIds: union(existsPlan.patientIds, [patientId]),
@@ -153,7 +156,7 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
         })
     }
   }
-  return result.result.ok
+  return get(result, 'result.ok', true)
 }
 const MessageMap = [
   {
