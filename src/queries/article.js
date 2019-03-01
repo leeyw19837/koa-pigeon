@@ -1,7 +1,7 @@
 import flattenDeep from 'lodash/flattenDeep'
 import get from 'lodash/get'
 import { request } from 'graphql-request'
-const { BLOG_URL = 'http://172.16.0.69:3181/graphql' } = process.env
+const { BLOG_URL = 'http://192.168.199.249:3181/graphql' } = process.env
 
 const QUERY_MAP = {
   getCategoryArticles: `query GetCategoryArticles($category: String, $systemType: String) {
@@ -30,6 +30,15 @@ const QUERY_MAP = {
         comments
         publishedAt
       }
+    }
+  }`,
+  getArticleById: `query GetArticleById($systemType: String, $id: ID!) {
+    getArticleById(systemType: $systemType, id: $id) {
+      _id
+      title
+      views
+      comments
+      publishedAt
     }
   }`,
 }
@@ -88,4 +97,33 @@ export const getArticlesByCategory = async (_, { category, cursorInput }) => {
   }
   const result = await getDataWithSharing('getArticlesByCategory', params)
   return result[0]
+}
+
+export const getArticleById = async (_, { systemType = 'BG', id }) => {
+  let result = null
+  try {
+    const data = await request(BLOG_URL, QUERY_MAP['getArticleById'], {
+      systemType,
+      id,
+    })
+    result = data['getArticleById']
+  } catch (error) {
+    console.log(error, 'error')
+  }
+  if (result) {
+    const sharingInfo = await db
+      .collection('sharing')
+      .aggregate([
+        { $match: { 'shareData.recordId': result._id } },
+        { $group: { _id: '$shareData.recordId', count: { $sum: 1 } } },
+      ])
+      .toArray()
+    result = {
+      ...result,
+      sharings:
+        get(sharingInfo.filter(o => o._id === result._id), '0.count') || 0,
+      publishedAt: result.publishedAt ? new Date(result.publishedAt) : null,
+    }
+  }
+  return result
 }

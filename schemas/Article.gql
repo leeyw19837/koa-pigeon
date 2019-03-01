@@ -54,4 +54,5 @@ extend type Query {
     systemType: String
     cursorInput: PaginationCursorInput
   ): PaginationResult
+  getArticleById(systemType: String, id: ID!): Article
 }
