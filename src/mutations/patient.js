@@ -121,7 +121,6 @@ export const addWildPatient = async (
   const isDuplicate = await db.collection('users').count({
     $or: [{ username }, { idCard }],
   })
-
   if (isDuplicate) throw new Error('No duplicate username or idCard allowed')
   const patientId = new ObjectID()
 
@@ -148,9 +147,10 @@ export const addWildPatient = async (
   }
   const result = await db.collection('users').insert(wildPatient)
   if (plan) {
+    const { hospitalId, departmentId } = plan
     await outpatientPlanCheckIn(
       null,
-      { patientId: patientId.toString(), planId },
+      { patientId: patientId.toString(), planId, hospitalId, departmentId },
       context,
     )
   }

@@ -105,8 +105,8 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
     const index = findIndex(existsPlan.extraData, { patientId })
     const extraPart = pick(args, ['nextVisitDate', 'disease', 'mobile'])
 
-    let setter
     if (!isEmpty(extraPart)) {
+      let setter
       extraPart.patientId = patientId
       extraPart.doctor = doctorName
       if (index < 0) {
@@ -121,19 +121,18 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
           $set: { extraData, updatedAt: new Date() },
         }
       }
+      result = await db
+        .collection('outpatientPlan')
+        .update({ _id: existsPlan._id }, setter)
+
+      result &&
+        result.result.ok &&
+        pubsub.publish('outpatientPlanDynamics', {
+          ...existsPlan,
+          patientIds: union(existsPlan.patientIds, [patientId]),
+          _operation: 'UPDATED',
+        })
     }
-
-    result = await db
-      .collection('outpatientPlan')
-      .update({ _id: existsPlan._id }, setter)
-
-    result &&
-      result.result.ok &&
-      pubsub.publish('outpatientPlanDynamics', {
-        ...existsPlan,
-        patientIds: union(existsPlan.patientIds, [patientId]),
-        _operation: 'UPDATED',
-      })
   }
 
   if (!isEmpty(disease)) {
@@ -471,4 +470,18 @@ export const transformToHealthCarePatient = async (_, args, context) => {
     })
   }
   return !!result
+}
+
+export const checkInByHand = async (_, { username, planId }, context) => {
+  const db = await context.getDb()
+  const patient = await db.collection('users').findOne({
+    username: username,
+  })
+
+  if (patient) {
+    const patientId = patient._id.toString()
+    return await outpatientPlanCheckIn(null, { patientId, planId }, context)
+  } else {
+    throw new Error('cannot find patient')
+  }
 }
