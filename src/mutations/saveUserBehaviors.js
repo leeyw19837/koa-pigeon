@@ -1,5 +1,6 @@
 import { ObjectID } from 'mongodb'
 import { logger } from '../common'
+
 const { ENABLE_USER_BEHAVIOR } = process.env
 
 export const saveUserBehaviors = async (_, args, context) => {
@@ -21,7 +22,7 @@ export const saveUserBehaviors = async (_, args, context) => {
   if (!user) {
     throw new Error(`User: ${patientId} does not exist`)
   }
-
+  
   const frId = new ObjectID()
   const behaviour = {
     _id: String(frId),
@@ -29,7 +30,7 @@ export const saveUserBehaviors = async (_, args, context) => {
     eventName,
     eventNumber,
     sessionId,
-    occurredAt,
+    occurredAt: new Date(),
   }
   if (eventName === 'OPEN_APP') {
     behaviour.deviceContext = deviceContext
@@ -44,6 +45,6 @@ export const saveUserBehaviors = async (_, args, context) => {
     meta: behaviour,
     context,
   })
-
+  
   return true
 }
