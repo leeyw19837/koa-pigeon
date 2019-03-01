@@ -15,6 +15,14 @@ export const updatePatientProfile = async (_, args, context) => {
     if (restSetter.nickname) {
       restSetter.pinyinName = getPinyinUsername(restSetter.nickname)
     }
+    if (!isEmpty(restSetter.petname)) {
+      const petnameDistinct = await db.collection('users').find({
+        petname: restSetter.petname
+      }).toArray()
+      if (petnameDistinct && petnameDistinct.length > 0) {
+        throw new Error('该昵称已被其他用户使用！')
+      }
+    }
     await db.collection('users').update(
       { _id: ObjectId(patientId) },
       {
