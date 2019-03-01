@@ -201,6 +201,8 @@ type Query {
   getOutpatientPlans(date: String): [OutpatientPlan]
   # 获取病种列表
   getDisease: [Disease!]
+  # 获取医院的信息
+  getHospitalMessage(id: ID!): [HospitalMessage]
 }
 
 type Mutation {

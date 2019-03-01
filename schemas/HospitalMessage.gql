@@ -1,0 +1,8 @@
+type HospitalMessage{
+    _id:String
+    code : String
+    name : String
+    fullname : String
+    logoImg : String
+    hospitalImage:String
+}

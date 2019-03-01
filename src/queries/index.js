@@ -64,6 +64,7 @@ import * as getShoppingCartGoods from './getShoppingCartGoods'
 
 import * as getOutpatientModules from './getOutpatientModules'
 import * as getPublicityActivityController from './getPublicityActivity'
+import * as getHospitalMessage from './getHospitalMessage'
 
 //AI
 import * as queryAIContentTypes from './queryAIContentTypes'
@@ -147,6 +148,7 @@ const queries = {
   ...outpatientPlan,
   ...disease,
   themes,
+  ...getHospitalMessage,
 }
 
 const queriesWithAuthandLog = {}
