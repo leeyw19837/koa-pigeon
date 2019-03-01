@@ -89,7 +89,7 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
     result = await db.collection('outpatientPlan').update(
       { _id: fromPlanId },
       {
-        $pull: { patientIds: patientId, signedIds: patientId },
+        $push: { extraData: { patientId, nextVisitDate: toPlan.date } },
         $set: { updatedAt: new Date() },
       },
     )

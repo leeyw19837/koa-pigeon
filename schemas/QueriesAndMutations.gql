@@ -648,7 +648,7 @@ type Mutation {
   ): UploadFoodPhotoResult
   markReadPublicityActivity(patientId: ID, activityId: ID): Boolean
   # 将一个患者加入到一个门诊计划中
-  # 若传了fromPlanId则同时将该患者从相应的门诊计划中移出
+  # 若传了fromPlanId则在对应的plan中增加患者的下次就诊时间记录
   movePatientToOutpatientPlan(
     patientId: ID!
     toPlan: InputOutpatientPlan!
