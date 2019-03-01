@@ -10,6 +10,7 @@ import { ObjectID } from 'mongodb'
 import { pubsub } from '../pubsub'
 
 import { mutateTreatmentCheckboxs } from './treatmentState'
+import { addPatientAppointment } from './appointment'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
 export const movePatientToOutpatientPlan = async (_, args, context) => {
@@ -384,4 +385,19 @@ export const changeWildPatientInfos = async (
     })
   }
   return true
+}
+
+export const transformToHealthCarePatient = async (_, args, context) => {
+  const { planId, ...rest } = args
+  const result = await addPatientAppointment(null, rest, context)
+  if (result) {
+    const updatedPlan = await db
+      .collection('outpatientPlan')
+      .findOne({ _id: planId })
+    pubsub.publish('outpatientPlanDynamics', {
+      ...updatedPlan,
+      _operation: 'UPDATED',
+    })
+  }
+  return !!result
 }

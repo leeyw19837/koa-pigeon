@@ -680,6 +680,25 @@ type Mutation {
   ): ApiReturn
   # 保存病种（添加或修改，用于签到工作台）
   saveDisease(_id: ID, name: String): Boolean
+  # 转为共同照护待预约患者
+  transformToHealthCarePatient(
+    planId: ID
+    currentOutPatientId: ID
+    institutionId: String
+    nickname: String
+    expectedTime: Date
+    hisNumber: String
+    source: ID
+    mobile: String
+    blood: Boolean
+    footAt: Boolean
+    eyeGroundAt: Boolean
+    insulinAt: Boolean
+    nutritionAt: Boolean
+    healthTech: Boolean
+    quantizationAt: Boolean
+    note: String
+  ): Boolean
 }
 
 type Subscription {
