@@ -7,10 +7,10 @@ export const OutpatientPlan = {
     return await db.collection('institutions').findOne({ _id: hospitalId })
   },
   department: async () => ({ _id: 'neifenmi', name: '内分泌' }),
-  patients: async ({ patientIds, extraData }, args, { getDb }) => {
-    if (isEmpty(patientIds)) return []
+  patients: async ({ signedIds, extraData }, args, { getDb }) => {
+    if (isEmpty(signedIds)) return []
     const db = await getDb()
-    const objIds = map(patientIds, id => ObjectID(id))
+    const objIds = map(signedIds, id => ObjectID(id))
     let patients = await db
       .collection('users')
       .find({ _id: { $in: objIds } })
@@ -25,7 +25,7 @@ export const OutpatientPlan = {
     }
     return patients
   },
-  patientsCount: async ({ patientIds }) => {
-    return size(patientIds)
+  patientsCount: async ({ signedIds }) => {
+    return size(signedIds)
   },
 }

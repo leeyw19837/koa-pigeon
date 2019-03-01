@@ -5,20 +5,76 @@ import union from 'lodash/union'
 import isEmpty from 'lodash/isEmpty'
 import findIndex from 'lodash/findIndex'
 import pick from 'lodash/pick'
+import filter from 'lodash/filter'
 import includes from 'lodash/includes'
 import { ObjectID } from 'mongodb'
+
 import { pubsub } from '../pubsub'
 
 import { mutateTreatmentCheckboxs } from './treatmentState'
 import { addPatientAppointment } from './appointment'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
+const isSameWeek = (date1, date2) => {
+  const startOfThisWeek = dayjs(date1)
+    .startOf('week')
+    .add(1, 'day')
+    .format('YYYY-MM-DD')
+  const endOfThisWeek = dayjs(date1)
+    .endOf('week')
+    .add(1, 'day')
+    .format('YYYY-MM-DD')
+  return date2 >= startOfThisWeek && date2 <= endOfThisWeek
+}
 export const movePatientToOutpatientPlan = async (_, args, context) => {
   const db = await context.getDb()
 
   const { patientId, toPlan, fromPlanId, disease, doctorName } = args
 
-  const existsPlan = await db.collection('outpatientPlan').findOne(toPlan)
+  const startOfThisWeek = dayjs()
+    .startOf('week')
+    .add(1, 'day')
+    .format('YYYY-MM-DD')
+  const endOfThisWeek = dayjs()
+    .endOf('week')
+    .add(1, 'day')
+    .format('YYYY-MM-DD')
+  const { hospitalId, departmentId, date } = toPlan
+  let existsPlanGroup = await db.collection('outpatientPlanGroup').findOne({
+    hospitalId,
+    departmentId,
+    'period.startDate': { $lte: date },
+    'period.endDate': { $gte: date },
+  })
+  if (!existsPlanGroup) {
+    await db.collection('outpatientPlanGroup').insert({
+      _id: freshId(),
+      hospitalId,
+      departmentId,
+      period: {
+        startDate: startOfThisWeek,
+        endDate: endOfThisWeek,
+      },
+      patientIds: [patientId],
+      createdAt: new Date(),
+    })
+    existsPlanGroup = await db.collection('outpatientPlanGroup').findOne({
+      hospitalId,
+      departmentId,
+      'period.startDate': { $lte: date },
+      'period.endDate': { $gte: date },
+    })
+  } else {
+    await db.collection('outpatientPlanGroup').update(
+      {
+        _id: existsPlanGroup._id,
+      },
+      { $addToSet: { patientIds: patientId } },
+      { $set: { updatedAt: new Date() } },
+    )
+  }
+
+  const existsPlan = await db.collection('outpatientPlan').findOne({ toPlan })
   let result
   if (!existsPlan) {
     const extraData = {
@@ -28,9 +84,9 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
     }
     const planObj = {
       _id: freshId(),
+      groupId: existsPlanGroup._id,
       ...toPlan,
       dayOfWeek: WEEKDAYS[dayjs(toPlan.date).day()],
-      patientIds: [patientId],
       signedIds: [],
       createdAt: new Date(),
       extraData: [extraData],
@@ -42,7 +98,7 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
         _operation: 'ADDED',
       })
   } else {
-    const index = findIndex(existsPlan.extraData, { patientId: patientId })
+    const index = findIndex(existsPlan.extraData, { patientId })
     const extraPart = pick(args, ['nextVisitDate', 'disease', 'mobile'])
     let setter
     if (!isEmpty(extraPart)) {
@@ -62,13 +118,9 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
       }
     }
 
-    result = await db.collection('outpatientPlan').update(
-      { _id: existsPlan._id },
-      {
-        $addToSet: { patientIds: patientId },
-        ...setter,
-      },
-    )
+    result = await db
+      .collection('outpatientPlan')
+      .update({ _id: existsPlan._id }, setter)
     result.result.ok &&
       pubsub.publish('outpatientPlanDynamics', {
         ...existsPlan,
@@ -80,10 +132,7 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
   if (!isEmpty(disease)) {
     await db
       .collection('users')
-      .update(
-        { _id: ObjectID(patientId) },
-        { $set: { extraData: { disease } } },
-      )
+      .update({ _id: ObjectID(patientId) }, { $set: { disease } })
   }
   if (fromPlanId && result.result.ok) {
     result = await db.collection('outpatientPlan').update(
@@ -267,20 +316,31 @@ export const outpatientPlanCheckIn = async (
   )
   const existsPlan = await db.collection('outpatientPlan').findOne(cond)
 
-  const isSameDay = dateStr === existsPlan.date
-  if (!isSameDay) return getReturnMessage('ONLY_CHECKIN_AT_THAT_DAY')
+  if (!isSameWeek(dateStr, existsPlan.date))
+    return getReturnMessage('ONLY_CHECKIN_AT_THAT_DAY')
 
   if (includes(existsPlan.signedIds, patientId)) {
     return getReturnMessage('ALREADY_SIGNED')
   }
-  if (!includes(existsPlan.patientIds, patientId)) {
-    returnCode = 'NOT_PLAN_PATIENT'
-  } else {
-    returnCode = 'CHECKIN'
-  }
-  const result = await db
-    .collection('outpatientPlan')
-    .update({ _id: existsPlan._id }, { $addToSet: { signedIds: patientId } })
+
+  returnCode = 'CHECKIN'
+
+  const patientExtraIndex = findIndex(existsPlan.extraData, { patientId })
+  const newExtraData = isEmpty(existsPlan.extraData)
+    ? []
+    : [...existsPlan.extraData]
+  newExtraData[patientExtraIndex] =
+    patientExtraIndex > 0
+      ? { ...newExtraData[patientExtraIndex], signedAt: new Date() }
+      : { signedAt: new Date() }
+
+  const result = await db.collection('outpatientPlan').update(
+    { _id: existsPlan._id },
+    {
+      $addToSet: { signedIds: patientId },
+      $set: { extraData: newExtraData },
+    },
+  )
   if (result.result.ok) {
     const updatedPlan = await db
       .collection('outpatientPlan')
@@ -306,9 +366,13 @@ export const cancelCheckIn = async (_, { patientId, planId }, context) => {
   const isSameDay = dayjs().format('YYYY-MM-DD') === existsPlan.date
   if (!isSameDay) throw new Error('cannot cancel a non-preset check-in')
 
+  const extraData = filter(existsPlan.extraData, { patientId })
   const result = await db
     .collection('outpatientPlan')
-    .update({ _id: planId }, { $pull: { signedIds: patientId } })
+    .update(
+      { _id: planId },
+      { $pull: { signedIds: patientId }, $set: { extraData } },
+    )
 
   if (result.result.ok) {
     const updatedPlan = await db
