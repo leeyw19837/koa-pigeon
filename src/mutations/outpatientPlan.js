@@ -31,7 +31,7 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
   const db = await context.getDb()
 
   const { patientId, toPlan, fromPlanId, disease, doctorName } = args
-
+  console.log('jjjjjjjj', patientId, toPlan)
   const startOfThisWeek = dayjs()
     .startOf('week')
     .add(1, 'day')
@@ -76,6 +76,7 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
   }
 
   const existsPlan = await db.collection('outpatientPlan').findOne(toPlan)
+
   let result
   if (!existsPlan) {
     const extraData = {
@@ -86,8 +87,10 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
     const planObj = {
       _id: new ObjectID().toString(),
       groupId: existsPlanGroup._id,
-      ...toPlan,
-      dayOfWeek: WEEKDAYS[dayjs(toPlan.date).day()],
+      hospitalId,
+      departmentId,
+      date,
+      dayOfWeek: WEEKDAYS[dayjs(date).day()],
       signedIds: [],
       createdAt: new Date(),
       extraData: [extraData],
@@ -101,6 +104,7 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
   } else {
     const index = findIndex(existsPlan.extraData, { patientId })
     const extraPart = pick(args, ['nextVisitDate', 'disease', 'mobile'])
+
     let setter
     if (!isEmpty(extraPart)) {
       extraPart.patientId = patientId
@@ -118,11 +122,11 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
         }
       }
     }
-    if (setter) {
-      result = await db
-        .collection('outpatientPlan')
-        .update({ _id: existsPlan._id }, setter)
-    }
+
+    result = await db
+      .collection('outpatientPlan')
+      .update({ _id: existsPlan._id }, setter)
+
     result &&
       result.result.ok &&
       pubsub.publish('outpatientPlanDynamics', {
@@ -335,7 +339,7 @@ export const outpatientPlanCheckIn = async (
   newExtraData[patientExtraIndex] =
     patientExtraIndex > 0
       ? { ...newExtraData[patientExtraIndex], signedAt: new Date() }
-      : { signedAt: new Date() }
+      : { patientId, signedAt: new Date() }
 
   const result = await db.collection('outpatientPlan').update(
     { _id: existsPlan._id },

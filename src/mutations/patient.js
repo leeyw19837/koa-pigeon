@@ -3,7 +3,7 @@ import isEmpty from 'lodash/isEmpty'
 import get from 'lodash/get'
 import { changeUsername } from './changeUsername'
 import moment from 'moment'
-import { movePatientToOutpatientPlan } from './outpatientPlan'
+import { outpatientPlanCheckIn } from './outpatientPlan'
 
 export const updatePatientProfile = async (_, args, context) => {
   const db = await context.getDb()
@@ -121,7 +121,7 @@ export const addWildPatient = async (
   const isDuplicate = await db.collection('users').count({
     $or: [{ username }, { idCard }],
   })
-  console.log('fffffffffffkkkkkkkkkkkkkk')
+
   if (isDuplicate) throw new Error('No duplicate username or idCard allowed')
   const patientId = new ObjectID()
 
@@ -148,9 +148,9 @@ export const addWildPatient = async (
   }
   const result = await db.collection('users').insert(wildPatient)
   if (plan) {
-    await movePatientToOutpatientPlan(
+    await outpatientPlanCheckIn(
       null,
-      { patientId: patientId.toString(), toPlan: plan },
+      { patientId: patientId.toString(), planId },
       context,
     )
   }
