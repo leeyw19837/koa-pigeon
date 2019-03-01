@@ -36,14 +36,14 @@ input PaginationCursorInput {
   after: String
 }
 
-type PaginationCursor {
+type PaginationInfo {
   first: Int
   after: String
   hasNextPage: Boolean
 }
 
 type PaginationResult {
-  pageCursor: PaginationCursor
+  pageInfo: PaginationInfo
   articles: [Article]
 }
 

@@ -18,7 +18,8 @@ const QUERY_MAP = {
   }`,
   getArticlesByCategory: `query GetArticlesByCategory($category: String, $systemType: String, $cursorInput: PaginationCursorInput) {
     getArticlesByCategory(category: $category,systemType: $systemType, cursorInput: $cursorInput) {
-      pageCursor {
+      pageInfo {
+        first
         after
         hasNextPage
       }
@@ -86,6 +87,5 @@ export const getArticlesByCategory = async (_, { category, cursorInput }) => {
     cursorInput,
   }
   const result = await getDataWithSharing('getArticlesByCategory', params)
-  console.log('result', '~~~~~', result)
   return result[0]
 }
