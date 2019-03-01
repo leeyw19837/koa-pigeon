@@ -648,7 +648,7 @@ type Mutation {
   ): UploadFoodPhotoResult
   markReadPublicityActivity(patientId: ID, activityId: ID): Boolean
   # 将一个患者加入到一个门诊计划中
-  # 若传了fromPlanId则同时将该患者从相应的门诊计划中移出
+  # 若传了fromPlanId则在对应的plan中增加患者的下次就诊时间记录
   movePatientToOutpatientPlan(
     patientId: ID!
     toPlan: InputOutpatientPlan!
@@ -680,6 +680,26 @@ type Mutation {
   ): ApiReturn
   # 保存病种（添加或修改，用于签到工作台）
   saveDisease(_id: ID, name: String): Boolean
+  # 转为共同照护待预约患者
+  transformToHealthCarePatient(
+    planId: ID
+    currentOutPatientId: ID
+    institutionId: String
+    nickname: String
+    expectedTime: Date
+    hisNumber: String
+    source: ID
+    mobile: String
+    blood: Boolean
+    footAt: Boolean
+    eyeGroundAt: Boolean
+    insulinAt: Boolean
+    nutritionAt: Boolean
+    healthTech: Boolean
+    quantizationAt: Boolean
+    note: String
+  ): Boolean
+  checkInByHand(username: String!, planId: ID!): ApiReturn
 }
 
 type Subscription {
