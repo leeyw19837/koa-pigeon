@@ -699,6 +699,7 @@ type Mutation {
     quantizationAt: Boolean
     note: String
   ): Boolean
+  checkInByHand(username: String!, planId: ID!): ApiReturn
 }
 
 type Subscription {

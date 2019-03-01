@@ -468,3 +468,17 @@ export const transformToHealthCarePatient = async (_, args, context) => {
   }
   return !!result
 }
+
+export const checkInByHand = async (_, { username, planId }, context) => {
+  const db = await context.getDb()
+  const patient = await db.collection('users').findOne({
+    username: username,
+  })
+
+  if (patient) {
+    const patientId = patient._id.toString()
+    return await outpatientPlanCheckIn(null, { patientId, planId }, context)
+  } else {
+    throw new Error('cannot find patient')
+  }
+}

@@ -121,7 +121,6 @@ export const addWildPatient = async (
   const isDuplicate = await db.collection('users').count({
     $or: [{ username }, { idCard }],
   })
-  console.log('fffffffffffkkkkkkkkkkkkkk')
   if (isDuplicate) throw new Error('No duplicate username or idCard allowed')
   const patientId = new ObjectID()
 
