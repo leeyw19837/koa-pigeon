@@ -237,7 +237,7 @@ const MessageMap = [
     type: 'SUCCESS',
     message: {
       type: 'SUCCESS',
-      text: '签到成功',
+      text: '该患者已签到',
     },
   },
   {
