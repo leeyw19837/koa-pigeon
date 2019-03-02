@@ -234,9 +234,9 @@ const MessageMap = [
   },
   {
     code: 'ALREADY_SIGNED',
-    type: 'SUCCESS',
+    type: 'FAIL',
     message: {
-      type: 'SUCCESS',
+      type: 'ERROR',
       text: '该患者已签到',
     },
   },
