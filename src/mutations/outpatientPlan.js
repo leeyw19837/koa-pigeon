@@ -2,6 +2,8 @@ import freshId from 'fresh-id'
 import dayjs from 'dayjs'
 import find from 'lodash/find'
 import union from 'lodash/union'
+import omitBy from 'lodash/omitBy'
+import isNil from 'lodash/isNil'
 import isEmpty from 'lodash/isEmpty'
 import get from 'lodash/get'
 import findIndex from 'lodash/findIndex'
@@ -31,40 +33,39 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
   const db = await context.getDb()
 
   const { patientId, toPlan, fromPlanId, disease, doctorName } = args
-  console.log('jjjjjjjj', patientId, toPlan)
-  const startOfThisWeek = dayjs()
+  const { hospitalId, departmentId, date } = toPlan
+  const startOfTargetWeek = dayjs(date)
     .startOf('week')
     .add(1, 'day')
     .format('YYYY-MM-DD')
-  const endOfThisWeek = dayjs()
+  const endOfTargetWeek = dayjs(date)
     .endOf('week')
     .add(1, 'day')
     .format('YYYY-MM-DD')
-  const { hospitalId, departmentId, date } = toPlan
-  let existsPlanGroup = await db.collection('outpatientPlanGroup').findOne({
+  const groupCondition = {
     hospitalId,
     departmentId,
     'period.startDate': { $lte: date },
     'period.endDate': { $gte: date },
-  })
+  }
+  let existsPlanGroup = await db
+    .collection('outpatientPlanGroup')
+    .findOne(groupCondition)
   if (!existsPlanGroup) {
     await db.collection('outpatientPlanGroup').insert({
       _id: freshId(),
       hospitalId,
       departmentId,
       period: {
-        startDate: startOfThisWeek,
-        endDate: endOfThisWeek,
+        startDate: startOfTargetWeek,
+        endDate: endOfTargetWeek,
       },
       patientIds: [patientId],
       createdAt: new Date(),
     })
-    existsPlanGroup = await db.collection('outpatientPlanGroup').findOne({
-      hospitalId,
-      departmentId,
-      'period.startDate': { $lte: date },
-      'period.endDate': { $gte: date },
-    })
+    existsPlanGroup = await db
+      .collection('outpatientPlanGroup')
+      .findOne(groupCondition)
   } else {
     await db.collection('outpatientPlanGroup').update(
       {
@@ -79,28 +80,42 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
 
   let result
   if (!existsPlan) {
-    const extraData = {
-      patientId: patientId,
-      disease: disease,
-      doctor: doctorName,
+    for (let i = 1; i <= 7; i++) {
+      const loopDate = dayjs(date)
+        .startOf('week')
+        .add(i, 'day')
+        .format('YYYY-MM-DD')
+
+      const planObj = {
+        _id: new ObjectID().toString(),
+        groupId: existsPlanGroup._id,
+        hospitalId,
+        departmentId,
+        date: loopDate,
+        dayOfWeek: WEEKDAYS[dayjs(loopDate).day()],
+        signedIds: [],
+        createdAt: new Date(),
+      }
+      if (loopDate === date) {
+        const extraData = omitBy(
+          {
+            disease,
+            doctor: doctorName,
+          },
+          isNil,
+        )
+        if (!isEmpty(extraData)) {
+          extraData.patientId = patientId
+          planObj.extraData = [extraData]
+        }
+      }
+      result = await db.collection('outpatientPlan').insert(planObj)
+      result.result.ok &&
+        pubsub.publish('outpatientPlanDynamics', {
+          ...planObj,
+          _operation: 'ADDED',
+        })
     }
-    const planObj = {
-      _id: new ObjectID().toString(),
-      groupId: existsPlanGroup._id,
-      hospitalId,
-      departmentId,
-      date,
-      dayOfWeek: WEEKDAYS[dayjs(date).day()],
-      signedIds: [],
-      createdAt: new Date(),
-      extraData: [extraData],
-    }
-    result = await db.collection('outpatientPlan').insert(planObj)
-    result.result.ok &&
-      pubsub.publish('outpatientPlanDynamics', {
-        ...planObj,
-        _operation: 'ADDED',
-      })
   } else {
     const index = findIndex(existsPlan.extraData, { patientId })
     const extraPart = pick(args, ['nextVisitDate', 'disease', 'mobile'])
@@ -141,13 +156,26 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
       .update({ _id: ObjectID(patientId) }, { $set: { disease } })
   }
   if (fromPlanId && result.result.ok) {
-    result = await db.collection('outpatientPlan').update(
-      { _id: fromPlanId },
-      {
+    const fromPlan = await db
+      .collection('outpatientPlan')
+      .findOne({ _id: fromPlanId })
+    const index = findIndex(fromPlan.extraData, { patientId })
+    let setter
+    if (index < 0) {
+      setter = {
         $push: { extraData: { patientId, nextVisitDate: toPlan.date } },
         $set: { updatedAt: new Date() },
-      },
-    )
+      }
+    } else {
+      const newExtraData = [...fromPlan.extraData]
+      newExtraData[index] = { ...newExtraData, nextVisitDate: toPlan.date }
+      setter = {
+        $set: { updatedAt: new Date() },
+      }
+    }
+    result = await db
+      .collection('outpatientPlan')
+      .update({ _id: fromPlanId }, setter)
     if (result.result.ok) {
       const updatedPlan = await db
         .collection('outpatientPlan')
@@ -480,7 +508,16 @@ export const checkInByHand = async (_, { username, planId }, context) => {
 
   if (patient) {
     const patientId = patient._id.toString()
-    return await outpatientPlanCheckIn(null, { patientId, planId }, context)
+    const plan = await db
+      .collection('outpatientPlan')
+      .findOne({ _id: planId }, { hospitalId: 1, departmentId: 1, date: 1 })
+    if (!plan) throw new Error('outpatient plan NOT exists!')
+    const { hospitalId, departmentId } = plan
+    return await outpatientPlanCheckIn(
+      null,
+      { patientId, planId, hospitalId, departmentId },
+      context,
+    )
   } else {
     throw new Error('cannot find patient')
   }
