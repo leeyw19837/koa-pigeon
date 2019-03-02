@@ -29,6 +29,18 @@ const isSameWeek = (date1, date2) => {
     .format('YYYY-MM-DD')
   return date2 >= startOfThisWeek && date2 <= endOfThisWeek
 }
+
+const combineExtra = (planExtras = [], patientExtra) => {
+  let result = planExtras
+  const index = findIndex(planExtras, { patientId: patientExtra.patientId })
+  if (index < 0) {
+    result.push(patientExtra)
+  } else {
+    result[index] = omitBy({ ...result[index], ...patientExtra }, isNil)
+  }
+  return result
+}
+
 export const movePatientToOutpatientPlan = async (_, args, context) => {
   const db = await context.getDb()
 
@@ -97,17 +109,12 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
         createdAt: new Date(),
       }
       if (loopDate === date) {
-        const extraData = omitBy(
-          {
-            disease,
-            doctor: doctorName,
-          },
-          isNil,
-        )
-        if (!isEmpty(extraData)) {
-          extraData.patientId = patientId
-          planObj.extraData = [extraData]
-        }
+        const extraData = combineExtra([], {
+          patientId,
+          disease,
+          doctor: doctorName,
+        })
+        planObj.extraData = extraData
       }
       result = await db.collection('outpatientPlan').insert(planObj)
       result.result.ok &&
@@ -117,28 +124,20 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
         })
     }
   } else {
-    const index = findIndex(existsPlan.extraData, { patientId })
     const extraPart = pick(args, ['nextVisitDate', 'disease', 'mobile'])
 
     if (!isEmpty(extraPart)) {
-      let setter
       extraPart.patientId = patientId
       extraPart.doctor = doctorName
-      if (index < 0) {
-        setter = {
-          $push: { extraData: extraPart },
-          $set: { updatedAt: new Date() },
-        }
-      } else {
-        const extraData = [...existsPlan.extraData]
-        extraData[index] = { ...extraData[index], ...extraPart }
-        setter = {
-          $set: { extraData, updatedAt: new Date() },
-        }
-      }
+
+      const extraData = combineExtra(existsPlan.extraData, extraPart)
+
       result = await db
         .collection('outpatientPlan')
-        .update({ _id: existsPlan._id }, setter)
+        .update(
+          { _id: existsPlan._id },
+          { $set: { updatedAt: new Date(), extraData } },
+        )
 
       result &&
         result.result.ok &&
@@ -159,23 +158,18 @@ export const movePatientToOutpatientPlan = async (_, args, context) => {
     const fromPlan = await db
       .collection('outpatientPlan')
       .findOne({ _id: fromPlanId })
-    const index = findIndex(fromPlan.extraData, { patientId })
-    let setter
-    if (index < 0) {
-      setter = {
-        $push: { extraData: { patientId, nextVisitDate: toPlan.date } },
-        $set: { updatedAt: new Date() },
-      }
-    } else {
-      const newExtraData = [...fromPlan.extraData]
-      newExtraData[index] = { ...newExtraData, nextVisitDate: toPlan.date }
-      setter = {
-        $set: { updatedAt: new Date() },
-      }
-    }
+
+    const extraData = combineExtra(fromPlan.extraData, {
+      patientId,
+      nextVisitDate: toPlan.date,
+    })
+
     result = await db
       .collection('outpatientPlan')
-      .update({ _id: fromPlanId }, setter)
+      .update(
+        { _id: fromPlanId },
+        { $set: { updatedAt: new Date(), extraData } },
+      )
     if (result.result.ok) {
       const updatedPlan = await db
         .collection('outpatientPlan')
@@ -359,20 +353,16 @@ export const outpatientPlanCheckIn = async (
 
   returnCode = 'CHECKIN'
 
-  const patientExtraIndex = findIndex(existsPlan.extraData, { patientId })
-  const newExtraData = isEmpty(existsPlan.extraData)
-    ? []
-    : [...existsPlan.extraData]
-  newExtraData[patientExtraIndex] =
-    patientExtraIndex > 0
-      ? { ...newExtraData[patientExtraIndex], signedAt: new Date() }
-      : { patientId, signedAt: new Date() }
+  const extraData = combineExtra(existsPlan.extraData, {
+    patientId,
+    signedAt: new Date(),
+  })
 
   const result = await db.collection('outpatientPlan').update(
     { _id: existsPlan._id },
     {
       $addToSet: { signedIds: patientId },
-      $set: { extraData: newExtraData },
+      $set: { extraData },
     },
   )
   if (result.result.ok) {
@@ -400,7 +390,10 @@ export const cancelCheckIn = async (_, { patientId, planId }, context) => {
   const isSameDay = dayjs().format('YYYY-MM-DD') === existsPlan.date
   if (!isSameDay) throw new Error('cannot cancel a non-preset check-in')
 
-  const extraData = filter(existsPlan.extraData, { patientId })
+  const extraData = combineExtra(existsPlan.extraData, {
+    patientId,
+    signedAt: null,
+  })
   const result = await db
     .collection('outpatientPlan')
     .update(
@@ -431,22 +424,16 @@ export const changeWildPatientInfos = async (
     .collection('outpatientPlan')
     .findOne({ _id: planId })
   if (existsPlan) {
-    const index = findIndex(existsPlan.extraData, { patientId: patient._id })
     const extraPart = pick(patient, ['nextVisitDate', 'disease', 'username'])
     if (!isEmpty(extraPart)) {
       extraPart.patientId = patient._id
-      let setter
-      if (index < 0) {
-        setter = {
-          $push: { extraData: extraPart },
-          $set: { updatedBy: operatorId, updatedAt: new Date() },
-        }
-      } else {
-        const extraData = [...existsPlan.extraData]
-        extraData[index] = { ...extraData[index], ...extraPart }
-        setter = {
-          $set: { extraData, updatedBy: operatorId, updatedAt: new Date() },
-        }
+      const extraData = combineExtra(existsPlan.extraData, extraPart)
+
+      const setter = {
+        $set: { extraData, updatedAt: new Date() },
+      }
+      if (operatorId) {
+        setter.updatedBy = operatorId
       }
       await db
         .collection('outpatientPlan')
