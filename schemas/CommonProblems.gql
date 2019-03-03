@@ -1,6 +1,6 @@
 type CommonProblem {
   _id:String
-  king:String
+  kind:String
   subType:String
   question:String
   answer:String
