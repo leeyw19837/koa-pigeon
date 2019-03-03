@@ -193,6 +193,10 @@ type Query {
 
   # 根据活动的ID查询当前的活动
   getOneOfPublicityActivity(activityId: String): Activity
+
+  # app 常见问题
+  getCommonProblem:[CommonProblem]
+
 }
 
 type Mutation {
