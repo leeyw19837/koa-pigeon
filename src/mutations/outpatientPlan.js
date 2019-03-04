@@ -283,7 +283,7 @@ export const outpatientPlanCheckIn = async (
       patientState: { $in: ['ACTIVE', 'HAS_APPOINTMENT'] },
     })
     if (patient) {
-      const treatmentToday = await db.collection('appointments').findOne({
+      const appointmentToday = await db.collection('appointments').findOne({
         patientId,
         patientState: { $ne: 'ARCHIVED' },
         appointmentTime: {
@@ -295,12 +295,18 @@ export const outpatientPlanCheckIn = async (
             .toDate(),
         },
       })
+      let treatmentToday
+      if (appointmentToday) {
+        treatmentToday = await db.collectin('treatmentState').findOne({
+          _id: appointmentToday.treatmentStateId,
+        })
+      }
       if (!treatmentToday) {
         return getReturnMessage('NO_TREATMENT_TODAY_FOR_YOU')
       } else if (treatmentToday.checkIn) {
         return getReturnMessage('ALREADY_SIGNED')
       } else {
-        const appointmentId = treatmentToday.appointmentId
+        const appointmentId = appointmentToday._id
         const outpatient = await db
           .collection('outpatients')
           .findOne({ appointmentsId: { $eq: appointmentId, $ne: null } })
