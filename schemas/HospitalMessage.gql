@@ -5,4 +5,6 @@ type HospitalMessage{
     fullname : String
     logoImg : String
     hospitalImage:String
+    shortIntroduce:String
+    introduce:String
 }
