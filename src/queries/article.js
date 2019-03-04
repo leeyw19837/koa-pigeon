@@ -1,7 +1,7 @@
 import flattenDeep from 'lodash/flattenDeep'
 import get from 'lodash/get'
 import { request } from 'graphql-request'
-const { BLOG_URL = 'http://192.168.199.249:3181/graphql' } = process.env
+const { BLOG_URL = 'http://172.16.0.69:3181/graphql' } = process.env
 
 const QUERY_MAP = {
   getCategoryArticles: `query GetCategoryArticles($category: String, $systemType: String) {
@@ -13,6 +13,7 @@ const QUERY_MAP = {
         title
         views
         comments
+        avatar
       }
     }
   }`,
@@ -29,6 +30,7 @@ const QUERY_MAP = {
         views
         comments
         publishedAt
+        avatar
       }
     }
   }`,
@@ -39,6 +41,7 @@ const QUERY_MAP = {
       views
       comments
       publishedAt
+      avatar
     }
   }`,
 }

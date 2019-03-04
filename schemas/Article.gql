@@ -3,6 +3,7 @@ type Article {
   _id: String!
   # 文章配图的缩略图
   avatarThumbnail: String
+  avatar: String
   # 标题
   title: String
   # 文章发布时间
@@ -23,6 +24,8 @@ enum ArticleCategory {
   EXPERT_LECTURES
   # 糖友家园
   FAMILY_GROUP
+  # 了解血糖
+  KNOW_BG
 }
 
 type CategoryArticle {
