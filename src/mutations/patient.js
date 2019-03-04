@@ -3,7 +3,7 @@ import isEmpty from 'lodash/isEmpty'
 import get from 'lodash/get'
 import { changeUsername } from './changeUsername'
 import moment from 'moment'
-import { movePatientToOutpatientPlan } from './outpatientPlan'
+import { outpatientPlanCheckIn } from './outpatientPlan'
 
 export const updatePatientProfile = async (_, args, context) => {
   const db = await context.getDb()
@@ -133,22 +133,26 @@ export const addWildPatient = async (
     pinyinName: getPinyinUsername(nickname),
     createdAt: new Date(),
   }
+  let plan
   if (patient.institutionId) {
     wildPatient.institutionId = patient.institutionId
   } else if (planId) {
-    const plan = await db
+    plan = await db
       .collection('outpatientPlan')
-      .findOne({ _id: planId }, { hospitalId: 1 })
+      .findOne({ _id: planId }, { hospitalId: 1, departmentId: 1, date: 1 })
     if (plan) wildPatient.institutionId = plan.hospitalId
   }
   if (operatorId) {
     wildPatient.createdBy = operatorId
   }
   const result = await db.collection('users').insert(wildPatient)
-  await movePatientToOutpatientPlan(
-    null,
-    { patientId: patientId.toString(), toPlan: { _id: planId } },
-    context,
-  )
+  if (plan) {
+    const { hospitalId, departmentId } = plan
+    await outpatientPlanCheckIn(
+      null,
+      { patientId: patientId.toString(), planId, hospitalId, departmentId },
+      context,
+    )
+  }
   return result.result.ok
 }
