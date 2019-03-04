@@ -297,7 +297,7 @@ export const outpatientPlanCheckIn = async (
       })
       let treatmentToday
       if (appointmentToday) {
-        treatmentToday = await db.collectin('treatmentState').findOne({
+        treatmentToday = await db.collection('treatmentState').findOne({
           _id: appointmentToday.treatmentStateId,
         })
       }
