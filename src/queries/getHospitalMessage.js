@@ -11,10 +11,11 @@ export const getHospitalMessage = async (_, args) => {
       _id: ObjectId.createFromHexString(patientId)
     })
   const { institutionId = "", healthCareTeamId = [] } = user
+  let hospitalMessage = [];
   if (healthCareTeamId.length !== 0) {
-    return []
+    return hospitalMessage
   } else if (institutionId) {
-    const hospitalMessage = await db
+    hospitalMessage = await db
       .collection('institutions')
       .find({
         _id: institutionId,
@@ -22,16 +23,16 @@ export const getHospitalMessage = async (_, args) => {
       }, {
         password: 0,
       }).toArray()
-    return hospitalMessage
+    
   } else {
-    const hospitalMessage = await db
+    hospitalMessage = await db
       .collection('institutions')
       .find({
         isPartner: true,
       }, {
         password: 0,
       }).toArray()
-    return hospitalMessage
   }
-  
+  console.log('hospitalMessage', hospitalMessage)
+  return hospitalMessage
 }

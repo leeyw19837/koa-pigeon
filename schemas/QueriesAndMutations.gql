@@ -202,7 +202,7 @@ type Query {
   # 获取病种列表
   getDisease: [Disease!]
   # 获取医院的信息
-  getHospitalMessage(id: ID!): [HospitalMessage]
+  getHospitalMessage(patientId: String): [HospitalMessage]
 }
 
 type Mutation {
