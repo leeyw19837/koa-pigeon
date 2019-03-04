@@ -3,6 +3,12 @@ import omit from 'lodash/omit'
 import { ObjectID } from 'mongodb'
 import { changeUsername } from './changeUsername'
 import { changeUserProperties } from '../modules/appointment'
+import {verify} from "righteous-raven";
+const {
+  RIGHTEOUS_RAVEN_URL,
+  RIGHTEOUS_RAVEN_ID,
+  RIGHTEOUS_RAVEN_KEY,
+} = process.env
 const moment = require('moment')
 
 export const addAppointment = async (_, args, context) => {
@@ -1203,4 +1209,34 @@ export const updateOutpatientInfos = async (_, params, context) => {
   }
 
   return true
+}
+
+export const applyForAppointment = async (_, params, context) => {
+  const {
+    mobile,
+    verificationCode
+  } = params
+
+  if (!/^1[3|4|5|6|7|8|9][0-9]\d{8}$/.test(mobile)) {
+    throw new Error('手机号码格式不正确')
+    return
+  }
+  // const verificationResult = await verify(RIGHTEOUS_RAVEN_URL, {
+  //   client_id: RIGHTEOUS_RAVEN_ID,
+  //   client_key: RIGHTEOUS_RAVEN_KEY,
+  //   rec: mobile,
+  //   code: verificationCode,
+  // })
+  // if ( verificationResult.data.result !== 'success') {
+  //   throw new Error('验证码不正确')
+  // }
+
+  const addAppointmentResult = await addPatientAppointment(_, params, context)
+
+  console.log('applyForAppointment >> addAppointmentResult=',addAppointmentResult)
+
+  if (addAppointmentResult.patientId) {
+    return true
+  }
+  return false
 }
