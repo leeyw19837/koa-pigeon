@@ -91,4 +91,5 @@ extend type Query {
   blogs(blogId: ID): [Blog]
   getBlogsPagination(count: Int!, index: Int!): [Blog]
   blogById(_id: String): Blog
+  getBlogsByIdArray(ids: [String]): [Blog]
 }

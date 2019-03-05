@@ -1,0 +1,23 @@
+type Address {
+  _id: ID!
+  # 病人编号
+  patientId: ID!
+  #  收货人
+  receiver: String
+  #  联系电话
+  phoneNumber: String
+  #  收货地址
+  receiveAddress: String
+}
+
+input AddressInput {
+  _id: ID
+  # 病人编号
+  patientId: ID
+  #  收货人
+  receiver: String
+  #  联系电话
+  phoneNumber: String
+  #  收货地址
+  receiveAddress: String
+}
