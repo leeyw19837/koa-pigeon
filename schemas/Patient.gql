@@ -2,6 +2,7 @@ type Patient {
   _id: ID
   nickname: String
   petname: String
+  knowledgeList: [String]
   username: String
   gender: String
   dateOfBirth: String
