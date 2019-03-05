@@ -27,19 +27,33 @@ const detect = async (base64Image) => {
   // face_field：面部特征
   // max_face_num ：最大人脸数量
   // face_type 人脸类型
+  // http://ai.baidu.com/docs#/Face-Detect-V3/top
 
-  const options = {};
+  const options = {
+    face_field: 'glasses,quality,emotion,gender'
+  };
 
   try {
     const detectResult = await client.detect(base64Image, imageType, options)
-    // console.log('人脸检测结果', detectResult)
+    console.log('人脸检测结果 detectResult = ',JSON.stringify(detectResult.result.face_list))
     const { error_code, error_msg } = detectResult
     if (error_code === 0 && error_msg === 'SUCCESS') {
+      const { angle, quality } = detectResult.result.face_list[0]
+      // 模糊度
+      const { blur } = quality
+      if (blur > 0.7) {
+        return false
+      }
+      // 人脸角度
+      const { yaw, pitch, roll } = angle
+      if (Math.abs(yaw) > 30 || Math.abs(pitch) > 30 || Math.abs(roll) > 30) {
+        return false
+      }
       return true
     }
     return false
   } catch (e) {
-    // console.log(e)
+    console.log(e)
     return false
   }
 }

@@ -204,6 +204,8 @@ type Query {
   # app 常见问题
   getCommonProblem:[CommonProblem]
 
+  # 获取医院的信息
+  getHospitalMessage(patientId: String): [HospitalMessage]
 }
 
 type Mutation {
