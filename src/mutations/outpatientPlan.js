@@ -16,6 +16,7 @@ import { pubsub } from '../pubsub'
 
 import { mutateTreatmentCheckboxs } from './treatmentState'
 import { addPatientAppointment } from './appointment'
+import { changeUsername } from './changeUsername'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
 const isSameWeek = (date1, date2) => {
@@ -423,9 +424,9 @@ export const cancelCheckIn = async (_, { patientId, planId }, context) => {
 export const changeWildPatientInfos = async (
   _,
   { operatorId, planId, patient },
-  { getDb },
+  context,
 ) => {
-  const db = await getDb()
+  const db = await context.getDb()
 
   const existsPlan = await db
     .collection('outpatientPlan')
@@ -466,6 +467,23 @@ export const changeWildPatientInfos = async (
       },
     },
   )
+
+  if (patient.nickname) {
+    await db
+      .collection('appointments')
+      .update(
+        { patientId: patient._id },
+        { $set: { nickname: patient.nickname } },
+        { multi: true },
+      )
+    await db
+      .collection('treatmentState')
+      .update(
+        { patientId: patient._id },
+        { $set: { nickname: patient.nickname } },
+        { multi: true },
+      )
+  }
 
   if (existsPlan) {
     const updatedPlan = await db
