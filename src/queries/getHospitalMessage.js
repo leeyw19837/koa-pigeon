@@ -22,7 +22,7 @@ export const getHospitalMessage = async (_, args) => {
         isPartner: true,
       }, {
         password: 0,
-      }).toArray()
+      }).sort({ recommendDegree: 1 }).toArray()
     
   } else {
     hospitalMessage = await db
@@ -31,8 +31,7 @@ export const getHospitalMessage = async (_, args) => {
         isPartner: true,
       }, {
         password: 0,
-      }).toArray()
+      }).sort({ recommendDegree: 1 }).toArray()
   }
-  console.log('hospitalMessage', hospitalMessage)
   return hospitalMessage
 }
