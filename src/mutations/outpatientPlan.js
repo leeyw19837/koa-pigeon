@@ -361,6 +361,7 @@ export const outpatientPlanCheckIn = async (
 
   const extraData = combineExtra(existsPlan.extraData, {
     patientId,
+    isHealthCare: !noHealthCare,
     signedAt: new Date(),
   })
 
