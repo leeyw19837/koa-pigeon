@@ -193,6 +193,9 @@ type Query {
 
   # 根据活动的ID查询当前的活动
   getOneOfPublicityActivity(activityId: String): Activity
+
+  # 查询文章收藏状态
+  ArticleCollection(patientId: ID, knowledgeId: String): Boolean
 }
 
 type Mutation {

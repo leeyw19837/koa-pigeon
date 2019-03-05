@@ -1,0 +1,7 @@
+extend type Mutation {
+  updateArticleCollection(
+    patientId: ID
+    knowledgeId: String
+    collectionStatus: Boolean
+  ): Boolean!
+}
