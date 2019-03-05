@@ -7,4 +7,5 @@ type HospitalMessage{
     hospitalImage:String
     shortIntroduce:String
     introduce:String
+    appointmentDates:[String]
 }

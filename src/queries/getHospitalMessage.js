@@ -35,3 +35,8 @@ export const getHospitalMessage = async (_, args) => {
   }
   return hospitalMessage
 }
+
+
+export const getHospitalAppointment = async (_, args) => {
+
+}
