@@ -3,7 +3,7 @@ import get from 'lodash/get'
 import includes from 'lodash/includes'
 import { request } from 'graphql-request'
 import { ObjectID } from 'mongodb'
-const { BLOG_URL = 'http://172.16.0.198:3181/graphql' } = process.env
+const { BLOG_URL = 'http://172.16.0.69:3181/graphql' } = process.env
 
 const QUERY_MAP = {
   getCategoryArticles: `query GetCategoryArticles($category: String, $systemType: String) {
@@ -44,6 +44,9 @@ const QUERY_MAP = {
       comments
       publishedAt
       avatar
+      avatarThumbnail
+      desc
+      category
     }
   }`,
 }
