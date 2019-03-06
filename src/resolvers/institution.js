@@ -12,12 +12,12 @@ export const HospitalMessage = {
           hospitalId: institution._id,
           outpatientDate: { $gte: moment().startOf('day').toDate() }
         })
-      
-      const dateArray = sortBy(availableAppointmentDates, (o) => {
-       return moment(o)
-      }).map((item) => {
+      const dateArray = sortBy(
+        availableAppointmentDates, (o) => {
+          return moment(o)
+        }).map((item) => {
         return moment(item).format('YYYY-MM-DD')
-      })
+      }).slice(0, 10)
       return dateArray
     }
 }
