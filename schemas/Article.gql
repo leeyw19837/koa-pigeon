@@ -13,6 +13,7 @@ type Article {
   views: Int
   comments: Int
   sharings: Int
+  category: ArticleCategory
 }
 
 enum ArticleCategory {

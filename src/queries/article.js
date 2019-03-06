@@ -44,6 +44,9 @@ const QUERY_MAP = {
       comments
       publishedAt
       avatar
+      avatarThumbnail
+      desc
+      category
     }
   }`,
   getAuthor: `
