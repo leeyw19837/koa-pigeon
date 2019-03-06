@@ -1,7 +1,3 @@
 extend type Mutation {
-  updateArticleCollection(
-    patientId: ID
-    knowledgeId: String
-    collectionStatus: Boolean
-  ): Boolean!
+  ArticleCollectionStatus(patientId: ID, knowledgeId: String): Boolean!
 }

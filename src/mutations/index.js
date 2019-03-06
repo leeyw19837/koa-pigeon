@@ -66,7 +66,7 @@ import * as editTakeMedicinePatient from './addTakeMedicinePatient'
 import * as updateGoodsFromShoppingCart from './updateGoodsFromShoppingCart'
 
 import * as createPayHistory from './payHistories'
-import * as articleCollection from './articleCollection'
+import * as ArticleCollectionStatus from './articleCollection'
 
 const mutations = {
   ...assessmentTime,
@@ -131,7 +131,7 @@ const mutations = {
   ...updateGoodsFromShoppingCart,
   ...createPayHistory,
   ...modifyUserPublicityActivity,
-  ...articleCollection,
+  ...ArticleCollectionStatus,
 }
 
 const mutationsWithAuthandLog = {}
