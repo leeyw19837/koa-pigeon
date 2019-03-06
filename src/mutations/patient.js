@@ -179,17 +179,19 @@ export const updateUserHeadImage = async (_, args, context) => {
   const { patientId, headImageBase64 } = args
   const imageUrlKey = `${patientId}${Date.now()}`
   const imageUrl = await uploadBase64Img(imageUrlKey, headImageBase64)
-  await db
-    .collection('users')
-    .update({ _id: ObjectId(patientId) }, { $set: { avatar: imageUrl } })
+  await db.collection('users').update(
+    { _id: ObjectID(patientId) },
+    { $set: { avatar: imageUrl } }
+  )
   return imageUrl
 }
 
 export const updateUserLocalCity = async (_, args, context) => {
   const db = await context.getDb()
   const { patientId, city } = args
-  await db
-    .collection('users')
-    .update({ _id: ObjectId(patientId) }, { $set: { localCity: city } })
+  await db.collection('users').update(
+    { _id: ObjectID(patientId) },
+    { $set: { localCity: city } }
+  )
   return true
 }
