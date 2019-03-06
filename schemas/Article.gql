@@ -26,6 +26,8 @@ enum ArticleCategory {
   FAMILY_GROUP
   # 了解血糖
   KNOW_BG
+  # 用户使用指南
+  USE_GUIDE
 }
 
 type CategoryArticle {
