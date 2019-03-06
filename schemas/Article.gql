@@ -52,6 +52,15 @@ type PaginationResult {
   articles: [Article]
 }
 
+type Author {
+  _id: String
+  nickname: String
+  avatar: String
+  institution: String
+  intro: String
+  achievements: String
+  articles: [Article]
+}
 extend type Query {
   getCategoryArticles(category: String, systemType: String): [CategoryArticle]
   getArticlesByCategory(
@@ -60,4 +69,5 @@ extend type Query {
     cursorInput: PaginationCursorInput
   ): PaginationResult
   getArticleById(systemType: String, id: ID!): Article
+  getAuthor(authorId: ID!): Author
 }

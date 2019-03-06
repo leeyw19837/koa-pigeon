@@ -3,7 +3,7 @@ import get from 'lodash/get'
 import includes from 'lodash/includes'
 import { request } from 'graphql-request'
 import { ObjectID } from 'mongodb'
-const { BLOG_URL = 'http://172.16.0.198:3181/graphql' } = process.env
+const { BLOG_URL = 'http://172.16.0.190:3181/graphql' } = process.env
 
 const QUERY_MAP = {
   getCategoryArticles: `query GetCategoryArticles($category: String, $systemType: String) {
@@ -36,7 +36,7 @@ const QUERY_MAP = {
       }
     }
   }`,
-  getArticleById: `query GetArticleById($systemType: String, $id: ID!) {
+  getArticlesById: `query GetArticleById($systemType: String, $id: ID!) {
     getArticleById(systemType: $systemType, id: $id) {
       _id
       title
@@ -46,6 +46,24 @@ const QUERY_MAP = {
       avatar
     }
   }`,
+  getAuthor: `
+    query getAuthor( $authorId: ID!) {
+      getAuthor(authorId: $authorId) {
+        _id
+        nickname
+        institution
+        avatar
+        intro
+        achievements
+        articles {
+          _id
+          title
+          views
+          comments
+        }
+      }
+    }
+  `,
 }
 
 const getDataWithSharing = async (queryKey, params) => {
@@ -131,6 +149,36 @@ export const getArticleById = async (_, { systemType = 'BG', id }) => {
     }
   }
   return result
+}
+
+export const getAuthor = async (_, { authorId }) => {
+  let author = null
+  try {
+    const data = await request(BLOG_URL, QUERY_MAP['getAuthor'], {
+      authorId,
+    })
+    author = data['getAuthor']
+  } catch (error) {
+    console.log(error, 'error')
+  }
+  if (author && author.articles) {
+    const articleIds = author.articles.map(a => a._id)
+    const sharingInfo = await db
+      .collection('sharing')
+      .aggregate([
+        { $match: { 'shareData.recordId': { $in: articleIds } } },
+        { $group: { _id: '$shareData.recordId', count: { $sum: 1 } } },
+      ])
+      .toArray()
+
+    author.articles = author.articles.map(article => ({
+      ...article,
+      sharings:
+        get(sharingInfo.filter(o => o._id === article._id), '0.count') || 0,
+      publishedAt: article.publishedAt ? new Date(article.publishedAt) : null,
+    }))
+  }
+  return author
 }
 
 export const ArticleCollection = async (_, args, context) => {
