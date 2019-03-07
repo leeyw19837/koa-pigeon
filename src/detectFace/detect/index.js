@@ -9,33 +9,33 @@ import { MessageMap, outpatientPlanCheckIn } from "../../mutations/outpatientPla
 const client = new AipFaceClient(APP_ID, API_KEY, SECRET_KEY);
 
 HttpClient.setRequestInterceptor(function (requestOptions) {
-
+  
   // 查看参数
   // console.log(requestOptions)
   // 修改参数
   requestOptions.timeout = 5000;
   // 返回参数
   return requestOptions;
-
+  
 })
 
 /**检测图片中的人脸并标记处位置信息*/
 const detect = async (base64Image) => {
   const imageType = 'BASE64';
-
+  
   // 可选参数配置 options 包括 ：
   // face_field：面部特征
   // max_face_num ：最大人脸数量
   // face_type 人脸类型
   // http://ai.baidu.com/docs#/Face-Detect-V3/top
-
+  
   const options = {
     face_field: 'glasses,quality,emotion,gender'
   };
-
+  
   try {
     const detectResult = await client.detect(base64Image, imageType, options)
-    console.log('人脸检测结果 detectResult = ',JSON.stringify(detectResult.result.face_list))
+    console.log('人脸检测结果 detectResult = ', JSON.stringify(detectResult.result.face_list))
     const { error_code, error_msg } = detectResult
     if (error_code === 0 && error_msg === 'SUCCESS') {
       const { angle, quality } = detectResult.result.face_list[0]
@@ -76,7 +76,7 @@ const detect = async (base64Image) => {
 export const addUser = async (ctx) => {
   const { base64Image, hospitalId, userInfo } = ctx.request.body
   const detectResult = await detect(base64Image);
-  const { phoneNumber, nickname, idCard = "" } = userInfo
+  const { phoneNumber, nickname, idCard = "", socialInsurance } = userInfo
   // console.log('detectResult', detectResult)
   if (!detectResult) {
     return responseMessage(FACE_RESPONSE_CODE.error_detect_user_face_invalid, userInfo, "用户人脸检测失败，请重新录入")
@@ -87,11 +87,12 @@ export const addUser = async (ctx) => {
     .findOne({
       username: phoneNumber
     });
-
+  
   if (user) {
     // 数据库查到了该用户
     const patient = { userId: user._id.valueOf().toString(), ...userInfo }
     const imageUrl = await getImageUrlFromKs3(user._id.valueOf().toString(), base64Image)
+    const dataOfSet = socialInsurance ? { socialInsurance } : {}
     db.collection('users').update(
       { _id: user._id },
       {
@@ -99,39 +100,40 @@ export const addUser = async (ctx) => {
           authenticAvatar: imageUrl,
           username: phoneNumber,
           nickname,
-          idCard,
           pinyinName,
           updatedAt: new Date(),
           institutionId: hospitalId,
-          ...getUserInfoByIdCard(idCard)
+          ...getUserInfoByIdCard(idCard),
+          ...dataOfSet,
         }
       },
     )
-
+    
     return responseResult(base64Image, hospitalId, patient, imageUrl)
   } else {
     // 数据库没有查到该用户
-
+    
     const _id = new ObjectID();
     const patient = { userId: _id.valueOf().toString(), ...userInfo }
     // 插入新用户到数据库
     const imageUrl = await getImageUrlFromKs3(_id.valueOf().toString(), base64Image)
+    const dataOfSet = socialInsurance ? { socialInsurance } : {}
     db.collection('users').insert({
       _id,
       nickname,
       username: phoneNumber,
       createdAt: new Date(),
-      idCard,
       pinyinName,
       authenticAvatar: imageUrl,
       institutionId: hospitalId,
       ...getUserInfoByIdCard(idCard),
+      ...dataOfSet,
       createdBy: 'FACE_DOG'
     })
-
+    
     return responseResult(base64Image, hospitalId, patient, imageUrl)
   }
-
+  
 }
 
 const responseResult = async (base64Image, hospitalId, userInfo, imageUrl = "") => {
@@ -139,8 +141,9 @@ const responseResult = async (base64Image, hospitalId, userInfo, imageUrl = "") 
   let userFaceImageUrl = imageUrl;
   if (!userFaceImageUrl) {
     userFaceImageUrl = await getImageUrlFromKs3(userInfo.userId, base64Image)
-    const { userId, phoneNumber, nickname, idCard } = userInfo
+    const { userId, phoneNumber, nickname, idCard, socialInsurance } = userInfo
     const pinyinName = getPinyinUsername(nickname)
+    const dataOfSet = socialInsurance ? { socialInsurance } : {}
     db.collection('users').update(
       { _id: ObjectId.createFromHexString(userId) },
       {
@@ -148,17 +151,17 @@ const responseResult = async (base64Image, hospitalId, userInfo, imageUrl = "") 
           authenticAvatar: userFaceImageUrl,
           username: phoneNumber,
           nickname,
-          idCard,
           pinyinName,
           updatedAt: new Date(),
           institutionId: hospitalId,
-          ...getUserInfoByIdCard(idCard)
+          ...getUserInfoByIdCard(idCard),
+          ...dataOfSet
         }
       },
     )
   }
   updateLocalFaceStorage(hospitalId, userFaceImageUrl, userInfo)
-
+  
   if (addUserFaceResult) {
     /*** 加入签到的逻辑*/
     const result = await checkInResult({ patientId: userInfo.userId, hospitalId })
@@ -177,7 +180,7 @@ const responseResult = async (base64Image, hospitalId, userInfo, imageUrl = "") 
  * 3. userInfo :{userId! ...}
  * */
 const addUserFace = async ({ base64Image, hospitalId, userInfo }) => {
-
+  
   const imageType = "BASE64";
   // 如果有可选参数
   const options = {};
@@ -185,7 +188,7 @@ const addUserFace = async ({ base64Image, hospitalId, userInfo }) => {
   // options["quality_control"] = "NORMAL";
   // options["liveness_control"] = "LOW";
   await deleteAndAddNewUserFace(userInfo.userId, hospitalId)
-
+  
   // 调用人脸注册
   try {
     const addResult = await client.addUser(base64Image, imageType, hospitalId, userInfo.userId, options)
@@ -216,14 +219,14 @@ export const searchFace = async (ctx) => {
   if (!detectResult) {
     return responseMessage(FACE_RESPONSE_CODE.error_detect_user_face_invalid, EmptyUserInfo, "用户人脸检测失败，请重新录入")
   }
-
+  
   const imageType = 'BASE64';
-
+  
   // 调用人脸搜索
   try {
     const searchResult = await client.search(base64Image, imageType, hospitalId)
     // console.log('人脸搜索结果', JSON.stringify(searchResult));
-
+    
     const { error_code, result } = searchResult
     if (error_code === 0 && !isEmpty(result.user_list[0])) {
       const {
@@ -252,13 +255,14 @@ export const searchUserByPhoneNumber = async (ctx) => {
     .collection('users')
     .findOne({
       username: phoneNumber
-    }, { nickname: 1, idCard: 1, username: 1 })
+    }, { nickname: 1, idCard: 1, username: 1, socialInsurance: 1 })
   if (user) {
     const formattedUser = {
       userId: user._id.valueOf().toString(),
       phoneNumber: user.username,
       nickname: user.nickname || null,
-      idCard: user.idCard || null
+      idCard: user.idCard || null,
+      socialInsurance: user.socialInsurance || null
     }
     return responseMessage(FACE_RESPONSE_CODE.success, formattedUser, "手机号校验：查到该用户！")
   } else {
@@ -291,7 +295,7 @@ const deleteAndAddNewUserFace = async (userId, groupId) => {
     // console.log('获取当前用户的人脸库数据失败', e)
     return true
   }
-
+  
 }
 
 
@@ -309,7 +313,7 @@ const updateLocalFaceStorage = async (groupID, faceUrl, userInfo) => {
       userId: userInfo.userId,
       groupID,
     });
-
+  
   const nowDate = new Date()
   const faceSourceItem = {
     faceToken: new ObjectID().valueOf().toString(),
@@ -361,10 +365,10 @@ export const getHospitals = async () => {
 }
 
 // 获取签到结果
-export const checkInResult = async ({ patientId, hospitalId, hasHealthCare=true}) => {
+export const checkInResult = async ({ patientId, hospitalId, hasHealthCare = true }) => {
   // console.log("checkInResult",patientId, hospitalId, hasHealthCare)
   const result = await outpatientPlanCheckIn(null, {
-    patientId:patientId.valueOf().toString(),
+    patientId: patientId.valueOf().toString(),
     hospitalId,
     noHealthCare: !hasHealthCare,
     departmentId: 'neifenmi'
@@ -376,12 +380,12 @@ export const checkInResult = async ({ patientId, hospitalId, hasHealthCare=true}
   } = result
   let resultStatus = ""
   let resultMessage = message.text
-
+  
   switch (code) {
     case 'ALREADY_SIGNED':
       resultStatus = FACE_RESPONSE_CODE.error_check_in_already_signed
       break
-
+    
     case 'PLANID_NOT_FOUND':
     case 'ONLY_CHECKIN_AT_THAT_DAY':
     case 'NO_PLAN_FOR_DEPARTMENT':
@@ -390,36 +394,37 @@ export const checkInResult = async ({ patientId, hospitalId, hasHealthCare=true}
     case 'NOT_PLAN_PATIENT':
       resultStatus = FACE_RESPONSE_CODE.error_check_in_need_contact_cde
       break
-
+    
     case 'FAILED':
       resultStatus = FACE_RESPONSE_CODE.error_check_in_other_reasons
       break;
-
+    
     // 是共同照护门诊的患者，但是不该今天来。返回前端，让患者选择是参与共同照护门诊还是普通门诊
     case 'NO_TREATMENT_TODAY_FOR_YOU':
       resultStatus = FACE_RESPONSE_CODE.error_check_in_should_check_certain_day
       break
-
+    
     case 'CHECKIN':
       resultStatus = FACE_RESPONSE_CODE.success
       break
-
+    
     default:
       resultStatus = FACE_RESPONSE_CODE.error_check_in_other_reasons
       break
   }
-
+  
   // console.log(
   //   "checkInResult",
   //   resultStatus,
   //   resultMessage)
-
+  
   return {
     resultStatus,
     resultMessage
   }
 }
 
+// 选择普通门诊或者照护门诊的时候调用这个接口，针对的普通门诊
 export const checkInWithCondition = async (ctx) => {
   const { patientId, hospitalId, hasHealthCare } = ctx.request.body
   const result = await checkInResult({ patientId, hospitalId, hasHealthCare })
@@ -428,12 +433,13 @@ export const checkInWithCondition = async (ctx) => {
     .collection('users')
     .findOne({
       _id: ObjectId.createFromHexString(patientId.valueOf().toString())
-    }, { nickname: 1, idCard: 1, username: 1 })
+    }, { nickname: 1, idCard: 1, username: 1, socialInsurance: 1 })
   const formattedUser = {
     userId: user._id.valueOf().toString(),
     phoneNumber: user.username,
     nickname: user.nickname || null,
-    idCard: user.idCard || null
+    idCard: user.idCard || null,
+    socialInsurance: user.socialInsurance || null,
   }
   return responseMessage(resultStatus, formattedUser, resultMessage)
 }

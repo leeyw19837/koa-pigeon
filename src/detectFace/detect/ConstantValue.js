@@ -21,4 +21,5 @@ export const EmptyUserInfo = {
   phoneNumber: '',
   nickname: '',
   idCard: '',
+  socialInsurance: '',
 }

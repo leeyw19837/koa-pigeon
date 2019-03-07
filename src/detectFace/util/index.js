@@ -15,7 +15,7 @@ export const getUserInfoByIdCard = (idCard) => {
 //女
     gender = "female";
   }
-  return {dateOfBirth, gender}
+  return { dateOfBirth, gender, idCard }
 }
 
 // 获取拼音
