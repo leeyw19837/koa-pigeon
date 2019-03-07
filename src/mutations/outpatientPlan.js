@@ -16,6 +16,7 @@ import { pubsub } from '../pubsub'
 
 import { mutateTreatmentCheckboxs } from './treatmentState'
 import { addPatientAppointment } from './appointment'
+import { changeUsername } from './changeUsername'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
 const isSameWeek = (date1, date2) => {
@@ -283,40 +284,39 @@ export const outpatientPlanCheckIn = async (
       patientState: { $in: ['ACTIVE', 'HAS_APPOINTMENT'] },
     })
     if (patient) {
-      const appointmentToday = await db.collection('appointments').findOne({
-        patientId,
-        patientState: { $ne: 'ARCHIVED' },
-        appointmentTime: {
-          $gte: dayjs()
-            .startOf('day')
-            .toDate(),
-          $lt: dayjs()
-            .endOf('day')
-            .toDate(),
-        },
-      })
-      let treatmentToday
-      if (appointmentToday) {
-        treatmentToday = await db.collection('treatmentState').findOne({
-          _id: appointmentToday.treatmentStateId,
-        })
+      const today = {
+        $gte: dayjs()
+          .startOf('day')
+          .toDate(),
+        $lt: dayjs()
+          .endOf('day')
+          .toDate(),
       }
-      if (!treatmentToday) {
-        return getReturnMessage('NO_TREATMENT_TODAY_FOR_YOU')
-      } else if (treatmentToday.checkIn) {
-        return getReturnMessage('ALREADY_SIGNED')
-      } else {
-        const appointmentId = appointmentToday._id
-        const outpatient = await db
-          .collection('outpatients')
-          .findOne({ appointmentsId: { $eq: appointmentId, $ne: null } })
-        if (outpatient) {
+      const outpatientToday = await db.collection('outpatients').findOne({
+        state: 'WAITING',
+        hospitalId,
+        outpatientDate: today,
+      })
+
+      if (outpatientToday) {
+        const appointmentToday = await db.collection('appointments').findOne({
+          patientId,
+          patientState: { $ne: 'ARCHIVED' },
+          _id: { $in: outpatientToday.appointmentsId },
+          appointmentTime: today,
+        })
+
+        if (!appointmentToday) {
+          return getReturnMessage('NO_TREATMENT_TODAY_FOR_YOU')
+        } else if (appointmentToday.isOutpatient) {
+          return getReturnMessage('ALREADY_SIGNED')
+        } else {
           gtzhCheckInState = await mutateTreatmentCheckboxs(
             null,
             {
               propName: 'checkIn',
               propValue: true,
-              treatmentId: treatmentToday._id,
+              treatmentId: appointmentToday.treatmentStateId,
               outpatientId: outpatient._id,
             },
             context,
@@ -361,6 +361,7 @@ export const outpatientPlanCheckIn = async (
 
   const extraData = combineExtra(existsPlan.extraData, {
     patientId,
+    isHealthCare: !noHealthCare,
     signedAt: new Date(),
   })
 
@@ -422,9 +423,9 @@ export const cancelCheckIn = async (_, { patientId, planId }, context) => {
 export const changeWildPatientInfos = async (
   _,
   { operatorId, planId, patient },
-  { getDb },
+  context,
 ) => {
-  const db = await getDb()
+  const db = await context.getDb()
 
   const existsPlan = await db
     .collection('outpatientPlan')
@@ -465,6 +466,23 @@ export const changeWildPatientInfos = async (
       },
     },
   )
+
+  if (patient.nickname) {
+    await db
+      .collection('appointments')
+      .update(
+        { patientId: patient._id },
+        { $set: { nickname: patient.nickname } },
+        { multi: true },
+      )
+    await db
+      .collection('treatmentState')
+      .update(
+        { patientId: patient._id },
+        { $set: { nickname: patient.nickname } },
+        { multi: true },
+      )
+  }
 
   if (existsPlan) {
     const updatedPlan = await db

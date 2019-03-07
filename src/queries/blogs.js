@@ -158,3 +158,61 @@ export const blogById = async (_, args, context) => {
   console.log(result, 'result')
   return result
 }
+
+export const getBlogsByIdArray = async (_, args, context) => {
+  const query = `query getBlogsByIdArray($systemType: String!,$ids:[String]) {
+    getBlogsByIdArray(systemType: $systemType, ids:$ids) {
+      _id
+      title
+      type
+      avatar
+      avatarThumbnail
+      desc
+      author
+      publishedAt
+      videoSources
+      comments(systemType: $systemType) {
+        _id
+        content
+        user {
+          nickname
+          avatar
+        }
+        votes
+        createdAt
+      }
+      votes(systemType: $systemType)
+      views(systemType: $systemType)
+    }
+  }`
+  const { ids } = args
+  let result = []
+  try {
+    const data = await request(BLOG_URL, query, {
+      systemType: 'BG',
+      ids
+    })
+    result = data.getBlogsByIdArray
+  } catch (error) {
+    console.log(error, 'error')
+  }
+  result = result.map(blog => {
+    const { comments } = blog
+    let tempCms = []
+    if (comments.length) {
+      tempCms = comments.map(cm => ({
+        ...cm,
+        text: cm.content,
+        createdAt: new Date(cm.createdAt),
+      }))
+    }
+    return {
+      ...blog,
+      comments: tempCms,
+      publishedAt: new Date(blog.publishedAt),
+      createdAt: new Date(blog.publishedAt),
+    }
+  })
+
+  return result
+}

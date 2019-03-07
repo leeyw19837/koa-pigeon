@@ -1,7 +1,18 @@
+type ConfigurationItem {
+  imgUrl: String
+  type: String
+  recordId: String
+  title: String
+  knowledgeId: String
+  themeColor: String
+}
+
 type ConfigurationContent {
   _id: ID
   type: String
   title: String
+  category: String
   content: [String]
+  items:[ConfigurationItem]
   createdAt: Date
 }
