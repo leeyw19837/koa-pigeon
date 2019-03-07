@@ -168,7 +168,6 @@ export const getBlogsByIdArray = async (_, args, context) => {
       avatar
       avatarThumbnail
       desc
-      author
       publishedAt
       videoSources
       comments(systemType: $systemType) {
@@ -185,7 +184,7 @@ export const getBlogsByIdArray = async (_, args, context) => {
       views(systemType: $systemType)
     }
   }`
-  const { ids } = args
+  const { ids } = _
   let result = []
   try {
     const data = await request(BLOG_URL, query, {
@@ -213,6 +212,5 @@ export const getBlogsByIdArray = async (_, args, context) => {
       createdAt: new Date(blog.publishedAt),
     }
   })
-
   return result
 }

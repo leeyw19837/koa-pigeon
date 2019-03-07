@@ -81,6 +81,7 @@ type Patient {
   outpatientExtra: OutpatientExtraData
   authenticAvatar: String
   address:[Address]
+  myArticle: [Article]
 }
 
 type MembershipInformation {

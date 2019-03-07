@@ -3,7 +3,7 @@ import get from 'lodash/get'
 import includes from 'lodash/includes'
 import { request } from 'graphql-request'
 import { ObjectID } from 'mongodb'
-const { BLOG_URL = 'http://172.16.0.190:3181/graphql' } = process.env
+const { BLOG_URL = 'https://blog-backend.gtzh-stg.ihealthcn.com/graphql' } = process.env
 
 const QUERY_MAP = {
   getCategoryArticles: `query GetCategoryArticles($category: String, $systemType: String) {
@@ -67,6 +67,19 @@ const QUERY_MAP = {
       }
     }
   `,
+  getArticlesByIds: `query getArticlesByIds($systemType: String, $ids:[String]) {
+    getArticlesByIdArray(systemType: $systemType, ids: $ids) {
+      _id
+      title
+      views
+      comments
+      publishedAt
+      avatar
+      avatarThumbnail
+      desc
+      category
+    }
+  }`,
 }
 
 const getDataWithSharing = async (queryKey, params) => {
@@ -196,4 +209,35 @@ export const ArticleCollection = async (_, args, context) => {
   }
   let collectionList = user.knowledgeList
   return includes(collectionList, knowledgeId)
+}
+
+export const getBlogsByIdArray = async (_, args, context) => {
+  let result = null
+  const ids = _.ids
+  if (!ids) {
+    return []
+  }
+  try {
+    const data = await request(BLOG_URL, QUERY_MAP['getArticlesByIds'], {
+      systemType: 'BG',
+      ids,
+    })
+    result = data.getArticlesByIdArray
+  } catch (error) {
+    console.log(error, 'error')
+  }
+  if (result && result.length > 0) {
+    for (var i = 0; i < result.length; i++) {
+      const sharingInfo = await db
+        .collection('sharing')
+        .aggregate([
+          { $match: { 'shareData.recordId': result[i]._id } },
+          { $group: { _id: '$shareData.recordId', count: { $sum: 1 } } },
+        ])
+        .toArray()
+      result[i].sharings = get(sharingInfo.filter(o => o._id === result[i]._id), '0.count') || 0
+      result[i].publishedAt = result[i].publishedAt ? new Date(result[i].publishedAt) : null
+    }
+    return result
+  }
 }

@@ -5,6 +5,7 @@ import { maybeCreateFromHexString } from '../utils/maybeCreateFromHexString'
 import moment from 'moment'
 import axios from 'axios'
 import { getMeasureFeedback } from '../cronJob/controller/getMeasureFeedback'
+import { getBlogsByIdArray } from '../queries/article'
 
 const getCondition = async ({ filter }, db) => {
   const { namePattern, cdeId, isRecentCLR, isContinuousNonMonitor } = filter
@@ -847,6 +848,14 @@ export const Patient = {
         .find({ patientId })
         .sort({ createdAt: -1 })
         .toArray()
+    }
+    return result
+  },
+  myArticle: async (patient, _, { getDb }) => {
+    const knowledgeList = patient.knowledgeList
+    let result = []
+    if (knowledgeList && knowledgeList.length > 0) {
+      result = await getBlogsByIdArray({ ids: knowledgeList })
     }
     return result
   },
