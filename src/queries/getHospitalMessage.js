@@ -10,6 +10,7 @@ export const getHospitalMessage = async (_, args) => {
     .findOne({
       _id: ObjectId.createFromHexString(patientId)
     })
+  console.log("user", user)
   const { institutionId = "", healthCareTeamId = [] } = user
   let hospitalMessage = [];
   if (healthCareTeamId.length !== 0) {
@@ -33,5 +34,6 @@ export const getHospitalMessage = async (_, args) => {
         password: 0,
       }).sort({ recommendDegree: 1 }).toArray()
   }
+  console.log("hospitalMessage", hospitalMessage)
   return hospitalMessage
 }
