@@ -78,6 +78,7 @@ import * as configurationContent from './configurationContent'
 import * as outpatientPlan from './outpatientPlan'
 import * as disease from './disease'
 
+import * as getCommonProblem from './CommonProblems'
 import { themes } from './themes'
 
 const queries = {
@@ -147,6 +148,7 @@ const queries = {
   ...configurationContent,
   ...outpatientPlan,
   ...disease,
+  ...getCommonProblem,
   themes,
   ...getHospitalMessage,
 }

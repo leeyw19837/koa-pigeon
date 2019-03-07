@@ -201,6 +201,9 @@ type Query {
   getOutpatientPlans(date: String): [OutpatientPlan]
   # 获取病种列表
   getDisease: [Disease!]
+  # app 常见问题
+  getCommonProblem:[CommonProblem]
+
   # 获取医院的信息
   getHospitalMessage(patientId: String): [HospitalMessage]
 }
@@ -710,6 +713,16 @@ type Mutation {
     mobile: String
     verificationCode: String
     ): Boolean
+  updateUserHeadImage(
+    patientId: String!
+    headImageBase64: String!
+  ): String
+  saveAddress(address: AddressInput): Boolean
+  removeAddress( _id: ID!): Boolean
+  updateUserLocalCity(
+    patientId: String!
+    city: String!
+  ): Boolean
 }
 
 type Subscription {

@@ -1,0 +1,7 @@
+type CommonProblem {
+  _id:String
+  kind:String
+  subType:String
+  question:String
+  answer:String
+}

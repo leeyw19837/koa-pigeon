@@ -4,6 +4,8 @@ import get from 'lodash/get'
 import { changeUsername } from './changeUsername'
 import moment from 'moment'
 import { outpatientPlanCheckIn } from './outpatientPlan'
+// import { Date } from "../utils";
+import { uploadBase64Img } from '../utils/ks3'
 
 export const updatePatientProfile = async (_, args, context) => {
   const db = await context.getDb()
@@ -13,6 +15,17 @@ export const updatePatientProfile = async (_, args, context) => {
   if (!isEmpty(restSetter)) {
     if (restSetter.nickname) {
       restSetter.pinyinName = getPinyinUsername(restSetter.nickname)
+    }
+    if (!isEmpty(restSetter.petname)) {
+      const petnameDistinct = await db
+        .collection('users')
+        .find({
+          petname: restSetter.petname,
+        })
+        .toArray()
+      if (petnameDistinct && petnameDistinct.length > 0) {
+        throw new Error('该昵称已被其他用户使用！')
+      }
     }
     await db.collection('users').update(
       { _id: ObjectID(patientId) },
@@ -93,17 +106,22 @@ export const updateUserIdentificationInfos = async (_, args, context) => {
       'updateUserIdentificationInfos error! patient does not exist!',
     )
   }
-
-  const idCardDateOfBirth = userIdentificationInfos.idCard.substring(6, 14)
-  const dateOfBirth = moment(idCardDateOfBirth, 'YYYYMMDD').toDate()
-  const genderDigit = userIdentificationInfos.idCard.substr(-2, 1)
+  let infoFromIdCard = {}
+  if (userIdentificationInfos.idCard) {
+    const idCardDateOfBirth = userIdentificationInfos.idCard.substring(6, 14)
+    const dateOfBirth = moment(idCardDateOfBirth, 'YYYYMMDD').toDate()
+    const genderDigit = userIdentificationInfos.idCard.substr(-2, 1)
+    infoFromIdCard = {
+      dateOfBirth,
+      gender: genderDigit % 2 === 0 ? 'female' : 'male',
+    }
+  }
   await db.collection('users').update(
     { _id: ObjectID(patientId) },
     {
       $set: {
         ...userIdentificationInfos,
-        dateOfBirth,
-        gender: genderDigit % 2 === 0 ? 'female' : 'male',
+        ...infoFromIdCard,
       },
     },
   )
@@ -155,4 +173,25 @@ export const addWildPatient = async (
     )
   }
   return result.result.ok
+}
+export const updateUserHeadImage = async (_, args, context) => {
+  const db = await context.getDb()
+  const { patientId, headImageBase64 } = args
+  const imageUrlKey = `${patientId}${Date.now()}`
+  const imageUrl = await uploadBase64Img(imageUrlKey, headImageBase64)
+  await db.collection('users').update(
+    { _id: ObjectID(patientId) },
+    { $set: { avatar: imageUrl } }
+  )
+  return imageUrl
+}
+
+export const updateUserLocalCity = async (_, args, context) => {
+  const db = await context.getDb()
+  const { patientId, city } = args
+  await db.collection('users').update(
+    { _id: ObjectID(patientId) },
+    { $set: { localCity: city } }
+  )
+  return true
 }

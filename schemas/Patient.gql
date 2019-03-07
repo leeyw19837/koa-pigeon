@@ -2,6 +2,7 @@ type Patient {
   _id: ID
   nickname: String
   petname: String
+  knowledgeList: [String]
   username: String
   gender: String
   dateOfBirth: String
@@ -21,6 +22,7 @@ type Patient {
   patientState: String
   archivedReason: String
   district: String
+  localCity: String
   caseRecords(limit: Int): [CaseRecord]
   remarks: String
   soaps: [SOAP]
@@ -78,6 +80,7 @@ type Patient {
   # 门诊附加信息（此字段内容不是保存在WildPatient表中而是从门诊表获取得到）
   outpatientExtra: OutpatientExtraData
   authenticAvatar: String
+  address:[Address]
 }
 
 type MembershipInformation {
