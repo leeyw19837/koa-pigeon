@@ -1,0 +1,74 @@
+# 此版本的文章是为了给App所有，所以有所修改
+type Article {
+  _id: String!
+  # 文章配图的缩略图
+  avatarThumbnail: String
+  avatar: String
+  # 标题
+  title: String
+  # 文章发布时间
+  publishedAt: Date
+  # 纯文本简介
+  desc: String
+  views: Int
+  comments: Int
+  sharings: Int
+  category: ArticleCategory
+}
+
+enum ArticleCategory {
+  # 最新资讯
+  NEWS
+  # 健康饮食
+  HEALTH_FOOD
+  # 专家讲座
+  EXPERT_LECTURES
+  # 糖友家园
+  FAMILY_GROUP
+  # 了解血糖
+  KNOW_BG
+  # 用户使用指南
+  USE_GUIDE
+}
+
+type CategoryArticle {
+  dayUpdateCount: Int
+  category: ArticleCategory
+  articles: [Article]
+}
+
+input PaginationCursorInput {
+  first: Int
+  after: String
+}
+
+type PaginationInfo {
+  first: Int
+  after: String
+  hasNextPage: Boolean
+}
+
+type PaginationResult {
+  pageInfo: PaginationInfo
+  articles: [Article]
+}
+
+type Author {
+  _id: String
+  nickname: String
+  avatar: String
+  institution: String
+  intro: String
+  achievements: String
+  articles: [Article]
+}
+extend type Query {
+  getCategoryArticles(category: String, systemType: String): [CategoryArticle]
+  getArticlesByCategory(
+    category: String
+    systemType: String
+    cursorInput: PaginationCursorInput
+  ): PaginationResult
+  getArticleById(systemType: String, id: ID!): Article
+  getAuthor(authorId: ID!): Author
+}

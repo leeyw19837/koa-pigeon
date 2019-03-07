@@ -80,7 +80,7 @@ import * as disease from './disease'
 
 import * as getCommonProblem from './CommonProblems'
 import { themes } from './themes'
-
+import * as article from './article'
 const queries = {
   ...bloodGlucoseMeasurements,
   ...chatMessages,
@@ -151,6 +151,7 @@ const queries = {
   ...getCommonProblem,
   themes,
   ...getHospitalMessage,
+  ...article,
 }
 
 const queriesWithAuthandLog = {}

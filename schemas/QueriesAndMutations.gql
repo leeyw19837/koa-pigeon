@@ -202,10 +202,12 @@ type Query {
   # 获取病种列表
   getDisease: [Disease!]
   # app 常见问题
-  getCommonProblem:[CommonProblem]
+  getCommonProblem: [CommonProblem]
 
   # 获取医院的信息
   getHospitalMessage(patientId: String): [HospitalMessage]
+  # 查询文章收藏状态
+  ArticleCollection(patientId: ID, knowledgeId: String): Boolean
 }
 
 type Mutation {
@@ -706,23 +708,17 @@ type Mutation {
   ): Boolean
   checkInByHand(username: String!, planId: ID!): ApiReturn
   # APP申请预约接口
-    applyForAppointment(
+  applyForAppointment(
     nickname: String
     institutionId: String
     expectedTime: Date
     mobile: String
     verificationCode: String
-    ): Boolean
-  updateUserHeadImage(
-    patientId: String!
-    headImageBase64: String!
-  ): String
-  saveAddress(address: AddressInput): Boolean
-  removeAddress( _id: ID!): Boolean
-  updateUserLocalCity(
-    patientId: String!
-    city: String!
   ): Boolean
+  updateUserHeadImage(patientId: String!, headImageBase64: String!): String
+  saveAddress(address: AddressInput): Boolean
+  removeAddress(_id: ID!): Boolean
+  updateUserLocalCity(patientId: String!, city: String!): Boolean
 }
 
 type Subscription {

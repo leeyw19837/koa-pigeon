@@ -5,14 +5,7 @@ const { ENABLE_USER_BEHAVIOR } = process.env
 
 export const saveUserBehaviors = async (_, args, context) => {
   const db = await context.getDb()
-  const {
-    patientId,
-    eventName,
-    eventNumber,
-    sessionId,
-    occurredAt,
-    deviceContext,
-  } = args
+  const { patientId, eventName, sessionId, deviceContext } = args
   if (!patientId) {
     throw new Error('You must be logged in to update devices')
   }
@@ -28,7 +21,6 @@ export const saveUserBehaviors = async (_, args, context) => {
     _id: String(frId),
     patientId,
     eventName,
-    eventNumber,
     sessionId,
     occurredAt: new Date(),
   }

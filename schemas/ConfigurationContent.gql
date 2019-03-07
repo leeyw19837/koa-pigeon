@@ -11,8 +11,12 @@ type ConfigurationContent {
   _id: ID
   type: String
   title: String
-  category: String
   content: [String]
-  items:[ConfigurationItem]
+  category: String
+  items: [ConfigurationItem]
   createdAt: Date
+}
+
+extend type Query {
+  getConfigByCategory(category: String!): ConfigurationContent
 }
