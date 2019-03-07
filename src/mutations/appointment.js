@@ -1221,16 +1221,21 @@ export const applyForAppointment = async (_, params, context) => {
     throw new Error('手机号码格式不正确')
     return
   }
-  const verificationResult = await verify(RIGHTEOUS_RAVEN_URL, {
-    client_id: RIGHTEOUS_RAVEN_ID,
-    client_key: RIGHTEOUS_RAVEN_KEY,
-    rec: mobile,
-    code: verificationCode,
-  })
-  if ( verificationResult.data.result !== 'success') {
-    throw new Error('verification_error')
+
+  if (verificationCode && verificationCode!==''){
+    const verificationResult = await verify(RIGHTEOUS_RAVEN_URL, {
+      client_id: RIGHTEOUS_RAVEN_ID,
+      client_key: RIGHTEOUS_RAVEN_KEY,
+      rec: mobile,
+      code: verificationCode,
+    })
+    if ( verificationResult.data.result !== 'success') {
+      throw new Error('verification_error')
+    }
   }
 
+  // 标记预约申请来自于APP
+  params.source = 'from_app'
   const addAppointmentResult = await addPatientAppointment(_, params, context)
 
   console.log('applyForAppointment >> addAppointmentResult=',addAppointmentResult)
