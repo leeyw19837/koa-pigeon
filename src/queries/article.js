@@ -36,7 +36,7 @@ const QUERY_MAP = {
       }
     }
   }`,
-  getArticlesById: `query GetArticleById($systemType: String, $id: ID!) {
+  getArticleById: `query GetArticleById($systemType: String, $id: ID!) {
     getArticleById(systemType: $systemType, id: $id) {
       _id
       title
@@ -151,6 +151,7 @@ export const getArticleById = async (_, { systemType = 'BG', id }) => {
       publishedAt: result.publishedAt ? new Date(result.publishedAt) : null,
     }
   }
+  console.log('result :', result)
   return result
 }
 
