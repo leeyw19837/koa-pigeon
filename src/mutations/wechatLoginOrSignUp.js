@@ -1,20 +1,20 @@
-import {get, isEmpty} from 'lodash'
+import { get, isEmpty } from 'lodash'
 const OAuth = require('co-wechat-oauth')
 import jsonwebtoken from 'jsonwebtoken'
 
-const {APP_ID, APP_SECRET, TOKEN_EXP, TOKEN_EXP_FOR_NEW} = process.env
+const { APP_ID, APP_SECRET, TOKEN_EXP, TOKEN_EXP_FOR_NEW } = process.env
 const client = new OAuth(APP_ID, APP_SECRET)
 
-export const wechatLoginOrSignUp = async(_, args, context) => {
+export const wechatLoginOrSignUp = async (_, args, context) => {
   const db = await context.getDb()
-  const {JWT_SECRET} = process.env
-  const {wechatCode} = args
+  const { JWT_SECRET } = process.env
+  const { wechatCode } = args
   const token = await client.getAccessToken(wechatCode)
   const accessToken = get(token, 'data.access_token')
   const openid = get(token, 'data.openid')
   const existingPatient = await db
     .collection('users')
-    .findOne({wechatOpenId: openid})
+    .findOne({ wechatOpenId: openid })
   console.log('existingPatient', existingPatient, openid)
   if (existingPatient) {
     console.log('existingPatient---->>>', existingPatient)
@@ -26,7 +26,7 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
     console.log('准备为用户进行JWT签名：', existingPatient)
     const JWT = jsonwebtoken.sign({
       user: existingPatient
-    }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_NEW})
+    }, JWT_SECRET, { expiresIn: TOKEN_EXP_FOR_NEW })
     console.log('JWT', JWT)
     const isWechat = !isEmpty(existingPatient.wechatInfo)
     console.log('exist--->', openid)
@@ -38,11 +38,11 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
         .update({
           _id: existingPatient._id
         }, {
-          $set: {
-            avatar: wechatInfo.headimgurl,
-            updatedAt: new Date()
-          }
-        },)
+            $set: {
+              avatar: wechatInfo.headimgurl,
+              updatedAt: new Date()
+            }
+          })
     }
     return {
       patientId: existingPatient._id,
@@ -57,11 +57,12 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
             : existingPatient.gender === 'male'
               ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
               : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png' : existingPatient.gender === 'male'
-                ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
-                : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
+            ? 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-male@2x.png'
+            : 'https://swift-snail.ks3-cn-beijing.ksyun.com/patient-female@2x.png',
       // existingPatient.avatar,
       nickname: existingPatient.nickname,
       patientState: existingPatient.patientState,
+      petname: existingPatient.petname,
       birthday: existingPatient.dateOfBirth,
       gender: existingPatient.gender,
       didCreateNewPatient: false,
@@ -86,17 +87,17 @@ export const wechatLoginOrSignUp = async(_, args, context) => {
     .update({
       openid
     }, {
-      ...wechatInfo,
-      updatedAt: new Date()
-    }, {
-      upsert: true
-    },)
+        ...wechatInfo,
+        updatedAt: new Date()
+      }, {
+        upsert: true
+      })
   //JWT签名
   console.log('准备为新用户进行JWT签名：', openid)
   const JWT = jsonwebtoken.sign({
     user: openid
-  }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_NEW})
+  }, JWT_SECRET, { expiresIn: TOKEN_EXP_FOR_NEW })
   console.log('JWT', JWT)
 
-  return {wechatOpenId: openid, didCreateNewPatient: true, JWT}
+  return { wechatOpenId: openid, didCreateNewPatient: true, JWT }
 }
