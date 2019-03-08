@@ -74,7 +74,7 @@ const getLocation = outpatient => {
 
   const prefix =
     registrationType === 'ONSITE'
-      ? `${registrationLocation}挂${registrationDepartment}的号，后`
+      ? `${registrationLocation}挂${registrationDepartment}的号，`
       : ''
   const outpatientLocation = prefix + location
   const options = {
