@@ -142,7 +142,7 @@ export const saveBloodGlucoseMeasurementNew = async (_, args, context) => {
     note: '',
     labels: [],
     dataStatus: 'ACTIVE',
-    createdAt: measuredAt,
+    createdAt: new Date(),
     updatedAt: measuredAt,
   }
 
