@@ -12,7 +12,7 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
   const userObjectId = ObjectId.createFromHexString(userId)
 
   const user = await db.collection('users').findOne({
-    _id: userId === '66728d10dc75bc6a43052036' ? userId : userObjectId,
+    _id: { $in: [userId, userObjectId] },
   })
   let chatRoom
   if (user.needleChatRoomId) {
@@ -20,6 +20,15 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
       .collection('needleChatRooms')
       .findOne({ _id: user.needleChatRoomId })
   } else {
+    let cdeUserId
+    if (user.cdeId) {
+      const cde = await db
+        .collection('certifiedDiabetesEducators')
+        .findOne({ _id: user.cdeId })
+      if (cde) {
+        cdeUserId = cde.userId
+      }
+    }
     chatRoom = {
       _id: freshId(),
       participants: [
@@ -30,7 +39,7 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
           unreadCount: 0,
         },
         {
-          userId: '66728d10dc75bc6a43052036',
+          userId: cdeUserId || '66728d10dc75bc6a43052036',
           role: '医助',
           lastSeenAt: new Date(),
           unreadCount: 0,
@@ -39,7 +48,7 @@ export const fetchOrCreateNeedleChatRoom = async (_, args, context) => {
       lastMessageSendAt: new Date('2000-01-01'),
     }
     await db.collection('needleChatRooms').insertOne(chatRoom)
-    if (userId !== '66728d10dc75bc6a43052036') {
+    if (!user.roles) {
       await db
         .collection('users')
         .update(
