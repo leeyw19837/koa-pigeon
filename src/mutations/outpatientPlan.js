@@ -277,6 +277,7 @@ export const outpatientPlanCheckIn = async (
   context,
 ) => {
   const db = await context.getDb()
+  const healthCareCheckInSuccess = false
   if (!noHealthCare) {
     let gtzhCheckInState
     const patient = await db.collection('users').findOne({
@@ -324,6 +325,7 @@ export const outpatientPlanCheckIn = async (
           if (gtzhCheckInState.status !== 'success') {
             return getReturnMessage('FAILED')
           }
+          healthCareCheckInSuccess = true
         }
       }
     }
@@ -361,7 +363,7 @@ export const outpatientPlanCheckIn = async (
 
   const extraData = combineExtra(existsPlan.extraData, {
     patientId,
-    isHealthCare: !noHealthCare,
+    isHealthCare: healthCareCheckInSuccess,
     signedAt: new Date(),
   })
 
