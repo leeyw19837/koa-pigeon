@@ -71,18 +71,11 @@ export const NeedleChatRoom = {
     let users = []
 
     for (const participant of needleChatRoom.participants) {
-      // TODO(tangweikun) Hard Cord should replace of healthCareProfessional id
-      if (participant.userId === '66728d10dc75bc6a43052036') {
-        const healthCareProfessional = await db
-          .collection('users')
-          .findOne({ _id: participant.userId })
-        users.push(healthCareProfessional)
-      } else {
-        const patient = await db
-          .collection('users')
-          .findOne({ _id: maybeCreateFromHexString(participant.userId) })
-        users.push(patient)
-      }
+      const objId = maybeCreateFromHexString(participant.userId)
+      const user = await db
+        .collection('users')
+        .findOne({ _id: { $in: [participant.userId, objId] } })
+      users.push(user)
     }
 
     return users
