@@ -85,6 +85,7 @@ export const getGroupedInterventionTasks = async (
     .collection('interventionTask')
     .aggregate([
       { $match: condition },
+      { $sort: { createdAt: -1 } },
       { $group: { _id: '$type', count: { $sum: 1 } } },
       { $project: { type: '$_id', _id: 0, count: 1 } },
     ])

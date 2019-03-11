@@ -140,9 +140,10 @@ export const saveTask = async task => {
     const nearestTask = await getNearestTaskWithSameType(task)
     if (!nearestTask) shouldPub = true
     else {
+      const isNearestTaskDone = nearestTask.state === 'DONE'
       if (task.type === 'FLUCTUATION') {
         // 覆盖上次
-        shouldPub = nearestTask.state !== 'DONE'
+        shouldPub = !isNearestTaskDone
         shouldSilenceNearest = shouldPub
       } else if (
         task.type === 'AFTER_MEALS_HIGH' ||
@@ -150,7 +151,6 @@ export const saveTask = async task => {
       ) {
         // 大于0表示新任务的优先级更高
         const diffRiskLevel = nearestTask.riskLevel - task.riskLevel
-        const isNearestTaskDone = nearestTask.state === 'DONE'
         if (isNearestTaskDone) {
           shouldPub = diffRiskLevel > 0
         } else {
@@ -174,7 +174,11 @@ export const saveTask = async task => {
   }
   const taskState = shouldPub ? 'PENDING' : 'SILENT'
   await db.collection('interventionTask').insert({ ...task, state: taskState })
-  if (shouldPub) {
+  if (
+    shouldPub ||
+    (!shouldPub &&
+      (task.type === 'AFTER_MEALS_HIGH' || task.type === 'EMPTY_STOMACH_HIGH'))
+  ) {
     pubsub.publish('interventionTaskDynamics', {
       ...task,
       state: taskState,

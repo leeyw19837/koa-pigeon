@@ -98,7 +98,6 @@ export const getRiskLevel = async ({
         const latestDayTooHigh = first(emptyStomachBgsByDay)
         // 以前未测量过空腹血糖，或者前一天的测量值不高于阈值，认为不连续超高
 
-        console.log('latestDayTooHigh :', latestDayTooHigh)
         if (
           !latestDayTooHigh ||
           latestDayTooHigh.higherValue < thresholdOfTooHigh
