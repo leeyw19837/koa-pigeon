@@ -859,4 +859,17 @@ export const Patient = {
     }
     return result
   },
+  isShowAskDoctor: async (patient, _, { getDb }) => {
+    const { createdAt, institutionId } = patient
+    if (institutionId && institutionId === 'CHAOYANGYIYUAN') {
+      var beforeThreeDays = moment().day(-2)
+      if (beforeThreeDays > moment(createdAt)) {
+        return false
+      } else {
+        return true
+      }
+    } else {
+      return false
+    }
+  },
 }

@@ -26,12 +26,12 @@ export const patients = async (_, { cdeId, healthCareTeamId }, { getDb }) => {
     roles: { $exists: 0 },
   }
   if (cdeId) condition.cdeId = cdeId
-
+  
   if (healthCareTeamId) {
     condition.healthCareTeamId = healthCareTeamId
     condition.patientState = 'ACTIVE'
   }
-
+  
   return await db
     .collection('users')
     .find(condition)
@@ -53,7 +53,7 @@ export const patientsHasCDE = async (
     condition.nickname = { $regex: nameFilter }
   }
   if (!nosy && cdeId) condition.cdeId = cdeId
-
+  
   return await db
     .collection('users')
     .find(condition)
@@ -119,7 +119,7 @@ export const appointmentsInformation = async (_, args, { getDb }) => {
     })
     .sort({ appointmentTime: -1 })
     .toArray()
-
+  
   // 下次门诊时间/下次门诊次数/下次门诊还剩几天
   const preAppointments = appointments.filter(a => {
     // 所有签了到的门诊, 用来计算历史门诊次数
@@ -127,24 +127,23 @@ export const appointmentsInformation = async (_, args, { getDb }) => {
   })
   result.preAppointmentsCount = preAppointments.length
   result.nextAppointmentCount = result.preAppointmentsCount + 1
-
+  
   const nextAppointment = orderBy(
     // 未签到的, 今天或今天之后的第一次门诊
     appointments.filter(a => {
       return (
         a.isOutPatient === false &&
-        moment(a.appointmentTime) >= moment().startOf('day')
+        moment(a.appointmentTime || a.expectedTime) >= moment().startOf('day')
       )
     }),
     ['appointmentTime'],
     ['asc'],
   )
   if (nextAppointment && nextAppointment.length > 0) {
-    result.nextAppointmentDate = moment(
-      nextAppointment[0].appointmentTime,
-    ).format('YYYY-MM-DD')
-    result.nextAppointmentDays = moment(nextAppointment[0].appointmentTime)
-      .diff(new Date(), 'days')
+    const nextAppoint = nextAppointment[0].appointmentTime || nextAppointment[0].expectedTime
+    result.nextAppointmentDate = moment(nextAppoint).format('YYYY-MM-DD')
+    result.nextAppointmentDays = moment(nextAppoint)
+      .diff(moment(), 'days')
       .toString()
   }
   return result

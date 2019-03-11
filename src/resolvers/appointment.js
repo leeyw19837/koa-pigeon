@@ -42,4 +42,13 @@ export const Appointment = {
     }
     return timeRange
   },
+  hospitalName: async (appointment, _, { getDb }) => {
+    const db = await getDb()
+    const { institutionId } = appointment
+    const hospital = await db
+      .collection('institutions')
+      .findOne({ _id: institutionId })
+    return hospital.fullname
+  },
+  
 }

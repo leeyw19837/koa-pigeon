@@ -82,6 +82,7 @@ type Patient {
   authenticAvatar: String
   address:[Address]
   myArticle: [Article]
+  isShowAskDoctor: Boolean
 }
 
 type MembershipInformation {

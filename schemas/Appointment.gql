@@ -57,6 +57,7 @@ type Appointment {
   inValueRange: [Date]
   patientUserInfoCompleted: Boolean
   treatmentStateId: ID
+  hospitalName: String
 }
 
 type DailyAppointment {
