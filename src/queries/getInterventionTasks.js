@@ -1,6 +1,6 @@
 export const getInterventionTasks = async (
   _,
-  { cdeId, patientId, nosy },
+  { cdeId, patientId, nosy, state },
   { getDb },
 ) => {
   const db = await getDb()
@@ -20,6 +20,9 @@ export const getInterventionTasks = async (
     condition.patientId = { $in: patientsIds }
   } else if (patientId) {
     condition = { patientId }
+    if (state) {
+      condition.state = state
+    }
   } else if (nosy) {
     const patients = await db
       .collection('users')

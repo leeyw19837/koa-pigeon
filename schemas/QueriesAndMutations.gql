@@ -135,6 +135,7 @@ type Query {
     cdeId: ID
     patientId: ID
     nosy: Boolean
+    state: InterventionTaskState
   ): [InterventionTask!]
   getUnreadTask(patientId: ID, type: String): Int
   getGroupedInterventionTasks(
