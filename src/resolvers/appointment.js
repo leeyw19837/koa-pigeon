@@ -48,7 +48,10 @@ export const Appointment = {
     const hospital = await db
       .collection('institutions')
       .findOne({ _id: institutionId })
-    return hospital.fullname
+    if (hospital) {
+      return hospital.fullname
+    }
+    return ""
   },
-  
+
 }
