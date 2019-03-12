@@ -129,7 +129,7 @@ export const addUser = async (ctx) => {
       ...getUserInfoByIdCard(idCard),
       ...dataOfSet,
       createdBy: 'FACE_DOG',
-      patientState: 'WILD',
+      patientState: "WILD"
     })
     
     return responseResult(base64Image, hospitalId, patient, imageUrl)
