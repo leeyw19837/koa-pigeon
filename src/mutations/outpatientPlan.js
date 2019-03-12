@@ -277,7 +277,7 @@ export const outpatientPlanCheckIn = async (
   context,
 ) => {
   const db = await context.getDb()
-  const healthCareCheckInSuccess = false
+  let healthCareCheckInSuccess = false
   if (!noHealthCare) {
     let gtzhCheckInState
     const patient = await db.collection('users').findOne({
@@ -318,7 +318,7 @@ export const outpatientPlanCheckIn = async (
               propName: 'checkIn',
               propValue: true,
               treatmentId: appointmentToday.treatmentStateId,
-              outpatientId: outpatient._id,
+              outpatientId: outpatientToday._id,
             },
             context,
           )
@@ -517,6 +517,7 @@ export const checkInByHand = async (_, { username, planId }, context) => {
   const db = await context.getDb()
   const patient = await db.collection('users').findOne({
     username: username,
+    roles: { $exists: 0 },
   })
 
   if (patient) {
