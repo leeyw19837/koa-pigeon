@@ -841,6 +841,7 @@ export const Patient = {
   address: async (patient, _, { getDb }) => {
     const db = await getDb()
     const patientId = patient._id.toString()
+    console.log('patientId--->', patientId)
     let result = []
     if (patientId) {
       result = await db
@@ -849,6 +850,7 @@ export const Patient = {
         .sort({ createdAt: -1 })
         .toArray()
     }
+    console.log('result--->', result)
     return result
   },
   myArticle: async (patient, _, { getDb }) => {
