@@ -301,11 +301,10 @@ export const outpatientPlanCheckIn = async (
           outpatientDate: today,
         })
         .toArray()
-
       if (!isEmpty(outpatientsToday)) {
         const outpatientIncludeThisPatient = find(
           outpatientsToday,
-          ({ appointmentsId }) => includes(appointmentsId, patientId),
+          ({ patientsId }) => includes(patientsId, patientId),
         )
 
         let appointmentToday
