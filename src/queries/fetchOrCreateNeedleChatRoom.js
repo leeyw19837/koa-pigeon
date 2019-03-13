@@ -100,7 +100,7 @@ export const unreadMessages = async (_, args, context) => {
 
 export const getChatrooms = async (
   _,
-  { nosy, cdeId, page, limit, chatRoomId },
+  { nosy, cdeId, page, limit, chatRoomId, unreadOnly = false },
   { getDb },
 ) => {
   if (!nosy && !cdeId && !chatRoomId) {
@@ -110,33 +110,36 @@ export const getChatrooms = async (
   let condition = {}
   if (chatRoomId) {
     condition = { _id: chatRoomId }
-  } else if (!nosy && cdeId) {
-    let patientsIds = await db
-      .collection('users')
-      .find(
-        { cdeId, patientState: { $nin: ['REMOVED', 'ARCHIVED'] } },
-        { _id: 1 },
-      )
-      .toArray()
-    patientsIds = patientsIds.map(p => p._id.toString())
-    condition = {
-      participants: {
-        $elemMatch: { userId: { $in: patientsIds }, role: '患者' },
-      },
-    }
-  } else if (nosy) {
-    let patientsIds = await db
-      .collection('users')
-      .find({ patientState: { $nin: ['REMOVED', 'ARCHIVED'] } }, { _id: 1 })
-      .toArray()
-    patientsIds = patientsIds.map(p => p._id.toString())
-    condition = {
-      participants: {
-        $elemMatch: { userId: { $in: patientsIds }, role: '患者' },
-      },
-    }
   } else {
-    return null
+    const patientCond = { patientState: { $nin: ['REMOVED', 'ARCHIVED'] } }
+    if (!nosy && cdeId) {
+      patientCond.cdeId = cdeId
+    }
+    let patientsIds = await db
+      .collection('users')
+      .find(patientCond, { _id: 1 })
+      .toArray()
+    patientsIds = patientsIds.map(p => p._id.toString())
+    condition = {
+      participants: {
+        $elemMatch: { userId: { $in: patientsIds }, role: '患者' },
+      },
+    }
+    if (unreadOnly) {
+      condition = {
+        $and: [
+          condition,
+          {
+            participants: {
+              $elemMatch: {
+                role: '医助',
+                unreadCount: { $gt: 0 },
+              },
+            },
+          },
+        ],
+      }
+    }
   }
   const chatrooms = await db
     .collection('needleChatRooms')
