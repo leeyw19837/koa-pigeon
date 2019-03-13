@@ -9,3 +9,8 @@ type HospitalMessage{
     introduce:String
     appointmentDates:[String]
 }
+
+input Coordinate {
+    latitude:Float
+    longitude:Float
+}

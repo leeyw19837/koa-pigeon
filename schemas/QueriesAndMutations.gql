@@ -206,7 +206,7 @@ type Query {
   getCommonProblem: [CommonProblem]
 
   # 获取医院的信息
-  getHospitalMessage(patientId: String): [HospitalMessage]
+  getHospitalMessage(patientId: String ,coordinate: Coordinate): [HospitalMessage]
   # 查询文章收藏状态
   ArticleCollection(patientId: ID, knowledgeId: String): Boolean
 }
