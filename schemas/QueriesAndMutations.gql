@@ -158,6 +158,7 @@ type Query {
     page: Int
     limit: Int
     chatRoomId: ID
+    unreadOnly: Boolean
   ): [NeedleChatRoom!]
   # 对，用这个
   getSomeChatRooms(
