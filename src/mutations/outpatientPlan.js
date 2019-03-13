@@ -293,19 +293,30 @@ export const outpatientPlanCheckIn = async (
           .endOf('day')
           .toDate(),
       }
-      const outpatientToday = await db.collection('outpatients').findOne({
-        state: 'WAITING',
-        hospitalId,
-        outpatientDate: today,
-      })
-
-      if (outpatientToday) {
-        const appointmentToday = await db.collection('appointments').findOne({
-          patientId,
-          patientState: { $ne: 'ARCHIVED' },
-          _id: { $in: outpatientToday.appointmentsId },
-          appointmentTime: today,
+      const outpatientsToday = await db
+        .collection('outpatients')
+        .find({
+          state: 'WAITING',
+          hospitalId,
+          outpatientDate: today,
         })
+        .toArray()
+
+      if (!isEmpty(outpatientsToday)) {
+        const outpatientIncludeThisPatient = find(
+          outpatientsToday,
+          ({ appointmentsId }) => includes(appointmentsId, patientId),
+        )
+
+        let appointmentToday
+        if (outpatientIncludeThisPatient) {
+          appointmentToday = await db.collection('appointments').findOne({
+            patientId,
+            patientState: { $ne: 'ARCHIVED' },
+            _id: { $in: outpatientIncludeThisPatient.appointmentsId },
+            appointmentTime: today,
+          })
+        }
 
         if (!appointmentToday) {
           return getReturnMessage('NO_TREATMENT_TODAY_FOR_YOU')
@@ -318,7 +329,7 @@ export const outpatientPlanCheckIn = async (
               propName: 'checkIn',
               propValue: true,
               treatmentId: appointmentToday.treatmentStateId,
-              outpatientId: outpatientToday._id,
+              outpatientId: outpatientIncludeThisPatient._id,
             },
             context,
           )
