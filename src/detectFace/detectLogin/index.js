@@ -3,7 +3,7 @@ import jsonwebtoken from 'jsonwebtoken'
 
 const omit = require('lodash/omit')
 
-const {JWT_SECRET, TOKEN_EXP_FOR_API} = process.env;
+const {JWT_SECRET ,TOKEN_EXP} = process.env;
 
 class DetectLogin {
 
@@ -39,7 +39,7 @@ class DetectLogin {
         }
         const token = jsonwebtoken.sign({
           user: user._id,
-        }, JWT_SECRET, {expiresIn: TOKEN_EXP_FOR_API})
+        }, JWT_SECRET, {expiresIn: TOKEN_EXP})
         ctx.body = {
           message: '登录成功',
           user: userInfo,
