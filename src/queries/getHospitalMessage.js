@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
  * 查询未入组患者下面的医院介绍
  * */
 export const getHospitalMessage = async (_, args) => {
-  const { patientId, coordinate } = args
+  const { patientId, coordinate = {} } = args
   const user = await db
     .collection('users')
     .findOne({
