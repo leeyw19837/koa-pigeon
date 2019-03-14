@@ -82,3 +82,8 @@ if (!AUTH) AUTH = 'FALSE'
   console.log(`Running at ${PORT}/${SECRET}; Node env: ${NODE_ENV}`)
   correctSessions(await getDb())
 })()
+
+process.on('uncaughtException', function(err) {
+  console.log(err.stack)
+  console.log('NOT exit...')
+})
