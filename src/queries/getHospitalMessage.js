@@ -5,12 +5,12 @@ import { ObjectId } from "mongodb";
  * */
 export const getHospitalMessage = async (_, args) => {
   const { patientId, coordinate = {} } = args
+  console.log('coordinate', coordinate)
   const user = await db
     .collection('users')
     .findOne({
       _id: ObjectId.createFromHexString(patientId)
     })
-  console.log("user", user)
   const { institutionId = "", healthCareTeamId = [] } = user
   let hospitalMessage = [];
   if (healthCareTeamId.length !== 0) {
@@ -27,7 +27,11 @@ export const getHospitalMessage = async (_, args) => {
     
   } else {
     // 如果没有用户的地理位置信息，默认北大医院的坐标
-    const { longitude = 116.380702, latitude = 39.931959 } = coordinate
+    let { longitude, latitude } = coordinate
+    if (!longitude || !latitude) {
+      longitude = 116.380702
+      latitude = 39.931959
+    }
     const nearHospital = await db
       .collection('institutions')
       .findOne({
