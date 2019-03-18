@@ -2,30 +2,35 @@ import freshId from 'fresh-id'
 import { pubsub } from '../../pubsub'
 import { maybeCreateFromHexString } from '../../utils'
 import first from 'lodash/first'
+import includes from 'lodash/includes'
 import get from 'lodash/get'
 import { setDelayJob, delDelayJob, isJobExists } from '../delayJob'
 
+const assistantRoles = ['医助', '超级护理师']
 export const whoAmI = async (userId, nosy, participants, db) => {
   let me = participants.find(user => {
     return user.userId === userId
   })
+
   if (!me) {
     if (nosy) {
-      me = participants.find(user => {
-        return user.role === '医助'
-      })
+      me = participants.find(user => includes(assistantRoles, user.role))
     } else {
       // 这是一块新屎，有了它nosy参数形同虚设；等participants清洗完以后，再删除掉这个else块
       const user = await db
         .collection('users')
         .findOne({ _id: { $in: [userId, maybeCreateFromHexString(userId)] } })
-      if (userId === 'system' || (user && user.roles === '医助')) {
+      if (
+        userId === 'system' ||
+        (user && includes(assistantRoles, user.roles))
+      ) {
         me = participants.find(user => {
-          return user.role === '医助'
+          return includes(assistantRoles, user.roles)
         })
       }
     }
   }
+
   return me
 }
 
@@ -162,7 +167,10 @@ export const sessionFeeder = async (message, db) => {
     let initiator = null
     if (actualSender !== 'system' && !actualSender.roles) {
       initiator = 'PATIENT'
-    } else if (actualSender.roles === '医助' && sourceType === 'FROM_CDE') {
+    } else if (
+      includes(assistantRoles, actualSender.roles) &&
+      sourceType === 'FROM_CDE'
+    ) {
       initiator = 'ASSISTANT'
     } else {
       initiator = 'SYSTEM'

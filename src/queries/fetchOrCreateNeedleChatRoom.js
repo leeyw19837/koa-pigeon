@@ -132,7 +132,7 @@ export const getChatrooms = async (
           {
             participants: {
               $elemMatch: {
-                role: '医助',
+                role: {$in:['医助','超级护理师']},
                 unreadCount: { $gt: 0 },
               },
             },

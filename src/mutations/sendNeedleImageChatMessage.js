@@ -43,7 +43,7 @@ export const sendNeedleImageChatMessage = async (_, args, context) => {
   const sender = await db
     .collection('users')
     .findOne({ _id: { $in: [userId, userObjectId] } }, { roles: 1 })
-  const isAssistant = sender.roles === '医助'
+  const isAssistant = sender.roles === '医助' || sender.roles === '超级护理师'
 
   if (isAssistant) {
     const patientParticipants = chatRoom.participants.find(user => {

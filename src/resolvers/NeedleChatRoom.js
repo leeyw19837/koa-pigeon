@@ -32,7 +32,10 @@ const getCondition = async (filter, db) => {
         condition,
         {
           participants: {
-            $elemMatch: { role: '医助', unreadCount: { $gt: 0 } },
+            $elemMatch: {
+              role: { $in: ['医助', '超级护理师'] },
+              unreadCount: { $gt: 0 },
+            },
           },
         },
       ],

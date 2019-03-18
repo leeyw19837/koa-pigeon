@@ -71,7 +71,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
   const sender = await db
     .collection('users')
     .findOne({ _id: { $in: [userId, userObjectId] } }, { roles: 1 })
-  const isAssistant = sender.roles === '医助'
+  const isAssistant = sender.roles === '医助' || sender.roles === '超级护理师'
   const isPatient = !sender.roles
 
   if (isAssistant) {
@@ -126,7 +126,7 @@ export const sendNeedleTextChatMessage = async (_, args, { getDb }) => {
     // console.log(JSON.stringify(newChatMessage.intelligentQA))
   }
   pubsub.publish('chatMessageAdded', { chatMessageAdded: newChatMessage })
-  const assistant = chatRoom.participants.find(p => p.role === '医助')
+  const assistant = chatRoom.participants.find(p => p.role === '医助' || p.role === '超级护理师')
   if (isPatient && chatMessageCount === 0 && assistant) {
     if (text === '你好' || text === '您好') {
       const newChatMessageAutoReplied = {

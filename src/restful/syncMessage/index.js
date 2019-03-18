@@ -24,7 +24,7 @@ const findAssistantInChatroom = async ({ needleChatRoomId }) => {
     .findOne({ _id: needleChatRoomId })
   if (!room) return
 
-  const assistant = room.participants.find(p => p.role === '医助')
+  const assistant = room.participants.find(p => p.role === '医助' || p.role==='超级护理师')
   if (!assistant) return
   return assistant.userId
 }

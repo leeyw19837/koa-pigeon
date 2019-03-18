@@ -40,7 +40,7 @@ export const sendSystemChatMessage = async (_, args, { getDb }) => {
     var nowdays = moment(new Date()).day()
     var sendText = '医生在线沟通时间为周一至周五 {0}:00-{1}:00 紧急联系电话：{2}'.format(minHour, maxHour, mobile)
 
-    const assistant = chatRoom.participants.find(p => p.role === '医助')
+    const assistant = chatRoom.participants.find(p => p.role === '医助' || p.role === '超级护理师' )
     let systemMessageCount = await db.collection('needleChatMessages').find({ senderId: assistant.userId, createdAt: { $lte: curDate, $gte: curTime } }).count()
     if (systemMessageCount > 0) {
         return "已经存在，无需再次插入"
