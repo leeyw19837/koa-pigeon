@@ -4,18 +4,22 @@ export const getUserInfoByIdCard = (idCard) => {
   if (!idCard) {
     return {}
   }
+  try {
 //获取出生日期
-  const dateOfBirth = moment(idCard.substring(6, 14), 'YYYYMMDD').toDate();
+    const dateOfBirth = moment(idCard.substring(6, 14), 'YYYYMMDD').toDate();
 //获取性别
-  let gender = '';
-  if (parseInt(idCard.substr(16, 1)) % 2 === 1) {
+    let gender = '';
+    if (parseInt(idCard.substr(16, 1)) % 2 === 1) {
 //男
-    gender = "male";
-  } else {
+      gender = "male";
+    } else {
 //女
-    gender = "female";
+      gender = "female";
+    }
+    return { dateOfBirth, gender, idCard }
+  } catch (e) {
+    return {}
   }
-  return { dateOfBirth, gender, idCard }
 }
 
 // 获取拼音
